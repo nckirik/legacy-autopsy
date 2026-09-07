@@ -8,6 +8,33 @@
 >
 > [`protocol.md`](protocol.md) is normative. All skills, schemas, tools, docs, examples, and validators are non-authoritative implementations or projections. If they conflict, `protocol.md` wins.
 
+## Try Protocol v4 on your legacy repository
+
+> [!IMPORTANT]
+> **The fastest way to try Legacy Autopsy today is to give the normative protocol directly to your own coding agent.** This is a manual, agent-driven trial—not full M0 harness execution or proof of Protocol v4 conformance.
+
+Work on a clean branch in an approved, non-production copy of the legacy repository. Copy `protocol.md` into that repository's root:
+
+```sh
+cp /path/to/legacy-autopsy/protocol.md /path/to/your-legacy-repository/protocol.md
+```
+
+Open the legacy repository with your agent and give it this instruction:
+
+```text
+Read ./protocol.md completely and treat it as normative. Execute the Legacy System
+Deconstruction, Assurance, and Reconstruction Protocol strictly, beginning with
+Preflight. Before writing, establish the required Section 8.1 invocation identity,
+exact scope and snapshots, and allowed and forbidden read/write targets. Follow every
+MUST and MUST NOT requirement, evidence rule, ownership boundary, checkpoint, stop
+condition, and gate. Do not guess, fabricate evidence, access production, mutate the
+legacy source, or claim Exit A, Exit E, or Protocol v4 conformance unless the protocol's
+requirements are actually satisfied. Ask me for missing scope, access, snapshot, and
+human decisions, and stop whenever the protocol requires human action.
+```
+
+The protocol does not authorize production access. Keep credentials, raw exports, probe output, production data, and private operator material outside the repository and agent-visible context.
+
 ## What Legacy Autopsy is
 
 Legacy Autopsy is an evidence-grounded agent/harness system for deconstructing a legacy system into a reconstruction-ready package. An LLM performs bounded semantic investigation; provider-neutral code owns deterministic mechanics and validation.
