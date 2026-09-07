@@ -35,6 +35,10 @@ human decisions, and stop whenever the protocol requires human action.
 
 The protocol does not authorize production access. Keep credentials, raw exports, probe output, production data, and private operator material outside the repository and agent-visible context.
 
+This manual trial intentionally gives the agent the complete protocol. The developing harness instead assembles bounded, mode-specific normative context so individual invocations do not need the full document.
+
+For reproducible trials, record the Legacy Autopsy commit or protocol version used with the resulting `.extracted/` workspace.
+
 ## What Legacy Autopsy is
 
 Legacy Autopsy is an evidence-grounded agent/harness system for deconstructing a legacy system into a reconstruction-ready package. An LLM performs bounded semantic investigation; provider-neutral code owns deterministic mechanics and validation.
