@@ -39,6 +39,36 @@ This manual trial intentionally gives the agent the complete protocol. The devel
 
 For reproducible trials, record the Legacy Autopsy commit or protocol version used with the resulting `.extracted/` workspace.
 
+## Current state at a glance
+
+Legacy Autopsy currently has **two different maturity levels**:
+
+- **Protocol maturity:** `protocol.md` is the complete normative specification currently used by this project.
+- **Harness maturity:** the repository's deterministic harness and automation currently implement only the **M0 foundation** of that protocol.
+
+### What you can do today
+
+- use `protocol.md` directly with your own coding agent in a manual deconstruction workflow;
+- validate protocol/skill routing;
+- initialize and inspect an empty `.extracted/` workspace;
+- generate foundational IDs;
+- assemble bounded context packets;
+- run bootstrap fixtures.
+
+### What is not automated yet
+
+The repository does **not yet automate** large parts of the protocol, including:
+
+- semantic execution of deconstruction modes;
+- ticketing, reconciliation, and coverage closure;
+- Exit A and Exit E validation;
+- synthesis, confirmations, handbook generation, and packaging;
+- full Protocol v4 conformance checking.
+
+### What this means
+
+The **protocol itself is already present and usable**. What is still incomplete is the **automation/harness implementation** that will execute and validate it deterministically.
+
 ## What Legacy Autopsy is
 
 Legacy Autopsy is an evidence-grounded agent/harness system for deconstructing a legacy system into a reconstruction-ready package. An LLM performs bounded semantic investigation; provider-neutral code owns deterministic mechanics and validation.
