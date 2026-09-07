@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  m0-foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Go
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      - name: Check required M0 materials
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(
+            protocol.md
+            README.md
+            AGENTS.md
+            go.mod
+            cmd/legacy-autopsy/main.go
+            skill/SKILL.md
+            skill/modes.json
+            skill/modes/preflight.md
+            skill/modes/export-acquisition.md
+            skill/modes/discovery.md
+            skill/modes/ticket-resolution.md
+            skill/modes/promotion-review.md
+            skill/modes/sequential-reconciliation.md
+            skill/modes/profile-synchronization.md
+            skill/modes/cross-reference-reconciliation.md
+            skill/modes/partial-synthesis.md
+            skill/modes/final-synthesis.md
+            skill/modes/reconstruction-handoff.md
+            skill/modes/human-hatch.md
+            skill/modes/validation-gate.md
+            docs/architecture.md
+            docs/skill-runtime.md
+            docs/workspace.md
+            docs/conformance.md
+            docs/development.md
+            docs/roadmap.md
+            schemas/README.md
+            fixtures/README.md
+            examples/README.md
+            examples/minimal/README.md
+            tools/export-helper/README.md
+          )
+          for path in "${required[@]}"; do
+            test -s "$path" || { echo "Missing or empty required file: $path" >&2; exit 1; }
+          done
+
+      - name: Check formatting
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t files < <(git ls-files '*.go')
+          ((${#files[@]} > 0)) || { echo "No tracked Go files found." >&2; exit 1; }
+          unformatted="$(gofmt -l "${files[@]}")"
+          test -z "$unformatted" || { printf 'Unformatted Go files:\n%s\n' "$unformatted" >&2; exit 1; }
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Unit tests
+        run: go test ./...
+
+      - name: Build CLI
+        run: go build -o /tmp/legacy-autopsy ./cmd/legacy-autopsy
+
+      - name: Check protocol and skill routing
+        run: go run ./cmd/legacy-autopsy protocol check
+
+      - name: Validate routing independently
+        run: go run ./cmd/legacy-autopsy validate routing
+
+      - name: Run implemented fixtures
+        run: go run ./cmd/legacy-autopsy validate fixtures --implemented

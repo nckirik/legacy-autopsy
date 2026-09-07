@@ -1,0 +1,114 @@
+[
+  {
+    "id": "NEG-PROTOCOL-VERSION-001",
+    "protocol_section": "§8.3. Invocation-mode enum and explicit multi-file modes",
+    "group": "protocol-discovery",
+    "operation": "protocol-version",
+    "input": { "required": "9.9" },
+    "expect_error": true,
+    "expected_diagnostic": "PROTOCOL_VERSION_MISMATCH"
+  },
+  {
+    "id": "NEG-PROTOCOL-MODES-001",
+    "protocol_section": "§8.3. Invocation-mode enum and explicit multi-file modes",
+    "group": "protocol-discovery",
+    "operation": "protocol-mode-count",
+    "input": { "required": "12" },
+    "expect_error": true,
+    "expected_diagnostic": "PROTOCOL_MODE_COUNT_MISMATCH"
+  },
+  {
+    "id": "NEG-ID-TYPE-001",
+    "protocol_section": "§4.1. ID generation",
+    "group": "identity",
+    "operation": "generate-id",
+    "input": {
+      "type": "UNKNOWN",
+      "namespace": "billing-v1",
+      "owner": "owner",
+      "discriminator": "unit"
+    },
+    "expect_error": true,
+    "expected_diagnostic": "IDENTITY_INVALID"
+  },
+  {
+    "id": "NEG-ID-SPECIALIZED-001",
+    "protocol_section": "§4.1. ID generation",
+    "group": "identity",
+    "operation": "generate-id",
+    "input": {
+      "type": "PRF",
+      "namespace": "billing-v1",
+      "owner": "bad",
+      "discriminator": "anything"
+    },
+    "expect_error": true,
+    "expected_diagnostic": "IDENTITY_INVALID"
+  },
+  {
+    "id": "NEG-ID-SRC-KIND-001",
+    "protocol_section": "§4.1. ID generation",
+    "group": "identity",
+    "operation": "generate-id",
+    "input": {
+      "type": "SRC",
+      "kind": "INVALID",
+      "namespace": "billing-v1",
+      "owner": "owner",
+      "discriminator": "unit"
+    },
+    "expect_error": true,
+    "expected_diagnostic": "IDENTITY_INVALID"
+  },
+  {
+    "id": "NEG-ID-SRC-PATH-001",
+    "protocol_section": "§4.1. ID generation",
+    "group": "identity",
+    "operation": "generate-id",
+    "input": {
+      "type": "SRC",
+      "kind": "FILE",
+      "namespace": "billing-v1",
+      "owner": "src/../secret.go",
+      "discriminator": "source-unit"
+    },
+    "expect_error": true,
+    "expected_diagnostic": "IDENTITY_INVALID"
+  },
+  {
+    "id": "NEG-PATH-TRAVERSAL-001",
+    "protocol_section": "§4.1. ID generation",
+    "group": "path-normalization",
+    "operation": "normalize-path",
+    "input": { "path": "src/../secret.txt" },
+    "expect_error": true,
+    "expected_diagnostic": "PATH_INVALID"
+  },
+  {
+    "id": "NEG-MARKDOWN-FENCE-001",
+    "protocol_section": "§4.1.2. Normative canonical hash profile and packaging artifacts",
+    "group": "basic-markdown-hash",
+    "operation": "basic-markdown-hash",
+    "input": { "markdown": "# Title\n\n```text\nunclosed\n" },
+    "expect_error": true,
+    "expected_diagnostic": "MARKDOWN_INVALID"
+  },
+  {
+    "id": "NEG-WORKSPACE-MISSING-001",
+    "protocol_section": "§1.1. Plane 1 — Forensic Plane",
+    "group": "workspace-skeleton",
+    "operation": "workspace-skeleton",
+    "input": { "remove": "10-SOURCE-INVENTORY.md" },
+    "expect_error": true,
+    "expected_diagnostic": "WORKSPACE_INVALID"
+  },
+  {
+    "id": "NEG-WORKSPACE-HEADING-001",
+    "protocol_section": "§1.1. Plane 1 — Forensic Plane",
+    "group": "workspace-skeleton",
+    "operation": "workspace-skeleton",
+    "input": { "rewrite": "10-SOURCE-INVENTORY.md", "content": "# Wrong\n" },
+    "expect_error": true,
+    "expected_diagnostic": "WORKSPACE_INVALID"
+  }
+]

@@ -1,0 +1,69 @@
+[
+  {
+    "id": "POS-PROTOCOL-VERSION-001",
+    "protocol_section": "§8.3. Invocation-mode enum and explicit multi-file modes",
+    "group": "protocol-discovery",
+    "operation": "protocol-version",
+    "input": { "required": "4.0" },
+    "expected": "4.0"
+  },
+  {
+    "id": "POS-PROTOCOL-MODES-001",
+    "protocol_section": "§8.3. Invocation-mode enum and explicit multi-file modes",
+    "group": "protocol-discovery",
+    "operation": "protocol-mode-count",
+    "input": { "required": "13" },
+    "expected": "13"
+  },
+  {
+    "id": "POS-ID-CMP-001",
+    "protocol_section": "§4.1. ID generation",
+    "group": "identity",
+    "operation": "generate-id",
+    "input": {
+      "type": "CMP",
+      "namespace": "billing-v1",
+      "owner": "src/payments/service.go#Charge",
+      "discriminator": "atomic-component"
+    },
+    "expected": "CMP-08ED474400F4"
+  },
+  {
+    "id": "POS-ID-SRC-001",
+    "protocol_section": "§4.1. ID generation",
+    "group": "identity",
+    "operation": "generate-id",
+    "input": {
+      "type": "SRC",
+      "kind": "FILE",
+      "namespace": "billing-v1",
+      "owner": "./src//payments/service.go",
+      "discriminator": "source-unit"
+    },
+    "expected": "SRC-FILE-7A5180F89B03"
+  },
+  {
+    "id": "POS-PATH-001",
+    "protocol_section": "§4.1. ID generation",
+    "group": "path-normalization",
+    "operation": "normalize-path",
+    "input": { "path": "./src//Café/./File.go" },
+    "expected": "src/Café/File.go"
+  },
+  {
+    "id": "POS-BASIC-HASH-001",
+    "protocol_section": "§4.1.2. Normative canonical hash profile and packaging artifacts",
+    "group": "basic-markdown-hash",
+    "operation": "basic-markdown-hash",
+    "input": { "markdown": "# Title\r\n\r\nText   \r\n" },
+    "expected": "sha256:594f76ae6a9c8fe694cef00288a9812fe09d58fecb75f3e619490684558c49e0"
+  },
+  {
+    "id": "POS-WORKSPACE-001",
+    "protocol_section": "§1.1. Plane 1 — Forensic Plane",
+    "group": "workspace-skeleton",
+    "operation": "workspace-skeleton",
+    "input": {},
+    "expected": "valid"
+  }
+]
