@@ -8,6 +8,8 @@ Go 1.24 or newer is required. The built CLI has no external runtime dependencies
 
 ## CLI
 
+The commands below are the implemented M0 bootstrap interface. The target CLI becomes a headless observation/administration client to the planned local service, but it does not manually start or claim semantic work during the skill-first stage. Proposed service, adapter, question, and graph commands are intentionally absent until implemented. See the [runtime design](runtime.md) and [roadmap](roadmap.md).
+
 ```sh
 go run ./cmd/legacy-autopsy doctor
 go run ./cmd/legacy-autopsy protocol check

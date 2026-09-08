@@ -2,7 +2,9 @@
 
 > Non-authoritative orientation only. `protocol.md` defines the actual files, schemas, ownership, write rights, and gate conditions.
 
-`.extracted/` is the persistent execution state for one pinned system namespace and its declared environments/snapshots. It is designed to survive stateless invocations and must be validated from disk before mutation.
+`.extracted/` is the persistent execution state for one pinned system namespace and its declared environments/snapshots. In the target service, each autopsy binds one explicit `autopsy_id`, repository root, pinned snapshot identity, and rooted `.extracted/` workspace. The service process may host many autopsies, but their protocol state must remain isolated and independently validated from disk before mutation.
+
+Every service task and transaction must carry `autopsy_id`; every filesystem operation must additionally remain confined to that autopsy's declared repository/workspace roots. Path normalization, traversal rejection, and symlink-escape checks are required boundaries—not substitutes for explicit autopsy scoping.
 
 ## Four planes
 
@@ -33,9 +35,17 @@ In particular, templates must never invent:
 
 Missing information should remain explicitly absent, pending, unknown, or unsupported only where the normative schema permits that representation.
 
+## Per-project operational configuration
+
+The target runtime reserves `<repository>/.legacy-autopsy/` for project-scoped service and runner configuration. It is not part of the four-plane protocol workspace and never carries evidence, semantic, coverage, or gate authority.
+
+The exact JSON, YAML, SQLite, or mixed layout remains undecided. Future design must separate intentionally shareable, non-secret declarative configuration from mutable machine-local state such as adapter process metadata, leases, caches, logs, and private paths. Credentials and secret values stay outside the repository, `.legacy-autopsy/`, `.extracted/`, context packets, and browser-visible state. Mutable/private `.legacy-autopsy/` content must not be committed.
+
 ## Authority and sidecars
 
-Plane authority is scoped, not global: assurance does not replace forensic evidence, synthesis governs derived semantics only, and the handbook remains a projection. Machine sidecars are non-authoritative derivatives governed by Protocol §1.5; future checked-in generated derivatives must identify their generator, source fingerprints, schema version, and generation time and must be regenerated rather than hand-edited.
+Plane authority is scoped, not global: assurance does not replace forensic evidence, synthesis governs derived semantics only, and the handbook remains a projection. Service registry, lifecycle, scheduler, lease, event, and browser state are operational coordination—not semantic or gate authority.
+
+Machine sidecars are non-authoritative derivatives governed by Protocol §1.5. This includes future Atlas graph/search indexes and UI caches stored beneath `.legacy-autopsy/atlas/*`. They must be reproducible from validated committed records, identify their generator, source fingerprints, schema version, and generation time, carry a `NON-AUTHORITATIVE-DERIVATIVE` marker, and be regenerated rather than hand-edited. A projection conflict is resolved in favor of canonical workspace records and then original evidence; rebuilding a projection cannot change protocol state. Atlas generation is lower-priority representation work and must never block extraction, hold a semantic-worker slot, or participate in gate/coverage closure.
 
 Never commit a real `.extracted/` workspace, probe output, raw acquisition material, context packet, or operator-private state. Synthetic fixtures/examples belong only in their designated directories and carry no evidence authority.
 

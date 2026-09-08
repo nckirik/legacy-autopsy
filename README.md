@@ -35,7 +35,7 @@ human decisions, and stop whenever the protocol requires human action.
 
 The protocol does not authorize production access. Keep credentials, raw exports, probe output, production data, and private operator material outside the repository and agent-visible context.
 
-This manual trial intentionally gives the agent the complete protocol. The developing harness instead assembles bounded, mode-specific normative context so individual invocations do not need the full document.
+This manual trial intentionally gives the agent the complete protocol. The developing orchestration service will instead assemble bounded, mode-specific normative context so each executor invocation receives only its authorized scope.
 
 For reproducible trials, record the Legacy Autopsy commit or protocol version used with the resulting `.extracted/` workspace.
 
@@ -44,7 +44,7 @@ For reproducible trials, record the Legacy Autopsy commit or protocol version us
 Legacy Autopsy currently has **two different maturity levels**:
 
 - **Protocol maturity:** `protocol.md` is the complete normative specification currently used by this project.
-- **Harness maturity:** the repository's deterministic harness and automation currently implement only the **M0 foundation** of that protocol.
+- **Runtime maturity:** the repository's deterministic automation currently implements only the **M0 foundation** of that protocol; the local service and workbench are target architecture, not current capability.
 
 ### What you can do today
 
@@ -67,11 +67,15 @@ The repository does **not yet automate** large parts of the protocol, including:
 
 ### What this means
 
-The **protocol itself is already present and usable**. What is still incomplete is the **automation/harness implementation** that will execute and validate it deterministically.
+The **protocol itself is already present and usable**. What is still incomplete is the deterministic runtime and automation that will orchestrate, execute, validate, and present it.
 
 ## What Legacy Autopsy is
 
-Legacy Autopsy is an evidence-grounded agent/harness system for deconstructing a legacy system into a reconstruction-ready package. An LLM performs bounded semantic investigation; provider-neutral code owns deterministic mechanics and validation.
+Legacy Autopsy is evolving into a **local-first interactive autopsy workbench and orchestration service** where humans and executors collaboratively build an evidence-backed model of a legacy system. The protocol governs truth, state, assurance, and reconstruction readiness.
+
+> **Legacy Autopsy owns orchestration and protocol state. Executors own semantic work.**
+
+The target service manages multiple isolated autopsies, schedules bounded invocations, validates and commits workspace transactions, projects an explorable Atlas, and keeps human questions available asynchronously. User-facing execution arrives in order: first the generic skill inside any compatible coding harness, then thin managed adapters for named harnesses, and finally a minimal internal direct-model runner. During the first stage, the UI and CLI cannot manually start semantic work. The current M0 repository does not yet implement that service or UI; see the [runtime design](docs/runtime.md) and [architecture](docs/architecture.md).
 
 The complete protocol pipeline is:
 
@@ -100,6 +104,7 @@ This diagram describes Protocol v4, not current M0 implementation coverage. Exit
 ## Design principles
 
 - **Normative law stays singular:** `protocol.md` defines behavior; secondary material routes to or implements it.
+- **Orchestration and semantics stay separate:** Legacy Autopsy owns protocol/runtime state and deterministic commits; interchangeable executors perform bounded semantic work.
 - **Reasoning and mechanics stay separate:** LLMs interpret evidence and semantics; code handles identity, parsing, scope, ordering, hashing, validation, and state transitions.
 - **Filesystem state survives sessions:** `.extracted/` is persistent execution state; conversation memory is disposable.
 - **Evidence is not inference:** model reasoning cannot promote itself into source evidence.
@@ -154,9 +159,10 @@ Routing support is not mode-execution support. Bootstrap fixtures test only regi
 
 - [AGENTS.md](AGENTS.md): protocol-integrity and contribution rules.
 - [Skill entry point](skill/SKILL.md) and [skill guide](skill/README.md): non-authoritative invocation routing.
-- [Architecture](docs/architecture.md): current M0 packages and target boundaries.
+- [Architecture](docs/architecture.md): current M0 packages and target service boundaries.
+- [Runtime and workbench](docs/runtime.md): multi-autopsy orchestration, executors, Atlas, questions, and UI target design.
 - [Conformance](docs/conformance.md) and [fixture corpus](fixtures/README.md): implemented cases versus normative completeness.
-- [Roadmap](docs/roadmap.md): staged M0–M15 delivery.
+- [Roadmap](docs/roadmap.md): staged M0–M16 delivery.
 - [Schema projections](schemas/README.md): current schema status and future boundary.
 - [Export-helper boundary](tools/export-helper/README.md): operator-only acquisition trust model.
 
