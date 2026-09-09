@@ -42,22 +42,13 @@ The helper is a local developer/operator-side acquisition tool. It discovers, sa
 
 ## 4. Trust Boundary
 
-```text
-Operator/developer-side tool
-  Talks to Appsmith/n8n through approved read-only interfaces
-  Sees raw exports and n8n responses
-  Builds the private entity-usage index
-  Performs sanitization, secret scanning, and fingerprinting
-  Requests operator decisions for ambiguous candidates
-              |
-              | sanitized projection + lineage + approval gate
-              v
-Agent-side protocol
-  Sees sanitized inventory
-  Sees deterministic virtual coordinates
-  Sees lineage and source fingerprints
-  Sees unresolved operator actions
-  Performs POV deconstruction only after virtual entry-points are registered
+```mermaid
+flowchart TD
+    operator["Operator/developer-side tool<br/>Talks to Appsmith/n8n through approved read-only interfaces<br/>Sees raw exports and n8n responses<br/>Builds the private entity-usage index<br/>Performs sanitization, secret scanning, and fingerprinting<br/>Requests operator decisions for ambiguous candidates"]
+    gate["Sanitized projection + lineage + approval gate"]
+    agent["Agent-side protocol<br/>Sees sanitized inventory<br/>Sees deterministic virtual coordinates<br/>Sees lineage and source fingerprints<br/>Sees unresolved operator actions<br/>Performs POV deconstruction only after virtual entry-points are registered"]
+
+    operator --> gate --> agent
 ```
 
 Raw input should be read from paths outside the repository. Temporary files should use an operator-only system directory and be deleted after completion. The helper must not transmit exports, secrets, or repository content to third-party services.

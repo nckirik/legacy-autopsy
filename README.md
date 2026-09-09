@@ -79,24 +79,16 @@ The target service manages multiple isolated autopsies, schedules bounded invoca
 
 The complete protocol pipeline is:
 
-```text
-Legacy System
-   ↓
-Forensic Plane
-   ↓
-Assurance Plane
-   ↓
-Exit A
-   ↓
-Synthesis Plane
-   ↓
-Human Reconstruction Handbook
-   ↓
-Human Confirmation
-   ↓
-Exit E
-   ↓
-Certified Reconstruction Bundle
+```mermaid
+flowchart TD
+    legacy["Legacy System"] --> forensic["Forensic Plane"]
+    forensic --> assurance["Assurance Plane"]
+    assurance --> exitA["Exit A"]
+    exitA --> synthesis["Synthesis Plane"]
+    synthesis --> handbook["Human Reconstruction Handbook"]
+    handbook --> confirmation["Human Confirmation"]
+    confirmation --> exitE["Exit E"]
+    exitE --> bundle["Certified Reconstruction Bundle"]
 ```
 
 This diagram describes Protocol v4, not current M0 implementation coverage. Exit A and Exit E are protocol gates that only their required deterministic artifacts and validations can establish.

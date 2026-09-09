@@ -31,12 +31,13 @@ The service must derive protocol truth from validated workspace state. Operation
 
 One service process should manage multiple independent autopsies:
 
-```text
-Legacy Autopsy Service
-    ├─ Autopsy A → /repos/legacy-oibs
-    ├─ Autopsy B → /repos/old-personnel
-    ├─ Autopsy C → /repos/payment-system
-    └─ Autopsy D → /repos/appsmith-export
+```mermaid
+flowchart TB
+    service["Legacy Autopsy Service"]
+    service --> autopsyA["Autopsy A<br/>/repos/legacy-oibs"]
+    service --> autopsyB["Autopsy B<br/>/repos/old-personnel"]
+    service --> autopsyC["Autopsy C<br/>/repos/payment-system"]
+    service --> autopsyD["Autopsy D<br/>/repos/appsmith-export"]
 ```
 
 Each autopsy binds an explicit `autopsy_id` to:
@@ -58,20 +59,18 @@ Shared service infrastructure may include provider clients, coding-harness adapt
 
 ## Target service boundaries
 
-```text
-Stage 1:  Skill in any coding harness ────────────────┐
-Stage 2:  Named harness adapter runners ──────────────┤ semantic execution ingress
-Stage 3:  Minimal internal direct-model runner ───────┘
-                                                      ↓
-                                         Local Legacy Autopsy service
-                           ┌──────────────────────────────────────────────┐
-Browser workbench ────────▶│ autopsy registry   protocol engine          │◀──── Headless CLI
-(observe/configure/answer) │ scheduler          context builder          │      (observe/administer)
-                           │ workspace transactions   validators          │
-                           │ projection/index manager   event stream      │
-                           └──────────────────────────────────────────────┘
-                                      ↓                         ↓
-                           rooted per-autopsy workspaces    regenerable views
+```mermaid
+flowchart TB
+    skill["Stage 1: Skill in any coding harness"] --> ingress["Semantic execution ingress"]
+    adapters["Stage 2: Named harness adapter runners"] --> ingress
+    direct["Stage 3: Minimal internal direct-model runner"] --> ingress
+
+    ingress --> service["Local Legacy Autopsy service<br/>autopsy registry · protocol engine<br/>scheduler · context builder<br/>workspace transactions · validators<br/>projection/index manager · event stream"]
+    browser["Browser workbench<br/>observe / configure / answer"] --> service
+    cli["Headless CLI<br/>observe / administer"] --> service
+
+    service --> workspaces["Rooted per-autopsy workspaces"]
+    service --> views["Regenerable views"]
 ```
 
 During the skill-first stage, semantic work can begin only when the skill is invoked from a coding harness. The UI and CLI may observe, configure, attach, pause, resume, and present authorized human actions, but they must not manually start or claim a semantic invocation. Service-launched harness adapters introduce managed runners in Stage 2; direct model execution remains Stage 3.
@@ -110,26 +109,21 @@ The exact JSON, YAML, SQLite, or mixed layout remains undecided. The design must
 
 ## Claim, execute, and commit flow
 
-```text
-scheduler identifies permitted work
-    ↓
-worker claims one bounded invocation and lease
-    ↓
-service assembles fingerprinted normative context
-    ↓
-executor performs semantic work
-    ↓
-executor submits a structured result
-    ↓
-service revalidates scope, ownership, fingerprints, and implemented rules
-    ↓
-workspace transaction commits atomically
-    ↓
-client receives committed workspace revision + Atlas pending/stale status
-    ↓
-low-priority projection worker updates Atlas/search from committed records
-    ↓
-client receives Atlas-ready revision
+```mermaid
+flowchart TD
+    schedule["Scheduler identifies permitted work"]
+    claim["Worker claims one bounded invocation and lease"]
+    context["Service assembles fingerprinted normative context"]
+    execute["Executor performs semantic work"]
+    submit["Executor submits a structured result"]
+    validate["Service revalidates scope, ownership,<br/>fingerprints, and implemented rules"]
+    commit["Workspace transaction commits atomically"]
+    committed["Client receives committed workspace revision<br/>with Atlas pending/stale status"]
+    project["Low-priority projection worker updates<br/>Atlas/search from committed records"]
+    ready["Client receives Atlas-ready revision"]
+
+    schedule --> claim --> context --> execute --> submit
+    submit --> validate --> commit --> committed --> project --> ready
 ```
 
 One claim corresponds to one protocol invocation. A worker must not silently switch mode, persona, cluster, track, POV, or autopsy. Submission after stale inputs must reject semantic mutation rather than commit optimistically. Every started invocation still receives the mandatory `0G` append: rejected, stale, blocked, or unsupported results record their exact no-mutation outcome, blockers, and next loads under the applicable workspace transaction boundary. Unsupported validation or mutation remains `unsupported`; the service must not create placeholder success.
@@ -200,9 +194,10 @@ Atlas is a representation layer, never part of extraction closure or scheduling 
 
 Atlas and the handbook are complementary projections:
 
-```text
-Handbook → narrative, linear, task-oriented
-Atlas    → relational, exploratory, investigative
+```mermaid
+flowchart LR
+    handbook["Handbook"] --> handbookRole["Narrative · linear · task-oriented"]
+    atlas["Atlas"] --> atlasRole["Relational · exploratory · investigative"]
 ```
 
 A graph node should navigate to related handbook sections, and handbook content should open Atlas centered on its underlying semantic or forensic record. Stable bidirectional identities depend on later HBK/anchor work and must not be improvised before those identities are implemented.

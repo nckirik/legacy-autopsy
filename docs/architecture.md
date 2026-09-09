@@ -20,21 +20,19 @@ Current commands operate on one declared repository/workspace at a time and exit
 
 ## Target boundaries and flow
 
-```text
-Stage 1: generic skill in any coding harness ──────────┐
-Stage 2: service-managed thin harness adapters ────────┤ semantic execution ingress
-Stage 3: minimal internal direct-model runner ─────────┘
-                                                       ↓
-                                          Local Legacy Autopsy service
-                     ┌──────────────────────────────────────────────────┐
-Browser workbench ──▶│ autopsy registry   protocol engine   scheduler   │◀── Headless CLI
-observe/configure/   │ context builder    workspace transactions        │    observe/administer
-answer only          │ validators         projection/index/events       │    only
-                     └──────────────────────────────────────────────────┘
-                                  ↓                         ↓
-                     per-autopsy rooted `.extracted/`   regenerable UI indexes
+```mermaid
+flowchart TB
+    skill["Stage 1: generic skill in any coding harness"] --> ingress["Semantic execution ingress"]
+    adapters["Stage 2: service-managed thin harness adapters"] --> ingress
+    direct["Stage 3: minimal internal direct-model runner"] --> ingress
 
-operator-controlled export acquisition ──approved sanitized projections──▶ workspace
+    ingress --> service["Local Legacy Autopsy service<br/>autopsy registry · protocol engine · scheduler<br/>context builder · workspace transactions<br/>validators · projection/index/events"]
+    browser["Browser workbench<br/>observe / configure / answer only"] --> service
+    cli["Headless CLI<br/>observe / administer only"] --> service
+
+    service --> workspace["Per-autopsy rooted .extracted/"]
+    service --> indexes["Regenerable UI indexes"]
+    acquisition["Operator-controlled export acquisition"] -->|approved sanitized projections| workspace
 ```
 
 - **Normative protocol:** execution law, records, authority, modes, invariants, and gates; never generated from implementation metadata.
