@@ -1,10 +1,16 @@
 # Conformance
 
-> Non-authoritative implementation policy. Protocol §19.2 is the normative fixture requirement and wins on conflict.
+> Non-authoritative Legacy Autopsy implementation policy. Protocol §19.2 defines normative conformance cases and wins on conflict; this repository's JSON files, Go runner, CLI output, and CI workflow are one concrete test realization, not protocol prerequisites.
 
-Protocol v4 conformance requires every applicable positive and negative fixture in §19.2. A passing unit test, file-presence check, bootstrap case, or unsupported/skipped family is not conformance and cannot establish a gate result.
+Protocol v4.1 conformance requires satisfying every applicable positive and negative case in §19.2. A passing Legacy Autopsy unit test, file-presence check, bootstrap fixture, or unsupported/skipped family is not conformance and cannot establish a gate result.
 
-## Fixture contract
+## Standalone protocol quality test
+
+Give a fresh capable coding harness only `protocol.md`, the target repository and approved evidence roots, and a short instruction to execute the protocol. Without Legacy Autopsy context, service APIs, CLI commands, UI, Atlas, hidden validators, repository-specific fixtures, or prior conversation, it should be able to identify required inputs, create and resume `.extracted/`, perform semantic work, implement or reproduce deterministic operations with ordinary local tools, ask required human questions, and report unsupported behavior rather than invent success.
+
+This is a protocol-quality regression test, not by itself proof that an implementation is conforming or that a workspace has passed Exit A or Exit E.
+
+## Legacy Autopsy fixture contract
 
 Each implemented normative rule needs:
 
@@ -31,13 +37,17 @@ A case's protocol heading is provenance, not a claim that the case implements th
 
 1. persona workspace layout and ownership;
 2. context-qualified finite enums and bidirectional registry completeness;
-3. PRF identity and semantic hashing;
-4. HBK identity and path/anchor normalization;
-5. Profile Synchronization dependency closure;
-6. record-versus-artifact hashing and file-transport separation;
-7. canonicalization and exact carrier/envelope exclusions;
-8. final envelope and package-member integrity;
-9. all five packaging schemas and deterministic ordering;
-10. the acyclic Exit E sequence.
+3. invocation ownership and cold resume;
+4. ticket escalation and honest unresolved coverage;
+5. dead-code and semantic-predicate closure;
+6. deterministic iteration accounting;
+7. PRF identity and semantic hashing;
+8. HBK identity and path/anchor normalization;
+9. Profile Synchronization dependency closure;
+10. record-versus-artifact hashing and file-transport separation;
+11. canonicalization and exact carrier/envelope exclusions;
+12. final envelope and package-member integrity;
+13. packaging schemas, gate completeness, evidence bindings, and deterministic ordering;
+14. the acyclic, snapshot-consistent Exit E sequence and reproducible final verification.
 
-The repository supports neither Exit A nor Exit E and makes no Protocol v4 conformance claim. A complete family becomes implemented only when its production behavior and all required positive/negative fixtures run successfully in CI.
+The repository supports neither Exit A nor Exit E and makes no Protocol v4.1 conformance claim. A complete family becomes implemented only when its production behavior and all required positive/negative fixtures run successfully in CI.

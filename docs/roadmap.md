@@ -48,7 +48,7 @@ Implement source inventory, concrete denominator rows, claim-level evidence, fro
 
 ## M6 — Invocation context, cold resume, and executor rollout
 
-Implement all official mode routing, Protocol §8.1 identity headers, mandatory read sets, minimum-sufficient authoritative section packets, strict-scope verification, stale-checkpoint guards, §8.5 cold-resume summaries, and append-only invocation history. Integrate service claim/context/submit with fingerprint revalidation, one-invocation leases, idempotent submission, and crash-safe recovery. Conversation memory remains disposable.
+Implement all official mode routing, Protocol §8.1 identity headers, mandatory read sets, minimum-sufficient authoritative section packets, strict-scope verification, stale-checkpoint guards, §8.5 structured cold-resume checks, and append-only invocation history. The executor proposes semantic resume/actions; the runtime recomputes identity, scope, loaded fingerprints, write rights, staleness, and the cold-resume fingerprint before commit, including audited no-mutation outcomes. Integrate service claim/context/submit with fingerprint revalidation, one-invocation leases, idempotent submission, and crash-safe recovery. Conversation memory remains disposable.
 
 Deliver execution channels in order:
 
@@ -60,11 +60,11 @@ All three use the same invocation/result boundary. Adapter configuration is oper
 
 ## M7 — Ticket FSM, reconciliation, and asynchronous human dependencies
 
-Implement ticket identities/transitions, probe ingestion boundaries, Human Hatch prerequisites, persona-local buffers, deterministic Sequential Reconciliation, promotion/depromotion atomicity, unmapped discovery and synthesis-gap merging, concurrency locks, and reciprocal audit effects. Back the questions inbox with validated records and dependency impact; continue independent frontiers while human input waits.
+Implement ticket identities/transitions, closed escalation reasons, runtime and non-runtime Human Hatch prerequisites, honest human-required gap/partial outcomes distinct from exclusion, probe ingestion boundaries, persona-local buffers, deterministic Sequential Reconciliation, promotion/depromotion atomicity, unmapped discovery and synthesis-gap merging, concurrency locks, and reciprocal audit effects. Back the questions inbox with validated reason/evidence records and dependency impact; continue independent frontiers while human input waits.
 
 ## M8 — Coverage and Exit A
 
-Implement per-kind/track/environment/snapshot coverage arithmetic, evidence-backed sweeps, source/frontier/ticket/export closure, ownership and referential integrity, disabled capability governance, contradiction checks, deterministic reports, and all Composite Exit A conditions. Project validated status into the workbench; UI state cannot establish a gate. Claim support only after validators and fixtures pass.
+Implement per-kind/track/environment/snapshot coverage arithmetic, evidence-backed sweeps, source/frontier/ticket/export closure, dynamic-caller-aware dead-code proof, provenance-bound lifecycle/applicability predicates with fail-inclusive `Unknown`, ownership and referential integrity, disabled capability governance, contradiction checks, deterministic reports, and all Composite Exit A conditions. Project validated status into the workbench; UI state cannot establish a gate. Claim support only after validators and fixtures pass.
 
 ## M9 — Export acquisition helper
 
@@ -80,15 +80,15 @@ Implement candidate-bound `CNF` records, decision approvals, exact payload-versu
 
 ## M12 — Handbook and Atlas linking
 
-Implement HBK identities and stable anchors, synchronized handbook generation, progressive-disclosure navigation, quality/link/diagram checks, upstream-first correction, handbook staleness, confirmation envelopes, and stable bidirectional links between handbook sections and Atlas records. Both views remain projections over authoritative workspace state.
+Implement HBK identities and stable anchors, synchronized handbook generation, progressive-disclosure navigation, deterministic non-vacuity/link/diagram checks, candidate-bound CNF readability review coverage, upstream-first correction, handbook staleness, confirmation envelopes, and stable bidirectional links between handbook sections and Atlas records. Both views remain projections over authoritative workspace state.
 
 ## M13 — Canonical packaging/hashing
 
-Implement the normative Markdown canonical hash profile, independent typed-record hashes, file-transport fingerprints, exact carrier/envelope exclusions, canonical envelope bindings, complete package-member fingerprints, artifact hash domains, post-hash instance bindings, and deterministic schemas/order for all five packaging artifacts.
+Implement the normative Markdown canonical hash profile, independent typed-record hashes, file-transport fingerprints, exact carrier/envelope exclusions and legal prior-artifact envelope references, canonical envelope bindings, row evidence-set fingerprints, complete package-member fingerprints, artifact hash domains, post-hash instance bindings, and deterministic schemas/order for all five packaging artifacts.
 
 ## M14 — Exit E
 
-Implement content and decision readiness, equivalence-suite validation, exact confirmations, candidate report/manifest, content-readiness report, scope certificate, outer manifest, signature validation, and the strict acyclic six-step sequence. Only the validated signed outer payload may state `EXIT-E-STATUS: Passed`.
+Implement content and decision readiness, exact stage-specific check registries and evidence bindings, equivalence-suite validation, exact confirmations, candidate report/manifest, content-readiness report, scope certificate, directly snapshot-bound outer manifest, cross-chain snapshot equality, signature validation, reproducible final-bundle verification/non-authoritative receipts, and the strict acyclic six-step sequence. Only the validated signed outer payload may state `EXIT-E-STATUS: Passed`.
 
 ## M15 — Full Part 19 conformance suite
 
@@ -104,14 +104,18 @@ All are currently deferred and remain roadmap-visible:
 
 1. **Persona workspace layout and ownership** — M3/M7, including `_shared`, purity, buffers, and atomic Sequential Reconciliation moves.
 2. **Context-qualified finite enums and registry completeness** — M1/M5, including bidirectional schema registry and traversal `N/A` coupling.
-3. **PRF identity and semantic hashing** — M2/M10/M11, including `0A`, candidate, traceability, and CNF bindings.
-4. **HBK identity and path/anchor normalization** — M2/M12, including the fixed handbook root, exact Unicode/path handling, stable anchors, title edits, and proven moves.
-5. **Profile Synchronization closure** — M6/M10/M11, including complete direct/applicable and transitive dependency closure and identical confirmation closure.
-6. **Record versus artifact hashing** — M1/M13, including independent record hashes, ordered file transport, artifact hash-domain identity, and post-hash binding.
-7. **Canonicalization and exact exclusions** — M1/M11/M13, including LF/Unicode/order/whitespace handling and exact certification, DEC, CNF, and artifact boundaries.
-8. **Final envelope and package-member integrity** — M11/M13/M14, including identity/version-bound envelope fingerprints and complete finalized-file fingerprints.
-9. **Packaging schemas and deterministic ordering** — M13/M14, covering all five schemas, field order, empty values/tables, sort keys, counts, and cycle prevention.
-10. **Acyclic Exit E sequence** — M14, from candidate report through the signed outer manifest, with `Pending` through steps 1–5 and no post-step-6 completion artifact.
+3. **Invocation ownership and cold resume** — M6, including semantic proposal versus runtime-computed authorization, stale checks, check fingerprints, and `0G` bindings.
+4. **Ticket escalation and honest unresolved coverage** — M7/M8, including closed non-runtime reasons, Human Hatch rights, human-required gap/partial behavior, and exclusion separation.
+5. **Dead-code and semantic-predicate closure** — M5/M8/M12, including dynamic possible callers, complete denominators, provenance, fail-inclusive `Unknown`, lifecycle eligibility, and handbook non-vacuity.
+6. **Deterministic iteration accounting** — M6/M7/M10, including shared wave tokens, reconciliation before completion, synthesis-gap reopening, and ZULU exhaustion.
+7. **PRF identity and semantic hashing** — M2/M10/M11, including `0A`, candidate, traceability, and CNF bindings.
+8. **HBK identity and path/anchor normalization** — M2/M12, including the fixed handbook root, exact Unicode/path handling, stable anchors, title edits, and proven moves.
+9. **Profile Synchronization closure** — M6/M10/M11, including complete direct/applicable and transitive dependency closure and identical confirmation closure.
+10. **Record versus artifact hashing** — M1/M13, including independent record hashes, ordered file transport, artifact hash-domain identity, and post-hash binding.
+11. **Canonicalization and exact exclusions** — M1/M11/M13, including LF/Unicode/order/whitespace handling, exact certification/DEC/CNF/artifact boundaries, and legal prior versus forbidden later references.
+12. **Final envelope and package-member integrity** — M11/M13/M14, including identity/version-bound envelope fingerprints and complete finalized-file fingerprints.
+13. **Packaging schemas, gate completeness, and deterministic ordering** — M13/M14, covering all five schemas, exact report check sets, evidence-set fingerprints, field order, empty values/tables, sort keys, counts, and cycle prevention.
+14. **Acyclic, snapshot-consistent Exit E and final verification** — M14, from candidate report through the directly snapshot-bound signed outer manifest, with `Pending` through steps 1–5, reproducible verification receipts, and no authoritative post-step-6 completion artifact.
 
 ## Other deferred protocol families
 

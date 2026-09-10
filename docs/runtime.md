@@ -1,12 +1,12 @@
 # Local autopsy runtime and workbench
 
-> Non-authoritative target design. [`protocol.md`](../protocol.md) remains the sole normative authority. None of the service, scheduler, executor, Atlas, or browser behavior described here is implemented in M0 unless stated otherwise.
+> Non-authoritative target design for one reference/tooling implementation. [`protocol.md`](../protocol.md) is a standalone, implementation-independent specification and remains the sole normative authority. None of the Legacy Autopsy service, scheduler, executor adapters, Atlas, browser, or CLI behavior described here is required to execute the protocol or implemented in M0 unless stated otherwise.
 
 ## Product boundary
 
 Legacy Autopsy is evolving into a local-first interactive environment where humans and executors collaboratively build an evidence-backed model of a legacy system.
 
-> **Legacy Autopsy owns orchestration and protocol state. Executors own semantic work.**
+> **In Legacy Autopsy-managed execution, Legacy Autopsy owns orchestration of protocol-defined workspace state. Executors own semantic work.**
 
 The target runtime is a long-lived local service. It coordinates bounded protocol invocations, validates and commits their effects, projects committed state for exploration, and keeps human interaction available while work proceeds.
 
@@ -99,7 +99,9 @@ This signature is illustrative, not an implemented API. Execution support should
 
 Human-required actions remain protocol-governed UI/operator transactions, not a general semantic executor channel.
 
-An invocation must remain bound to one autopsy and the complete applicable protocol identity, scope, read set, write set, snapshot, and input fingerprints. A result is a proposal until the service validates it. Executors do not own scheduling, stale checks, workspace commits, gate state, or the protocol state machine.
+An invocation must remain bound to one autopsy and the complete applicable protocol identity, scope, read set, write set, snapshot, and input fingerprints. A result is a semantic proposal until the service validates it. Executors classify behavior, formulate claims, identify ambiguity, and propose prose or other semantic content with provenance. The service computes or independently reproduces protocol-defined IDs, canonical forms, fingerprints, scope/stale checks, FSM transitions, counts, completeness, gates, and package verification before commit; an executor-supplied deterministic value never becomes authoritative merely because it is present. Executors do not own scheduling, stale checks, workspace commits, gate state, or the protocol state machine.
+
+The common result envelope must carry the Protocol §8.5 semantic cold-resume assessment. Before every commit, the service adds its deterministic identity/scope/write-right/stale validation, recomputes the cold-resume fingerprint, and binds the pass/fail result to the mandatory `0G` entry. Failed or missing checks reject semantic mutation while preserving the exact no-mutation audit outcome.
 
 ## Per-project operational configuration
 
@@ -126,7 +128,9 @@ flowchart TD
     submit --> validate --> commit --> committed --> project --> ready
 ```
 
-One claim corresponds to one protocol invocation. A worker must not silently switch mode, persona, cluster, track, POV, or autopsy. Submission after stale inputs must reject semantic mutation rather than commit optimistically. Every started invocation still receives the mandatory `0G` append: rejected, stale, blocked, or unsupported results record their exact no-mutation outcome, blockers, and next loads under the applicable workspace transaction boundary. Unsupported validation or mutation remains `unsupported`; the service must not create placeholder success.
+One claim corresponds to one protocol invocation. A worker must not silently switch mode, persona, cluster, track, POV, or autopsy. Submission after stale inputs must reject semantic mutation rather than commit optimistically. Every started invocation still receives the mandatory `0G` append: rejected, stale, blocked, or unsupported results record their exact no-mutation outcome, cold-resume check fingerprint, blockers, and next loads under the applicable workspace transaction boundary. Unsupported validation or mutation remains `unsupported`; the service must not create placeholder success.
+
+Gate and packaging reports are service-computed deterministic effects. The service must enforce the protocol-versioned exact check registries, reject empty/missing/duplicate/unknown check sets, recompute row evidence-set fingerprints and cross-artifact snapshot equality, and expose reproducible final-bundle verification. Any final verification receipt is operational `NON-AUTHORITATIVE-DERIVATIVE` state outside the certified package and `.extracted/`; it records the run but cannot establish or change Exit E.
 
 Speculative model thoughts, streamed tokens, and uncommitted result drafts may appear as executor activity but must never appear as committed graph truth or evidence. Client events may announce an authoritative commit immediately after that commit; derivative-ready events occur only after the corresponding projection update. Atlas lag or failure must never block extraction, consume semantic-worker priority, invalidate a workspace commit, or prevent later protocol work.
 
@@ -214,7 +218,7 @@ Each item should show, where deterministically derivable:
 - the downstream records/frontiers that an accepted answer may release;
 - pinned fingerprints and authority requirements.
 
-Question impact may inform priority, but must not manufacture protocol semantics. Human Hatch prerequisites and subtype rights remain governed by the protocol. A human answer becomes effective only after the applicable validation and workspace transaction succeed.
+Question impact may inform priority, but must not manufacture protocol semantics. Human Hatch prerequisites and subtype rights remain governed by the protocol. Ticket escalation must expose the closed protocol reason—runtime required, third-party opacity, unavailable authority/fact/domain meaning, unsafe/destructive access, or unavailable sandbox—and the validated static-investigation/probe-feasibility record. Non-runtime reasons must not be forced through a fake runtime-probe state. A human-required terminal ticket remains an unresolved coverage gap/partial state, is visibly distinct from an exact approved exclusion, and blocks any scope claiming its closure while unrelated work may continue. A human answer becomes effective only after the applicable validation and workspace transaction succeed.
 
 ## Project registration and points of interest
 

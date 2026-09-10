@@ -1,6 +1,6 @@
 # Conformance fixtures
 
-> Non-authoritative test corpus guidance. Protocol §19.2 is normative.
+> Non-authoritative Legacy Autopsy test-corpus guidance. Protocol §19.2 defines implementation-independent normative cases. The JSON layout and runner described here are this repository's concrete realization; neither is required to use or implement the protocol.
 
 The implemented runner loads immutable JSON cases from:
 

@@ -1,12 +1,12 @@
 # Architecture
 
-> Non-authoritative implementation guide. [`protocol.md`](../protocol.md) is normative and resolves every conflict.
+> Non-authoritative implementation guide. [`protocol.md`](../protocol.md) is a standalone, implementation-independent specification, is normative, and resolves every conflict. Legacy Autopsy is one reference/tooling implementation; its service, CLI, UI, Atlas, adapters, and runtime architecture are optional implementation features rather than protocol prerequisites.
 
 ## Product direction
 
 Legacy Autopsy is evolving into a local-first interactive autopsy workbench and orchestration service. The governing boundary is:
 
-> **Legacy Autopsy owns orchestration and protocol state. Executors own semantic work.**
+> **In Legacy Autopsy-managed execution, Legacy Autopsy owns orchestration of protocol-defined workspace state. Executors own semantic work.**
 
 The service is the target runtime owner of scheduling, bounded context construction, validation, workspace transactions, projections, events, and human interaction. Execution channels are deliberately staged: a generic skill usable from any coding harness first, service-managed thin harness adapters second, and a minimal internal direct-model runner last. All eventually share the same logical invocation/result contract, but the UI and CLI cannot manually start semantic work during the skill-first stage.
 
@@ -42,7 +42,7 @@ flowchart TB
 - **Execution channels:** the generic skill is first and initially exclusive; named harness adapters add managed runners second; direct-model execution is the final minimal method. No channel may authorize its own writes, commits, gates, or state transitions.
 - **Per-project configuration:** reserved `.legacy-autopsy/` operational files select adapters and limits without becoming protocol/evidence authority; `.extracted/` remains separate and authoritative.
 - **Workspace transaction manager:** revalidates scope, ownership, stale inputs, and implemented rules before atomically committing protocol effects.
-- **Deterministic core:** owns identity, parsing, scope, ordering, canonicalization, hashing, validation, and state transitions as implemented.
+- **Deterministic core:** owns identity, parsing, scope, ordering, canonicalization, hashing, validation, and state transitions as implemented. It must independently reproduce executor-supplied deterministic values, persist protocol-bound cold-resume outcomes, enforce exact gate-check registries/evidence bindings and snapshot equality, and keep final verification receipts non-authoritative and outside the certified package.
 - **Workspace:** `.extracted/` remains persistent authoritative protocol state; conversation memory is disposable.
 - **Projections:** Atlas, search, event acceleration, and UI caches are regenerable non-authoritative derivatives of committed records.
 - **Clients:** during the first stage, the browser and CLI observe, configure, administer, and present authorized human actions but cannot manually start or claim semantic work; the skill is the only semantic-work ingress.

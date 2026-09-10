@@ -1,6 +1,6 @@
 # Skill adapter and executor invocation lifecycle
 
-> Non-authoritative operational guide. It routes to [`protocol.md`](../protocol.md); it does not reproduce or replace the protocol.
+> Non-authoritative Legacy Autopsy integration guide. It describes one optional reference/tooling implementation path, routes to the standalone [`protocol.md`](../protocol.md), and does not reproduce, replace, or become a prerequisite for the protocol.
 
 ## M0 support boundary
 
@@ -10,7 +10,7 @@ The current skill is a router/context guide. The service-backed adapter and exec
 
 ## Target ownership
 
-> **Legacy Autopsy owns orchestration and protocol state. Executors own semantic work.**
+> **In Legacy Autopsy-managed execution, Legacy Autopsy owns orchestration of protocol-defined workspace state. Executors own semantic work.**
 
 The local service selects permitted work, owns leases and scheduling, assembles bounded context, validates submitted results, commits authorized workspace transactions, updates projections, and emits events. In the first user-facing stage, a generic skill invoked inside any compatible coding harness is the only semantic-work ingress. The host harness performs one invocation and returns a result; the UI and CLI cannot manually start or claim semantic work.
 
