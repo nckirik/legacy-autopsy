@@ -1,72 +1,306 @@
 {
   "authority": "NON-AUTHORITATIVE OPERATIONAL PROJECTION",
   "description": "Routing metadata only. protocol.md is normative and wins every conflict.",
-  "expected_protocol_version": "4.0",
+  "expected_protocol_version": "4.1",
   "projections": [
     {
       "mode": "Preflight",
       "skill_projection": "skill/modes/preflight.md",
-      "protocol_sections": ["§2.1. Persona definition and purity", "§2.2. Canonical entry ownership", "§2.4. Traversal tracks", "§3.1. `0A-PREFLIGHT.md`", "§4.1. ID generation", "§5.1. Dedicated prefix groups", "§8.1. Resume identity header", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§2.1. Persona definition and purity",
+        "§2.2. Canonical entry ownership",
+        "§2.4. Traversal tracks",
+        "§3.1. `0A-PREFLIGHT.md`",
+        "§4.1. ID generation",
+        "§5.1. Dedicated prefix groups",
+        "§8.1. Resume identity header",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§12.5. Deterministic validation summary"
+      ]
     },
     {
       "mode": "Export Acquisition",
       "skill_projection": "skill/modes/export-acquisition.md",
-      "protocol_sections": ["§4.2. Atomic unit rule", "§4.3. Source inventory denominator — `10-SOURCE-INVENTORY.md`", "§5.3. Sanitized projections and helper limitations", "§5.6. Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md`", "§7.1. Trust boundary", "§7.2. Acquisition register", "§7.3. Logical explosion and virtual coordinates", "§7.4. Required explosion coverage", "§7.5. n8n human acquisition loop", "§7.6. Normalized maps", "§7.7. Export reconciliation — `13-EXPORT-RECONCILIATION.md`", "§8.1. Resume identity header", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§4.2. Atomic unit rule",
+        "§4.3. Source inventory denominator — `10-SOURCE-INVENTORY.md`",
+        "§5.3. Sanitized projections and helper limitations",
+        "§5.6. Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md`",
+        "§7.1. Trust boundary",
+        "§7.2. Acquisition register",
+        "§7.3. Logical explosion and virtual coordinates",
+        "§7.4. Required explosion coverage",
+        "§7.5. n8n human acquisition loop",
+        "§7.6. Normalized maps",
+        "§7.7. Export reconciliation — `13-EXPORT-RECONCILIATION.md`",
+        "§8.1. Resume identity header",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§12.5. Deterministic validation summary"
+      ]
     },
     {
       "mode": "Discovery",
       "skill_projection": "skill/modes/discovery.md",
-      "protocol_sections": ["§2.3. Five isolated POVs", "§2.4. Traversal tracks", "§2.5. Capability and runtime state", "§4.2. Atomic unit rule", "§4.3. Source inventory denominator — `10-SOURCE-INVENTORY.md`", "§4.4. Traversal frontier — `11-TRAVERSAL-FRONTIER.md`", "§4.5. Scope-specific source coverage — `16-SOURCE-COVERAGE.md`", "§5.2. Claim-level evidence — `12-CLAIM-EVIDENCE.md`", "§6.1. Atomic component schema", "§6.2. Dual-entry discovery", "§8.1. Resume identity header", "§8.2. Strict single-scope modes", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§10.1. Evidence-backed `[R-SWEPT]`", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§2.3. Five isolated POVs",
+        "§2.4. Traversal tracks",
+        "§2.5. Capability and runtime state",
+        "§4.2. Atomic unit rule",
+        "§4.3. Source inventory denominator — `10-SOURCE-INVENTORY.md`",
+        "§4.4. Traversal frontier — `11-TRAVERSAL-FRONTIER.md`",
+        "§4.5. Scope-specific source coverage — `16-SOURCE-COVERAGE.md`",
+        "§5.2. Claim-level evidence — `12-CLAIM-EVIDENCE.md`",
+        "§6.1. Atomic component schema",
+        "§6.2. Dual-entry discovery",
+        "§8.1. Resume identity header",
+        "§8.2. Strict single-scope modes",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§10.1. Evidence-backed `[R-SWEPT]`",
+        "§12.5. Deterministic validation summary"
+      ]
     },
     {
       "mode": "Ticket Resolution",
       "skill_projection": "skill/modes/ticket-resolution.md",
-      "protocol_sections": ["§5.4. Contradictions — `14-CONTRADICTIONS.md`", "§6.5. Surgical evolution", "§8.1. Resume identity header", "§8.2. Strict single-scope modes", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§9.1. Ticket schema and canonical IDs", "§9.2. FSM and write rights", "§9.4. Probe specification and asynchronous handoff", "§9.5. No-mock integrity", "§9.6. No-mock fallback payload", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§5.4. Contradictions — `14-CONTRADICTIONS.md`",
+        "§6.5. Surgical evolution",
+        "§8.1. Resume identity header",
+        "§8.2. Strict single-scope modes",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§9.1. Ticket schema and canonical IDs",
+        "§9.2. FSM and write rights",
+        "§9.4. Probe specification and asynchronous handoff",
+        "§9.5. No-mock integrity",
+        "§9.6. No-mock fallback payload",
+        "§12.5. Deterministic validation summary"
+      ]
     },
     {
       "mode": "Promotion Review",
       "skill_projection": "skill/modes/promotion-review.md",
-      "protocol_sections": ["§6.3. Staging and promotion", "§6.4. Depromotion", "§8.1. Resume identity header", "§8.2. Strict single-scope modes", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§6.3. Staging and promotion",
+        "§6.4. Depromotion",
+        "§8.1. Resume identity header",
+        "§8.2. Strict single-scope modes",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§12.5. Deterministic validation summary"
+      ]
     },
     {
       "mode": "Sequential Reconciliation",
       "skill_projection": "skill/modes/sequential-reconciliation.md",
-      "protocol_sections": ["§3.1. `0A-PREFLIGHT.md`", "§3.2. Foundational registries", "§6.3. Staging and promotion", "§6.4. Depromotion", "§8.1. Resume identity header", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.6. Concurrent persona traversal", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§9.1. Ticket schema and canonical IDs", "§11.1. Partial versus Final Synthesis", "§12.1. Traceability — `20-TRACEABILITY.md`", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§3.1. `0A-PREFLIGHT.md`",
+        "§3.2. Foundational registries",
+        "§6.3. Staging and promotion",
+        "§6.4. Depromotion",
+        "§8.1. Resume identity header",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.6. Concurrent persona traversal",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§9.1. Ticket schema and canonical IDs",
+        "§11.1. Partial versus Final Synthesis",
+        "§12.1. Traceability — `20-TRACEABILITY.md`",
+        "§12.5. Deterministic validation summary"
+      ]
     },
     {
       "mode": "Profile Synchronization",
       "skill_projection": "skill/modes/profile-synchronization.md",
-      "protocol_sections": ["§4.1.1. Semantic payload identity and certification envelopes", "§8.1. Resume identity header", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§11.13. Persona profile", "§12.1. Traceability — `20-TRACEABILITY.md`", "§12.2. Required reciprocal references", "§12.4. Dependency and impact provenance", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§4.1.1. Semantic payload identity and certification envelopes",
+        "§8.1. Resume identity header",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§11.13. Persona profile",
+        "§12.1. Traceability — `20-TRACEABILITY.md`",
+        "§12.2. Required reciprocal references",
+        "§12.4. Dependency and impact provenance",
+        "§12.5. Deterministic validation summary"
+      ]
     },
     {
       "mode": "Cross-Reference-Reconciliation",
       "skill_projection": "skill/modes/cross-reference-reconciliation.md",
-      "protocol_sections": ["§8.1. Resume identity header", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§11.1. Partial versus Final Synthesis", "§12.1. Traceability — `20-TRACEABILITY.md`", "§12.2. Required reciprocal references", "§12.3. Synthesis-ID timing", "§12.4. Dependency and impact provenance", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§8.1. Resume identity header",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§11.1. Partial versus Final Synthesis",
+        "§12.1. Traceability — `20-TRACEABILITY.md`",
+        "§12.2. Required reciprocal references",
+        "§12.3. Synthesis-ID timing",
+        "§12.4. Dependency and impact provenance",
+        "§12.5. Deterministic validation summary"
+      ]
     },
     {
       "mode": "Partial-Synthesis",
       "skill_projection": "skill/modes/partial-synthesis.md",
-      "protocol_sections": ["§4.1.1. Semantic payload identity and certification envelopes", "§8.1. Resume identity header", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§11.1. Partial versus Final Synthesis", "§11.2. Common synthesis block header", "§11.3. Architecture blueprint — `90-ARCH-BLUEPRINT.md`", "§11.4. Entity — `91-DATA-MODEL.md`", "§11.5. Relationship — `91-DATA-MODEL.md`", "§11.6. State machine — `91-DATA-MODEL.md`", "§11.7. Database routine — `91-DATA-MODEL.md`", "§11.8. Business rule — `92-BUSINESS-RULES.md`", "§11.9. Use case — `93-USE-CASES.md`", "§11.10. Interface — `94-INTERFACES.md`", "§11.11. Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`", "§11.12. NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`", "§12.4. Dependency and impact provenance", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§4.1.1. Semantic payload identity and certification envelopes",
+        "§8.1. Resume identity header",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§11.1. Partial versus Final Synthesis",
+        "§11.2. Common synthesis block header",
+        "§11.3. Architecture blueprint — `90-ARCH-BLUEPRINT.md`",
+        "§11.4. Entity — `91-DATA-MODEL.md`",
+        "§11.5. Relationship — `91-DATA-MODEL.md`",
+        "§11.6. State machine — `91-DATA-MODEL.md`",
+        "§11.7. Database routine — `91-DATA-MODEL.md`",
+        "§11.8. Business rule — `92-BUSINESS-RULES.md`",
+        "§11.9. Use case — `93-USE-CASES.md`",
+        "§11.10. Interface — `94-INTERFACES.md`",
+        "§11.11. Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`",
+        "§11.12. NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`",
+        "§12.4. Dependency and impact provenance",
+        "§12.5. Deterministic validation summary"
+      ]
     },
     {
       "mode": "Final-Synthesis",
       "skill_projection": "skill/modes/final-synthesis.md",
-      "protocol_sections": ["§4.1.1. Semantic payload identity and certification envelopes", "§8.1. Resume identity header", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§10.3. Composite Exit A — Deconstruction Closure", "§11.1. Partial versus Final Synthesis", "§11.2. Common synthesis block header", "§11.3. Architecture blueprint — `90-ARCH-BLUEPRINT.md`", "§11.4. Entity — `91-DATA-MODEL.md`", "§11.5. Relationship — `91-DATA-MODEL.md`", "§11.6. State machine — `91-DATA-MODEL.md`", "§11.7. Database routine — `91-DATA-MODEL.md`", "§11.8. Business rule — `92-BUSINESS-RULES.md`", "§11.9. Use case — `93-USE-CASES.md`", "§11.10. Interface — `94-INTERFACES.md`", "§11.11. Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`", "§11.12. NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`", "§12.1. Traceability — `20-TRACEABILITY.md`", "§12.2. Required reciprocal references", "§12.3. Synthesis-ID timing", "§12.4. Dependency and impact provenance", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§4.1.1. Semantic payload identity and certification envelopes",
+        "§8.1. Resume identity header",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§10.3. Composite Exit A — Deconstruction Closure",
+        "§11.1. Partial versus Final Synthesis",
+        "§11.2. Common synthesis block header",
+        "§11.3. Architecture blueprint — `90-ARCH-BLUEPRINT.md`",
+        "§11.4. Entity — `91-DATA-MODEL.md`",
+        "§11.5. Relationship — `91-DATA-MODEL.md`",
+        "§11.6. State machine — `91-DATA-MODEL.md`",
+        "§11.7. Database routine — `91-DATA-MODEL.md`",
+        "§11.8. Business rule — `92-BUSINESS-RULES.md`",
+        "§11.9. Use case — `93-USE-CASES.md`",
+        "§11.10. Interface — `94-INTERFACES.md`",
+        "§11.11. Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`",
+        "§11.12. NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`",
+        "§12.1. Traceability — `20-TRACEABILITY.md`",
+        "§12.2. Required reciprocal references",
+        "§12.3. Synthesis-ID timing",
+        "§12.4. Dependency and impact provenance",
+        "§12.5. Deterministic validation summary"
+      ]
     },
     {
       "mode": "Reconstruction-Handoff",
       "skill_projection": "skill/modes/reconstruction-handoff.md",
-      "protocol_sections": ["§4.1.1. Semantic payload identity and certification envelopes", "§4.1.2. Normative canonical hash profile and packaging artifacts", "§5.5. Authoritative decisions — `15-DECISIONS.md`", "§5.7. Human confirmations — `18-CONFIRMATIONS.md`", "§8.1. Resume identity header", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§13.1. Audience paths and progressive disclosure", "§13.2. Required chapter behavior", "§13.3. Disabled and Dormant Features chapter", "§13.4. Handbook quality gate", "§14.1. Decision log", "§14.5. Equivalence and acceptance suite", "§14.6. Sole-input invariant", "§15.1. Strict conditions", "§15.2. Scope certificate", "§15.3. Package contents", "§15.4. Acyclic certification sequence and hash domains", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§4.1.1. Semantic payload identity and certification envelopes",
+        "§4.1.2. Normative canonical hash profile and packaging artifacts",
+        "§5.5. Authoritative decisions — `15-DECISIONS.md`",
+        "§5.7. Human confirmations — `18-CONFIRMATIONS.md`",
+        "§8.1. Resume identity header",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§13.1. Audience paths and progressive disclosure",
+        "§13.2. Required chapter behavior",
+        "§13.3. Disabled and Dormant Features chapter",
+        "§13.4. Handbook quality gate",
+        "§14.1. Decision log",
+        "§14.5. Equivalence and acceptance suite",
+        "§14.6. Sole-input invariant",
+        "§15.1. Strict conditions",
+        "§15.2. Scope certificate",
+        "§15.3. Package contents",
+        "§15.4. Acyclic certification sequence and hash domains",
+        "§15.5. Reproducible final-bundle verification",
+        "§12.5. Deterministic validation summary"
+      ]
     },
     {
       "mode": "Human Hatch",
       "skill_projection": "skill/modes/human-hatch.md",
-      "protocol_sections": ["§5.5. Authoritative decisions — `15-DECISIONS.md`", "§5.7. Human confirmations — `18-CONFIRMATIONS.md`", "§8.1. Resume identity header", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§9.1. Ticket schema and canonical IDs", "§9.2. FSM and write rights", "§9.3. Human Hatch action prerequisites", "§9.4. Probe specification and asynchronous handoff", "§10.2. Per-kind coverage arithmetic", "§12.5. Deterministic validation summary"]
+      "protocol_sections": [
+        "§5.5. Authoritative decisions — `15-DECISIONS.md`",
+        "§5.7. Human confirmations — `18-CONFIRMATIONS.md`",
+        "§8.1. Resume identity header",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§9.1. Ticket schema and canonical IDs",
+        "§9.2. FSM and write rights",
+        "§9.3. Human Hatch action prerequisites",
+        "§9.4. Probe specification and asynchronous handoff",
+        "§10.2. Per-kind coverage arithmetic",
+        "§12.5. Deterministic validation summary",
+        "§13.4. Handbook quality gate"
+      ]
     },
     {
       "mode": "Validation/Gate",
       "skill_projection": "skill/modes/validation-gate.md",
-      "protocol_sections": ["§4.1. ID generation", "§4.1.1. Semantic payload identity and certification envelopes", "§4.1.2. Normative canonical hash profile and packaging artifacts", "§5.1. Dedicated prefix groups", "§8.1. Resume identity header", "§8.3. Invocation-mode enum and explicit multi-file modes", "§8.4. Mandatory read sets", "§8.5. Cold resume summary", "§8.7. Stale checkpoint guard", "§8.8. `0G` invocation log", "§10.1. Evidence-backed `[R-SWEPT]`", "§10.2. Per-kind coverage arithmetic", "§10.3. Composite Exit A — Deconstruction Closure", "§12.1. Traceability — `20-TRACEABILITY.md`", "§12.2. Required reciprocal references", "§12.5. Deterministic validation summary", "§13.4. Handbook quality gate", "§15.1. Strict conditions", "§15.2. Scope certificate", "§15.3. Package contents", "§15.4. Acyclic certification sequence and hash domains", "§19.2. Normative conformance fixtures"]
+      "protocol_sections": [
+        "§4.1. ID generation",
+        "§4.1.1. Semantic payload identity and certification envelopes",
+        "§4.1.2. Normative canonical hash profile and packaging artifacts",
+        "§5.1. Dedicated prefix groups",
+        "§8.1. Resume identity header",
+        "§8.3. Invocation-mode enum and explicit multi-file modes",
+        "§8.4. Mandatory read sets",
+        "§8.5. Cold resume check",
+        "§8.7. Stale checkpoint guard",
+        "§8.8. `0G` invocation log",
+        "§10.1. Evidence-backed `[R-SWEPT]`",
+        "§10.2. Per-kind coverage arithmetic",
+        "§10.3. Composite Exit A — Deconstruction Closure",
+        "§12.1. Traceability — `20-TRACEABILITY.md`",
+        "§12.2. Required reciprocal references",
+        "§12.5. Deterministic validation summary",
+        "§13.4. Handbook quality gate",
+        "§15.1. Strict conditions",
+        "§15.2. Scope certificate",
+        "§15.3. Package contents",
+        "§15.4. Acyclic certification sequence and hash domains",
+        "§15.5. Reproducible final-bundle verification",
+        "§19.2. Normative conformance cases"
+      ]
     }
   ]
 }

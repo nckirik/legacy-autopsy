@@ -1,6 +1,6 @@
 # Protocol: Legacy System Deconstruction, Assurance, and Reconstruction
 
-**Version:** 4.0 (Canonical Reconstruction-Ready Edition)  
+**Version:** 4.1 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative  
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
 
@@ -12,7 +12,17 @@
 
 The key words **MUST**, **MUST NOT**, **REQUIRED**, **SHOULD**, **SHOULD NOT**, and **MAY** are normative. MUST and MUST NOT are absolute protocol requirements. SHOULD and SHOULD NOT require a recorded reason when not followed. MAY is optional.
 
+This protocol is implementation-independent. A conforming implementation MAY use any programming language, runtime architecture, storage engine, agent framework, model provider, user interface, or execution tooling, including ordinary local scripts created by a capable coding harness, provided it preserves every normative behavior, deterministic algorithm, authority boundary, artifact, state transition, and conformance condition defined here. No reference implementation, product, service, CLI, UI, or agent harness is normative or required. The protocol-defined `.extracted/` layout is interoperable protocol state, not an implementation source-tree requirement. In this document, **conforming runtime** means the implementation-neutral deterministic authority role defined below; it need not be a long-lived service or separate installed tool.
+
 A **source unit** is one concrete, independently inventoryable unit in or affecting the system: a file, symbol, route, query, job, table, view, database routine, constraint, configuration key, workflow, node, edge, page, widget, action, binding, or equivalent. A **component** is one independently evidenced behavioral or structural record extracted from one source unit or from a precisely bounded portion of one source unit. A **material claim** is a fact whose falsity would alter behavior, scope, safety, compatibility, architecture, data semantics, or a reconstruction decision.
+
+Protocol work has three authority classes:
+
+1. **Executor-owned semantic work:** source traversal, behavior and business-rule interpretation, semantic classification, ambiguity recognition, claim formulation, and reconstruction prose. An executor MAY be a coding harness, model, remote worker, or human, but every semantic classification that affects scope, closure, mutation, or a gate MUST record its actor, invocation or human authority, reason, evidence/claim bindings, and pinned snapshot.
+2. **Conforming-runtime deterministic work:** identity, path normalization, structural parsing, canonicalization, ordering, fingerprints, scope and stale-input checks, finite-state transitions, coverage arithmetic, completeness, gates, package integrity, and other protocol-defined mechanical results. A conforming runtime MUST compute these values or independently reproduce them from authoritative inputs before commit. Executor-supplied deterministic values are proposals only and MUST NOT be accepted as authoritative unless deterministic validation reproduces them exactly.
+3. **Human-authorized decisions:** explicit exclusions, confirmations, policy or business intent, irreducible domain meaning, and acceptance of external facts only where this protocol permits it. A model inference or runtime computation MUST NOT substitute for the required human identity, authority basis, review scope, and exact input bindings.
+
+Every normative predicate that affects conformance, mutation authorization, coverage, candidacy, or a gate MUST be one of: a **deterministic predicate** computed by the conforming runtime; a **semantic predicate** classified by an executor or authorized human with the provenance above; or an **unresolved semantic predicate** recorded as `Unknown` with its affected scope and required ticket/question. Unless a section defines a stricter result, `Unknown` is fail-inclusive: the item remains applicable/in scope for closure, cannot justify omission or `Not-Applicable`, and blocks any success that depends on the predicate being false. Natural-language guidance that does not affect those outcomes need not create a protocol record.
 
 ### 0.2. Guarantees
 
@@ -287,7 +297,7 @@ Observed legacy facts and target decisions MUST appear in separate fields and ha
 - **System Namespace:** [stable slug]
 - **Target Repository / Evidence Roots:** [...]
 - **Primary Technology Stack:** [...]
-- **Protocol Version:** 4.0
+- **Protocol Version:** 4.1
 - **Current Iteration:** [one canonical token from §10.6: ALFA ... ZULU]
 - **Default Max Traversal Depth:** 3
 - **Included Environments / Snapshots:** [...]
@@ -486,7 +496,7 @@ Every synthesis block, persona profile, and semantic handbook section has a cano
 - **`SEMANTIC-CONTENT-FINGERPRINT`:** `sha256` of the record's canonical semantic payload under §4.1.2. The hash input includes record ID, semantic record version, schema/protocol version, and all semantic fields, prose, tables, diagrams, examples, and resolved semantic references with their bound versions/fingerprints. The carrier field that stores `SEMANTIC-CONTENT-FINGERPRINT` is excluded from its own hash input.
 - **Certification envelope:** status and approval metadata attached after payload generation. It contains `BLUEPRINT-STATUS` or `HANDBOOK-STATUS`, `CNF` references, confirmation-envelope version, approval/signature identities and timestamps, and envelope audit fields.
 
-The semantic-content hash and semantic record version MUST exclude the complete certification envelope, including B/handbook status, CNF reference, confirmation-envelope version, approval/signature identities and timestamps, candidate/content-readiness report references, and envelope digests. Attaching a confirmation or changing `[B-POPULATED]` to `[B-CONFIRMED]` therefore changes only the envelope and MUST NOT change the semantic record version or semantic-content fingerprint. Any edit to semantic prose, diagrams, examples, claims, derivation references, semantic cross-references, PRF identity, or HBK identity increments `SEMANTIC-RECORD-VERSION`, recomputes `SEMANTIC-CONTENT-FINGERPRINT`, invalidates the old envelope, and triggers targeted stale propagation.
+The semantic-content hash and semantic record version MUST exclude the complete certification envelope, including B/handbook status, CNF reference, confirmation-envelope version, approval/signature identities and timestamps, candidate report or candidate payload manifest references explicitly permitted by the envelope schema, and envelope digests. A certification envelope MUST NOT reference the later Exit E Content-Readiness Report, scope certificate, outer bundle manifest, or any other artifact that did not exist when the envelope was attached. Attaching a confirmation or changing `[B-POPULATED]` to `[B-CONFIRMED]` therefore changes only the envelope and MUST NOT change the semantic record version or semantic-content fingerprint. Any edit to semantic prose, diagrams, examples, claims, derivation references, semantic cross-references, PRF identity, or HBK identity increments `SEMANTIC-RECORD-VERSION`, recomputes `SEMANTIC-CONTENT-FINGERPRINT`, invalidates the old envelope, and triggers targeted stale propagation.
 
 A `CNF` confirms exact typed record IDs—including `PRF` and `HBK`—`SEMANTIC-RECORD-VERSION` values, and `SEMANTIC-CONTENT-FINGERPRINT` values, never mutable whole-file bytes or status-bearing envelopes. Validators MUST parse the payload/envelope boundary from the Markdown AST, recompute payload hashes, and reject envelope fields inside the semantic payload or semantic fields inside the envelope.
 
@@ -509,6 +519,25 @@ Semantic record fingerprints and the ordered file-transport fingerprint intentio
 An **envelope binding** is the exact tuple `(target typed record ID, envelope kind, envelope version, canonical envelope fingerprint)`. `Certification Envelope Binding`, `Approval Envelope Binding`, and `CNF Signature Envelope Binding` fields MUST serialize that tuple and MUST be recomputed rather than trusted. Attaching or changing an envelope leaves the underlying semantic/decision/CNF payload fingerprint unchanged as intended, but changes its envelope fingerprint and binding.
 
 Every final package member also receives an external **package-member file fingerprint**. For Markdown, its preimage is UTF-8 `PACKAGE-MEMBER|` plus normalized package-relative path, one LF, and the complete canonicalized file AST, including every record fingerprint carrier and every certification, approval, digest, and signature envelope with no excluded node. For non-Markdown members, the same path-bound domain prefixes the exact immutable bytes. This fingerprint is stored only in later manifests/reports, never inside the member whose bytes it covers, so it cannot self-reference. `Containing File Fingerprint`, `Package-Member File Fingerprint`, and outer-manifest member fingerprints mean this full finalized-file fingerprint, never the envelope-excluding transport fingerprint. Content-readiness and step-6 validation MUST recompute every envelope binding and package-member file fingerprint; removal or mutation of an envelope after review invalidates the package while leaving the separately scoped semantic fingerprint unchanged.
+
+An **evidence-set fingerprint** is the value serialized in every `Evidence Fingerprint` check or blocker cell in §15.1. Its semantic purpose is to bind that row to the exact authoritative evidence and deterministic validation inputs used for its result; it is not itself a semantic-record, containing-file, validator-output, envelope, or package-member fingerprint. The corresponding §12.5 validation summary MUST record the row's complete evidence-binding set. Each binding is the tuple `(normalized authoritative input path, binding kind, typed record or artifact ID or None, version or None, authoritative fingerprint)` using exactly one closed kind below:
+
+| Binding Kind        | Required Fingerprint Domain                                                                              | Version Field                                     |
+| :------------------ | :------------------------------------------------------------------------------------------------------- | :------------------------------------------------ |
+| RAW-SOURCE-BYTES    | the schema-requested immutable raw-source byte fingerprint                                               | immutable source version or `None`                |
+| RECORD-PAYLOAD      | the §4.1.2 heading-delimited canonical payload fingerprint for a non-semantic authoritative typed record | record version or `None` when the schema has none |
+| SEMANTIC-CONTENT    | `SEMANTIC-CONTENT-FINGERPRINT` under §4.1.1                                                              | semantic record version                           |
+| DECISION-CONTENT    | `DECISION-CONTENT-FINGERPRINT` under §5.5                                                                | decision-content version                          |
+| CNF-PAYLOAD         | `CNF Payload Fingerprint` under §5.7                                                                     | `None`                                            |
+| ARTIFACT-PAYLOAD    | `ARTIFACT-PAYLOAD-FINGERPRINT` under the generic §4.1.2 artifact schema                                  | artifact-schema version                           |
+| CANONICAL-ENVELOPE  | canonical envelope fingerprint under §4.1.2                                                              | positive envelope version                         |
+| FILE-TRANSPORT      | the ordered containing-file transport fingerprint under §4.1.2                                           | `None`                                            |
+| PACKAGE-MEMBER-FILE | the complete finalized path-bound package-member fingerprint under §4.1.2                                | `None`                                            |
+| VALIDATION-SUMMARY  | the §12.5 deterministic validation-summary output fingerprint                                            | validator/check-registry version                  |
+| DENOMINATOR-QUERY   | the frozen denominator query/result fingerprint required by the applicable source/sweep/coverage schema  | denominator schema version                        |
+| PROTOCOL-REGISTRY   | the canonical fingerprint of the identified protocol-defined registry                                    | registry version                                  |
+
+`Binding Kind` selects the only legal fingerprint domain for that row input; a different valid fingerprint over the same file or record is a mismatch, not an alternative. The conforming runtime MUST reject an unknown kind, a version inconsistent with the table, or duplicate tuples; sort bindings bytewise by the complete tuple after §4.1 normalization; and compute `sha256` over UTF-8 `EVIDENCE-SET|` plus the packaging artifact type, one LF, row kind `CHECK` or `BLOCKER`, one LF, stable row ID, one LF, the canonically serialized `System / Protocol / Snapshot` value, one LF, and the §4.1.2 canonical table serialization of the sorted tuples with columns in tuple order. The set MUST contain every input that can change the row result and at least one `DENOMINATOR-QUERY`, `PROTOCOL-REGISTRY`, or authoritative record/artifact binding even for an evidence-backed zero domain. It MUST NOT include the containing report, its own carrier, or a later artifact. A conforming runtime MUST recompute this fingerprint; an executor-supplied digest is non-authoritative and a mismatch is a structural failure.
 
 Each packaging artifact is one bounded payload. Its `HASH-DOMAIN` identity is exactly `artifact-type + "|" + normalized-relative-path`, using the path normalization rules in §4.1, and that identity is included in the canonical payload hash preimage. The payload fingerprint MUST NOT appear anywhere in its own preimage. After the payload fingerprint is computed, the separate `POST-HASH-ARTIFACT-INSTANCE-BINDING` is `artifact-type + "|" + normalized-relative-path + "|" + payload-fingerprint`; this binding identifies the resulting artifact instance, is computed only post-hash, and is not part of its own preimage. Packaging artifacts MUST use these exact generic boundaries:
 
@@ -737,6 +766,7 @@ Decision.Type                                           -> scope | contradiction
 Decision.Approval Status                                -> Proposed | Approved | Superseded
 CapabilityRecord.Target Decision State                  -> Bound | Pending
 Confirmation.Human Hatch Action                         -> Confirmation
+Confirmation.Handbook Readability Review                 -> Pass | Fail | Not-Applicable
 Confirmation.Invalidated By                             -> semantic change | dependency change | decision supersession | None
 AcquisitionCandidates[].State                           -> Included | Rejected-With-Operator-Decision | Approved-Excluded | Pending
 ExportReconciliation[].Reconciliation State             -> Mapped-Atomic | Mapped-Container-Only | Approved-Excluded | Gap | Superseded
@@ -745,7 +775,11 @@ InvocationHeader.Invocation Mode                        -> Preflight | Export Ac
 InvocationHeader.Human Hatch Action                     -> Ticket Escalation | Decision/Scope Approval | Confirmation | None
 InvocationHeader.Traversal Track                        -> Normal | Shadow/Conditional | Disabled | None
 InvocationHeader.Active POV                             -> POV-1 | POV-2 | POV-3 | POV-4 | POV-5 | None
+ColdResume.Runtime Scope / Mode / Write-Right Check     -> Pass | Fail
+ColdResume.Runtime Stale Check                          -> Pass | Fail
+ColdResume.Cold-Resume Result                           -> Pass | Fail
 Ticket.Status                                           -> [T-OPEN] | [T-PENDING] | [T-FOLLOW-UP] | [T-PROBE-REQUIRED] | [T-COMPLETE] | [T-INVALID] | [T-SUPERSEDED] | [T-HUMAN-REQUIRED] | [T-OUT-OF-SCOPE]
+Ticket.Escalation Reason                                -> None | RUNTIME-REQUIRED | THIRD-PARTY-OPAQUE | UNAUTHORIZED-ACCESS | UNSAFE | DESTRUCTIVE | NO-SANDBOX | NO-AUTHORITY-TO-DECIDE | DOMAIN-MEANING-REQUIRED | EXTERNAL-FACT-UNAVAILABLE
 Probe.Safety Classification                             -> non-destructive | controlled mutation
 SynthesisGap.Materiality                                -> Material | Supporting
 SynthesisGap.Disposition                                -> Pending | Ticket-Created | Frontier-Created | Both-Created | Merged | Invalid | Approved-Excluded
@@ -774,12 +808,19 @@ NFR.Attribute                                            -> latency | throughput
 Security.Category                                       -> auth | authorization | transport | at-rest | in-transit | PII | secrets | audit | threat | privacy
 Security.Risk Level                                     -> high | medium | low | unassessed
 Traceability[].C Status                                 -> [C-COVERED] | [C-PARTIAL] | [C-GAP] | [C-EXCLUDED]
+Traceability.Lifecycle Eligibility[].Classification     -> Eligible | Ineligible | Unknown
+ValidationSummary.Evidence Bindings[].Binding Kind       -> RAW-SOURCE-BYTES | RECORD-PAYLOAD | SEMANTIC-CONTENT | DECISION-CONTENT | CNF-PAYLOAD | ARTIFACT-PAYLOAD | CANONICAL-ENVELOPE | FILE-TRANSPORT | PACKAGE-MEMBER-FILE | VALIDATION-SUMMARY | DENOMINATOR-QUERY | PROTOCOL-REGISTRY
+ExitECandidateReport.Check Results[].Check ID             -> §15.1.1 `EXIT-E-CHECKS-v1` rows with Stage `CANDIDATE`
 ExitECandidateReport.Check Results[].Result             -> Pass | Fail
 ExitECandidateReport.Candidate Result                   -> Ready-For-Human-Review | Blocked
+ExitEContentReadinessReport.Check Results[].Check ID     -> §15.1.1 `EXIT-E-CHECKS-v1` rows with Stage `CONTENT-READINESS`
 ExitEContentReadinessReport.Check Results[].Result      -> Pass | Fail
 ExitEContentReadinessReport.EXIT-E-PREPACKAGE-STATE     -> Pending
 ExitEContentReadinessReport.Content Readiness Result    -> Ready-For-Certificate | Blocked
 OuterBundleManifest.EXIT-E-STATUS                       -> Passed
+FinalVerificationReceipt.Check Results[].Check ID       -> §15.5 `EXIT-E-FINAL-CHECKS-v1` Check ID rows
+FinalVerificationReceipt.Check Results[].Result         -> Pass | Fail
+FinalVerificationReceipt.Overall Result                 -> Pass | Fail
 ```
 
 `EntryCluster.Required Traversal Matrix[].Status` accepts `N/A` if and only if the same row's `Applicability` is exactly `Not-Applicable`; such a row MUST also carry the claim-backed reason required by §3.1. A `Required` row MUST use one bracketed allowed `R-` token and MUST NOT use `N/A`. A `Not-Applicable` row MUST use exactly `N/A` and MUST NOT use an `R-` token.
@@ -893,6 +934,7 @@ States are `Included`, `Rejected-With-Operator-Decision`, `Approved-Excluded`, o
 - **Human Hatch Action:** Confirmation
 - **Approver / Role / Authority Basis:** [...]
 - **Review Timestamp / Review Scope / Limitations:** [...]
+- **Handbook Readability Review:** Pass | Fail | Not-Applicable
 - **Confirmed Record Bindings:**
   | Typed Record ID (including PRF/HBK) | SEMANTIC-RECORD-VERSION | SEMANTIC-CONTENT-FINGERPRINT | Candidate Manifest Entry |
 - **Pinned Exit A / Exit E Candidate Report / Candidate Payload Manifest Fingerprints:** [...]
@@ -985,7 +1027,7 @@ Promotion eligibility requires all locks:
 
 Sequential Reconciliation is the sole promotion executor. It loads the complete request, canonical `personas/_shared/` source blocks, target persona POV files, indexes, traceability, and current lock inputs; applies the stale-check guard; revalidates every lock; and atomically moves each full canonical block from `_shared` to the target persona file, changes it to `[S-PROMOTED]`, updates or removes shared-reference pointers as applicable, updates indexes/traceability, consumes the request, and logs one transaction. A failed or stale revalidation performs no partial move and leaves a dispositioned request for renewed review. At no point may both source and target contain canonical copies, nor may neither contain one.
 
-`[S-DEAD-CODE]` requires an inventory-backed zero-caller proof across all tracks and relevant snapshots. Disabled or conditional code is not dead.
+`[S-DEAD-CODE]` requires an inventory-backed zero-caller proof across every traversal track and every environment/snapshot in the component's bound scope denominator. Any linked nonterminal dynamic-reference or acquisition-candidate row, active ticket, open frontier, unresolved possible-caller edge, or discovered active/conditional/shadow/disabled/historical/intended caller makes `[S-DEAD-CODE]` invalid. A dynamically observed caller disproves dead-code classification. An unavailable caller domain may be removed from the proof denominator only by an exact approved exclusion; it is never equivalent to proven no caller. These effects are local to the linked component and its dependency closure and MUST NOT downgrade unrelated coverage.
 
 ## 6.4. Depromotion
 
@@ -1011,7 +1053,7 @@ The helper MUST:
 
 - default to dry-run;
 - accept credentials only through environment, stdin, or OS credential storage, never command arguments;
-- keep raw exports and private matching state outside the repository;
+- keep raw exports and private matching state outside the target repository and authoritative `.extracted/` workspace, in operator-controlled storage not published to executor-visible projections;
 - use restrictive temporary storage and best-effort cleanup;
 - perform field-aware sanitization and secret scanning;
 - fail closed for unsupported schema versions, unknown sensitive fields, unresolved high-confidence secret findings, missing lineage, mixed snapshots, or rejected operator review;
@@ -1110,7 +1152,7 @@ Allowed states: `Mapped-Atomic`, `Mapped-Container-Only` (temporary and non-clos
 Every invocation begins with:
 
 ```yaml
-Protocol Version: v4.0
+Protocol Version: v4.1
 System Namespace: [slug]
 Current Iteration: [canonical §10.6 token ALFA..ZULU]
 Invocation ID: [globally unique]
@@ -1135,7 +1177,7 @@ Forbidden Write Targets: [...]
 Loaded Checkpoint Fingerprint: [...]
 ```
 
-The invocation MUST verify its intended actions against this header before writing.
+The executor MUST declare its intended semantic actions against this header before writing. The conforming runtime MUST independently validate the declared actions, exact read/write scope, loaded fingerprints, checkpoint freshness, and mode rights before commit; an executor's self-assessment cannot authorize mutation.
 
 ## 8.2. Strict single-scope modes
 
@@ -1178,7 +1220,7 @@ Each multi-file mode MUST enumerate exact files and record sections in its ident
 
 ## 8.4. Mandatory read sets
 
-All modes load protocol constants/statuses, `0A`, `0D`, `0E`, `0F`, `0G` or `0H`, relevant source inventory/frontier/claim records, and the active snapshot metadata.
+All modes load protocol constants/statuses, `0A`, `0D`, `0E`, `0F`, `0G` or `0H`, relevant source inventory/frontier/claim records, and the active snapshot metadata. Semantic decisions that a dependency or scope dimension is applicable or not applicable MUST carry the §0.1 classifier provenance and claim/evidence bindings. `Unknown` applicability is fail-inclusive: the dependency remains in the required read/validation closure and blocks mutation if it cannot be loaded and validated.
 
 Strict single-scope modes additionally load the active POV file, at most one active ledger, the matching shared POV/ledger for persona scope, the persona's `UNMAPPED-DISCOVERY-BUFFER.md`, concrete source excerpts, and relevant normalized map. Before Discovery, the invocation MUST verify from a current `0H` global buffer summary or a deterministic read of every persona-local unmapped buffer that no `Pending-Merge` entry exists; an absent/stale summary without the full fallback read blocks the invocation. Load `0B` for auth; `0C` for sensitive data; dependency source excerpts for cross-boundary references; probe logs for matching probe tickets; persona siblings only for promotion uniqueness.
 
@@ -1186,21 +1228,26 @@ Acquisition loads `0A`, `0C`, `0G/0H`, supplied approved projections, lineage/sa
 
 Sequential Reconciliation loads all relevant canonical `personas/_shared/` files, persona-local shared-staging/promotion-request/question/unmapped-discovery buffers, synthesis-gap buffers, and destination records. Profile Synchronization MUST load `0A`, the target `PRF` profile, and every record directly referenced by or applicable to any profile field, then recursively load the complete transitive `DERIVED-FROM` closure of those records. This closure explicitly includes every applicable `AUTH`, `CLM`, `SRC`, `CMP`, `ER`, `REL`, `BR`, `UC`, `IF`, `CFG`, `SCHED`, `DR`, `SM`, `STATE`, `DEP`, `MOD`, `CAP`, `DEC`, `SEC`, `NFR`, and `FLT` record, plus relevant source inventory, coverage, traceability, contradiction, decision-approval, and snapshot records needed to prove currency. Every loaded dependency MUST have its exact record ID, version where applicable, semantic/content fingerprint, source snapshot, and reciprocal binding verified. Profile Synchronization MUST reject mutation if any directly applicable record or any transitive dependency is absent, unresolved, stale, version-mismatched, fingerprint-mismatched, or read from a mixed snapshot. Confirmation validation of a PRF MUST load and validate this identical closure against the candidate-bound versions and fingerprints before attaching or accepting its envelope. Partial/Final Synthesis loads required closed or bounded forensic and assurance inputs plus existing synthesis blocks. Final Synthesis MUST load all active personas, all POV/ledger files, all relevant claims, reconciliation, coverage, contradictions, and gate inputs.
 
-## 8.5. Cold resume summary
+## 8.5. Cold resume check
 
-Before mutation, produce internally:
+Before mutation, the executor MUST return the semantic assessment fields below as part of its invocation result, and the conforming runtime MUST complete the deterministic validation fields before deciding whether to commit:
 
 ```markdown
-- Iteration / Invocation / Mode
-- Persona / Cluster / Track / POV
-- Relevant active tickets and frontiers
-- Last mutation affecting targets
-- Open blockers and contradictions
-- Allowed next actions
-- Loaded files and fingerprints
-- Explicit exclusions from context
-- Stale checkpoint check result
+- **Iteration / Invocation / Mode:** [...]
+- **Persona / Cluster / Track / POV:** [...]
+- **Relevant Active Tickets and Frontiers:** [...]
+- **Last Mutation Affecting Targets:** [...]
+- **Semantic Blockers and Contradictions:** [...]
+- **Proposed Allowed Next Actions:** [...]
+- **Explicit Context Exclusions and Reasons:** [...]
+- **Runtime-Validated Loaded Files / Fingerprints:** [...]
+- **Runtime Scope / Mode / Write-Right Check:** Pass | Fail
+- **Runtime Stale Check:** Pass | Fail
+- **Cold-Resume Result:** Pass | Fail
+- **Cold-Resume Check Fingerprint:** [...]
 ```
+
+The cold-resume check fingerprint is `sha256` over UTF-8 `COLD-RESUME|` plus system namespace, one `|`, invocation ID, one LF, and the §4.1.2 canonical serialization of every field above except its own carrier. The runtime MUST reproduce identity, scope, loaded-file fingerprints, stale state, and write rights from authoritative filesystem state; it validates but does not invent the executor's semantic blockers, actions, or exclusion reasons. A missing field, mismatched fingerprint, failed runtime check, or semantic exclusion that would omit required scope yields `Cold-Resume Result: Fail`, rejects semantic mutation, and still appends the required no-mutation `0G` entry with the check fingerprint and exact failure. The successful check fingerprint/result is bound into the same transaction's `0G` entry, making the pre-mutation authorization externally observable.
 
 Filesystem state is authoritative over conversation. Contradictions in files create tickets/contradiction records; conversational memory cannot resolve them.
 
@@ -1228,6 +1275,8 @@ Append after every invocation:
 ### [ITERATION] - [INVOCATION-ID] - [Scope] - [Mode]
 
 - **Identity Header Summary:** [...]
+- **Cold-Resume Result / Check Fingerprint:** [...]
+- **Declared Semantic Actions / Runtime Authorization Result:** [...]
 - **Loaded Files / Fingerprints:** [...]
 - **Mutation Summary:** [...]
 - **Tickets Created / Updated:** [...]
@@ -1262,7 +1311,9 @@ Ticket IDs use `MONIKER-PERSONA-POV-SEQUENCE`. Sequence allocation resets per it
 - **Affected SRC/CMP/CLM/Frontier IDs:** [...]
 - **Memory Anchor and Creation Context:** [complete stateless assumptions]
 - **Description:** [one technical ambiguity]
-- **Static Investigation:** [paths/methods attempted and result]
+- **Static Investigation:** [bounded paths/methods attempted, evidence, and result]
+- **Escalation Reason:** None | RUNTIME-REQUIRED | THIRD-PARTY-OPAQUE | UNAUTHORIZED-ACCESS | UNSAFE | DESTRUCTIVE | NO-SANDBOX | NO-AUTHORITY-TO-DECIDE | DOMAIN-MEANING-REQUIRED | EXTERNAL-FACT-UNAVAILABLE
+- **Probe Feasibility / Inapplicability:** [assessment, proposed safe probe for RUNTIME-REQUIRED, or why a probe cannot safely/legally/meaningfully resolve the ambiguity]
 - **Coverage / Promotion Effect:** [...]
 ```
 
@@ -1276,10 +1327,10 @@ T-PENDING --origin rejects--> T-FOLLOW-UP -> T-OPEN investigation
 Active state --valid proof--> T-INVALID or T-SUPERSEDED
 Active state --mutual scope decision--> T-OUT-OF-SCOPE
 T-PROBE-REQUIRED --target ingests successful probe--> T-PENDING
-T-PROBE-REQUIRED --Human Hatch--> T-HUMAN-REQUIRED
+T-OPEN/T-FOLLOW-UP/T-PROBE-REQUIRED --Human Hatch after §9.3 prerequisites--> T-HUMAN-REQUIRED
 ```
 
-Any POV may originate `[T-OPEN]` through the correct direct ledger or buffer. Only the target POV updates to `[T-PENDING]` or `[T-PROBE-REQUIRED]`. Only the origin accepts/rejects pending answers. Origin or target may propose out-of-scope; terminalization requires recorded mutual agreement or Human Hatch approval.
+Any POV may originate `[T-OPEN]` through the correct direct ledger or buffer. Only the target POV updates to `[T-PENDING]` or `[T-PROBE-REQUIRED]`. Only the origin accepts/rejects pending answers. Origin or target may propose out-of-scope; terminalization requires recorded mutual agreement or Human Hatch approval. A conforming runtime validates every transition, escalation reason, required evidence field, actor right, and source state; an executor cannot assign a terminal or probe state merely by writing its token.
 
 **Direct creation of `[T-HUMAN-REQUIRED]` is forbidden.**
 
@@ -1287,14 +1338,15 @@ Any POV may originate `[T-OPEN]` through the correct direct ledger or buffer. On
 
 ### Human Hatch Action: Ticket Escalation
 
-Only this subtype has the static-investigation/probe prerequisites below. Before `Human Hatch: Ticket Escalation`:
+Only this subtype may terminalize an unresolved ticket as human-required. Before `Human Hatch: Ticket Escalation`:
 
-1. perform and record bounded static investigation;
-2. transition to `[T-PROBE-REQUIRED]` with a feasibility assessment and proposed safe probe;
-3. record the attempted probe or why it cannot be attempted safely, legally, or technically;
-4. invoke the subtype with exact ticket, scope, denominator, risk, and coverage consequences plus reviewer authority.
+1. perform and record bounded static investigation with exact methods, evidence, and remaining ambiguity;
+2. select exactly one closed `Escalation Reason` and record the probe feasibility/inapplicability assessment;
+3. for `RUNTIME-REQUIRED`, transition to `[T-PROBE-REQUIRED]`, propose a safe observable probe, and record the attempted probe or why it cannot be attempted safely, legally, or technically;
+4. for every non-runtime reason, remain `[T-OPEN]` or `[T-FOLLOW-UP]` and record why runtime observation is inapplicable, unauthorized, unsafe, destructive, unavailable, or incapable of resolving the required domain meaning/external fact; a fake probe or transition through `[T-PROBE-REQUIRED]` is forbidden;
+5. invoke the subtype with exact ticket, scope, denominator, risk, and coverage consequences plus reviewer authority.
 
-Ticket Escalation may terminalize the ticket as `[T-HUMAN-REQUIRED]`, but the affected source remains `[C-GAP]` or `[C-PARTIAL]` unless an authorized human separately or concurrently approves an exact `[C-EXCLUDED]` decision under `Decision/Scope Approval`. No terminal ticket silently implies coverage.
+Direct creation of `[T-HUMAN-REQUIRED]`, an escalation with `Escalation Reason: None`, or a reason inconsistent with the recorded feasibility assessment is invalid. Ticket Escalation may terminalize the ticket as `[T-HUMAN-REQUIRED]`, but the affected source remains `[C-GAP]` or `[C-PARTIAL]` unless an authorized human separately or concurrently approves an exact `[C-EXCLUDED]` decision under `Decision/Scope Approval`. No terminal ticket silently implies coverage. Human-required is an honest unresolved orchestration outcome distinct from exclusion: it blocks Exit A for any scope claiming the affected unit's closure, remains visible in partial synthesis and final risk reporting, and permits independent unaffected work to continue.
 
 ### Human Hatch Action: Decision/Scope Approval
 
@@ -1401,7 +1453,7 @@ Exit A succeeds only when all conditions hold for the pinned scope:
 4. **Source disposition:** every in-scope concrete source unit is terminally disposed and no Candidate remains.
 5. **Frontier closure:** every traversal frontier is terminal.
 6. **Export reconciliation:** every normalized logical unit is atomically mapped or approved excluded.
-7. **Sweep validity:** every required traversal-matrix cell has a valid evidence-backed `[R-SWEPT]` record; all applicable POVs were evaluated independently.
+7. **Sweep validity:** every required traversal-matrix cell has a valid evidence-backed `[R-SWEPT]` record. Applicable POVs are exactly rows whose `Applicability` is `Required`; independent evaluation means each such row has its own valid sweep and MUST NOT inherit another row's result.
 8. **Atomic coverage:** all effective denominator units are `[C-COVERED]`; no `[C-PARTIAL]` or `[C-GAP]` remains for Exit A scope.
 9. **Forensic referential integrity:** ID uniqueness, existing forensic/assurance reciprocal links, no invalid tombstone references, no orphan claims, no dangling source/component/persona/entry references, and canonical ownership all validate. `Pending-Synthesis-Reference` placeholders are permitted until synthesis and do not count as dangling at Exit A.
 10. **Contradiction closure:** no open material contradiction remains.
@@ -1563,7 +1615,7 @@ A state machine is required only for an **eligible lifecycle scope**: an entity 
 - **Environment / Capability Variants:** [...]
 ```
 
-Eligibility decisions are recorded in traceability so absence cannot be assumed.
+Eligibility decisions use the §12.1 lifecycle table so absence cannot be assumed. `Unknown` requires a ticket, is treated as eligible for closure, and blocks Exit E until resolved to `Eligible` with a complete `SM` or `Ineligible` with claim-backed provenance.
 
 ## 11.7. Database routine — `91-DATA-MODEL.md`
 
@@ -1808,6 +1860,15 @@ One atomic row per source-to-semantic mapping:
 
 Multiple rows MAY represent multiple mappings, but source coverage is evaluated once per `SRC` and requires all applicable mappings. The ID registry, source denominator query fingerprints, lifecycle eligibility decisions, exclusions, and reciprocal reference check results are included in this file.
 
+Lifecycle eligibility uses one row per candidate entity aggregate or capability:
+
+```markdown
+| Scope ID | Classification | Reason | CLM / Evidence Bindings | Classified By / Invocation | Snapshot |
+| :------- | :------------- | :----- | :---------------------- | :------------------------- | :------- |
+```
+
+`Classification` is `Eligible | Ineligible | Unknown`. It is a semantic predicate: the classifier MUST record provenance and claim/evidence bindings. `Unknown` is fail-inclusive and is treated as eligible for completeness and gate purposes until resolved; it requires a ticket and cannot justify omission of an `SM`. The conforming runtime deterministically verifies row uniqueness, snapshot consistency, required provenance, and the corresponding `SM` presence or explicit ineligibility result.
+
 Higher-level traceability invariants are:
 
 1. every source unit in the inventory has at least one traceability row, including exact exclusions;
@@ -1864,15 +1925,25 @@ Broad whole-file staleness is allowed only when dependency granularity is unavai
 
 Every validator run records:
 
-- schema/protocol/validator versions;
-- authoritative input file fingerprints;
+- schema/protocol/check-registry/validator versions;
+- authoritative input file fingerprints and a deterministic input-set fingerprint;
 - checks executed and stable check IDs;
+- for every check and blocker row, the complete sorted evidence-binding tuples and recomputed §4.1.2 evidence-set fingerprint;
 - pass/fail counts and exact offending IDs;
 - coverage arithmetic by kind/track/environment;
 - broken links, invalid diagrams, duplicate IDs, orphan/dangling references, stale blocks, unsupported statuses, and unresolved contradictions;
+- any authorized human review input used by a check, including reviewer identity/authority, review scope, timestamp, exact candidate-bound fingerprints, limitations, and result;
 - output fingerprint and timestamp.
 
-A changed input invalidates the prior summary.
+Evidence bindings are externally observable in the validation summary using this exact table shape, with one or more rows per Check/Blocker ID as required:
+
+```markdown
+- **Evidence Bindings:**
+  | Row Kind | Check / Blocker ID | Normalized Authoritative Input Path | Binding Kind | Typed Record / Artifact ID or None | Version or None | Authoritative Fingerprint |
+  | :------- | :----------------- | :---------------------------------- | :----------- | :--------------------------------- | :-------------- | :------------------------ |
+```
+
+Rows sort by `(Row Kind, Check / Blocker ID, Normalized Authoritative Input Path, Binding Kind, Typed Record / Artifact ID or None, Version or None, Authoritative Fingerprint)`. `Binding Kind` uses the closed §4.1.2 mapping. A changed input invalidates the prior summary. Deterministic values supplied by an executor MUST be independently reproduced. A missing required check, unknown or duplicate Check ID, incomplete evidence-binding set, or mismatch against the applicable §15.1.1 registry makes the summary and dependent gate result invalid.
 
 ---
 
@@ -1937,16 +2008,17 @@ Disabled features MUST also be cross-linked from every affected chapter. They MU
 
 ## 13.4. Handbook quality gate
 
-Before Exit E, validate:
+Before candidacy, the conforming runtime validates:
 
-- all required chapters exist and have non-vacuous content or evidence-backed zero-domain statements;
+- all required chapters exist and each contains at least one claim-backed semantic handbook assertion or an evidence-backed zero-domain statement; headings, navigation links, placeholders, or grouping prose alone are vacuous;
 - all internal links and anchor targets resolve;
-- Mermaid/diagram syntax parses where tooling is available, otherwise receives explicit human review;
-- each confirmed synthesis block is discoverable from at least one handbook path;
+- every Mermaid/diagram block parses with a conforming deterministic parser; unavailable parsing capability is `unsupported` and blocks candidacy rather than silently falling back to invisible self-assessment;
+- each candidate synthesis block is discoverable from at least one handbook path;
 - active versus disabled presentation is unambiguous;
 - target decisions are not presented as observed facts;
-- no `[B-STALE]`, provisional, or pending-reference section remains;
-- a human readability review confirms that core user goals can be followed without reading raw catalogs.
+- no `[B-STALE]`, provisional, or pending-reference section remains.
+
+After candidacy, authorized human readability review is recorded through one or more §5.7 `CNF` records whose combined exact HBK bindings cover every candidate handbook section and whose `Handbook Readability Review` is `Pass`; their hashed review scope/limitations state how core user goals were followed without reading raw catalogs. A CNF that does not review HBK content uses `Not-Applicable`; `Fail` or incomplete HBK coverage blocks content readiness. The Exit E Content-Readiness Report MUST validate reviewer authority, candidate manifest/report bindings, complete HBK coverage, timestamps, results, and unchanged handbook fingerprints. Human review cannot substitute for deterministic link, diagram, or non-vacuity checks, and an unrecorded review has no gate effect.
 
 ---
 
@@ -2031,9 +2103,9 @@ Exit E remains `Pending` through steps 1–5 of §15.4. The stage-4 Exit E Conte
 15. The reviewed equivalence suite maps every UC contract, BR/invariant property, eligible SM transition, external IF baseline, and disabled-capability safeguard to at least one test or an exact approved exclusion.
 16. All pending synthesis references and GAP records are reconciled; no orphan/dangling/tombstone violation remains.
 17. All material contradictions and decision-required items are resolved or represented by approved scope exclusions that preserve and disclose exact residual risk.
-18. The snapshot, source inventory denominator, export projections, claims, Exit A inputs, Exit E Candidate Report, candidate payload manifest, confirmations, Exit E Content-Readiness Report, scope certificate, package members, and outer bundle manifest are fingerprint-pinned under §4.1.2 and the acyclic exclusions in §15.4.
+18. The system namespace, protocol version, environments, and snapshot are present and exactly equal across the Exit A report, Exit E Candidate Report, Exit E Content-Readiness Report, scope certificate, every snapshot-bearing package member, and outer bundle manifest; the source inventory denominator, export projections, claims, candidate payload manifest, confirmations, and remaining package members are fingerprint-pinned to that identity under §4.1.2 and the acyclic exclusions in §15.4. Missing identity or snapshot mixing fails closed.
 19. Human architect/domain confirmation is recorded in `18-CONFIRMATIONS.md`; `[B-CONFIRMED]` is never machine-assigned, and confirmation-envelope attachment did not alter any semantic version/fingerprint.
-20. At step 6, the outer bundle manifest payload includes every package member other than itself, including the Exit E Content-Readiness Report and scope certificate; all listed package-member file fingerprints and all required certification/approval/CNF envelope bindings recompute and validate; the payload contains `EXIT-E-STATUS: Passed`; and its required human signature envelope validates. The signed outer manifest is the authoritative non-cyclic Exit E completion attestation. No post-step-6 Exit E artifact is created.
+20. At step 6, the outer bundle manifest payload directly declares the exact system/protocol/environment/snapshot identity, final check-registry fingerprint, and pre-signature input-set fingerprint; includes every package member other than itself, including the Exit E Content-Readiness Report and scope certificate; and contains `EXIT-E-STATUS: Passed`. All listed package-member file fingerprints, required certification/approval/CNF envelope bindings, cross-artifact snapshot identities, and required final checks recompute and validate, and its required human signature envelope validates under §15.5. The signed outer manifest is the authoritative non-cyclic Exit E completion attestation. No post-step-6 authoritative Exit E artifact is created.
 
 There are no row-count shortcuts. “File exists,” “section exists,” or “zero rows” does not satisfy completeness without denominator-backed proof.
 
@@ -2052,6 +2124,38 @@ The five packaging artifact types are `EXIT-E-CANDIDATE-REPORT`, `CANDIDATE-PAYL
 
 The declared table sort keys are: candidate validation or readiness checks by `(Check ID)`; blockers by `(Blocker ID)`; semantic counts by `(Record Type)`; decision counts by `(Decision Type)`; semantic bindings by `(Record Type, Typed Record ID)`; decision bindings by `(DEC ID)`; confirmed bindings by `(Record Type, Typed Record ID)`; approved decision bindings by `(DEC ID)`; included scope dimensions by `(Dimension, Value)`; source counts by `(SRC Kind)`; exclusions by `(DEC ID, Excluded Unit ID)`; residual risks by `(Risk ID)`; and every package-member table, including the outer manifest, by `(Normalized Path, Artifact Type)`. Fields described as a deterministic set or tuple use the corresponding rule above.
 
+The required Exit E report check registry is `EXIT-E-CHECKS-v1`. Its canonical registry fingerprint is `sha256` over UTF-8 `EXIT-E-CHECK-REGISTRY|EXIT-E-CHECKS-v1` plus one LF and the §4.1.2 canonical serialization of this exact ordered table:
+
+| Stage             | Check ID                                  | Requirement                                                                                          |
+| :---------------- | :---------------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| CANDIDATE         | CANDIDATE-01-EXIT-A                       | §15.1 condition 1 and a valid pinned Composite Exit A                                                |
+| CANDIDATE         | CANDIDATE-02-SOURCE-CLOSURE               | §15.1 condition 2                                                                                    |
+| CANDIDATE         | CANDIDATE-03-SYNTHESIS-DOMAINS            | §15.1 condition 3                                                                                    |
+| CANDIDATE         | CANDIDATE-04-HANDBOOK-QUALITY             | §15.1 condition 4 and the deterministic pre-candidate §13.4 checks                                   |
+| CANDIDATE         | CANDIDATE-05-REFERENTIAL-INTEGRITY        | §15.1 condition 5                                                                                    |
+| CANDIDATE         | CANDIDATE-06-LIFECYCLE                    | §15.1 condition 6, including no `Unknown` eligibility                                                |
+| CANDIDATE         | CANDIDATE-07-USE-CASES                    | §15.1 condition 7                                                                                    |
+| CANDIDATE         | CANDIDATE-08-CONFIGURATION                | §15.1 condition 8                                                                                    |
+| CANDIDATE         | CANDIDATE-09-PRIVACY-SECURITY             | §15.1 condition 9                                                                                    |
+| CANDIDATE         | CANDIDATE-10-DISABLED-CAPABILITIES        | §15.1 condition 10                                                                                   |
+| CANDIDATE         | CANDIDATE-11-FAULTS                       | §15.1 condition 11                                                                                   |
+| CANDIDATE         | CANDIDATE-12-PROFILES                     | populated PRF identity, dependency closure, and candidate eligibility portions of §15.1 condition 12 |
+| CANDIDATE         | CANDIDATE-13-PENDING-AND-CONTRADICTIONS   | pre-confirmation portions of §15.1 conditions 16–17                                                  |
+| CANDIDATE         | CANDIDATE-14-SNAPSHOT-INPUTS              | candidate-stage portions of §15.1 condition 18                                                       |
+| CONTENT-READINESS | READINESS-01-CANDIDATE-IMMUTABILITY       | unchanged candidate report, manifest, semantic payloads, decisions, and dependencies                 |
+| CONTENT-READINESS | READINESS-02-CONFIRMATIONS                | confirmed semantic bindings and §15.1 conditions 12–13 and 19                                        |
+| CONTENT-READINESS | READINESS-03-DECISION-APPROVALS           | §15.1 condition 14                                                                                   |
+| CONTENT-READINESS | READINESS-04-EQUIVALENCE                  | §15.1 condition 15                                                                                   |
+| CONTENT-READINESS | READINESS-05-HANDBOOK-READABILITY         | complete fingerprint-bound human review under §13.4                                                  |
+| CONTENT-READINESS | READINESS-06-NO-PENDING-OR-CONTRADICTIONS | §15.1 conditions 16–17 after review                                                                  |
+| CONTENT-READINESS | READINESS-07-ENVELOPE-INTEGRITY           | every certification, approval, and CNF envelope binding available at stage 4                         |
+| CONTENT-READINESS | READINESS-08-PREPACKAGE-MEMBERS           | complete stage-4 member set and package-member file fingerprints                                     |
+| CONTENT-READINESS | READINESS-09-SNAPSHOT-CONSISTENCY         | exact system/protocol/environment/snapshot equality across the chain and members                     |
+| CONTENT-READINESS | READINESS-10-RESIDUAL-RISK                | every approved exclusion and residual risk is disclosed and bound                                    |
+| CONTENT-READINESS | READINESS-11-SEQUENCE                     | all stage-4 §15.4 dependency edges point only to earlier artifacts and Exit E remains `Pending`      |
+
+A report's `Check Results.Check ID` set MUST equal exactly the rows for its stage: no missing, duplicate, unknown, or other-stage ID is permitted. Every required row is serialized and has `Result: Pass | Fail`; this registry defines no `Not-Applicable` result because each check validates its own applicability denominator and evidence-backed zero domains. A missing or malformed row is a structural report failure, not a pass or an omitted/unknown result. `Ready-For-Human-Review` or `Ready-For-Certificate` requires exact-set equality, every row `Pass`, every row's evidence-set fingerprint to recompute, and an empty blockers table. Therefore a header-only empty check table can never satisfy either report. Any failed check requires at least one corresponding blocker; a blocker cannot compensate for a missing check.
+
 ## 15.1.2. Exit E Candidate Report ordered payload schema
 
 The Exit E Candidate Report is emitted before the candidate payload manifest. Its exact payload field order is:
@@ -2065,6 +2169,7 @@ The Exit E Candidate Report is emitted before the candidate payload manifest. It
 - **ARTIFACT-PATH:** [normalized relative path]
 - **PROTOCOL / ARTIFACT-SCHEMA VERSION:** [...]
 - **System / Protocol / Snapshot:** [pinned system namespace, protocol version, environments, and snapshot]
+- **Required Check Registry / Fingerprint:** [EXIT-E-CHECKS-v1 and its canonical registry fingerprint]
 - **Exit A Report Fingerprint:** [...]
 - **Deterministic Candidate Input-Set Fingerprint:** [sha256 of the canonically sorted authoritative input path/fingerprint bindings]
 - **Coverage Validation Summary:** [passed count, failed count, deterministic summary fingerprint]
@@ -2093,7 +2198,7 @@ The Exit E Candidate Report is emitted before the candidate payload manifest. It
 <!-- END-ARTIFACT-DIGEST-SIGNATURE-ENVELOPE: EXIT-E-CANDIDATE-REPORT -->
 ```
 
-`Check Results` sorts by `(Check ID)` and uses `Pass | Fail`; `Blockers` sorts by `(Blocker ID)`. `Ready-For-Human-Review` requires zero failed checks and an empty blockers table. The report MUST NOT reference or include the later candidate payload manifest, confirmations or CNFs, confirmation envelopes, Exit E Content-Readiness Report, scope certificate, or outer bundle manifest. This ordering prevents a candidate report/manifest hash cycle.
+`Check Results` sorts by `(Check ID)` and uses `Pass | Fail`; `Blockers` sorts by `(Blocker ID)`. `Ready-For-Human-Review` requires exact `CANDIDATE` registry-set equality, every required check passing with a valid evidence-set fingerprint, and an empty blockers table. A failed check requires a blocker; a missing/duplicate/unknown check makes the report structurally invalid. The report MUST NOT reference or include the later candidate payload manifest, confirmations or CNFs, confirmation envelopes, Exit E Content-Readiness Report, scope certificate, or outer bundle manifest. This ordering prevents a candidate report/manifest hash cycle.
 
 ## 15.1.3. Candidate Payload Manifest ordered payload schema
 
@@ -2141,6 +2246,7 @@ The stage-4 Exit E Content-Readiness Report is a pre-certificate artifact. Its e
 - **ARTIFACT-PATH:** [normalized relative path]
 - **PROTOCOL / ARTIFACT-SCHEMA VERSION:** [...]
 - **System / Protocol / Snapshot:** [pinned system namespace, protocol version, environments, and snapshot]
+- **Required Check Registry / Fingerprint:** [EXIT-E-CHECKS-v1 and its canonical registry fingerprint]
 - **Exit A Report Fingerprint:** [...]
 - **Exit E Candidate Report Fingerprint:** [...]
 - **Candidate Payload Manifest Fingerprint:** [...]
@@ -2171,7 +2277,7 @@ The stage-4 Exit E Content-Readiness Report is a pre-certificate artifact. Its e
 <!-- END-ARTIFACT-DIGEST-SIGNATURE-ENVELOPE: EXIT-E-CONTENT-READINESS-REPORT -->
 ```
 
-Confirmed bindings sort by `(Record Type, Typed Record ID)`, approved decisions by `(DEC ID)`, pre-certificate members by `(Normalized Path, Artifact Type)`, checks by `(Check ID)`, and blockers by `(Blocker ID)`. Check results use `Pass | Fail`. `Ready-For-Certificate` requires every check to pass and an empty blockers table. The payload MUST omit the outer-manifest Exit E completion field and completion literal and MUST NOT reference or depend on the later scope certificate or outer bundle manifest. It cannot pass Exit E; Exit E remains `Pending` until the signed outer-manifest step 6.
+Confirmed bindings sort by `(Record Type, Typed Record ID)`, approved decisions by `(DEC ID)`, pre-certificate members by `(Normalized Path, Artifact Type)`, checks by `(Check ID)`, and blockers by `(Blocker ID)`. Check results use `Pass | Fail`. `Ready-For-Certificate` requires exact `CONTENT-READINESS` registry-set equality, every required check passing with a valid evidence-set fingerprint, and an empty blockers table. A failed check requires a blocker; a missing/duplicate/unknown check makes the report structurally invalid. The payload MUST omit the outer-manifest Exit E completion field and completion literal and MUST NOT reference or depend on the later scope certificate or outer bundle manifest. It cannot pass Exit E; Exit E remains `Pending` until the signed outer-manifest step 6.
 
 ## 15.2. Scope certificate
 
@@ -2238,12 +2344,14 @@ Raw secrets, raw private exports, private matching hints, and private entity ind
 
 Certification MUST follow this order; no later artifact is an input to an earlier hash:
 
-1. **Populate semantic payloads.** Final-Synthesis and Profile Synchronization produce complete `[B-POPULATED]` synthesis and `PRF` profile payloads. Reconstruction-Handoff projects the complete handbook as `[B-POPULATED]` `HBK` records, validates links/diagrams/readability, and computes every typed record's `SEMANTIC-CONTENT-FINGERPRINT`. No confirmation envelope is required yet.
+1. **Populate semantic payloads.** Final-Synthesis and Profile Synchronization produce complete `[B-POPULATED]` synthesis and `PRF` profile payloads. Reconstruction-Handoff projects the complete handbook as `[B-POPULATED]` `HBK` records, runs the deterministic pre-candidate non-vacuity/link/diagram and synchronization checks in §13.4, and computes every typed record's `SEMANTIC-CONTENT-FINGERPRINT`. Human readability review does not occur in this stage; it is candidate-bound confirmation work in step 3. No confirmation envelope is required yet.
 2. **Emit candidate artifacts.** Validation/Gate validates Exit A, all populated typed payloads, proposed decision content, references, coverage, and handbook quality, then emits an immutable Exit E Candidate Report and candidate payload manifest using the generic §4.1.2 artifact schema. The manifest lists every candidate synthesis, PRF, and HBK record ID, semantic record version, semantic-content fingerprint, dependency fingerprint, and required decision-content version/fingerprint binding. Neither candidate artifact includes future DEC approval envelopes, CNFs, confirmation envelopes, the Exit E Content-Readiness Report, certificate, or outer manifest.
-3. **Human review and envelope attachment.** Authorized humans approve required `DEC` content by attaching approval envelopes bound to the exact candidate `DECISION-CONTENT-VERSION`/`DECISION-CONTENT-FINGERPRINT`, then create `CNF` records against exact candidate typed-record bindings, including PRF/HBK IDs where applicable. These approval/status attachments do not alter candidate-bound content fingerprints and do not by themselves restart candidacy. The authorized confirmation action attaches `[B-CONFIRMED]`/CNF envelopes without regenerating or changing semantic payload. DEC and CNF hashes use §4.1.2 and their exact record-specific envelope markers.
+3. **Human review and envelope attachment.** Authorized humans approve required `DEC` content by attaching approval envelopes bound to the exact candidate `DECISION-CONTENT-VERSION`/`DECISION-CONTENT-FINGERPRINT`, then create `CNF` records against exact candidate typed-record bindings, including PRF/HBK IDs where applicable. These approval/status attachments do not alter candidate-bound content fingerprints and do not by themselves restart candidacy. Every CNF that confirms candidate HBK content records the §13.4 handbook readability result; the combined passing CNFs MUST cover every candidate HBK binding. The authorized confirmation action attaches `[B-CONFIRMED]`/CNF envelopes without regenerating or changing semantic payload. DEC and CNF hashes use §4.1.2 and their exact record-specific envelope markers.
 4. **Emit Exit E Content-Readiness Report.** Validation/Gate recomputes candidate semantic fingerprints, verifies unchanged payloads, recomputes and validates every certification/approval/CNF envelope binding and finalized package-member file fingerprint available at this stage, and validates every content/confirmation/package-member condition available before certificate and outer-manifest creation. It emits the immutable Exit E Content-Readiness Report using artifact type `EXIT-E-CONTENT-READINESS-REPORT`. Its hashed payload may reference Exit A, the Exit E Candidate Report/candidate payload manifest, DEC/CNF records, exact envelope bindings, and all validated pre-certificate package-member file fingerprints available at this stage. It MUST state that Exit E is still `Pending`, MUST NOT contain `EXIT-E-STATUS: Passed`, and MUST NOT reference or depend on the later scope certificate or outer bundle manifest/fingerprint. It is a pre-package content-readiness artifact, not the Exit E pass artifact.
 5. **Emit scope certificate.** Reconstruction-Handoff emits the scope certificate using artifact type `SCOPE-CERTIFICATE`, referencing the immutable Exit E Content-Readiness Report fingerprint and prior chain. Creating it MUST NOT change the content-readiness report. Exit E remains `Pending`.
-6. **Emit, validate, and sign the authoritative outer bundle manifest; transition Exit E.** Reconstruction-Handoff emits the outer manifest using artifact type `OUTER-BUNDLE-MANIFEST`. Its hashed payload lists every final package member other than the manifest itself and each external package-member file fingerprint, including the candidate artifacts, DEC/CNF records and their finalized containing files, confirmed semantic records and their finalized containing files, Exit E Content-Readiness Report, and scope certificate; includes the literal field `- **EXIT-E-STATUS:** Passed`; and does not list itself or its own digest as a package member. Validation/Gate recomputes every package-member file fingerprint and required certification/approval/CNF envelope binding, verifies the complete member set, generic payload/envelope boundaries, the content-readiness and certificate references, and all §15.1 conditions. Authorized humans then sign the outer artifact envelope, and the harness validates the completed signature envelope in-process without emitting another artifact. Only when the outer payload, every full-file/envelope binding, and the required outer signature all validate does Exit E transition from `Pending` to `Passed`. The signed outer manifest is the authoritative non-cyclic Exit E completion attestation and its payload digest is the bundle fingerprint. No post-step-6 completion report or attestation is emitted.
+6. **Emit, validate, and sign the authoritative outer bundle manifest; transition Exit E.** Reconstruction-Handoff emits the outer manifest using artifact type `OUTER-BUNDLE-MANIFEST`. Its hashed payload directly declares the pinned `System / Protocol / Snapshot`, the final check-registry identity/fingerprint, and the pre-signature authoritative input-set fingerprint; lists every final package member other than the manifest itself and each external package-member file fingerprint, including the candidate artifacts, DEC/CNF records and their finalized containing files, confirmed semantic records and their finalized containing files, Exit E Content-Readiness Report, and scope certificate; includes the literal field `- **EXIT-E-STATUS:** Passed`; and does not list itself or its own digest as a package member. Validation/Gate requires exact system/protocol/environment/snapshot equality across Exit A, candidate report, content-readiness report, scope certificate, every snapshot-bearing package member, and the outer payload; recomputes every package-member file fingerprint and required certification/approval/CNF envelope binding; verifies the complete member set, generic payload/envelope boundaries, the content-readiness and certificate references, pre-signature input-set fingerprint, final check-registry fingerprint, and all §15.1 conditions. Missing identity, mixed snapshots, or a validly hashed member from another snapshot fails closed. Authorized humans then sign the outer artifact envelope, and the conforming implementation performs the §15.5 deterministic final-bundle verification over the completed signature envelope. Only when every required final check passes does Exit E transition from `Pending` to `Passed`. The signed outer manifest is the authoritative non-cyclic Exit E completion attestation and its payload digest is the bundle fingerprint. No post-step-6 authoritative completion report or attestation is emitted.
+
+The outer payload's `Pre-Signature Validation Input-Set Fingerprint` is computed before outer payload hashing and signing. Its complete preimage is UTF-8 `EXIT-E-PRE-SIGNATURE-INPUTS|`, the canonically serialized outer `System / Protocol / Snapshot`, one LF, the `EXIT-E-CHECKS-v1` identity and fingerprint, one LF, the `EXIT-E-FINAL-CHECKS-v1` identity and fingerprint, one LF, the Exit E Content-Readiness Report artifact-payload fingerprint, one LF, the scope-certificate artifact-payload fingerprint, one LF, and the §4.1.2 canonical serialization of exactly the outer `Package Members` table. Each member row MUST use `PACKAGE-MEMBER-FILE` and the complete finalized path-bound fingerprint for that normalized path/artifact type. The table MUST equal the complete final member set excluding only the outer manifest itself; a missing, extra, duplicate, differently domained, or mixed-snapshot binding changes or invalidates the preimage. The preimage excludes the outer payload, its fingerprint carrier, and its signature envelope, so it is acyclic.
 
 The authoritative step-6 outer manifest MUST instantiate the generic schema as follows; `EXIT-E-STATUS` is inside the hashed payload, while signatures are outside it:
 
@@ -2253,6 +2361,9 @@ The authoritative step-6 outer manifest MUST instantiate the generic schema as f
 - **ARTIFACT-TYPE:** OUTER-BUNDLE-MANIFEST
 - **ARTIFACT-PATH:** [normalized relative path]
 - **PROTOCOL / ARTIFACT-SCHEMA VERSION:** [...]
+- **System / Protocol / Snapshot:** [pinned system namespace, protocol version, environments, and snapshot]
+- **Final Verification Check Registry / Fingerprint:** [EXIT-E-FINAL-CHECKS-v1 and its canonical registry fingerprint]
+- **Pre-Signature Validation Input-Set Fingerprint:** [computed by the exact §15.4 preimage]
 - **Exit E Content-Readiness Report Fingerprint:** [...]
 - **Scope Certificate Fingerprint:** [...]
 - **Package Members:**
@@ -2273,7 +2384,43 @@ The authoritative step-6 outer manifest MUST instantiate the generic schema as f
 
 **Exact exclusion rule:** the normative semantic/payload hash profile and exact boundaries are §4.1.2. Packaging payload fingerprints exclude only their own `ARTIFACT-PAYLOAD-FINGERPRINT` carrier and matching generic artifact digest/signature envelope. Synthesis/PRF/HBK semantic records exclude exactly the certification envelope in §4.1.1; `DEC` excludes exactly the decision-approval envelope in §5.5 and its own carrier; `CNF` excludes exactly the CNF digest/signature envelope in §5.7 and its own carrier. Those exclusions do not apply to canonical envelope fingerprints or external package-member file fingerprints: envelope fingerprints include every field within their exact envelope, and package-member file fingerprints include the complete finalized member. Cross-document references, content timestamps, package-member lists, `EXIT-E-STATUS`, and all other payload fields remain hashed. No artifact may exclude a later artifact reference merely to mask a cycle; such a reference is forbidden by the sequence.
 
-**Restart rule:** a semantic payload, dependency, candidate decision-content binding, or candidate-manifest change restarts at step 1 or 2 as applicable and invalidates downstream CNFs. A DEC review-input or decision-content change restarts at step 2; attaching a matching approval envelope occurs at step 3 and does not restart, while a mismatched envelope is rejected. A CNF or confirmation-envelope defect restarts at step 3. An Exit E Content-Readiness Report payload defect restarts at step 4. A certificate-only payload defect restarts at step 5. An outer-manifest membership, status, fingerprint, order, validation, or signature defect restarts at step 6 and leaves Exit E `Pending`. Replacing any finalized member envelope changes its envelope binding and package-member file fingerprint; it restarts from the stage that owns that envelope and always invalidates/requires regeneration and re-signing of the step-6 outer manifest. Replacing only the outer manifest's own signature envelope with an unchanged outer payload digest restarts step 6 only and requires revalidation/re-signing. Any change that reaches backward into an earlier artifact restarts from the earliest affected step. There is no post-step-6 artifact whose hash could create a cycle.
+**Restart rule:** a semantic payload, dependency, candidate decision-content binding, or candidate-manifest change restarts at step 1 or 2 as applicable and invalidates downstream CNFs. A DEC review-input or decision-content change restarts at step 2; attaching a matching approval envelope occurs at step 3 and does not restart, while a mismatched envelope is rejected. A CNF or confirmation-envelope defect restarts at step 3. An Exit E Content-Readiness Report payload defect restarts at step 4. A certificate-only payload defect restarts at step 5. An outer-manifest membership, status, fingerprint, order, validation, or signature defect restarts at step 6 and leaves Exit E `Pending`. Replacing any finalized member envelope changes its envelope binding and package-member file fingerprint; it restarts from the stage that owns that envelope and always invalidates/requires regeneration and re-signing of the step-6 outer manifest. Replacing only the outer manifest's own signature envelope with an unchanged outer payload digest restarts step 6 only and requires revalidation/re-signing. Any change that reaches backward into an earlier artifact restarts from the earliest affected step. There is no post-step-6 authoritative artifact whose hash could create a cycle.
+
+## 15.5. Reproducible final-bundle verification
+
+`EXIT-E-FINAL-CHECKS-v1` is the exact final verification registry:
+
+| Check ID                     | Requirement                                                                                                    |
+| :--------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| FINAL-01-OUTER-PAYLOAD       | exact outer schema, canonical payload fingerprint, field order, and `EXIT-E-STATUS: Passed`                    |
+| FINAL-02-SNAPSHOT            | direct exact system/protocol/environment/snapshot equality under §15.1 condition 18                            |
+| FINAL-03-MEMBER-SET          | complete package-member set, no self-member, missing member, extra member, or duplicate binding                |
+| FINAL-04-MEMBER-FINGERPRINTS | every path-bound finalized package-member file fingerprint recomputes                                          |
+| FINAL-05-ENVELOPES           | every required certification, decision-approval, CNF-signature, and outer-signature envelope/binding validates |
+| FINAL-06-CHAIN               | candidate, manifest, confirmation, readiness, and certificate references follow the §15.4 order and recompute  |
+| FINAL-07-REGISTRY-AND-INPUTS | report/final registry fingerprints and pre-signature authoritative input-set fingerprint recompute             |
+| FINAL-08-CONDITIONS          | every applicable §15.1 condition and required report check passed with complete evidence bindings              |
+| FINAL-09-SEQUENCE            | Exit E remained `Pending` through step 5 and the bundle contains no post-step-6 completion member or reference |
+
+Its canonical fingerprint is `sha256` over UTF-8 `EXIT-E-FINAL-CHECK-REGISTRY|EXIT-E-FINAL-CHECKS-v1`, one LF, and the §4.1.2 canonical serialization of that table. A conforming runtime MUST expose a deterministic `verify final bundle` operation over the complete signed bundle. The operation recomputes the exact registry and check results from bundle bytes; it does not trust the outer payload's `Passed` literal, stored fingerprints, or executor-supplied values. Missing, duplicate, unknown, or failed checks yield overall `Fail`. `FINAL-09-SEQUENCE` verifies only bundle-observable members, references, and recorded prior-stage states. The prohibition on creating later authoritative completion state is separately enforced by the runtime's post-Exit-E transaction rules and cannot be inferred from standalone bundle bytes.
+
+Every execution records a **final verification receipt** with this schema:
+
+```markdown
+- **Protocol / Artifact / Check Registry Versions and Fingerprints:** [...]
+- **Normalized Bundle Identity:** [...]
+- **Outer Payload / Canonical Outer-Envelope Fingerprints:** [...]
+- **System / Protocol / Environment / Snapshot:** [...]
+- **Package-Member / Input Bindings and Input-Set Fingerprint:** [exact sorted set]
+- **Check Results:**
+  | Check ID | Result | Offending Bindings |
+  | :------- | :----- | :----------------- |
+- **Overall Result:** Pass | Fail
+- **Validator Implementation Version / Timestamp:** [diagnostic provenance]
+- **Deterministic Result Fingerprint:** [...]
+```
+
+The result fingerprint covers every preceding field except `Validator Implementation Version / Timestamp` and its own carrier under §4.1.2 with domain prefix `FINAL-VERIFY-RESULT|`. The receipt is a `NON-AUTHORITATIVE-DERIVATIVE`, MUST remain outside the certified package and authoritative `.extracted/` protocol state, MUST NOT be a package member or input to Exit E, and cannot change the outer payload digest, signature, or gate state. It records which checks the original runtime executed; any third party can discard it and reproduce the same deterministic result from the signed bundle. Creating, deleting, or regenerating a receipt is not a post-step-6 completion artifact or attestation.
 
 ---
 
@@ -2349,11 +2496,13 @@ A migration MAY retain either filename only as a `NON-AUTHORITATIVE-COMPATIBILIT
 
 ---
 
-# Part 19. Implementation and Acceptance Checklist
+# Part 19. Conformance and Acceptance Checklist
 
-## 19.1. Harness implementation
+## 19.1. Conforming implementation capabilities
 
 - [ ] Identity headers enforce exact persona/cluster/track/POV/file/ledger isolation.
+- [ ] Executors propose semantic content only; the conforming runtime independently computes or reproduces every protocol-defined ID, canonical form, fingerprint, scope/stale check, FSM transition, count, completeness result, gate result, and package verification before commit.
+- [ ] Cold-resume results bind executor semantic assessment to runtime-recomputed identity/scope/write-right/stale checks and the mandatory `0G` no-mutation or commit entry.
 - [ ] Workspace discovery treats `personas/` as the sole persona container, validates canonical shared records under `personas/_shared/`, rejects `_shared` as a persona slug, and never counts the reserved directory as a persona.
 - [ ] Multi-file writes are restricted to enumerated modes and enforce the `personas/{persona}/` versus `personas/_shared/` ownership boundary.
 - [ ] ID generator, collision extension, aliases, versions, tombstones, and `COV`/`CND`/`MOD`/`PRF`/`HBK` types and canonical coordinates are implemented.
@@ -2365,39 +2514,47 @@ A migration MAY retain either filename only as a `NON-AUTHORITATIVE-COMPATIBILIT
 - [ ] Source enumerators cover every required kind and can prove zero domains.
 - [ ] Exactly one FRT is created for every discovered traversal boundary, including immediately terminal boundaries and depth stops.
 - [ ] CLM schema rejects mixed evidence and derives non-lossy `BLOCK-CONFIDENCE-RANK` plus `BLOCK-EVIDENCE-PROFILE`.
-- [ ] Helper publication fails closed and keeps private state outside repository.
+- [ ] Helper publication fails closed and keeps raw/private state outside the target repository and authoritative `.extracted/` workspace in operator-controlled storage.
 - [ ] Export reconciliation is one row per normalized coordinate.
-- [ ] Ticket FSM forbids direct human-required creation.
+- [ ] Ticket FSM forbids direct human-required creation, validates the closed escalation-reason taxonomy, and permits non-runtime Human Hatch escalation only after bounded static exhaustion and a reason-consistent probe inapplicability assessment.
+- [ ] Human-required terminalization preserves gap/partial coverage and remains distinct from exact approved exclusion.
 - [ ] Probe workflow fingerprints and sanitizes logs.
 - [ ] Concurrent persona buffers, including promotion requests and unmapped discoveries, merge sequentially, deterministically, and atomically before later Discovery; only Sequential Reconciliation moves canonical blocks between `personas/_shared/` and persona POV files.
 - [ ] Synthesis GAP records deduplicate deterministically and create required ticket/frontier work only through Sequential Reconciliation.
 - [ ] Promotion/depromotion and disabled/dead distinctions validate.
 - [ ] Sweep records reproduce expected/mapped/frontier/ticket counts.
 - [ ] Coverage arithmetic runs per kind, track, environment, and snapshot.
+- [ ] Dead-code validation rejects any linked unresolved possible caller/dynamic reference and confines the effect to the linked dependency closure.
+- [ ] Semantic applicability/lifecycle classifications carry provenance; `Unknown` is fail-inclusive and cannot silently justify omission or closure.
 - [ ] Reciprocal, orphan, dangling, ownership, and persona-purity checks run.
 - [ ] Targeted stale propagation follows `DERIVED-FROM` impact edges.
 - [ ] Profile Synchronization loads and validates the complete direct/applicable and transitive §8.4 dependency closure; confirmation reuses the identical candidate-bound closure.
 - [ ] Synthesis gap buffering and controlled ticket creation are separated.
 - [ ] Human confirmation is required for every B-confirmed block and binds exact semantic versions/fingerprints without changing payloads.
-- [ ] All five packaging artifacts enforce exact field order, required/optional/empty representation, schema-declared row sorting, and rejection of unknown, duplicate, reordered, or omitted fields.
-- [ ] Exit E Candidate Report, candidate payload manifest, Exit E Content-Readiness Report, later scope certificate, and signed outer manifest follow §15.4; only the validated signed outer payload can set `EXIT-E-STATUS: Passed`.
-- [ ] Handbook links, diagrams, evidence-rank/profile display, and readability are checked.
+- [ ] All five packaging artifacts enforce exact field order, required/optional/empty representation, schema-declared row sorting, stage-specific exact required-check sets, evidence-set fingerprints, and rejection of unknown, duplicate, reordered, omitted, or stage-ineligible fields/checks.
+- [ ] Exit E Candidate Report, candidate payload manifest, Exit E Content-Readiness Report, later scope certificate, and signed outer manifest follow §15.4; direct snapshot equality is enforced across the chain and only the validated signed outer payload can set `EXIT-E-STATUS: Passed`.
+- [ ] Final-bundle verification executes the exact final registry and emits only a reproducible non-authoritative receipt outside package/protocol state.
+- [ ] Handbook links, diagrams, and evidence-rank/profile display pass the deterministic §13.4 checks before candidacy; candidate-bound human readability review is recorded only through complete passing CNFs after candidacy.
 - [ ] Validation summaries are deterministic and fingerprinted.
 
-## 19.2. Normative conformance fixtures
+## 19.2. Normative conformance cases
 
-A conforming harness MUST ship and execute deterministic positive and negative fixtures for every rule below. Fixture failures block protocol conformance and gate execution:
+A conforming implementation MUST satisfy every applicable positive and negative case below and deterministically produce the specified acceptance or rejection. These are protocol-level behavioral cases, not required files or test-runner inputs; their storage, serialization, and execution mechanism are implementation-specific. Failure of an applicable case defeats a claim of protocol conformance. Workspace gate execution is governed independently by the authoritative inputs and gate checks defined elsewhere in this protocol:
 
-- **Persona workspace layout and ownership:** positive fixtures enumerate two persona directories beneath `personas/`, load canonical shared records only from `personas/_shared/`, route persona-local buffers beneath `personas/{persona}/`, preserve purity/shared-reference behavior, and execute an eligible promotion only through one atomic Sequential Reconciliation move; negative fixtures reject root-level persona directories, a root-level `shared/`, `_shared` as a persona slug or registry row, canonical shared records in a persona directory, persona records in `_shared`, writes that cross the ownership boundary, direct Promotion Review moves, non-atomic source/target updates, duplicate canonical copies, and a move that temporarily leaves no canonical copy.
-- **Context-qualified finite enums and registry completeness:** a bidirectional schema-to-registry fixture discovers every normative finite-choice bullet/table field and requires exactly one matching §5.1 path, while a registry-to-schema fixture rejects orphan or duplicate paths. Positive value fixtures exercise every declared path, including every status-bearing table column, all block-confidence/evidence-profile contexts, schema-local synthesis choices, and the coupled traversal `Applicability`/`Status` `N/A` case; negative fixtures reject label-only dispatch, wrong-family tokens at every path, prose mixed with tokens, unbracketed prefix tokens, bracketed unprefixed literals, `N/A` without `Not-Applicable`, an R-token with `Not-Applicable`, invalid table-cell tokens, a schema enum omitted from the registry, and an undeclared/orphan registry path.
-- **PRF identity and semantic hashing:** positive fixtures derive one PRF ID from system namespace plus persona prefix, bind it reciprocally through `0A`, traceability, candidate manifest, and CNF, and prove that a semantic-record-version change changes its fingerprint while a fingerprint-carrier-only or certification-envelope-only change does not; negative fixtures reject illegal/duplicate PRFs, prefix-coordinate mismatch, missing separately ordered semantic fields, carrier inclusion in its own preimage, and omitted/substituted candidate or CNF identity.
-- **HBK identity and path/anchor normalization:** positive fixtures fix the sole identity root at `.extracted/handbook/`, preserve path case and exact Unicode code points beneath it, normalize POSIX separators plus repeated and `.` segments, use an explicitly assigned anchor matching `[a-z0-9]+(?:-[a-z0-9]+)*`, preserve identity across title-only edits, and apply the proven-move rule; negative fixtures reject package-root-prefixed or `.extracted/handbook/`-prefixed coordinate values, alternate roots, `..`, implicit Unicode normalization, transliteration, punctuation/uppercase/Unicode in anchors, renderer-generated anchors, duplicate path-anchor coordinates, unproven moves, missing coordinate fields, and omitted/substituted candidate or CNF identity.
-- **Profile Synchronization closure:** a positive fixture regenerates a PRF from a multi-hop `DERIVED-FROM` graph containing direct/applicable and transitive records, verifies versions/fingerprints/snapshot/reciprocal bindings, and confirms it using the identical candidate-bound closure; negative fixtures reject a missing direct/applicable record, missing transitive record, stale dependency, version mismatch, fingerprint mismatch, broken reciprocal binding, mixed snapshots, or confirmation closure different from the generation closure.
-- **Record versus artifact hashing:** positive fixtures independently hash two typed records in one Markdown file, produce the separate ordered file-transport fingerprint, hash each packaging artifact as one bounded payload using only `artifact-type + "|" + normalized-relative-path` as hash-domain identity, and construct the post-hash artifact-instance binding afterward; negative fixtures reject whole-file bytes as a record/CNF identity, record reordering without a changed transport fingerprint, artifact hashes computed from unbounded bytes, any payload fingerprint or post-hash binding in its own preimage, and construction of the instance binding before hashing.
-- **Canonicalization and exact exclusions:** positive fixtures cover normalized LF, exact Unicode preservation, schema field/table order, insignificant whitespace, every semantic certification envelope, the exact DEC approval envelope, the exact CNF digest/signature envelope, every generic artifact payload/envelope boundary, and every fingerprint-carrier exclusion; negative fixtures mutate one included byte or move content across a boundary and require a hash change or structural rejection, while only explicitly authorized envelope changes leave the corresponding semantic/content fingerprint unchanged.
-- **Final envelope and package-member integrity:** positive fixtures compute identity/version-bound fingerprints for certification, DEC-approval, and CNF-signature envelopes, serialize their exact bindings, and compute external path-bound package-member file fingerprints over complete finalized files while preserving unchanged semantic/decision/CNF payload fingerprints; negative fixtures remove or mutate only each envelope, signature, timestamp, binding, fingerprint carrier, or finalized file byte after content-readiness and require content-readiness/outer validation to fail, and reject use of the envelope-excluding transport fingerprint as a package-member fingerprint or storage of a package-member fingerprint inside its own member.
-- **Packaging schemas and deterministic ordering:** positive fixtures instantiate all five exact §15 schemas, canonicalize semantically identical rows supplied in different source orders to one hash, serialize empty scalars as `None`, retain header/separator-only empty tables, and verify declared counts/arithmetic; negative fixtures reject unknown, duplicate, reordered, missing, or extra fields, duplicate sort keys, noncanonical row order after normalization, omitted empty values, malformed empty tables, report-to-manifest back-reference, and any forbidden later-artifact reference.
-- **Acyclic Exit E sequence:** positive fixtures execute candidate report -> candidate manifest -> DEC/CNF and confirmation envelopes -> Exit E Content-Readiness Report with Exit E `Pending` -> scope certificate -> outer manifest validation/signature -> exact step-6 transition to `EXIT-E-STATUS: Passed`; negative fixtures reject `Passed` at steps 1–5, a content-readiness report presented as the pass artifact, a certificate emitted before its content-readiness input, an outer manifest missing the report or certificate, payload self-reference, a missing/invalid signature, a `Passed` field outside the hashed outer payload, and any post-step-6 completion artifact.
+- **Persona workspace layout and ownership:** positive cases enumerate two persona directories beneath `personas/`, load canonical shared records only from `personas/_shared/`, route persona-local buffers beneath `personas/{persona}/`, preserve purity/shared-reference behavior, and execute an eligible promotion only through one atomic Sequential Reconciliation move; negative cases reject root-level persona directories, a root-level `shared/`, `_shared` as a persona slug or registry row, canonical shared records in a persona directory, persona records in `_shared`, writes that cross the ownership boundary, direct Promotion Review moves, non-atomic source/target updates, duplicate canonical copies, and a move that temporarily leaves no canonical copy.
+- **Context-qualified finite enums and registry completeness:** a bidirectional schema-to-registry case discovers every normative finite-choice bullet/table field and requires exactly one matching §5.1 path, while a registry-to-schema case rejects orphan or duplicate paths. Positive value cases exercise every declared path, including every status-bearing table column, all block-confidence/evidence-profile contexts, schema-local synthesis choices, and the coupled traversal `Applicability`/`Status` `N/A` case; negative cases reject label-only dispatch, wrong-family tokens at every path, prose mixed with tokens, unbracketed prefix tokens, bracketed unprefixed literals, `N/A` without `Not-Applicable`, an R-token with `Not-Applicable`, invalid table-cell tokens, a schema enum omitted from the registry, and an undeclared/orphan registry path.
+- **Invocation ownership and cold resume:** positive cases bind executor-proposed semantic actions/blockers to runtime-recomputed identity, mode, scope, loaded fingerprints, stale state, write rights, cold-resume fingerprint, and the same transaction's `0G` entry; negative cases reject a missing summary, executor-authored deterministic digest that does not reproduce, stale checkpoint, changed target, forbidden intended write, omitted required load, mixed snapshot, mismatched check fingerprint, mutation after a failed check, and interrupted work resumed without a fresh check.
+- **Ticket escalation and honest unresolved coverage:** positive cases exercise `RUNTIME-REQUIRED` through `[T-PROBE-REQUIRED]` and every legal non-runtime escalation reason from `[T-OPEN]`/`[T-FOLLOW-UP]`, terminalize only through authorized Human Hatch, preserve linked `[C-GAP]`/`[C-PARTIAL]`, permit unaffected work and bounded partial synthesis, and distinguish a later exact approved exclusion; negative cases reject direct `[T-HUMAN-REQUIRED]`, `None` reason, missing bounded static investigation, runtime escalation without probe feasibility, non-runtime escalation through a fake probe state, reason/assessment mismatch, unauthorized reviewer, and human-required counted as covered or silently excluded.
+- **Dead-code and semantic-predicate closure:** positive cases prove a complete no-caller denominator across bound tracks/environments/snapshots, permit a terminal exactly excluded unavailable caller domain, map traversal `Required` rows one-to-one to independent sweep records, and resolve lifecycle eligibility with provenance; negative cases reject `[S-DEAD-CODE]` with an unresolved dynamic reference/candidate/ticket/frontier/possible caller, any observed conditional/disabled/historical/intended caller, missing denominator dimension, an effect on unrelated coverage, lifecycle/applicability without provenance, `Unknown` treated as ineligible/not-applicable, a missing required `SM`, vacuous handbook content, and inherited POV sweep results.
+- **Deterministic iteration accounting:** positive cases prove that the first invocation opens `ALFA`, parallel invocations share one token, an open-token synthesis gap consumes no additional token, and a post-completion reopen advances exactly once; negative cases reject completion with unterminated invocations or unreconciled buffers, reuse/reset of a completed token after Exit A/synthesis/confirmation failure, advancement that skips a token, and any work or closure claim beyond completed `ZULU`.
+- **PRF identity and semantic hashing:** positive cases derive one PRF ID from system namespace plus persona prefix, bind it reciprocally through `0A`, traceability, candidate manifest, and CNF, and prove that a semantic-record-version change changes its fingerprint while a fingerprint-carrier-only or certification-envelope-only change does not; negative cases reject illegal/duplicate PRFs, prefix-coordinate mismatch, missing separately ordered semantic fields, carrier inclusion in its own preimage, and omitted/substituted candidate or CNF identity.
+- **HBK identity and path/anchor normalization:** positive cases fix the sole identity root at `.extracted/handbook/`, preserve path case and exact Unicode code points beneath it, normalize POSIX separators plus repeated and `.` segments, use an explicitly assigned anchor matching `[a-z0-9]+(?:-[a-z0-9]+)*`, preserve identity across title-only edits, and apply the proven-move rule; negative cases reject package-root-prefixed or `.extracted/handbook/`-prefixed coordinate values, alternate roots, `..`, implicit Unicode normalization, transliteration, punctuation/uppercase/Unicode in anchors, renderer-generated anchors, duplicate path-anchor coordinates, unproven moves, missing coordinate fields, and omitted/substituted candidate or CNF identity.
+- **Profile Synchronization closure:** a positive case regenerates a PRF from a multi-hop `DERIVED-FROM` graph containing direct/applicable and transitive records, verifies versions/fingerprints/snapshot/reciprocal bindings, and confirms it using the identical candidate-bound closure; negative cases reject a missing direct/applicable record, missing transitive record, stale dependency, version mismatch, fingerprint mismatch, broken reciprocal binding, mixed snapshots, or confirmation closure different from the generation closure.
+- **Record versus artifact hashing:** positive cases independently hash two typed records in one Markdown file, produce the separate ordered file-transport fingerprint, hash each packaging artifact as one bounded payload using only `artifact-type + "|" + normalized-relative-path` as hash-domain identity, and construct the post-hash artifact-instance binding afterward; negative cases reject whole-file bytes as a record/CNF identity, record reordering without a changed transport fingerprint, artifact hashes computed from unbounded bytes, any payload fingerprint or post-hash binding in its own preimage, and construction of the instance binding before hashing.
+- **Canonicalization and exact exclusions:** positive cases cover normalized LF, exact Unicode preservation, schema field/table order, insignificant whitespace, every semantic certification envelope, the exact DEC approval envelope, the exact CNF digest/signature envelope, every generic artifact payload/envelope boundary, every fingerprint-carrier exclusion, and an allowed candidate binding whose attachment preserves the semantic fingerprint while changing envelope and package-member fingerprints; negative cases mutate one included byte or move content across a boundary and require a hash change or structural rejection, reject a certification-envelope reference to content-readiness/certificate/outer artifacts, and prove that only explicitly authorized envelope changes leave the corresponding semantic/content fingerprint unchanged.
+- **Final envelope and package-member integrity:** positive cases compute identity/version-bound fingerprints for certification, DEC-approval, and CNF-signature envelopes, serialize their exact bindings, and compute external path-bound package-member file fingerprints over complete finalized files while preserving unchanged semantic/decision/CNF payload fingerprints; negative cases remove or mutate only each envelope, signature, timestamp, binding, fingerprint carrier, or finalized file byte after content-readiness and require content-readiness/outer validation to fail, and reject use of the envelope-excluding transport fingerprint as a package-member fingerprint or storage of a package-member fingerprint inside its own member.
+- **Packaging schemas, gate completeness, and deterministic ordering:** positive cases instantiate all five exact §15 schemas, require exact candidate/content-readiness registry sets, reproduce each evidence-set fingerprint from complete authoritative row bindings independent of source order, canonicalize semantically identical rows supplied in different source orders to one hash, serialize empty scalars as `None`, retain header/separator-only empty non-check tables, and verify declared counts/arithmetic; negative cases reject an empty required check table, one missing required check, unknown/duplicate/wrong-stage check, failed check without blocker, fabricated omission/`Not-Applicable`, wrong evidence domain, omitted/duplicate/stale/self/later evidence binding, executor-authored digest mismatch, unknown/duplicate/reordered/missing/extra fields, duplicate sort keys, noncanonical row order after normalization, omitted empty values, malformed empty tables, report-to-manifest back-reference, and any forbidden later-artifact reference.
+- **Acyclic, snapshot-consistent Exit E and final verification:** positive cases execute candidate report -> candidate manifest -> DEC/CNF and confirmation envelopes -> Exit E Content-Readiness Report with Exit E `Pending` -> scope certificate -> outer manifest validation/signature -> exact step-6 transition to `EXIT-E-STATUS: Passed`, bind one direct snapshot identity across the chain, execute every `EXIT-E-FINAL-CHECKS-v1` check, and reproduce a non-authoritative receipt without changing the bundle; negative cases reject `Passed` at steps 1–5, a content-readiness report presented as the pass artifact, a certificate emitted before its content-readiness input, an outer manifest missing the report/certificate/direct identity/registry/input-set field, candidate-readiness-certificate-outer snapshot mismatch, a mixed-snapshot member despite valid individual hashes, payload self-reference, missing/invalid signature, missing/unknown/failed final check, a `Passed` field outside the hashed outer payload, a receipt treated as a package member or authority, and any authoritative post-step-6 completion artifact.
 
 ## 19.3. Corpus acceptance
 
@@ -2427,12 +2584,12 @@ A conforming harness MUST ship and execute deterministic positive and negative f
 | `0A-PREFLIGHT.md`                                       | scope, personas, clusters, acquisition registry                 | Forensic                  | Preflight/Acquisition; Profile Synchronization for persona rows; Sequential Reconciliation for buffered unmapped discoveries | isolated POVs write only persona-local unmapped buffers      |
 | `0B` / `0C` / `0D` / `0F`                               | auth, security/privacy, glossary, global state                  | Forensic                  | scoped POV buffers + Sequential Reconciliation                                                                               | Synthesis/Handoff                                            |
 | `0E-INDEX.md`                                           | forensic cross-reference index                                  | Forensic                  | Sequential/Cross-Reference Reconciliation                                                                                    | isolated POV direct global edits                             |
-| `0G` / `0H`                                             | append-only history / derived checkpoint                        | Forensic                  | every mode appends `0G`; harness derives `0H`                                                                                | no overwrite of `0G`                                         |
+| `0G` / `0H`                                             | append-only history / derived checkpoint                        | Forensic                  | every mode appends `0G`; conforming implementation derives `0H`                                                              | no overwrite of `0G`                                         |
 | `personas/_shared/01–05 POV`                            | canonical shared atomic components                              | Forensic                  | Sequential Reconciliation for merge, promotion, and depromotion transactions                                                 | parallel persona agents; Promotion Review direct moves       |
 | `personas/{persona}/01–05 POV`                          | persona invocation references/promoted atoms                    | Forensic                  | bound isolated POV for references; Sequential Reconciliation for atomic promotion/depromotion                                | other personas; Promotion Review direct moves                |
 | persona-local staging/question/unmapped buffers         | concurrent handoff and unmapped discovery                       | Forensic workflow         | bound isolated POV appends; Sequential Reconciliation consumes atomically                                                    | direct `personas/_shared/` or `0A` mutation by isolated POVs |
 | `*-QUESTIONS.md`                                        | ticket FSM                                                      | Forensic                  | bound origin/target rights; Sequential Reconciliation for buffered creation                                                  | Synthesis direct writes                                      |
-| normalized maps / probes                                | navigation / runtime telemetry                                  | Forensic                  | Acquisition / operator-harness probe path                                                                                    | behavioral synthesis as source authority                     |
+| normalized maps / probes                                | navigation / runtime telemetry                                  | Forensic                  | Acquisition / operator-controlled probe ingestion path                                                                       | behavioral synthesis as source authority                     |
 | `10-SOURCE-INVENTORY.md`                                | denominator and dispositions                                    | Assurance                 | Acquisition, bound traversal, Sequential Reconciliation, Human Hatch                                                         | Handbook                                                     |
 | `11-TRAVERSAL-FRONTIER.md`                              | traversal boundaries and closure                                | Assurance                 | bound traversal and Sequential Reconciliation                                                                                | Synthesis                                                    |
 | `12-CLAIM-EVIDENCE.md`                                  | atomic evidence claims                                          | Assurance                 | evidence-producing bound invocation; reconciliation/validation                                                               | Handbook semantic edits                                      |
@@ -2455,4 +2612,4 @@ A conforming harness MUST ship and execute deterministic positive and negative f
 
 ---
 
-**End of Canonical Deconstruction Protocol v4.0**
+**End of Canonical Deconstruction Protocol v4.1**

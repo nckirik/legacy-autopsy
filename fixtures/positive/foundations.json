@@ -4,8 +4,8 @@
     "protocol_section": "§8.3. Invocation-mode enum and explicit multi-file modes",
     "group": "protocol-discovery",
     "operation": "protocol-version",
-    "input": { "required": "4.0" },
-    "expected": "4.0"
+    "input": { "required": "4.1" },
+    "expected": "4.1"
   },
   {
     "id": "POS-PROTOCOL-MODES-001",
