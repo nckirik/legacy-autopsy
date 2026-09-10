@@ -6,12 +6,22 @@
 
 > **Normative authority**
 >
-> [`protocol.md`](protocol.md) is normative. All skills, schemas, tools, docs, examples, and validators are non-authoritative implementations or projections. If they conflict, `protocol.md` wins.
+> [`protocol.md`](protocol.md) is a standalone, implementation-independent specification and the sole normative authority. Legacy Autopsy is one non-normative reference/tooling implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, concrete fixtures, or validators. All skills, schemas, tools, docs, examples, and validators here are non-authoritative implementations or projections; if they conflict, `protocol.md` wins.
 
-## Try Protocol v4 on your legacy repository
+## How to use Legacy Autopsy
+
+There are three intended ways to run the protocol. Only the first is usable today, and it remains a manual workflow rather than proof of conformance.
+
+1. **Manual run with your own coding agent — available today.** Give the agent `protocol.md` and the execution prompt below. It works directly in the legacy repository and pauses when it needs scope, access, evidence, or an authorized human answer.
+2. **Legacy Autopsy skill with your own coding agent — planned for M6.** Invoke the skill from a compatible coding harness. Legacy Autopsy will attach the project, schedule bounded protocol tasks, assemble exact context, validate results, persist `.extracted/`, and surface questions while your agent performs semantic work. Complete Exit A–Exit E automation still depends on later milestones.
+3. **Legacy Autopsy UI — future, milestone not yet assigned.** Select a repository, start and monitor an autopsy, answer questions and tickets, inspect the Atlas and handbook, and retrieve the final bundle without manually driving an external agent session. M4/M6 intentionally keep semantic-work start and claim control outside the UI.
+
+The three options use the same standalone protocol. The skill and UI add orchestration, validation, observability, and convenience; they do not redefine protocol behavior or authority. See the [roadmap](docs/roadmap.md) for the implementation sequence.
+
+### Option 1: manual run with your own coding agent
 
 > [!IMPORTANT]
-> **The fastest way to try Legacy Autopsy today is to give the normative protocol directly to your own coding agent.** This is a manual, agent-driven trial—not full M0 harness execution or proof of Protocol v4 conformance.
+> **The fastest way to try the protocol today is to give `protocol.md` directly to your own coding agent.** This is a manual, agent-driven run—not Legacy Autopsy-managed execution or proof of Protocol v4 conformance.
 
 Work on a clean branch in an approved, non-production copy of the legacy repository. Copy `protocol.md` into that repository's root:
 
@@ -33,11 +43,13 @@ requirements are actually satisfied. Ask me for missing scope, access, snapshot,
 human decisions, and stop whenever the protocol requires human action.
 ```
 
+Continue in the agent session as it works through the protocol. Occasionally answer its open questions or tickets, provide approved evidence or access when required, and make the human decisions the protocol does not permit an executor to infer. The agent should preserve progress in `.extracted/`, so conversation memory is not the execution record.
+
 The protocol does not authorize production access. Keep credentials, raw exports, probe output, production data, and private operator material outside the repository and agent-visible context.
 
-This manual trial intentionally gives the agent the complete protocol. The developing orchestration service will instead assemble bounded, mode-specific normative context so each executor invocation receives only its authorized scope.
+This manual path intentionally gives the agent the complete protocol. The planned skill and orchestration service will instead assemble bounded, mode-specific normative context for each invocation. The [standalone protocol quality test](docs/conformance.md#standalone-protocol-quality-test) keeps this generic-harness path explicit as the tooling evolves.
 
-For reproducible trials, record the Legacy Autopsy commit or protocol version used with the resulting `.extracted/` workspace.
+For reproducible runs, record the protocol version or Legacy Autopsy commit used with the resulting `.extracted/` workspace.
 
 ## Current state at a glance
 
@@ -73,7 +85,7 @@ The **protocol itself is already present and usable**. What is still incomplete 
 
 Legacy Autopsy is evolving into a **local-first interactive autopsy workbench and orchestration service** where humans and executors collaboratively build an evidence-backed model of a legacy system. The protocol governs truth, state, assurance, and reconstruction readiness.
 
-> **Legacy Autopsy owns orchestration and protocol state. Executors own semantic work.**
+> **In Legacy Autopsy-managed execution, Legacy Autopsy owns orchestration of protocol-defined workspace state. Executors own semantic work.**
 
 The target service manages multiple isolated autopsies, schedules bounded invocations, validates and commits workspace transactions, projects an explorable Atlas, and keeps human questions available asynchronously. User-facing execution arrives in order: first the generic skill inside any compatible coding harness, then thin managed adapters for named harnesses, and finally a minimal internal direct-model runner. During the first stage, the UI and CLI cannot manually start semantic work. The current M0 repository does not yet implement that service or UI; see the [runtime design](docs/runtime.md) and [architecture](docs/architecture.md).
 
@@ -96,7 +108,7 @@ This diagram describes Protocol v4, not current M0 implementation coverage. Exit
 ## Design principles
 
 - **Normative law stays singular:** `protocol.md` defines behavior; secondary material routes to or implements it.
-- **Orchestration and semantics stay separate:** Legacy Autopsy owns protocol/runtime state and deterministic commits; interchangeable executors perform bounded semantic work.
+- **Orchestration and semantics stay separate:** in Legacy Autopsy-managed runs, the tooling coordinates protocol-defined workspace state and deterministic commits; interchangeable executors perform bounded semantic work.
 - **Reasoning and mechanics stay separate:** LLMs interpret evidence and semantics; code handles identity, parsing, scope, ordering, hashing, validation, and state transitions.
 - **Filesystem state survives sessions:** `.extracted/` is persistent execution state; conversation memory is disposable.
 - **Evidence is not inference:** model reasoning cannot promote itself into source evidence.
