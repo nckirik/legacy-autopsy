@@ -8,7 +8,7 @@ Register, sanitize, explode, and reconcile one approved serialized-export acquis
 
 ## Required identity bindings
 
-Bind Protocol v4.1, namespace, iteration/invocation, `Invocation Mode: Export Acquisition`, pinned snapshot/environment, exact approved artifact/projection set, and every multi-file read/write/forbidden target.
+Bind Protocol v4.1.1, namespace, iteration/invocation, `Invocation Mode: Export Acquisition`, pinned snapshot/environment, exact approved artifact/projection set, and every multi-file read/write/forbidden target.
 
 ## Normative protocol sections
 

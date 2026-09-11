@@ -8,7 +8,7 @@ Evaluate promotion locks for one bound component or cohort and request—not exe
 
 ## Required identity bindings
 
-Bind exactly one persona/prefix, concrete cluster, track, POV, POV file, optional ledger, exact CMP/cohort, source shared path, and target persona/POV.
+Bind exactly one persona, prefix, canonical persona directory, concrete cluster, track, POV, POV file, optional ledger, exact CMP/cohort, source shared path, and target persona/POV.
 
 ## Normative protocol sections
 

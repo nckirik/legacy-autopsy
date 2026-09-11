@@ -8,7 +8,7 @@ Apply one legal ticket-FSM action, including probe ingestion, with surgical upda
 
 ## Required identity bindings
 
-Bind exactly one persona/prefix, cluster, track, POV, POV file, zero/one ledger, one ticket, snapshot/environment, and actor origin/target role. Neutral arbitration retains original scope and records the neutral POV.
+Bind exactly one persona, prefix, canonical persona directory, cluster, track, POV, POV file, zero/one ledger, one ticket, snapshot/environment, and actor origin/target role. Neutral arbitration retains original scope and records the neutral POV.
 
 ## Normative protocol sections
 

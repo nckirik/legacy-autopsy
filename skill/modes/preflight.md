@@ -8,7 +8,7 @@ Establish one structurally valid, resumable `0A-PREFLIGHT.md` scope without clai
 
 ## Required identity bindings
 
-Bind Protocol v4.1, namespace, iteration, invocation ID, `Invocation Mode: Preflight`, snapshot/environment, exact scope, sole semantic target `0A`, and explicit read/write/forbidden targets. Persona, cluster, track, and POV may be `None` only where §8.1 permits.
+Bind Protocol v4.1.1, namespace, iteration, invocation ID, `Invocation Mode: Preflight`, snapshot/environment, exact scope, sole semantic target `0A`, and explicit read/write/forbidden targets. Persona, cluster, track, and POV may be `None` only where §8.1 permits.
 
 ## Normative protocol sections
 
@@ -40,7 +40,7 @@ No POV, synthesis, handbook, profile, decision, confirmation, or unrelated regis
 
 ## Deterministic validation
 
-Validate version/mode, namespace and IDs, prefix uniqueness/non-reuse, `_shared` exclusion, canonical entry ownership, concrete track/matrix structure, and absence of wildcard-only closure.
+Validate version/mode, namespace and IDs, explicit persona slugs, canonical `<persona-prefix>-<persona-slug>` basenames, registry/header prefix agreement, prefix uniqueness/non-reuse, `_shared` exclusion, canonical entry ownership, concrete track/matrix structure, and absence of wildcard-only closure.
 
 ## Completion condition
 

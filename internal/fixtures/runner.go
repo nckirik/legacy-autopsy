@@ -49,6 +49,7 @@ var operationGroups = map[string]string{
 	"generate-id":         "identity",
 	"normalize-path":      "path-normalization",
 	"basic-markdown-hash": "basic-markdown-hash",
+	"persona-directory":   "persona-directory",
 	"workspace-skeleton":  "workspace-skeleton",
 }
 
@@ -198,6 +199,15 @@ func execute(repoRoot string, fixture Case) (string, error) {
 	case "basic-markdown-hash":
 		result, err := canonical.BasicMarkdownFingerprint(fixture.Input["markdown"])
 		return result, classified("MARKDOWN_INVALID", err)
+	case "persona-directory":
+		result, err := workspace.ParsePersonaDirectory(fixture.Input["name"])
+		if err != nil {
+			return "", classified("PERSONA_DIRECTORY_INVALID", err)
+		}
+		if prefix := fixture.Input["prefix"]; prefix != "" && result.Prefix != prefix {
+			return "", classified("PERSONA_DIRECTORY_INVALID", fmt.Errorf("persona directory prefix %q does not match bound persona prefix %q", result.Prefix, prefix))
+		}
+		return result.Prefix + "|" + result.Slug, nil
 	case "workspace-skeleton":
 		parent, err := os.MkdirTemp("", "legacy-autopsy-fixture-*")
 		if err != nil {

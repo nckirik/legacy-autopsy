@@ -14,14 +14,15 @@ import (
 	"github.com/nckirik/legacy-autopsy/internal/identity"
 	"github.com/nckirik/legacy-autopsy/internal/protocol"
 	"github.com/nckirik/legacy-autopsy/internal/routing"
+	"github.com/nckirik/legacy-autopsy/internal/workspace"
 )
 
 type Options struct {
-	Mode, SystemNamespace, Iteration, InvocationID, InvocationScope   string
-	Persona, PersonaPrefix, Cluster, Track, POV, POVFile              string
-	QuestionLedger, EnvironmentSnapshot, HumanHatchAction, Workspace  string
-	MaxTraversalDepth                                                 int
-	AdditionalReadTargets, AllowedWriteTargets, ForbiddenWriteTargets []string
+	Mode, SystemNamespace, Iteration, InvocationID, InvocationScope        string
+	Persona, PersonaPrefix, PersonaDirectory, Cluster, Track, POV, POVFile string
+	QuestionLedger, EnvironmentSnapshot, HumanHatchAction, Workspace       string
+	MaxTraversalDepth                                                      int
+	AdditionalReadTargets, AllowedWriteTargets, ForbiddenWriteTargets      []string
 }
 
 type FileBinding struct {
@@ -63,8 +64,15 @@ func Build(repoRoot string, model *protocol.Model, manifest *routing.Manifest, o
 		return nil, fmt.Errorf("at least one allowed and one forbidden write target are required")
 	}
 	if strictMode(options.Mode) {
-		if options.Persona == "" || options.Cluster == "" || options.Track == "" || options.POV == "" || options.POVFile == "" || options.MaxTraversalDepth <= 0 {
-			return nil, fmt.Errorf("%s requires persona, cluster, track, POV, POV file, and positive traversal-depth bindings", options.Mode)
+		if options.Persona == "" || options.PersonaPrefix == "" || options.PersonaDirectory == "" || options.Cluster == "" || options.Track == "" || options.POV == "" || options.POVFile == "" || options.MaxTraversalDepth <= 0 {
+			return nil, fmt.Errorf("%s requires persona, persona prefix, persona directory, cluster, track, POV, POV file, and positive traversal-depth bindings", options.Mode)
+		}
+		personaDirectory, err := workspace.ParsePersonaDirectory(options.PersonaDirectory)
+		if err != nil {
+			return nil, err
+		}
+		if personaDirectory.Prefix != options.PersonaPrefix {
+			return nil, fmt.Errorf("persona directory prefix %q does not match bound persona prefix %q", personaDirectory.Prefix, options.PersonaPrefix)
 		}
 	}
 	if options.Mode == "Human Hatch" && options.HumanHatchAction == "" {
@@ -87,8 +95,8 @@ func Build(repoRoot string, model *protocol.Model, manifest *routing.Manifest, o
 	if options.QuestionLedger != "" {
 		readTargets = append(readTargets, options.QuestionLedger)
 	}
-	if options.Persona != "" && strictMode(options.Mode) {
-		readTargets = append(readTargets, filepath.ToSlash(filepath.Join("personas", options.Persona, "UNMAPPED-DISCOVERY-BUFFER.md")))
+	if options.PersonaDirectory != "" && strictMode(options.Mode) {
+		readTargets = append(readTargets, filepath.ToSlash(filepath.Join("personas", options.PersonaDirectory, "UNMAPPED-DISCOVERY-BUFFER.md")))
 	}
 	readTargets = append(readTargets, options.AdditionalReadTargets...)
 	readTargets, err = normalizedUnique(readTargets)
@@ -206,7 +214,7 @@ func (p *Packet) Markdown() (string, error) {
 		{"Protocol Version", "v" + p.Protocol.Version}, {"System Namespace", p.Options.SystemNamespace}, {"Current Iteration", p.Options.Iteration},
 		{"Invocation ID", p.Options.InvocationID}, {"Invocation Mode", p.Options.Mode}, {"Human Hatch Action", valueOrNone(p.Options.HumanHatchAction)},
 		{"Invocation Scope", p.Options.InvocationScope}, {"Persona", valueOrNone(p.Options.Persona)}, {"Persona Prefix", valueOrNone(p.Options.PersonaPrefix)},
-		{"Entry Cluster", valueOrNone(p.Options.Cluster)}, {"Traversal Track", valueOrNone(p.Options.Track)}, {"Active POV", valueOrNone(p.Options.POV)},
+		{"Persona Directory", valueOrNone(p.Options.PersonaDirectory)}, {"Entry Cluster", valueOrNone(p.Options.Cluster)}, {"Traversal Track", valueOrNone(p.Options.Track)}, {"Active POV", valueOrNone(p.Options.POV)},
 		{"Active POV File", valueOrNone(p.Options.POVFile)}, {"Active Question Ledger", valueOrNone(p.Options.QuestionLedger)},
 		{"Environment/Snapshot", p.Options.EnvironmentSnapshot}, {"Max Traversal Depth", fmt.Sprintf("%d", p.Options.MaxTraversalDepth)},
 		{"Allowed Read Targets", joinOrNone(filePaths(p.Files))}, {"Allowed Write Targets", joinOrNone(p.Options.AllowedWriteTargets)},

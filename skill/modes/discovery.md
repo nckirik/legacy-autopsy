@@ -8,7 +8,7 @@ Perform one bounded, persona-driven forensic traversal without crossing the boun
 
 ## Required identity bindings
 
-Bind exactly one persona/prefix, concrete cluster, track, POV, POV file, environment/snapshot, root, and depth; bind zero or one ledger and enumerate the fixed sidecar bundle.
+Bind exactly one persona, prefix, canonical persona directory, concrete cluster, track, POV, POV file, environment/snapshot, root, and depth; bind zero or one ledger and enumerate the fixed sidecar bundle.
 
 ## Normative protocol sections
 

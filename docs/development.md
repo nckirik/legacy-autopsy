@@ -40,7 +40,7 @@ go run ./cmd/legacy-autopsy context \
   --workspace /tmp/autopsy/.extracted
 ```
 
-Reads are normalized and confined to the workspace, including symlink resolution; missing mandatory inputs fail closed. The emitted packet embeds exact workspace bytes and fingerprints plus routed protocol text. It is **not sanitized**: redirect it only to an operator-approved location outside the repository, review it before transmission, and never commit it or send it to an unapproved provider. Automatic transitive closure, stale comparison, mutation authorization, and semantic execution remain deferred.
+Reads are normalized and confined to the workspace, including symlink resolution; missing mandatory inputs fail closed. Strict persona-bound modes require `--persona`, `--persona-prefix`, and the canonical `--persona-directory <persona-prefix>-<persona-slug>` binding; the directory prefix must agree with `--persona-prefix`. The emitted packet embeds exact workspace bytes and fingerprints plus routed protocol text. It is **not sanitized**: redirect it only to an operator-approved location outside the repository, review it before transmission, and never commit it or send it to an unapproved provider. Automatic transitive closure, stale comparison, mutation authorization, and semantic execution remain deferred.
 
 ## Local checks
 

@@ -94,6 +94,42 @@
     "expected_diagnostic": "MARKDOWN_INVALID"
   },
   {
+    "id": "NEG-PERSONA-DIRECTORY-UNPREFIXED-001",
+    "protocol_section": "§2.1. Persona definition and purity",
+    "group": "persona-directory",
+    "operation": "persona-directory",
+    "input": { "name": "candidate-web" },
+    "expect_error": true,
+    "expected_diagnostic": "PERSONA_DIRECTORY_INVALID"
+  },
+  {
+    "id": "NEG-PERSONA-SLUG-001",
+    "protocol_section": "§2.1. Persona definition and purity",
+    "group": "persona-directory",
+    "operation": "persona-directory",
+    "input": { "name": "CND-Candidate-Web" },
+    "expect_error": true,
+    "expected_diagnostic": "PERSONA_DIRECTORY_INVALID"
+  },
+  {
+    "id": "NEG-PERSONA-DIRECTORY-PREFIX-MISMATCH-001",
+    "protocol_section": "§2.1. Persona definition and purity",
+    "group": "persona-directory",
+    "operation": "persona-directory",
+    "input": { "name": "CND-candidate-web", "prefix": "PAY" },
+    "expect_error": true,
+    "expected_diagnostic": "PERSONA_DIRECTORY_INVALID"
+  },
+  {
+    "id": "NEG-PERSONA-DIRECTORY-RESERVED-001",
+    "protocol_section": "§2.1. Persona definition and purity",
+    "group": "persona-directory",
+    "operation": "persona-directory",
+    "input": { "name": "_shared" },
+    "expect_error": true,
+    "expected_diagnostic": "PERSONA_DIRECTORY_INVALID"
+  },
+  {
     "id": "NEG-WORKSPACE-MISSING-001",
     "protocol_section": "§1.1. Plane 1 — Forensic Plane",
     "group": "workspace-skeleton",

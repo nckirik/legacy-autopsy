@@ -4,8 +4,8 @@
     "protocol_section": "§8.3. Invocation-mode enum and explicit multi-file modes",
     "group": "protocol-discovery",
     "operation": "protocol-version",
-    "input": { "required": "4.1" },
-    "expected": "4.1"
+    "input": { "required": "4.1.1" },
+    "expected": "4.1.1"
   },
   {
     "id": "POS-PROTOCOL-MODES-001",
@@ -57,6 +57,14 @@
     "operation": "basic-markdown-hash",
     "input": { "markdown": "# Title\r\n\r\nText   \r\n" },
     "expected": "sha256:594f76ae6a9c8fe694cef00288a9812fe09d58fecb75f3e619490684558c49e0"
+  },
+  {
+    "id": "POS-PERSONA-DIRECTORY-001",
+    "protocol_section": "§2.1. Persona definition and purity",
+    "group": "persona-directory",
+    "operation": "persona-directory",
+    "input": { "name": "CND-candidate-web", "prefix": "CND" },
+    "expected": "CND|candidate-web"
   },
   {
     "id": "POS-WORKSPACE-001",

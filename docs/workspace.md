@@ -15,6 +15,10 @@ Every service task and transaction must carry `autopsy_id`; every filesystem ope
 
 The exact tree belongs to `protocol.md`. Implementations should discover and validate it structurally rather than treating this guide as a schema.
 
+## Persona directories
+
+Each registered persona lives directly beneath `personas/` at the canonical basename `<persona-prefix>-<persona-slug>`, for example `personas/CND-candidate-web/`. The uppercase prefix is the existing canonical persona code; the lowercase slug is explicit registry data and is never derived from the display name. `personas/_shared/` remains the sole reserved non-persona directory. The current M0 workspace checker validates discovered persona basenames; complete registry agreement, persona purity, and atomic ownership moves remain later milestone work.
+
 ## History and checkpoints
 
 `0G-DECONSTRUCTION-STATE.md` is append-only invocation history. Every invocation appends its identity, loaded fingerprints, effects, blockers, and next required loads.

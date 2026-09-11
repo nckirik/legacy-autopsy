@@ -1,6 +1,6 @@
 # Protocol: Legacy System Deconstruction, Assurance, and Reconstruction
 
-**Version:** 4.1 (Canonical Reconstruction-Ready Edition)
+**Version:** 4.1.1 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative  
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
 
@@ -100,7 +100,7 @@ Partial synthesis MAY run before Exit A for bounded review. It is provisional an
       01-FRONTEND-QUESTIONS.md
       ... 05-WIRING-POV.md
       05-WIRING-QUESTIONS.md
-    {persona}/
+    {persona-prefix}-{persona-slug}/
       PERSONA-PROFILE.md
       01-FRONTEND-POV.md
       ... 05-WIRING-QUESTIONS.md
@@ -207,11 +207,11 @@ JSON, SQLite, graph, search, code-generation, or validator sidecars MAY be gener
 
 A **Persona** is a distinct human actor, service actor, external system, or autonomous runtime class entering through a concrete execution surface. Personas are selected by distinct physical or virtual entry paths, not merely business titles. Roles sharing identical routes, triggers, and paths SHOULD be grouped; materially different data visibility, authorization, or execution paths require distinct personas.
 
-**Persona Purity Invariant:** a `personas/{persona}/` directory MUST document only that persona's triggers, invocation paths, local UI/runtime state, and usage references. Shared components are linked, not copied as another persona's behavior. Purity does not imply exclusive component ownership.
+**Persona Purity Invariant:** a `personas/{persona-directory}/` directory MUST document only that persona's triggers, invocation paths, local UI/runtime state, and usage references. Shared components are linked, not copied as another persona's behavior. Purity does not imply exclusive component ownership.
 
-`personas/` is the sole container for persona-scoped and canonical shared forensic files. `personas/_shared/` is a reserved non-persona directory containing canonical shared POV and question records; the leading underscore provides deterministic visual/sort separation and does not create a persona. Persona directory slugs MUST NOT equal `_shared`, and persona discovery, counting, purity, and profile validation MUST ignore that reserved directory as a persona while still validating its shared-record ownership rules.
+`personas/` is the sole container for persona-scoped and canonical shared forensic files. `personas/_shared/` is a reserved non-persona directory containing canonical shared POV and question records; the leading underscore provides deterministic visual/sort separation and does not create a persona. Persona discovery, counting, purity, and profile validation MUST ignore that reserved directory as a persona while still validating its shared-record ownership rules.
 
-Every active persona MUST have one globally unique uppercase prefix matching `[A-Z][A-Z0-9]{1,7}`. Prefix uniqueness is validated in `0A-PREFLIGHT.md`; reuse is forbidden, including retired personas.
+Every active persona MUST have one globally unique uppercase prefix matching `[A-Z][A-Z0-9]{1,7}` and one explicit lowercase persona slug matching `[a-z0-9]+(?:-[a-z0-9]+)*`. Prefix uniqueness is validated in `0A-PREFLIGHT.md`; reuse is forbidden, including retired personas. The canonical persona-directory basename is exactly `<persona-prefix>-<persona-slug>` and therefore matches `[A-Z][A-Z0-9]{1,7}-[a-z0-9]+(?:-[a-z0-9]+)*`. The `0A` registry stores the persona slug explicitly; it MUST NOT be inferred from, transliterated from, or normalized from the display name. The basename prefix, registry prefix, invocation `Persona Prefix`, ticket prefix, and PRF owner coordinate MUST agree exactly. A non-reserved directory directly beneath `personas/` that is unregistered, malformed, or prefix-mismatched is invalid; `_shared` MUST NOT appear as a persona prefix, slug, basename, or registry row.
 
 ## 2.2. Canonical entry ownership
 
@@ -306,7 +306,7 @@ Observed legacy facts and target decisions MUST appear in separate fields and ha
 
 ## 2. Persona Registry
 
-| Persona | Prefix | Actor Class | Canonical Entry IDs | Scope Paths | Registry State |
+| Persona | Prefix | Persona Slug | Persona Directory | Actor Class | Canonical Entry IDs | Scope Paths | Registry State |
 
 ## 3. Entry-Point Clusters
 
@@ -349,7 +349,7 @@ Agents MAY append acquisition reference placeholders directly where Acquisition 
 
 ### Persona-local unmapped discovery buffer
 
-Each `personas/{persona}/UNMAPPED-DISCOVERY-BUFFER.md` entry has this schema:
+Each `personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md` entry has this schema:
 
 ```markdown
 ### [DSC-ID]
@@ -996,7 +996,7 @@ Persona-driven discovery is the only behavioral discovery path. There is no inde
 When a persona entry discovers a component:
 
 1. create the full canonical atomic record in the persona's `SHARED-STAGING-BUFFER.md` for later merge to `personas/_shared/XX-*-POV.md` with `[S-DISCOVERED]`;
-2. immediately create a persona invocation pointer in `personas/{persona}/XX-*-POV.md`.
+2. immediately create a persona invocation pointer in `personas/{persona-directory}/XX-*-POV.md`.
 
 ```markdown
 ### [CMP-ID] [Name] — Shared Reference
@@ -1009,7 +1009,7 @@ When a persona entry discovers a component:
 - **Canonical Staging Status:** [S-DISCOVERED] | [S-STAGING-VERIFIED]
 ```
 
-This ensures a persona manifest represents its full operational footprint without duplicating canonical behavior. If discovery reaches a coordinate that cannot yet be assigned to the bound persona/cluster/track/POV, the same transaction MUST create its `FRT` and append a `DSC` entry to `personas/{persona}/UNMAPPED-DISCOVERY-BUFFER.md`; the invocation MUST NOT write `0A` directly or continue through the unmapped boundary. Sequential Reconciliation MUST merge all such pending entries before any later Discovery invocation begins, as specified in §3.1.
+This ensures a persona manifest represents its full operational footprint without duplicating canonical behavior. If discovery reaches a coordinate that cannot yet be assigned to the bound persona/cluster/track/POV, the same transaction MUST create its `FRT` and append a `DSC` entry to `personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md`; the invocation MUST NOT write `0A` directly or continue through the unmapped boundary. Sequential Reconciliation MUST merge all such pending entries before any later Discovery invocation begins, as specified in §3.1.
 
 ## 6.3. Staging and promotion
 
@@ -1023,7 +1023,7 @@ Promotion eligibility requires all locks:
 4. **Coverage:** source units are `[C-COVERED]` for the promoted component.
 5. **Evidence:** no material `[E-UNKNOWN]` claim and no material unresolved redaction dependency.
 
-`Promotion Review` validates these locks but MUST NOT move or rewrite canonical blocks. It appends one `PROMOTION-REQUEST` to the bound persona's `personas/{persona}/SHARED-STAGING-BUFFER.md`, containing the CMP/cohort IDs, target persona/POV, source `_shared` paths and complete file/record fingerprints, lock-evidence IDs, review invocation, and requested `[S-PROMOTED]` state. Connected atomic components MAY be requested as one cohort only when their combined persona set is singular and all locks pass. Grouping containers never promote.
+`Promotion Review` validates these locks but MUST NOT move or rewrite canonical blocks. It appends one `PROMOTION-REQUEST` to the bound persona's `personas/{persona-directory}/SHARED-STAGING-BUFFER.md`, containing the CMP/cohort IDs, target persona/POV, source `_shared` paths and complete file/record fingerprints, lock-evidence IDs, review invocation, and requested `[S-PROMOTED]` state. Connected atomic components MAY be requested as one cohort only when their combined persona set is singular and all locks pass. Grouping containers never promote.
 
 Sequential Reconciliation is the sole promotion executor. It loads the complete request, canonical `personas/_shared/` source blocks, target persona POV files, indexes, traceability, and current lock inputs; applies the stale-check guard; revalidates every lock; and atomically moves each full canonical block from `_shared` to the target persona file, changes it to `[S-PROMOTED]`, updates or removes shared-reference pointers as applicable, updates indexes/traceability, consumes the request, and logs one transaction. A failed or stale revalidation performs no partial move and leaves a dispositioned request for renewed review. At no point may both source and target contain canonical copies, nor may neither contain one.
 
@@ -1152,7 +1152,7 @@ Allowed states: `Mapped-Atomic`, `Mapped-Container-Only` (temporary and non-clos
 Every invocation begins with:
 
 ```yaml
-Protocol Version: v4.1
+Protocol Version: v4.1.1
 System Namespace: [slug]
 Current Iteration: [canonical §10.6 token ALFA..ZULU]
 Invocation ID: [globally unique]
@@ -1164,6 +1164,8 @@ Human Hatch Action:
 Invocation Scope: [exact scope]
 Persona: [exactly one or None where mode permits]
 Persona Prefix: [unique prefix or None]
+Persona Directory:
+  [exact `<persona-prefix>-<persona-slug>` basename or None where mode permits]
 Entry Cluster: [exactly one concrete cluster or None where mode permits]
 Traversal Track: [Normal | Shadow/Conditional | Disabled | None]
 Active POV: [POV-1..POV-5 | None]
@@ -1181,7 +1183,7 @@ The executor MUST declare its intended semantic actions against this header befo
 
 ## 8.2. Strict single-scope modes
 
-`Discovery`, `Ticket Resolution`, and `Promotion Review` MUST bind exactly one persona, one concrete entry cluster, one traversal track, one POV, one POV file, and at most one question ledger. Each has one semantic POV target and optional one semantic ledger target. Its fixed transactional sidecar bundle MAY append only directly produced rows/blocks in `10`, `11`, `12`, `14`, `16`, persona-local shared buffers, `personas/{persona}/UNMAPPED-DISCOVERY-BUFFER.md`, and `0G`; these are assurance/audit side effects, not permission to change scope or another POV's semantics. Cross-POV outputs go to the bound ledger or persona-local buffers. An unmapped discovery MUST use the local buffer and requires Sequential Reconciliation before any later Discovery invocation.
+`Discovery`, `Ticket Resolution`, and `Promotion Review` MUST bind exactly one persona, its persona prefix, its canonical persona directory, one concrete entry cluster, one traversal track, one POV, one POV file, and at most one question ledger. Each has one semantic POV target and optional one semantic ledger target. Its fixed transactional sidecar bundle MAY append only directly produced rows/blocks in `10`, `11`, `12`, `14`, `16`, persona-local shared buffers, `personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md`, and `0G`; these are assurance/audit side effects, not permission to change scope or another POV's semantics. Cross-POV outputs go to the bound ledger or persona-local buffers. An unmapped discovery MUST use the local buffer and requires Sequential Reconciliation before any later Discovery invocation.
 
 A cluster containing wildcards MUST be expanded into concrete coordinates before a closing invocation. One invocation may traverse multiple atomic units reachable from its one concrete root, subject to depth/frontier rules, but may not switch roots, personas, POVs, or tracks.
 
@@ -1255,9 +1257,9 @@ Filesystem state is authoritative over conversation. Contradictions in files cre
 
 Personas MAY run concurrently in one named iteration. They MUST NOT write canonical shared POV or shared question files directly.
 
-- shared component discoveries go to `personas/{persona}/SHARED-STAGING-BUFFER.md`;
-- outbound shared questions go to `personas/{persona}/SHARED-QUESTIONS-BUFFER.md`;
-- unmapped coordinates go to `personas/{persona}/UNMAPPED-DISCOVERY-BUFFER.md` with a same-transaction `FRT`;
+- shared component discoveries go to `personas/{persona-directory}/SHARED-STAGING-BUFFER.md`;
+- outbound shared questions go to `personas/{persona-directory}/SHARED-QUESTIONS-BUFFER.md`;
+- unmapped coordinates go to `personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md` with a same-transaction `FRT`;
 - persona-owned invocation pointers may be written immediately;
 - depromotion is annotated `[R-DEPROMOTION-PENDING]` and deferred.
 
@@ -2451,16 +2453,17 @@ Migration is an explicit procedure identified by `Protocol-Migration Metadata` a
 5. Split routine families, modules, serialized containers, and aggregated blocks into universal atomic records; retain non-promotable grouping containers for navigation.
 6. Inventory and classify Normal, Shadow/Conditional, and Disabled tracks separately by environment/snapshot.
 7. Apply deterministic persona-prefix uniqueness and entry ownership; create shared-entry records where intentional.
-8. Re-run logical explosion and reconcile every normalized export coordinate.
-9. Convert block-level evidence into one-fact CLM records; split mixed evidence and derive `BLOCK-CONFIDENCE-RANK` plus `BLOCK-EVIDENCE-PROFILE` mechanically.
-10. Build traversal frontier records from depth boundaries, unresolved dependencies, missing exports, and old tickets.
-11. Convert direct human-required records into migration findings; reopen them at the static-investigation/probe stage unless an existing authorized exclusion proves the scope disposition.
-12. Populate traceability, reciprocal references, contradiction records, and coverage arithmetic.
-13. Mark old synthesis-like outputs provisional `[B-DRAFT]`; do not inherit confirmation.
-14. Expose all gaps before enabling strict validators. Never backfill evidence merely to satisfy a gate.
-15. Run Sequential and Cross-Reference Reconciliation, then evidence-backed sweep validation.
-16. Enable Composite Exit A validators only after denominator and frontier stabilization.
-17. Run Final Synthesis, handbook projection, human review, and Exit E.
+8. Move each legacy unprefixed persona directory to its registered `<persona-prefix>-<persona-slug>` basename as a proven path move; preserve record IDs and history, record the prior path as an alias, update every path reference and invocation target, and recompute affected file-transport fingerprints without changing prefix-derived PRF identity.
+9. Re-run logical explosion and reconcile every normalized export coordinate.
+10. Convert block-level evidence into one-fact CLM records; split mixed evidence and derive `BLOCK-CONFIDENCE-RANK` plus `BLOCK-EVIDENCE-PROFILE` mechanically.
+11. Build traversal frontier records from depth boundaries, unresolved dependencies, missing exports, and old tickets.
+12. Convert direct human-required records into migration findings; reopen them at the static-investigation/probe stage unless an existing authorized exclusion proves the scope disposition.
+13. Populate traceability, reciprocal references, contradiction records, and coverage arithmetic.
+14. Mark old synthesis-like outputs provisional `[B-DRAFT]`; do not inherit confirmation.
+15. Expose all gaps before enabling strict validators. Never backfill evidence merely to satisfy a gate.
+16. Run Sequential and Cross-Reference Reconciliation, then evidence-backed sweep validation.
+17. Enable Composite Exit A validators only after denominator and frontier stabilization.
+18. Run Final Synthesis, handbook projection, human review, and Exit E.
 
 ## 17.2. Migration guarantees
 
@@ -2483,7 +2486,8 @@ A migration MAY retain either filename only as a `NON-AUTHORITATIVE-COMPATIBILIT
 - [ ] Family/container blocks split into atomic records.
 - [ ] Normal, Shadow/Conditional, and Disabled tracks classified separately.
 - [ ] Capability-state environment matrices recorded.
-- [ ] Persona prefixes and canonical entry owners validated.
+- [ ] Persona prefixes, explicit persona slugs, canonical `<persona-prefix>-<persona-slug>` basenames, and canonical entry owners validated.
+- [ ] Legacy unprefixed persona directories migrated as proven path moves with aliases, updated references, and stable prefix-derived PRF identity.
 - [ ] DB-autonomous ownership applied deterministically.
 - [ ] Serialized coordinates fully exploded and reconciled.
 - [ ] Material evidence converted to single-fact CLMs.
@@ -2503,8 +2507,8 @@ A migration MAY retain either filename only as a `NON-AUTHORITATIVE-COMPATIBILIT
 - [ ] Identity headers enforce exact persona/cluster/track/POV/file/ledger isolation.
 - [ ] Executors propose semantic content only; the conforming runtime independently computes or reproduces every protocol-defined ID, canonical form, fingerprint, scope/stale check, FSM transition, count, completeness result, gate result, and package verification before commit.
 - [ ] Cold-resume results bind executor semantic assessment to runtime-recomputed identity/scope/write-right/stale checks and the mandatory `0G` no-mutation or commit entry.
-- [ ] Workspace discovery treats `personas/` as the sole persona container, validates canonical shared records under `personas/_shared/`, rejects `_shared` as a persona slug, and never counts the reserved directory as a persona.
-- [ ] Multi-file writes are restricted to enumerated modes and enforce the `personas/{persona}/` versus `personas/_shared/` ownership boundary.
+- [ ] Workspace discovery treats `personas/` as the sole persona container, validates each registered persona basename as exact `<persona-prefix>-<persona-slug>` with registry/header/ticket/PRF prefix agreement, validates canonical shared records under `personas/_shared/`, rejects malformed/unregistered persona directories and `_shared` as a prefix, slug, basename, or persona row, and never counts the reserved directory as a persona.
+- [ ] Multi-file writes are restricted to enumerated modes and enforce the `personas/{persona-directory}/` versus `personas/_shared/` ownership boundary.
 - [ ] ID generator, collision extension, aliases, versions, tombstones, and `COV`/`CND`/`MOD`/`PRF`/`HBK` types and canonical coordinates are implemented.
 - [ ] HBK paths and assigned anchors implement §4.1 exactly; renderer-generated heading anchors are never identity inputs.
 - [ ] The §4.1.2 canonical hash profile, per-record and file-transport fingerprints, exact carrier/envelope exclusions, and acyclic package hashes are implemented.
@@ -2541,7 +2545,7 @@ A migration MAY retain either filename only as a `NON-AUTHORITATIVE-COMPATIBILIT
 
 A conforming implementation MUST satisfy every applicable positive and negative case below and deterministically produce the specified acceptance or rejection. These are protocol-level behavioral cases, not required files or test-runner inputs; their storage, serialization, and execution mechanism are implementation-specific. Failure of an applicable case defeats a claim of protocol conformance. Workspace gate execution is governed independently by the authoritative inputs and gate checks defined elsewhere in this protocol:
 
-- **Persona workspace layout and ownership:** positive cases enumerate two persona directories beneath `personas/`, load canonical shared records only from `personas/_shared/`, route persona-local buffers beneath `personas/{persona}/`, preserve purity/shared-reference behavior, and execute an eligible promotion only through one atomic Sequential Reconciliation move; negative cases reject root-level persona directories, a root-level `shared/`, `_shared` as a persona slug or registry row, canonical shared records in a persona directory, persona records in `_shared`, writes that cross the ownership boundary, direct Promotion Review moves, non-atomic source/target updates, duplicate canonical copies, and a move that temporarily leaves no canonical copy.
+- **Persona workspace layout and ownership:** positive cases enumerate two registered persona directories beneath `personas/` whose basenames exactly equal `<persona-prefix>-<persona-slug>`, preserve explicit display names without deriving slugs, prove basename/registry/invocation/ticket/PRF prefix agreement, load canonical shared records only from `personas/_shared/`, route persona-local buffers beneath `personas/{persona-directory}/`, preserve purity/shared-reference behavior, migrate an unprefixed legacy directory as a proven path move without changing prefix-derived PRF identity, and execute an eligible promotion only through one atomic Sequential Reconciliation move; negative cases reject root-level persona directories, a root-level `shared/`, `_shared` as a prefix, slug, basename, or registry row, unprefixed or malformed persona basenames, uppercase or non-ASCII slugs, prefix mismatch, inferred/transliterated display-name slugs, unregistered persona directories, canonical shared records in a persona directory, persona records in `_shared`, writes that cross the ownership boundary, direct Promotion Review moves, non-atomic source/target updates, duplicate canonical copies, and a move that temporarily leaves no canonical copy.
 - **Context-qualified finite enums and registry completeness:** a bidirectional schema-to-registry case discovers every normative finite-choice bullet/table field and requires exactly one matching §5.1 path, while a registry-to-schema case rejects orphan or duplicate paths. Positive value cases exercise every declared path, including every status-bearing table column, all block-confidence/evidence-profile contexts, schema-local synthesis choices, and the coupled traversal `Applicability`/`Status` `N/A` case; negative cases reject label-only dispatch, wrong-family tokens at every path, prose mixed with tokens, unbracketed prefix tokens, bracketed unprefixed literals, `N/A` without `Not-Applicable`, an R-token with `Not-Applicable`, invalid table-cell tokens, a schema enum omitted from the registry, and an undeclared/orphan registry path.
 - **Invocation ownership and cold resume:** positive cases bind executor-proposed semantic actions/blockers to runtime-recomputed identity, mode, scope, loaded fingerprints, stale state, write rights, cold-resume fingerprint, and the same transaction's `0G` entry; negative cases reject a missing summary, executor-authored deterministic digest that does not reproduce, stale checkpoint, changed target, forbidden intended write, omitted required load, mixed snapshot, mismatched check fingerprint, mutation after a failed check, and interrupted work resumed without a fresh check.
 - **Ticket escalation and honest unresolved coverage:** positive cases exercise `RUNTIME-REQUIRED` through `[T-PROBE-REQUIRED]` and every legal non-runtime escalation reason from `[T-OPEN]`/`[T-FOLLOW-UP]`, terminalize only through authorized Human Hatch, preserve linked `[C-GAP]`/`[C-PARTIAL]`, permit unaffected work and bounded partial synthesis, and distinguish a later exact approved exclusion; negative cases reject direct `[T-HUMAN-REQUIRED]`, `None` reason, missing bounded static investigation, runtime escalation without probe feasibility, non-runtime escalation through a fake probe state, reason/assessment mismatch, unauthorized reviewer, and human-required counted as covered or silently excluded.
@@ -2586,7 +2590,7 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 | `0E-INDEX.md`                                           | forensic cross-reference index                                  | Forensic                  | Sequential/Cross-Reference Reconciliation                                                                                    | isolated POV direct global edits                             |
 | `0G` / `0H`                                             | append-only history / derived checkpoint                        | Forensic                  | every mode appends `0G`; conforming implementation derives `0H`                                                              | no overwrite of `0G`                                         |
 | `personas/_shared/01–05 POV`                            | canonical shared atomic components                              | Forensic                  | Sequential Reconciliation for merge, promotion, and depromotion transactions                                                 | parallel persona agents; Promotion Review direct moves       |
-| `personas/{persona}/01–05 POV`                          | persona invocation references/promoted atoms                    | Forensic                  | bound isolated POV for references; Sequential Reconciliation for atomic promotion/depromotion                                | other personas; Promotion Review direct moves                |
+| `personas/{persona-directory}/01–05 POV`                | persona invocation references/promoted atoms                    | Forensic                  | bound isolated POV for references; Sequential Reconciliation for atomic promotion/depromotion                                | other personas; Promotion Review direct moves                |
 | persona-local staging/question/unmapped buffers         | concurrent handoff and unmapped discovery                       | Forensic workflow         | bound isolated POV appends; Sequential Reconciliation consumes atomically                                                    | direct `personas/_shared/` or `0A` mutation by isolated POVs |
 | `*-QUESTIONS.md`                                        | ticket FSM                                                      | Forensic                  | bound origin/target rights; Sequential Reconciliation for buffered creation                                                  | Synthesis direct writes                                      |
 | normalized maps / probes                                | navigation / runtime telemetry                                  | Forensic                  | Acquisition / operator-controlled probe ingestion path                                                                       | behavioral synthesis as source authority                     |
@@ -2612,4 +2616,4 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 
 ---
 
-**End of Canonical Deconstruction Protocol v4.1**
+**End of Canonical Deconstruction Protocol v4.1.1**

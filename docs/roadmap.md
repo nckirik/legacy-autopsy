@@ -6,6 +6,10 @@ Milestones are incremental and dependency-ordered completion criteria. M0 intent
 
 The application should become useful and observable while deeper protocol automation is still being implemented. The early runtime milestone therefore follows the foundational protocol, identity, and workspace mechanics; it does not claim semantic execution or gate support before their validators exist.
 
+## Resolved protocol issue: persona path/prefix drift
+
+The original persona layout used an unconstrained persona slug while separately assigning each persona a globally unique canonical prefix. That allowed filesystem ownership paths to drift from invocation, ticket, and profile identities. Protocol §2.1 now binds each registered persona to an explicit persona slug and the canonical basename `<persona-prefix>-<persona-slug>` while preserving `personas/_shared/` unchanged. The M0 structural slice validates this basename grammar; complete registry-to-directory agreement, persona purity, and atomic ownership moves remain in M3/M7.
+
 ## M0 — Repository and skill foundation
 
 Establish authority messaging, contributor rules, architecture/development/workspace/conformance docs, the thin skill and 13 mode projections, provider-neutral Go module/CLI foundation, routing validation, basic deterministic primitives, workspace scaffolding, bootstrap fixtures, and honest CI reporting. This milestone is implemented; later milestones deepen protocol behavior and introduce the service/workbench repository shape.

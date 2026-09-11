@@ -75,3 +75,20 @@ func fixture(t *testing.T) (string, *protocol.Model, *routing.Manifest, Options)
 	options := Options{Mode: "Preflight", SystemNamespace: "example", Iteration: "ALFA", InvocationID: "INV-EXAMPLE", InvocationScope: "bootstrap", EnvironmentSnapshot: "dev/snapshot-1", Workspace: workspaceRoot, AllowedWriteTargets: []string{"0A-PREFLIGHT.md", "0G-DECONSTRUCTION-STATE.md"}, ForbiddenWriteTargets: []string{"all other workspace paths"}}
 	return root, model, manifest, options
 }
+
+func TestBuildRejectsPersonaDirectoryPrefixMismatch(t *testing.T) {
+	root, model, manifest, options := fixture(t)
+	options.Mode = "Discovery"
+	options.Persona = "Candidate-Web"
+	options.PersonaPrefix = "PAY"
+	options.PersonaDirectory = "CND-candidate-web"
+	options.Cluster = "CLU-EXAMPLE"
+	options.Track = "Normal"
+	options.POV = "POV-2"
+	options.POVFile = "personas/CND-candidate-web/02-BACKEND-POV.md"
+	options.MaxTraversalDepth = 3
+	options.AdditionalReadTargets = []string{"20-TRACEABILITY.md"}
+	if _, err := Build(root, model, manifest, options); err == nil {
+		t.Fatal("expected persona directory prefix mismatch")
+	}
+}

@@ -1,7 +1,7 @@
 {
   "authority": "NON-AUTHORITATIVE OPERATIONAL PROJECTION",
   "description": "Routing metadata only. protocol.md is normative and wins every conflict.",
-  "expected_protocol_version": "4.1",
+  "expected_protocol_version": "4.1.1",
   "projections": [
     {
       "mode": "Preflight",

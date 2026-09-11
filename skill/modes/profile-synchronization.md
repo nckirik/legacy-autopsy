@@ -8,7 +8,7 @@ Synchronize one persona profile semantic payload with its matching `0A` persona 
 
 ## Required identity bindings
 
-Bind exactly one persona, unique prefix, deterministic PRF ID, target profile, matching `0A` row, snapshot, and explicit read/write/forbidden targets.
+Bind exactly one persona, unique prefix, canonical persona directory, deterministic PRF ID, target profile, matching `0A` row, snapshot, and explicit read/write/forbidden targets.
 
 ## Normative protocol sections
 

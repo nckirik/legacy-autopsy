@@ -186,6 +186,7 @@ func contextCommand(args []string, stdout, stderr io.Writer) error {
 	set.StringVar(&options.InvocationScope, "scope", "", "exact invocation scope")
 	set.StringVar(&options.Persona, "persona", "", "persona")
 	set.StringVar(&options.PersonaPrefix, "persona-prefix", "", "persona prefix")
+	set.StringVar(&options.PersonaDirectory, "persona-directory", "", "canonical <persona-prefix>-<persona-slug> persona basename")
 	set.StringVar(&options.Cluster, "cluster", "", "entry cluster")
 	set.StringVar(&options.Track, "track", "", "traversal track")
 	set.StringVar(&options.POV, "pov", "", "active POV")

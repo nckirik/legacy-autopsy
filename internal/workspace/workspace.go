@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -35,6 +36,24 @@ var handbookFiles = []string{
 }
 
 var povNames = []string{"FRONTEND", "BACKEND", "BACKGROUND", "DATA", "WIRING"}
+
+var personaDirectoryPattern = regexp.MustCompile(`^([A-Z][A-Z0-9]{1,7})-([a-z0-9]+(?:-[a-z0-9]+)*)$`)
+
+type PersonaDirectory struct {
+	Prefix string
+	Slug   string
+}
+
+func ParsePersonaDirectory(name string) (PersonaDirectory, error) {
+	if name == "_shared" {
+		return PersonaDirectory{}, fmt.Errorf("%q is the reserved non-persona directory", name)
+	}
+	matches := personaDirectoryPattern.FindStringSubmatch(name)
+	if matches == nil {
+		return PersonaDirectory{}, fmt.Errorf("persona directory %q must match <persona-prefix>-<persona-slug>", name)
+	}
+	return PersonaDirectory{Prefix: matches[1], Slug: matches[2]}, nil
+}
 
 func RequiredFiles() []string {
 	var files []string
@@ -116,6 +135,27 @@ func Check(root string) error {
 		return fmt.Errorf("workspace root is not a directory: %s", root)
 	}
 	var problems []string
+	personaRoot := filepath.Join(root, "personas")
+	personaEntries, err := os.ReadDir(personaRoot)
+	if err != nil {
+		problems = append(problems, fmt.Sprintf("personas: %v", err))
+	} else {
+		for _, entry := range personaEntries {
+			if entry.Name() == "_shared" {
+				if !entry.IsDir() {
+					problems = append(problems, "personas/_shared: must be a directory")
+				}
+				continue
+			}
+			if !entry.IsDir() {
+				problems = append(problems, fmt.Sprintf("personas/%s: persona container entries must be directories", entry.Name()))
+				continue
+			}
+			if _, err := ParsePersonaDirectory(entry.Name()); err != nil {
+				problems = append(problems, fmt.Sprintf("personas/%s: %v", entry.Name(), err))
+			}
+		}
+	}
 	for _, rel := range RequiredFiles() {
 		path := filepath.Join(root, filepath.FromSlash(rel))
 		data, err := os.ReadFile(path)

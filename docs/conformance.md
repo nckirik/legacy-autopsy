@@ -2,7 +2,7 @@
 
 > Non-authoritative Legacy Autopsy implementation policy. Protocol §19.2 defines normative conformance cases and wins on conflict; this repository's JSON files, Go runner, CLI output, and CI workflow are one concrete test realization, not protocol prerequisites.
 
-Protocol v4.1 conformance requires satisfying every applicable positive and negative case in §19.2. A passing Legacy Autopsy unit test, file-presence check, bootstrap fixture, or unsupported/skipped family is not conformance and cannot establish a gate result.
+Protocol v4.1.1 conformance requires satisfying every applicable positive and negative case in §19.2. A passing Legacy Autopsy unit test, file-presence check, bootstrap fixture, or unsupported/skipped family is not conformance and cannot establish a gate result.
 
 ## Standalone protocol quality test
 
@@ -28,6 +28,7 @@ Positive and negative cases currently cover:
 - structural discovery of protocol version and invocation-mode count;
 - foundational 12-character typed IDs;
 - relative-path normalization and traversal rejection;
+- prefix-qualified persona-directory basename parsing and reserved `_shared` rejection;
 - the explicitly limited basic Markdown hash primitive;
 - generated workspace-skeleton structure.
 
@@ -50,4 +51,4 @@ A case's protocol heading is provenance, not a claim that the case implements th
 13. packaging schemas, gate completeness, evidence bindings, and deterministic ordering;
 14. the acyclic, snapshot-consistent Exit E sequence and reproducible final verification.
 
-The repository supports neither Exit A nor Exit E and makes no Protocol v4.1 conformance claim. A complete family becomes implemented only when its production behavior and all required positive/negative fixtures run successfully in CI.
+The repository supports neither Exit A nor Exit E and makes no Protocol v4.1.1 conformance claim. A complete family becomes implemented only when its production behavior and all required positive/negative fixtures run successfully in CI.
