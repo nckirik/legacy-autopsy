@@ -145,6 +145,7 @@ The initial graph representation is JSON under `.legacy-autopsy/atlas/*`; the in
 - `internal/reference/`: independent second VM over the same EIR for backend-conformance testing.
 - `internal/capabilities/`: deterministic capability set for the pilot; proposing providers and effect services are not implemented.
 - `internal/parity/`: test A (backend trace equality) and test B (protocol parity and oracle).
+- `internal/analysis/`: deterministic coverage metrics over the authored protocol classification; never validates classification judgement.
 
 No service, scheduler, executor, HTTP/event, graph, or UI package exists today. Planned runtime responsibilities remain conceptual until implemented under the [roadmap](roadmap.md). The service/application layer should orchestrate provider-neutral packages; the target CLI should remain a thin client rather than contain protocol logic.
 

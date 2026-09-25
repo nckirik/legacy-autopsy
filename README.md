@@ -162,6 +162,8 @@ Legacy Autopsy is not a generic code summarizer, automatic rewrite tool, moderni
 - [Execution IR](docs/eir.md): versioned interchange contract and canonical hashing.
 - [Execution semantics](docs/execution-semantics.md): step transactions, lifetimes, workflow, traces.
 - [Runtime architecture](docs/runtime-architecture.md): layers, capability taxonomy, backends, parity tests.
+- [Coverage profile](docs/coverage-profile.md): protocol classification, metrics, and context-assembly leakage.
+- [Capability contracts](docs/capability-contracts.md): deterministic capability boundaries and status.
 - [Migration audit](docs/migration-audit.md): dispositions, freeze policy, phases and gates.
 
 **Implementation and contribution**

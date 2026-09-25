@@ -63,20 +63,25 @@ conditions held: no grammar growth. One pilot finding corrected example data onl
 `BLOCK` target must resolve to a declared gate, so `fingerprint` became the declared
 gate `artifact-fingerprint` in the example and contract.
 
-### S2 — Coverage profile, capability contracts, context design — next
+### S2 — Coverage profile, capability contracts, context design — implemented
 
-- classify `protocol.md@4.1.2` in the CDL vocabulary (rule count, token share, gate and
-  transition ownership, `USES` density, capability-dependent rules, AGENT contracts,
-  free prose);
-- audit context-assembly leakage: can `EVIDENCE`/`USES` determine the mandatory
-  read/scope set, or is procedural harness logic required?
-- define deterministic capability contracts (identity, path normalization,
-  canonicalization, hashing, tables) with kind, version, and failure modes;
-- define proposing-provider provenance and the effect-service boundary.
+- classified all 148 headings (20 Parts + 128 sections) in
+  `analysis/protocol-classification.json`; deterministic coverage, vocabulary,
+  fingerprint, and metrics checks in `internal/analysis`, with
+  `analysis/metrics.golden.json`;
+- profile findings in [coverage-profile.md](coverage-profile.md): MACHINE 45.0% and
+  MIXED 47.0% of section lines, pure AGENT prose 8.0%; 98 artifact sections, 33 gate and
+  47 transition sections, 36 capability-dependent, 17 reuse-defining;
+- context-assembly leakage quantified (9 common + 50 mode-specific read targets, 3
+  strict modes, 26 iteration tokens, 221 sections cited by hand-maintained routing) with
+  the required §8 migration shape;
+- deterministic capability contracts defined in
+  [capability-contracts.md](capability-contracts.md) with kind, determinism,
+  inputs/outputs, failure modes, and current implementation status.
 
-Gate **G3**: coverage profile and leakage audit reviewed; capability contracts accepted.
+Gate **G3** passes via `go test ./internal/analysis/` plus review of the two documents.
 
-### S3 — Section-by-section protocol migration
+### S3 — Section-by-section protocol migration — next
 
 Migrate `protocol.cdl` in dependency order, each with compiler checks, VM support,
 reference-VM comparison, and dual-source drift against `protocol.md`:
@@ -309,8 +314,8 @@ the negative fixture from that defect is retained permanently.
 
 ## Current next milestone
 
-Proceed to S2: classify `protocol.md@4.1.2` in the CDL vocabulary, audit
-context-assembly leakage against EIR `EVIDENCE`/`USES`, and define the deterministic
-capability contracts (identity, path normalization, canonicalization, hashing, tables)
-per this roadmap and the [migration audit](migration-audit.md). Do not begin S3 or
-harness work until the S2 gates are reviewed.
+Proceed to S3 in the recommended order from the [coverage profile](coverage-profile.md):
+§4.1–4.1.2, then §8 (which retires the context-assembly leakage), §10, §3+§5, §15+§12,
+then remaining MIXED schema sections and AGENT-only guidance. Each migration section
+requires compiler checks, VM support where applicable, a reference-VM comparison, and
+dual-source drift against `protocol.md`.

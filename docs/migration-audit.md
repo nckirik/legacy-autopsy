@@ -23,42 +23,42 @@
 
 ## 2. Code and fixture disposition
 
-| Artifact | Role today | Disposition | Gate to change |
-|---|---|---|---|
-| `cmd/legacy-autopsy` | thin CLI entry | Keep; add spec/pilot wiring later | pilot |
-| `internal/cli` | command wiring | Rework (additive): spec compile/run commands; no protocol logic | pilot |
-| `internal/protocol` | protocol.md version/mode/section reader | Freeze; parity oracle and routing input | replaced by EIR when routing is generated |
-| `internal/markdown` | structural Markdown model | Keep as oracle parser; `cdl` gets its own parser | never shared implicitly; revisit after pilot |
-| `internal/routing` | skill/projection drift checks | Freeze; candidate retire when skill views are generated from EIR | expressibility check |
-| `internal/identity` | foundational typed IDs | Transitional freeze; becomes a deterministic capability with a declared contract | pilot capability work |
-| `internal/canonical` | basic Markdown hash (explicitly not §4.1.2) | Transitional freeze; superseded by stdlib canonicalization capability | never use for protocol-significant hashing |
-| `internal/workspace` | non-fabricating skeleton init/check | Keep; rebase onto runtime effect services and declared artifact schemas later | pilot review |
-| `internal/contextpacket` | bounded context from protocol sections | Keep with caution; **named leakage risk** (runtime-architecture §5); rework to resolve `EVIDENCE`/`USES` from EIR | pilot review |
-| `internal/fixtures` + `fixtures/` | 24 bootstrap cases | **Freeze as independent oracle**; only additive fixtures with unchanged existing cases | never rewritten by the pilot |
-| `skill/` (SKILL.md, modes.json, 13 modes) | hand-maintained routing projections | Freeze pending expressibility check; candidate for generation from EIR reference views | coverage profile + pilot |
-| `schemas/README.md` | placeholder | Keep; fold into docs rework | docs phase |
-| `tools/export-helper/` | operator acquisition tool | Keep; out of protocol core; review separately | later milestone |
-| `examples/minimal` | synthetic example | Keep; reuse as prompt-backend acceptance fixture | pilot |
-| `.github/workflows/ci.yml` | M0 checks | Update additively when pilot tests are stable (spec compile, test A/B) | pilot completion |
-| `AGENTS.md` | contribution rules | Update after pilot review with `cdl`/runtime boundaries and oracle-freeze rules | post-pilot |
+| Artifact                                  | Role today                                  | Disposition                                                                                                       | Gate to change                               |
+| ----------------------------------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `cmd/legacy-autopsy`                      | thin CLI entry                              | Keep; add spec/pilot wiring later                                                                                 | pilot                                        |
+| `internal/cli`                            | command wiring                              | Rework (additive): spec compile/run commands; no protocol logic                                                   | pilot                                        |
+| `internal/protocol`                       | protocol.md version/mode/section reader     | Freeze; parity oracle and routing input                                                                           | replaced by EIR when routing is generated    |
+| `internal/markdown`                       | structural Markdown model                   | Keep as oracle parser; `cdl` gets its own parser                                                                  | never shared implicitly; revisit after pilot |
+| `internal/routing`                        | skill/projection drift checks               | Freeze; candidate retire when skill views are generated from EIR                                                  | expressibility check                         |
+| `internal/identity`                       | foundational typed IDs                      | Transitional freeze; becomes a deterministic capability with a declared contract                                  | pilot capability work                        |
+| `internal/canonical`                      | basic Markdown hash (explicitly not §4.1.2) | Transitional freeze; superseded by stdlib canonicalization capability                                             | never use for protocol-significant hashing   |
+| `internal/workspace`                      | non-fabricating skeleton init/check         | Keep; rebase onto runtime effect services and declared artifact schemas later                                     | pilot review                                 |
+| `internal/contextpacket`                  | bounded context from protocol sections      | Keep with caution; **named leakage risk** (runtime-architecture §5); rework to resolve `EVIDENCE`/`USES` from EIR | pilot review                                 |
+| `internal/fixtures` + `fixtures/`         | 24 bootstrap cases                          | **Freeze as independent oracle**; only additive fixtures with unchanged existing cases                            | never rewritten by the pilot                 |
+| `skill/` (SKILL.md, modes.json, 13 modes) | hand-maintained routing projections         | Freeze pending expressibility check; candidate for generation from EIR reference views                            | coverage profile + pilot                     |
+| `schemas/README.md`                       | placeholder                                 | Keep; fold into docs rework                                                                                       | docs phase                                   |
+| `tools/export-helper/`                    | operator acquisition tool                   | Keep; out of protocol core; review separately                                                                     | later milestone                              |
+| `examples/minimal`                        | synthetic example                           | Keep; reuse as prompt-backend acceptance fixture                                                                  | pilot                                        |
+| `.github/workflows/ci.yml`                | M0 checks                                   | Update additively when pilot tests are stable (spec compile, test A/B)                                            | pilot completion                             |
+| `AGENTS.md`                               | contribution rules                          | Update after pilot review with `cdl`/runtime boundaries and oracle-freeze rules                                   | post-pilot                                   |
 
 ## 3. Documentation disposition
 
-| Doc | Status | Disposition |
-|---|---|---|
-| `protocol.md` | sole normative authority | Keep frozen except demonstrated defects; generated later from `protocol.cdl` |
-| `docs/cdl.md` | frozen source-language contract | Canonical; change only via errata or a new version |
-| `docs/execution-semantics.md`, `docs/eir.md`, `docs/runtime-architecture.md` | design contracts (below language) | Maintain through pilot findings |
-| `docs/spec-language-substrate-v0/v1/v2.md` | superseded drafts | Deleted; [`cdl.md`](cdl.md) is the frozen contract |
-| `docs/architecture.md` | stale M0 boundary description | Rework to the layered architecture after pilot |
-| `docs/conformance.md` | fixture contract + standalone quality test | Rework additively: add spec/backend parity (tests A/B), keep the oracle description |
-| `docs/development.md` | build/check workflow | Update additively with `cdl`, runtime, pilot commands |
-| `docs/roadmap.md` | milestone plan predating the DSL | Rework: add an explicit Spec track and re-sequence around pilot evidence |
-| `docs/runtime.md` | target service/workbench design | Align with runtime-architecture (MACHINE VM, AGENT scheduler); keep as product design |
-| `docs/skill-runtime.md` | skill-first stage | Review against the interpreter model; likely partially stale |
-| `docs/workspace.md` | workspace semantics | Keep; align with effect services and invalidation rules |
-| `README.md` | visitor entry point | Rework after pilot to describe the spec track and current status honestly |
-| `kiro-session-*.zip` | untracked private session archive | Gitignored; never commit. File still sits in the tree until an archive location is chosen |
+| Doc                                                                          | Status                                     | Disposition                                                                               |
+| ---------------------------------------------------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| `protocol.md`                                                                | sole normative authority                   | Keep frozen except demonstrated defects; generated later from `protocol.cdl`              |
+| `docs/cdl.md`                                                                | frozen source-language contract            | Canonical; change only via errata or a new version                                        |
+| `docs/execution-semantics.md`, `docs/eir.md`, `docs/runtime-architecture.md` | design contracts (below language)          | Maintain through pilot findings                                                           |
+| `docs/spec-language-substrate-v0/v1/v2.md`                                   | superseded drafts                          | Deleted; [`cdl.md`](cdl.md) is the frozen contract                                        |
+| `docs/architecture.md`                                                       | stale M0 boundary description              | Rework to the layered architecture after pilot                                            |
+| `docs/conformance.md`                                                        | fixture contract + standalone quality test | Rework additively: add spec/backend parity (tests A/B), keep the oracle description       |
+| `docs/development.md`                                                        | build/check workflow                       | Update additively with `cdl`, runtime, pilot commands                                     |
+| `docs/roadmap.md`                                                            | milestone plan predating the DSL           | Rework: add an explicit Spec track and re-sequence around pilot evidence                  |
+| `docs/runtime.md`                                                            | target service/workbench design            | Align with runtime-architecture (MACHINE VM, AGENT scheduler); keep as product design     |
+| `docs/skill-runtime.md`                                                      | skill-first stage                          | Review against the interpreter model; likely partially stale                              |
+| `docs/workspace.md`                                                          | workspace semantics                        | Keep; align with effect services and invalidation rules                                   |
+| `README.md`                                                                  | visitor entry point                        | Rework after pilot to describe the spec track and current status honestly                 |
+| `kiro-session-*.zip`                                                         | untracked private session archive          | Gitignored; never commit. File still sits in the tree until an archive location is chosen |
 
 ### Docs authority map (target)
 
@@ -93,7 +93,8 @@ Phase 1  pilot (additive): cdl subset, runtime VM, reference VM,
          prompt backend, tests A/B for §7.7                               [done]
 Phase 2  pilot review: leakage audit (context assembly), capability extraction
          decisions (identity/canonical), skill-generation decision, docs
-         consolidation into history + authority map                       [next]
+         consolidation into history + authority map
+         [mostly done: skill-generation decision still open]              [next]
 Phase 3  migration: section-by-section protocol.cdl growth, dual-source drift
          checks, roadmap/README/CI rewrite
 Phase 4  crown: parity report accepted by human; DSL becomes normative source;
@@ -104,7 +105,7 @@ Gates:
 
 - **G1** test A passes (native and reference VMs agree on trace hash for §7.7). [pass]
 - **G2** test B passes (EIR behavior matches `protocol.md@4.1.2`; 24 fixtures unchanged). [pass]
-- **G3** coverage profile produced with the context-assembly leakage category counted. [S2]
+- **G3** coverage profile produced with the context-assembly leakage category counted. [pass]
 - **G4** pilot review accepted before any frozen artifact is reworked or retired. [S2]
 
 ## 6. Deletion policy

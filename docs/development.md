@@ -75,7 +75,13 @@ The same checks are available as Go tests:
 ```sh
 go test ./cdl/               # compiler, renderer, ledger, negative fixtures
 go test ./internal/parity/   # test A (backend) and test B (protocol parity)
+go test ./internal/analysis/ # classification coverage and metrics golden
 ```
+
+S2 analysis lives in [`coverage-profile.md`](coverage-profile.md) and
+[`capability-contracts.md`](capability-contracts.md). Regenerate the metrics golden with
+`go test ./internal/analysis/ -update`; never hand-edit
+[`analysis/metrics.golden.json`](../analysis/metrics.golden.json).
 
 Generated pilot assets are golden-checked and must be regenerated deterministically,
 never hand-edited:
