@@ -58,7 +58,7 @@
 | `docs/skill-runtime.md` | skill-first stage | Review against the interpreter model; likely partially stale |
 | `docs/workspace.md` | workspace semantics | Keep; align with effect services and invalidation rules |
 | `README.md` | visitor entry point | Rework after pilot to describe the spec track and current status honestly |
-| `kiro-session-*.zip` | untracked private session archive | Move out of the tree and gitignore; never commit |
+| `kiro-session-*.zip` | untracked private session archive | Gitignored; never commit. File still sits in the tree until an archive location is chosen |
 
 ### Docs authority map (target)
 
@@ -88,12 +88,12 @@ to a frozen artifact must state which fixture outcomes were re-verified.
 ## 5. Migration phases and gates
 
 ```
-Phase 0  audit accepted; session archive moved; freeze policy in effect
+Phase 0  audit accepted; session archive gitignored; freeze policy in effect   [done]
 Phase 1  pilot (additive): cdl subset, runtime VM, reference VM,
-         prompt backend, tests A/B for §7.7
+         prompt backend, tests A/B for §7.7                               [done]
 Phase 2  pilot review: leakage audit (context assembly), capability extraction
          decisions (identity/canonical), skill-generation decision, docs
-         consolidation into history + authority map
+         consolidation into history + authority map                       [next]
 Phase 3  migration: section-by-section protocol.cdl growth, dual-source drift
          checks, roadmap/README/CI rewrite
 Phase 4  crown: parity report accepted by human; DSL becomes normative source;
@@ -102,10 +102,10 @@ Phase 4  crown: parity report accepted by human; DSL becomes normative source;
 
 Gates:
 
-- **G1** test A passes (native and reference VMs agree on trace hash for §7.7).
-- **G2** test B passes (EIR behavior matches `protocol.md@4.1.2`; 24 fixtures unchanged).
-- **G3** coverage profile produced with the context-assembly leakage category counted.
-- **G4** pilot review accepted before any frozen artifact is reworked or retired.
+- **G1** test A passes (native and reference VMs agree on trace hash for §7.7). [pass]
+- **G2** test B passes (EIR behavior matches `protocol.md@4.1.2`; 24 fixtures unchanged). [pass]
+- **G3** coverage profile produced with the context-assembly leakage category counted. [S2]
+- **G4** pilot review accepted before any frozen artifact is reworked or retired. [S2]
 
 ## 6. Deletion policy
 

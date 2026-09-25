@@ -10,7 +10,7 @@ Give a fresh capable coding harness only `protocol.md`, the target repository an
 
 This is a protocol-quality regression test, not by itself proof that an implementation is conforming or that a workspace has passed Exit A or Exit E.
 
-## Spec-track conformance (planned, not implemented)
+## Spec-track conformance (pilot implemented for §7.7)
 
 As `protocol.md` migrates to `protocol.cdl` and EIR, conformance separates into two
 orthogonal tests defined in the [runtime architecture](runtime-architecture.md) §6:
@@ -22,11 +22,17 @@ orthogonal tests defined in the [runtime architecture](runtime-architecture.md) 
   unchanged 24-fixture runner as an independent oracle. The oracle is never rewritten
   by the system it verifies.
 
-Additional Spec-track checks: deterministic EIR for identical source and versions
-([EIR](eir.md) §3), resolution and typing of every reference, capability closure at
-operation level, omission legality, and `ALLOWS`/lifetime checks. None of these proves
-semantic fidelity of AGENT clauses, review competence, Exit A/E, package/corpus
-acceptance, or autopsy success. No Spec-track check is implemented yet.
+The S1 pilot implements both tests for §7.7 plus compiler checks: deterministic EIR for
+identical source and versions ([EIR](eir.md) §3), resolution of every reference,
+operation-level capability closure, omission legality, `ALLOWS`/lifetime checks,
+identity-ledger verification, golden EIR/prompt bytes, and eight negative compiler
+fixtures. Run them with `go test ./cdl/ ./internal/parity/`, or reproduce individual
+results with `go run ./cmd/legacy-autopsy spec compile|render|run`.
+
+These checks prove implementation consistency, migration parity for one section, and
+structural derivation integrity only. They do not prove semantic fidelity of AGENT
+clauses, review competence, Protocol conformance, Exit A/E, package/corpus acceptance,
+or autopsy success.
 
 ## Legacy Autopsy fixture contract
 

@@ -55,16 +55,18 @@ language), [`eir.md`](eir.md), [`execution-semantics.md`](execution-semantics.md
 
 M0 provides a short-lived Go CLI, thin skill routing, structural Markdown foundations,
 initial identities/path handling, workspace scaffolding/checks, confined context
-assembly, bootstrap fixtures, and CI. The Spec track currently provides frozen
-documents only: CDL, EIR, execution semantics, runtime architecture, and the migration
-audit. No compiler, VM, reference VM, or prompt backend exists yet.
+assembly, bootstrap fixtures, and CI. The Spec track implements the S1 §7.7 pilot: the
+CDL compiler subset with canonical EIR, the native MACHINE VM, an independent reference
+VM, a prompt backend, backend/protocol parity tests, and additive CLI verbs
+(`spec compile|render|run`). Source-language and execution contracts plus the migration
+audit are checked in.
 
 The repository does not provide a long-lived service, multi-autopsy registry, scheduler,
 executor abstraction, browser UI, Atlas projection, questions inbox, semantic invocation
 execution, complete cold resume, protocol schemas, canonical hashing, gates,
 acquisition, synthesis, confirmations, handbook generation, or packaging. Current
 commands operate on one declared repository/workspace at a time and exit; that is not
-multi-autopsy orchestration.
+multi-autopsy orchestration. The pilot is not a protocol-conformance or Exit A/E claim.
 
 ## Target boundaries and flow
 
@@ -138,9 +140,11 @@ The initial graph representation is JSON under `.legacy-autopsy/atlas/*`; the in
 - `internal/contextpacket`: identity validation, confined reads, exact routed text, and packet rendering. Keep with caution: context-assembly leakage risk; rework to resolve EIR `EVIDENCE`/`USES`.
 - `internal/fixtures`: registered bootstrap cases and stable diagnostic matching. Frozen as the independent parity oracle.
 - `internal/cli`: current short-lived command wiring. Rework additively for Spec-track commands.
-- `cdl/` (planned): parser, resolver, typechecker, EIR emitter, renderers; must not import runtime/capability packages.
-- `internal/runtime/` (planned): MACHINE VM, step executor, state/artifact runtime, checkpointing.
-- `internal/capabilities/` (planned): deterministic capabilities, proposing providers, effect services.
+- `cdl/`: pilot parser, resolver/checks, identity ledger, canonical EIR, and template renderer; must not import runtime/capability packages (enforced by a test).
+- `internal/runtime/`: pilot native MACHINE VM, staged-effect executor, in-memory state, canonical trace.
+- `internal/reference/`: independent second VM over the same EIR for backend-conformance testing.
+- `internal/capabilities/`: deterministic capability set for the pilot; proposing providers and effect services are not implemented.
+- `internal/parity/`: test A (backend trace equality) and test B (protocol parity and oracle).
 
 No service, scheduler, executor, HTTP/event, graph, or UI package exists today. Planned runtime responsibilities remain conceptual until implemented under the [roadmap](roadmap.md). The service/application layer should orchestrate provider-neutral packages; the target CLI should remain a thin client rather than contain protocol logic.
 

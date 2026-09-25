@@ -22,6 +22,8 @@ go run ./cmd/legacy-autopsy validate fixtures
 
 The M0 fixture command always runs every registered bootstrap case and lists all complete Part 19.2 families as unsupported. The accepted `--implemented` flag is currently a redundant compatibility selector; public examples omit it.
 
+The additive Spec-track pilot verbs (`spec compile|render|run`) are documented under [Spec track](#spec-track). They cover only §7.7 and do not change the M0 boundary above.
+
 ### Context packets
 
 `context` is an advanced M0 command. It requires common §8.1 identity inputs, explicit allowed/forbidden write targets, and the exact mode. Repeat `--read-target` for mode-specific or transitive inputs. Strict single-scope modes additionally require `--persona`, `--cluster`, `--track`, `--pov`, `--pov-file`, and positive `--max-depth`; Human Hatch requires `--human-hatch-action`.
@@ -42,19 +44,48 @@ go run ./cmd/legacy-autopsy context \
 
 Reads are normalized and confined to the workspace, including symlink resolution; missing mandatory inputs fail closed. Strict persona-bound modes require `--persona`, `--persona-prefix`, and the canonical `--persona-directory <persona-prefix>-<persona-slug>` binding; the directory prefix must agree with `--persona-prefix`. The emitted packet embeds exact workspace bytes and fingerprints plus routed protocol text. It is **not sanitized**: redirect it only to an operator-approved location outside the repository, review it before transmission, and never commit it or send it to an unapproved provider. Automatic transitive closure, stale comparison, mutation authorization, and semantic execution remain deferred.
 
-## Spec track (contracts only)
+## Spec track
 
-The Spec track currently consists of design contracts; no compiler, VM, reference VM, or
-prompt backend exists, and no spec commands are available. The frozen source language is
-[`cdl.md`](cdl.md); execution contracts are
-[`eir.md`](eir.md), [`execution-semantics.md`](execution-semantics.md), and
+The S1 §7.7 pilot is implemented for exactly one section. The frozen source language is
+[`cdl.md`](cdl.md); execution contracts are [`eir.md`](eir.md),
+[`execution-semantics.md`](execution-semantics.md), and
 [`runtime-architecture.md`](runtime-architecture.md); sequencing is in the
 [roadmap](roadmap.md); migration and freeze rules are in the
-[migration audit](migration-audit.md).
+[migration audit](migration-audit.md). Everything outside §7.7 remains unimplemented, and
+the pilot is not a conformance or Exit A/E claim.
 
-Until the §7.7 pilot lands (roadmap S1), the M0 code, fixtures, and skill projections are
-frozen: bug fixes that preserve all fixture outcomes, additive pilot wiring, and no new
-protocol behavior or refactors. Do not document or add spec commands before they exist.
+```sh
+go run ./cmd/legacy-autopsy spec compile
+go run ./cmd/legacy-autopsy spec compile --golden examples/spec/golden/export-reconciliation.eir.json
+go run ./cmd/legacy-autopsy spec render
+go run ./cmd/legacy-autopsy spec render --out /tmp/export-reconciliation.light.prompt.md \
+  --generated-at 2026-09-25T00:00:00Z
+go run ./cmd/legacy-autopsy spec run --fixture examples/spec/fixtures/incomplete.json
+go run ./cmd/legacy-autopsy spec run --fixture examples/spec/fixtures/reconciled.json --json
+```
+
+`spec compile` validates the identity ledger and prints the source fingerprint and EIR
+hash; `spec render` renders one projection/channel with a provenance header; `spec run`
+executes the native VM over a synthetic fixture and prints the canonical trace and hash.
+All three default to the §7.7 source, ledger, and repository root, and accept
+`--source`/`--ledger`/`--repo`.
+
+The same checks are available as Go tests:
+
+```sh
+go test ./cdl/               # compiler, renderer, ledger, negative fixtures
+go test ./internal/parity/   # test A (backend) and test B (protocol parity)
+```
+
+Generated pilot assets are golden-checked and must be regenerated deterministically,
+never hand-edited:
+
+```sh
+go test ./cdl/ -run TestUpdateAssets -update
+```
+
+The M0 code, fixtures, and skill projections remain frozen: bug fixes that preserve all
+fixture outcomes, additive pilot wiring, and no new protocol behavior or refactors.
 
 ## Local checks
 

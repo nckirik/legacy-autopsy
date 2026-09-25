@@ -4,9 +4,9 @@ Legacy Autopsy is a **local-first reference/tooling implementation** for evidenc
 
 The project is built around [`protocol.md`](protocol.md), a standalone specification that can be used directly with any capable coding agent. Legacy Autopsy adds orchestration, deterministic validation, persistent workspace management, and—over time—an interactive workbench.
 
-> **Project status — M0 foundation + Spec-track contracts**
+> **Project status — M0 foundation + S1 spec pilot**
 >
-> The protocol is available and usable today. The tooling implements its M0 foundations: protocol/skill routing, an empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets, and bootstrap fixtures. The Spec track currently consists of frozen design contracts only (source language, EIR, execution semantics, runtime architecture, migration audit); no compiler, VM, reference VM, or prompt backend exists yet. The repository does **not** execute semantic deconstruction modes, prove Exit A or Exit E, or claim Protocol v4 conformance.
+> The protocol is available and usable today. The tooling implements its M0 foundations: protocol/skill routing, an empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets, and bootstrap fixtures. The Spec track implements the S1 §7.7 pilot: CDL source for one section, canonical EIR, a native MACHINE VM, an independent reference VM, a prompt backend, and backend/protocol parity tests. The repository does **not** execute semantic deconstruction modes, prove Exit A or Exit E, or claim Protocol v4 conformance.
 
 > **Normative authority**
 >
@@ -97,7 +97,7 @@ The current tooling is an **M0 foundation**, not an automated autopsy runner.
 Implemented bootstrap capabilities:
 
 - a thin skill/router with exactly 13 machine-validated mode projections;
-- a provider-neutral Go CLI with `doctor`, `init`, `protocol check`, `workspace check`, `id`, `context`, and implemented `validate` targets;
+- a provider-neutral Go CLI with `doctor`, `init`, `protocol check`, `workspace check`, `id`, `context`, implemented `validate` targets, and additive `spec compile|render|run` verbs for the §7.7 pilot;
 - a small structural Markdown model for headings, fields, code blocks, comments, tables, and bounded sections;
 - foundational typed IDs, normalized SRC-FILE paths, relative-path validation, and a deliberately limited basic Markdown hash primitive;
 - atomic creation and structural checking of a non-fabricated four-plane workspace skeleton;

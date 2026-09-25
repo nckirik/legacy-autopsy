@@ -37,7 +37,7 @@ discipline before any runtime code:
 
 No runtime code exists yet. No semantic, gate, or conformance claim is implied.
 
-### S1 — §7.7 end-to-end pilot — next
+### S1 — §7.7 end-to-end pilot — implemented
 
 Additive pilot for one section, proving the contracts are implementable:
 
@@ -45,20 +45,25 @@ Additive pilot for one section, proving the contracts are implementable:
   under `examples/spec/` until crown so they imply no authority; promoted to `protocol/`
   at S4);
 - `cdl/` compiler subset: parser, resolver/typechecker, capability closure,
-  omission checks, deterministic EIR with canonical hash (no runtime imports);
+  omission checks, ledger verification, deterministic EIR with canonical hash, and a
+  template-total prompt renderer (no runtime imports; enforced by a boundary test);
 - native VM subset: staged-effect transaction model, `SET`/`GUARD`/`BLOCK`/`IF`/
-  `FOR EACH`/`APPEND`, one deterministic `hash.sha256` capability, in-memory state;
-- reference VM consuming the same EIR;
+  `FOR EACH`/`APPEND`, deterministic `hash.sha256`, in-memory state;
+- independent reference VM consuming the same EIR;
 - one prompt backend rendering the §7.7 light projection;
-- negative fixtures from CDL §14 and the corrected §7.7 positive/negative pair;
-- test A (trace-hash equality) and test B (protocol parity against `protocol.md@4.1.2`
-  plus the unchanged 24-fixture oracle).
+- synthetic execution fixtures, EIR/prompt/ledger goldens, and eight compiler negative
+  fixtures including all six from CDL §14;
+- test A (backend trace-hash equality) and test B (protocol parity against
+  `protocol.md@4.1.2` plus the unchanged 24-fixture oracle);
+- additive CLI verbs `spec compile`, `spec render`, and `spec run` over the same
+  packages (no new semantic surface).
 
-Gate **G1**: reference and native VMs agree on canonical trace hash.
-Gate **G2**: EIR behavior matches `protocol.md@4.1.2`; existing fixtures unchanged.
-Stop conditions: CDL §14 — no grammar growth to escape a pilot failure.
+Gate **G1** and gate **G2** pass via `go test ./cdl/ ./internal/parity/`. Stop
+conditions held: no grammar growth. One pilot finding corrected example data only: a
+`BLOCK` target must resolve to a declared gate, so `fingerprint` became the declared
+gate `artifact-fingerprint` in the example and contract.
 
-### S2 — Coverage profile, capability contracts, context design
+### S2 — Coverage profile, capability contracts, context design — next
 
 - classify `protocol.md@4.1.2` in the CDL vocabulary (rule count, token share, gate and
   transition ownership, `USES` density, capability-dependent rules, AGENT contracts,
@@ -304,6 +309,8 @@ the negative fixture from that defect is retained permanently.
 
 ## Current next milestone
 
-Proceed to S1: the additive §7.7 pilot per this roadmap and the
-[migration audit](migration-audit.md). Do not begin S2, harness work, or document
-rework beyond the accepted audit until G1 and G2 pass.
+Proceed to S2: classify `protocol.md@4.1.2` in the CDL vocabulary, audit
+context-assembly leakage against EIR `EVIDENCE`/`USES`, and define the deterministic
+capability contracts (identity, path normalization, canonicalization, hashing, tables)
+per this roadmap and the [migration audit](migration-audit.md). Do not begin S3 or
+harness work until the S2 gates are reviewed.
