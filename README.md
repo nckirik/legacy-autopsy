@@ -4,9 +4,9 @@ Legacy Autopsy is a **local-first reference/tooling implementation** for evidenc
 
 The project is built around [`protocol.md`](protocol.md), a standalone specification that can be used directly with any capable coding agent. Legacy Autopsy adds orchestration, deterministic validation, persistent workspace management, and—over time—an interactive workbench.
 
-> **Project status — M0 foundation**
+> **Project status — M0 foundation + Spec-track contracts**
 >
-> The protocol is available and usable today. The Legacy Autopsy tooling currently implements only its M0 foundations: protocol/skill routing, an empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets, and bootstrap fixtures. It does **not** yet execute semantic deconstruction modes, prove Exit A or Exit E, or claim Protocol v4 conformance.
+> The protocol is available and usable today. The tooling implements its M0 foundations: protocol/skill routing, an empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets, and bootstrap fixtures. The Spec track currently consists of frozen design contracts only (source language, EIR, execution semantics, runtime architecture, migration audit); no compiler, VM, reference VM, or prompt backend exists yet. The repository does **not** execute semantic deconstruction modes, prove Exit A or Exit E, or claim Protocol v4 conformance.
 
 > **Normative authority**
 >
@@ -20,7 +20,7 @@ There are three intended ways to run the protocol. Only the first is usable toda
 2. **Legacy Autopsy skill with your own coding agent — planned for M6.** Invoke the skill from a compatible coding harness. Legacy Autopsy will attach the project, schedule bounded protocol tasks, assemble exact context, validate results, persist `.extracted/`, and surface questions while your agent performs semantic work. Complete Exit A–Exit E automation still depends on later milestones.
 3. **Legacy Autopsy UI — future, milestone not yet assigned.** Select a repository, start and monitor an autopsy, answer questions and tickets, inspect the Atlas and handbook, and retrieve the final bundle without manually driving an external agent session. M4/M6 intentionally keep semantic-work start and claim control outside the UI.
 
-All three paths use the same standalone protocol. The skill and UI add reliability, observability, and convenience; they do not redefine protocol behavior or authority. See the [roadmap](docs/roadmap.md) for the implementation sequence.
+All three paths use the same standalone protocol. The skill and UI add reliability, observability, and convenience; they do not redefine protocol behavior or authority. The [roadmap](docs/roadmap.md) runs two tracks: the Spec track (protocol ownership through `protocol.cdl`/EIR) and the harness track (runtime services and workbench).
 
 ### Try it today with your own coding agent
 
@@ -154,14 +154,22 @@ Legacy Autopsy is not a generic code summarizer, automatic rewrite tool, moderni
 - [`protocol.md`](protocol.md): standalone normative specification.
 - [Minimal example](examples/minimal/README.md): shortest implemented tooling flow.
 - [Workspace guide](docs/workspace.md): the four planes and initialization boundary.
-- [Roadmap](docs/roadmap.md): staged M0–M16 delivery.
+- [Roadmap](docs/roadmap.md): Spec track S0–S4 and harness track M0–M16.
+
+**Spec track (design contracts)**
+
+- [Frozen CDL contract](docs/cdl.md): Canonical Deconstruction Language grammar, ownership, channels, projections.
+- [Execution IR](docs/eir.md): versioned interchange contract and canonical hashing.
+- [Execution semantics](docs/execution-semantics.md): step transactions, lifetimes, workflow, traces.
+- [Runtime architecture](docs/runtime-architecture.md): layers, capability taxonomy, backends, parity tests.
+- [Migration audit](docs/migration-audit.md): dispositions, freeze policy, phases and gates.
 
 **Implementation and contribution**
 
 - [Development guide](docs/development.md): CLI usage and local checks.
 - [AGENTS.md](AGENTS.md): protocol-integrity and contribution rules.
 - [Skill entry point](skill/SKILL.md) and [skill guide](skill/README.md): non-authoritative invocation routing.
-- [Architecture](docs/architecture.md): current packages and target service boundaries.
+- [Architecture](docs/architecture.md): current packages, Spec-track layers, and target service boundaries.
 - [Runtime and workbench](docs/runtime.md): multi-autopsy orchestration, executors, Atlas, questions, and UI design.
 - [Conformance](docs/conformance.md) and [fixture corpus](fixtures/README.md): implementation cases versus normative completeness.
 - [Schema projections](schemas/README.md): current schema status and future boundary.

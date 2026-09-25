@@ -10,6 +10,24 @@ Give a fresh capable coding harness only `protocol.md`, the target repository an
 
 This is a protocol-quality regression test, not by itself proof that an implementation is conforming or that a workspace has passed Exit A or Exit E.
 
+## Spec-track conformance (planned, not implemented)
+
+As `protocol.md` migrates to `protocol.cdl` and EIR, conformance separates into two
+orthogonal tests defined in the [runtime architecture](runtime-architecture.md) §6:
+
+- **Test A — backend conformance:** the native runtime and the reference VM consume the
+  same EIR and inputs and must produce the same canonical execution trace hash
+  ([execution semantics](execution-semantics.md) §13).
+- **Test B — protocol parity:** EIR behavior must match `protocol.md@4.1.2` using the
+  unchanged 24-fixture runner as an independent oracle. The oracle is never rewritten
+  by the system it verifies.
+
+Additional Spec-track checks: deterministic EIR for identical source and versions
+([EIR](eir.md) §3), resolution and typing of every reference, capability closure at
+operation level, omission legality, and `ALLOWS`/lifetime checks. None of these proves
+semantic fidelity of AGENT clauses, review competence, Exit A/E, package/corpus
+acceptance, or autopsy success. No Spec-track check is implemented yet.
+
 ## Legacy Autopsy fixture contract
 
 Each implemented normative rule needs:

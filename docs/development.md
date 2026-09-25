@@ -42,6 +42,20 @@ go run ./cmd/legacy-autopsy context \
 
 Reads are normalized and confined to the workspace, including symlink resolution; missing mandatory inputs fail closed. Strict persona-bound modes require `--persona`, `--persona-prefix`, and the canonical `--persona-directory <persona-prefix>-<persona-slug>` binding; the directory prefix must agree with `--persona-prefix`. The emitted packet embeds exact workspace bytes and fingerprints plus routed protocol text. It is **not sanitized**: redirect it only to an operator-approved location outside the repository, review it before transmission, and never commit it or send it to an unapproved provider. Automatic transitive closure, stale comparison, mutation authorization, and semantic execution remain deferred.
 
+## Spec track (contracts only)
+
+The Spec track currently consists of design contracts; no compiler, VM, reference VM, or
+prompt backend exists, and no spec commands are available. The frozen source language is
+[`cdl.md`](cdl.md); execution contracts are
+[`eir.md`](eir.md), [`execution-semantics.md`](execution-semantics.md), and
+[`runtime-architecture.md`](runtime-architecture.md); sequencing is in the
+[roadmap](roadmap.md); migration and freeze rules are in the
+[migration audit](migration-audit.md).
+
+Until the §7.7 pilot lands (roadmap S1), the M0 code, fixtures, and skill projections are
+frozen: bug fixes that preserve all fixture outcomes, additive pilot wiring, and no new
+protocol behavior or refactors. Do not document or add spec commands before they exist.
+
 ## Local checks
 
 ```sh

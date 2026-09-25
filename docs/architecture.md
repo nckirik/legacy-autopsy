@@ -12,11 +12,59 @@ The service is the target runtime owner of scheduling, bounded context construct
 
 See [runtime.md](runtime.md) for the conceptual multi-autopsy, executor, Atlas, questions, and workbench design.
 
-## Current M0 boundary
+## Spec-track architecture
 
-M0 provides a short-lived Go CLI, thin skill routing, structural Markdown foundations, initial identities/path handling, workspace scaffolding/checks, confined context assembly, bootstrap fixtures, and CI. It does not provide a long-lived service, multi-autopsy registry, scheduler, executor abstraction, browser UI, Atlas projection, questions inbox, semantic invocation execution, complete cold resume, protocol schemas, canonical hashing, gates, acquisition, synthesis, confirmations, handbook generation, or packaging.
+The protocol is becoming a program: a source language compiled to a versioned Execution
+IR (EIR) that both native execution and prompt backends consume. The governing
+ownership split is:
 
-Current commands operate on one declared repository/workspace at a time and exit. That is not multi-autopsy orchestration.
+> **`protocol.cdl` defines what must happen. Legacy Autopsy defines how those semantics are executed in the native channel.**
+
+```
+protocol source (protocol.cdl)
+        │
+        ▼
+CDL language          grammar + static semantics + stdlib
+        │
+        ▼
+Execution IR (EIR)           versioned canonical interchange contract
+        │
+        ├────────────────────────┐
+        ▼                        ▼
+Native runtime (Legacy Autopsy)   Prompt backend (full / light)
+  MACHINE VM · AGENT scheduler      partial interpretation /
+  state/artifacts · effect services  rendering
+```
+
+- MACHINE steps are interpreted by the native VM; AGENT steps are dispatched and
+  structurally validated, never semantically judged by the runtime.
+- Authority is derived from the execution channel: native MACHINE results are
+  authoritative; prompt MACHINE results are proposed; AGENT outputs stay drafts until
+  human confirmation.
+- Deterministic work binds only deterministic capabilities; proposing providers feed
+  evidence, never authoritative values; effect services are runtime infrastructure.
+- The 24 bootstrap fixtures and their runner remain an independent parity oracle until
+  a parity report is accepted.
+
+See [`cdl.md`](cdl.md) (frozen source
+language), [`eir.md`](eir.md), [`execution-semantics.md`](execution-semantics.md), and
+[`runtime-architecture.md`](runtime-architecture.md). Migration and disposition are in
+[`migration-audit.md`](migration-audit.md); sequencing is in the [roadmap](roadmap.md).
+
+## Current state
+
+M0 provides a short-lived Go CLI, thin skill routing, structural Markdown foundations,
+initial identities/path handling, workspace scaffolding/checks, confined context
+assembly, bootstrap fixtures, and CI. The Spec track currently provides frozen
+documents only: CDL, EIR, execution semantics, runtime architecture, and the migration
+audit. No compiler, VM, reference VM, or prompt backend exists yet.
+
+The repository does not provide a long-lived service, multi-autopsy registry, scheduler,
+executor abstraction, browser UI, Atlas projection, questions inbox, semantic invocation
+execution, complete cold resume, protocol schemas, canonical hashing, gates,
+acquisition, synthesis, confirmations, handbook generation, or packaging. Current
+commands operate on one declared repository/workspace at a time and exit; that is not
+multi-autopsy orchestration.
 
 ## Target boundaries and flow
 
@@ -42,7 +90,7 @@ flowchart TB
 - **Execution channels:** the generic skill is first and initially exclusive; named harness adapters add managed runners second; direct-model execution is the final minimal method. No channel may authorize its own writes, commits, gates, or state transitions.
 - **Per-project configuration:** reserved `.legacy-autopsy/` operational files select adapters and limits without becoming protocol/evidence authority; `.extracted/` remains separate and authoritative.
 - **Workspace transaction manager:** revalidates scope, ownership, stale inputs, and implemented rules before atomically committing protocol effects.
-- **Deterministic core:** owns identity, parsing, scope, ordering, canonicalization, hashing, validation, and state transitions as implemented. It must independently reproduce executor-supplied deterministic values, persist protocol-bound cold-resume outcomes, enforce exact gate-check registries/evidence bindings and snapshot equality, and keep final verification receipts non-authoritative and outside the certified package.
+- **Deterministic core:** identity, parsing, scope, ordering, canonicalization, hashing, validation, and state transitions become EIR instructions and declared deterministic capabilities. The runtime must independently reproduce executor-supplied deterministic values, persist protocol-bound cold-resume outcomes, enforce exact gate-check registries/evidence bindings and snapshot equality, and keep final verification receipts non-authoritative and outside the certified package.
 - **Workspace:** `.extracted/` remains persistent authoritative protocol state; conversation memory is disposable.
 - **Projections:** Atlas, search, event acceleration, and UI caches are regenerable non-authoritative derivatives of committed records.
 - **Clients:** during the first stage, the browser and CLI observe, configure, administer, and present authorized human actions but cannot manually start or claim semantic work; the skill is the only semantic-work ingress.
@@ -79,17 +127,20 @@ The browser workbench will use Angular with Taiga UI. Atlas visualization and eg
 
 The initial graph representation is JSON under `.legacy-autopsy/atlas/*`; the initial local API is loopback HTTP with SSE updates. Embedded graph storage or WebSocket may replace/add to those choices only when measured needs justify them. Desktop packaging remains out of scope.
 
-## Current packages
+## Current and planned packages
 
-- `internal/markdown`: limited structural nodes and source spans used by M0 readers.
-- `internal/protocol`: protocol version, heading, mode registry, and exact section extraction.
-- `internal/routing`: manifest/projection drift checks.
-- `internal/identity`: foundational typed IDs and relative-path normalization; specialized identities remain unsupported.
-- `internal/canonical`: deliberately limited basic Markdown fingerprinting, not the §4.1.2 canonical profile.
-- `internal/workspace`: atomic skeleton initialization and early structural checks.
-- `internal/contextpacket`: identity validation, confined reads, exact routed text, and packet rendering; automatic closure/stale comparison remain deferred.
-- `internal/fixtures`: registered bootstrap cases and stable diagnostic matching.
-- `internal/cli`: current short-lived command wiring.
+- `internal/markdown`: limited structural nodes and source spans used by M0 readers. Oracle-only per the [migration audit](migration-audit.md).
+- `internal/protocol`: protocol version, heading, mode registry, and exact section extraction. Frozen as parity oracle.
+- `internal/routing`: manifest/projection drift checks. Frozen pending S3 generation decision.
+- `internal/identity`: foundational typed IDs and relative-path normalization; specialized identities remain unsupported. Transitional; becomes a declared capability.
+- `internal/canonical`: deliberately limited basic Markdown fingerprinting, not the §4.1.2 canonical profile. Transitional; never used for protocol-significant hashing.
+- `internal/workspace`: atomic skeleton initialization and early structural checks. Survives; rebased onto runtime effect services.
+- `internal/contextpacket`: identity validation, confined reads, exact routed text, and packet rendering. Keep with caution: context-assembly leakage risk; rework to resolve EIR `EVIDENCE`/`USES`.
+- `internal/fixtures`: registered bootstrap cases and stable diagnostic matching. Frozen as the independent parity oracle.
+- `internal/cli`: current short-lived command wiring. Rework additively for Spec-track commands.
+- `cdl/` (planned): parser, resolver, typechecker, EIR emitter, renderers; must not import runtime/capability packages.
+- `internal/runtime/` (planned): MACHINE VM, step executor, state/artifact runtime, checkpointing.
+- `internal/capabilities/` (planned): deterministic capabilities, proposing providers, effect services.
 
 No service, scheduler, executor, HTTP/event, graph, or UI package exists today. Planned runtime responsibilities remain conceptual until implemented under the [roadmap](roadmap.md). The service/application layer should orchestrate provider-neutral packages; the target CLI should remain a thin client rather than contain protocol logic.
 
