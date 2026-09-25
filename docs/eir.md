@@ -74,12 +74,12 @@ Execution traces use the same canonicalization; `trace-hash` is defined in
 
 EIR body sections:
 
-| Section | Contains |
-|---|---|
+| Section        | Contains                                                                                                                                                                                      |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `declarations` | types, values (with lifetime), states (`VALUES`/`INITIAL`/`ALLOWS`), fields, enums, artifacts, registries, tables, gates, workflow targets, capabilities (kind/version), rules and predicates |
-| `sections` | section identity, number, title, goal, uses/requires edges, ordered steps |
-| `steps` | id, owner, typed contract (evidence/produces/result/require for AGENT), ordered operations (MACHINE) |
-| `projections` | logical views, channels, overrides, omissions, supplied-by |
+| `sections`     | section identity, number, title, goal, uses/requires edges, ordered steps                                                                                                                     |
+| `steps`        | id, owner, typed contract (evidence/produces/result/require for AGENT), ordered operations (MACHINE)                                                                                          |
+| `projections`  | logical views, channels, overrides, omissions, supplied-by                                                                                                                                    |
 
 Resolution requirements: every reference is resolved and bound in EIR; unresolved
 references never reach EIR. Capability kinds are resolved so a MACHINE operation can
@@ -98,16 +98,16 @@ operators      == != < <= > >= + - AND OR NOT IN
 
 Effects and control:
 
-| Source (CDL) | EIR operation | Outcome impact |
-|---|---|---|
-| `SET x := expr` | `set` | staged effect; stutter-aware |
-| `GUARD expr` + `OTHERWISE BLOCK g,...` | `guard` + `block` | `blocked` commits block set |
-| `IF`/`ELSE` | `branch` | no step-level outcome |
-| `FOR EACH x IN reg` | `foreach` | iterates canonical order |
-| `APPEND row FOR x` | `append` | staged table effect |
-| `REQUIRES CAPABILITY c` (step declaration) | `requires` field | unavailable ⇒ `unsupported` |
-| `BLOCK g,...` | `block` | commits gate block |
-| `REOPEN`, `RETURN`, `LOOP`, `REQUEST` | `reopen`, `return`, `loop`, `request` | defined; not executed in pilot |
+| Source (CDL)                               | EIR operation                         | Outcome impact                 |
+| ------------------------------------------ | ------------------------------------- | ------------------------------ |
+| `SET x := expr`                            | `set`                                 | staged effect; stutter-aware   |
+| `GUARD expr` + `OTHERWISE BLOCK g,...`     | `guard` + `block`                     | `blocked` commits block set    |
+| `IF`/`ELSE`                                | `branch`                              | no step-level outcome          |
+| `FOR EACH x IN reg`                        | `foreach`                             | iterates canonical order       |
+| `APPEND row FOR x`                         | `append`                              | staged table effect            |
+| `REQUIRES CAPABILITY c` (step declaration) | `requires` field                      | unavailable ⇒ `unsupported`    |
+| `BLOCK g,...`                              | `block`                               | commits gate block             |
+| `REOPEN`, `RETURN`, `LOOP`, `REQUEST`      | `reopen`, `return`, `loop`, `request` | defined; not executed in pilot |
 
 AGENT steps serialize as their contract plus the verbatim `REQUIRE` text (which is
 normative content, not a comment).
@@ -133,13 +133,13 @@ perform no semantic filtering of their own; they render what EIR declares.
 
 ## 7. Versioning
 
-| Change | Bump |
-|---|---|
-| new EIR field/instruction, backward compatible | `eir-format` |
-| changed meaning of an existing instruction | `language` + `eir-format`, new fixture |
-| stdlib operation semantics | `stdlib` |
-| protocol behavior | `protocol` |
-| renderer wording only, golden fixtures updated | generator version |
+| Change                                         | Bump                                   |
+| ---------------------------------------------- | -------------------------------------- |
+| new EIR field/instruction, backward compatible | `eir-format`                           |
+| changed meaning of an existing instruction     | `language` + `eir-format`, new fixture |
+| stdlib operation semantics                     | `stdlib`                               |
+| protocol behavior                              | `protocol`                             |
+| renderer wording only, golden fixtures updated | generator version                      |
 
 Compatibility: a backend declares the EIR formats it consumes. Unknown format,
 language, or stdlib versions fail closed. EIR documents are reproducible and may be

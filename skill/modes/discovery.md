@@ -13,7 +13,7 @@ Bind exactly one persona, prefix, canonical persona directory, concrete cluster,
 ## Normative protocol sections
 
 - §2.3. `Five isolated POVs`; §2.4. `Traversal tracks`; §2.5. `Capability and runtime state`
-- §4.2. `Atomic unit rule`; §4.3. `Source inventory denominator — `10-SOURCE-INVENTORY.md``; §4.4. `Traversal frontier — `11-TRAVERSAL-FRONTIER.md``; §4.5. `Scope-specific source coverage — `16-SOURCE-COVERAGE.md``
+- §4.2. `Atomic unit rule`; §4.3. `Source inventory denominator — `10-SOURCE-INVENTORY.md```; §4.4. `Traversal frontier — `11-TRAVERSAL-FRONTIER.md```; §4.5. `Scope-specific source coverage — `16-SOURCE-COVERAGE.md``
 - §5.2. `Claim-level evidence — `12-CLAIM-EVIDENCE.md``; §6.1. `Atomic component schema`; §6.2. `Dual-entry discovery`
 - §8.1. `Resume identity header`; §8.2. `Strict single-scope modes`; §8.3. `Invocation-mode enum and explicit multi-file modes`; §8.4. `Mandatory read sets`; §8.5. `Cold resume check`; §8.7. `Stale checkpoint guard`; §8.8. `` `0G` invocation log ``
 - §10.1. `Evidence-backed `[R-SWEPT]``; §12.5. `Deterministic validation summary`

@@ -10,16 +10,16 @@
 
 The interpreter boundary only prevents the old coupling if the split is explicit.
 
-| CDL VM semantics (conformance-relevant) | Legacy Autopsy policy (harness) |
-|---|---|
-| MACHINE step evaluation and staged effect commit | Which worker executes the next step |
-| Guard outcome and declared blocking | How many AGENT jobs run concurrently |
-| Capability unavailability and cascade | Which model/backend handles an AGENT task |
-| State/value lifetime realization | Retry, backoff, and scheduling |
-| `BLOCK`, `REOPEN`, `RETURN`, `LOOP`, `REQUEST` meaning | UI presentation of blocked work |
-| Checkpoint contents and resume validation | Multi-autopsy registry and isolation |
-| Artifact invalidation versus deletion | Process/service lifecycle |
-| Canonical execution trace | Internal metrics and telemetry |
+| CDL VM semantics (conformance-relevant)                | Legacy Autopsy policy (harness)           |
+| ------------------------------------------------------ | ----------------------------------------- |
+| MACHINE step evaluation and staged effect commit       | Which worker executes the next step       |
+| Guard outcome and declared blocking                    | How many AGENT jobs run concurrently      |
+| Capability unavailability and cascade                  | Which model/backend handles an AGENT task |
+| State/value lifetime realization                       | Retry, backoff, and scheduling            |
+| `BLOCK`, `REOPEN`, `RETURN`, `LOOP`, `REQUEST` meaning | UI presentation of blocked work           |
+| Checkpoint contents and resume validation              | Multi-autopsy registry and isolation      |
+| Artifact invalidation versus deletion                  | Process/service lifecycle                 |
+| Canonical execution trace                              | Internal metrics and telemetry            |
 
 Policy may change behavior that is not protocol-observable. If a policy choice changes
 a protocol-visible result, it is a semantics defect, not a policy setting.
@@ -106,17 +106,17 @@ Structural validation failures are `failed` for the step and do not write drafts
   error and never reaches the VM.
 - `VALUE` and `STATE` lifetimes are realized as follows:
 
-| LIFETIME | Realization | Survives process restart |
-|---|---|---|
-| `step` | reserved for future use; same as `LET` | no |
-| `section` | in-memory store keyed by `(section, identifier)` | no; recomputed or unavailable |
-| `run` | in-memory store for the run/invocation sequence | no; recomputed or unavailable |
-| `checkpoint` | durable workspace record with producing step, inputs fingerprint, EIR hash | yes, after validation |
+| LIFETIME     | Realization                                                                | Survives process restart      |
+| ------------ | -------------------------------------------------------------------------- | ----------------------------- |
+| `step`       | reserved for future use; same as `LET`                                     | no                            |
+| `section`    | in-memory store keyed by `(section, identifier)`                           | no; recomputed or unavailable |
+| `run`        | in-memory store for the run/invocation sequence                            | no; recomputed or unavailable |
+| `checkpoint` | durable workspace record with producing step, inputs fingerprint, EIR hash | yes, after validation         |
 
 - Tables are canonical ordered collections; `APPEND`/`REMOVE` are staged like any other
   effect and commit atomically with the step.
 - AGENT-authored table fields are drafts. A MACHINE guard over draft state computes an
-  authoritative *computation* over unconfirmed semantic input; confirmation status is
+  authoritative _computation_ over unconfirmed semantic input; confirmation status is
   tracked separately and may block completion attestation. The pilot records
   confirmation status but does not implement the confirmation flow.
 - State transitions derive from committed `SET` effects only; staged-then-discarded
@@ -207,17 +207,17 @@ is deliberately narrower than correctness: traces record what the VM did, not wh
 
 ## 14. Pilot subset (exactly what is implemented for §7.7)
 
-| Instruction/feature | Pilot |
-|---|---|
-| `SET` to `STATE`/`VALUE`, stutter rule | yes |
-| `GUARD` + `OTHERWISE BLOCK` | yes |
-| `IF` / `ELSE` | yes |
-| `FOR EACH` / `APPEND` on a table | yes |
-| `REQUIRES`/`AVAILABLE` capability check | yes |
-| `HASH` deterministic capability | yes |
-| expression operators `== != < <= > >= + - AND OR NOT` | yes |
-| `COUNT` | yes |
-| AGENT step structural contract + draft record | stub dispatch, real validation |
-| `REOPEN`, `RETURN`, `LOOP`, `REQUEST` | defined, not executed |
-| invocations, leases, `0G`, confirmation flow | not implemented |
-| checkpoint/resume | in-memory serialization only |
+| Instruction/feature                                   | Pilot                          |
+| ----------------------------------------------------- | ------------------------------ |
+| `SET` to `STATE`/`VALUE`, stutter rule                | yes                            |
+| `GUARD` + `OTHERWISE BLOCK`                           | yes                            |
+| `IF` / `ELSE`                                         | yes                            |
+| `FOR EACH` / `APPEND` on a table                      | yes                            |
+| `REQUIRES`/`AVAILABLE` capability check               | yes                            |
+| `HASH` deterministic capability                       | yes                            |
+| expression operators `== != < <= > >= + - AND OR NOT` | yes                            |
+| `COUNT`                                               | yes                            |
+| AGENT step structural contract + draft record         | stub dispatch, real validation |
+| `REOPEN`, `RETURN`, `LOOP`, `REQUEST`                 | defined, not executed          |
+| invocations, leases, `0G`, confirmation flow          | not implemented                |
+| checkpoint/resume                                     | in-memory serialization only   |

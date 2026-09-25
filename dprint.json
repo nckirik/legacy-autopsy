@@ -1,0 +1,15 @@
+{
+  "markdown": {
+    "textWrap": "maintain"
+  },
+  "plugins": [
+    "https://plugins.dprint.dev/markdown-0.24.0.wasm"
+  ],
+  "excludes": [
+    "protocol.md",
+    "docs/cdl.md",
+    "fixtures/**",
+    "examples/spec/**",
+    "analysis/**"
+  ]
+}

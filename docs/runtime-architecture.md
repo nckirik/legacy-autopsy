@@ -56,25 +56,25 @@ implementable by shipping a tiny second runtime (test A below).
 
 ## 3. Components
 
-| Component | Owns | Must not |
-|---|---|---|
-| `cdl` parser/resolver/typechecker | source structure, references, types, capability closure, IDs | know about workspaces, agents, filesystem |
-| `cdl` compiler | deterministic EIR + hashes | embed runtime policy |
-| `cdl` projection machinery | deterministic renderers, templates, omission rules | generate wording freely |
-| MACHINE VM | step transactions, staged effects, guards, workflow instructions | validate semantic truth |
-| AGENT scheduler | context assembly, dispatch, structural contract validation, draft attestation | judge semantic correctness, mark confirmed |
-| state/artifact runtime | tables, values, states, checkpoint persistence, invalidation | reinterpret protocol rules |
-| effect services | atomic writes, transactions, append-only logs | behave as expression values |
-| capability registry | deterministic capabilities and proposing providers, versioned | let proposing providers feed authoritative results |
-| backends | native, prompt, reference | diverge from EIR semantics |
+| Component                         | Owns                                                                          | Must not                                           |
+| --------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------- |
+| `cdl` parser/resolver/typechecker | source structure, references, types, capability closure, IDs                  | know about workspaces, agents, filesystem          |
+| `cdl` compiler                    | deterministic EIR + hashes                                                    | embed runtime policy                               |
+| `cdl` projection machinery        | deterministic renderers, templates, omission rules                            | generate wording freely                            |
+| MACHINE VM                        | step transactions, staged effects, guards, workflow instructions              | validate semantic truth                            |
+| AGENT scheduler                   | context assembly, dispatch, structural contract validation, draft attestation | judge semantic correctness, mark confirmed         |
+| state/artifact runtime            | tables, values, states, checkpoint persistence, invalidation                  | reinterpret protocol rules                         |
+| effect services                   | atomic writes, transactions, append-only logs                                 | behave as expression values                        |
+| capability registry               | deterministic capabilities and proposing providers, versioned                 | let proposing providers feed authoritative results |
+| backends                          | native, prompt, reference                                                     | diverge from EIR semantics                         |
 
 ## 4. Capability taxonomy (hard boundary)
 
-| Kind | Examples | Eligibility |
-|---|---|---|
-| deterministic capability | `hash.sha256`, canonical serialization, exact parser/query over declared structures, deterministic filesystem metadata | eligible for MACHINE-authoritative computation |
-| proposing provider | source analyzer, AST explorer, heuristic matcher, search, LLM-assisted extraction | evidence/proposals only; may feed AGENT steps, never authoritative MACHINE values |
-| effect service | artifact write, state transaction, checkpoint, append log, filesystem mutation | runtime infrastructure applied at commit; never an expression value |
+| Kind                     | Examples                                                                                                               | Eligibility                                                                       |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| deterministic capability | `hash.sha256`, canonical serialization, exact parser/query over declared structures, deterministic filesystem metadata | eligible for MACHINE-authoritative computation                                    |
+| proposing provider       | source analyzer, AST explorer, heuristic matcher, search, LLM-assisted extraction                                      | evidence/proposals only; may feed AGENT steps, never authoritative MACHINE values |
+| effect service           | artifact write, state transaction, checkpoint, append log, filesystem mutation                                         | runtime infrastructure applied at commit; never an expression value               |
 
 Enforcement: **an authoritative MACHINE result requires deterministic provenance.** A
 proposing provider used in a MACHINE step is a registration/compile error, not a
@@ -104,7 +104,7 @@ coverage), and records a draft. It never evaluates a `REQUIRE` clause.
 **Named leakage audit category (from the architecture review):** can `EVIDENCE` +
 `USES` actually determine the mandatory context/read set? §7.7 does not stress this;
 cold resume, strict source boundaries, and scoped evidence selection will. If the
-harness needs substantial procedural logic to decide *which subset* of declared
+harness needs substantial procedural logic to decide _which subset_ of declared
 evidence an agent may see, protocol semantics have leaked into the harness. The
 coverage profile must count context-assembly logic separately.
 
@@ -161,16 +161,16 @@ directive; no surface is added.
 
 Migration mapping from today's tree:
 
-| Today | Disposition |
-|---|---|
-| `internal/protocol`, `internal/markdown`, `internal/routing` | keep as bootstrap/parity oracle; some outputs become generated by `cdl` |
-| `internal/canonical` | reconcile with the deterministic `hash`/canonicalization capabilities when implemented |
-| `internal/identity` | rework under declared `TYPE`/identity ledger; candidate for generated validators |
-| `internal/workspace`, `internal/contextpacket`, `internal/cli` | survive as runtime/host surfaces after boundary review |
-| `internal/fixtures` | frozen as the independent protocol-parity oracle during bootstrap |
-| `skill/` + 13 projections | candidate for derivation from EIR reference/routing views |
-| `fixtures/` 24 cases | frozen parity baseline |
-| `docs/` | audit; substrate collapses to one canonical doc + design history |
+| Today                                                          | Disposition                                                                            |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `internal/protocol`, `internal/markdown`, `internal/routing`   | keep as bootstrap/parity oracle; some outputs become generated by `cdl`                |
+| `internal/canonical`                                           | reconcile with the deterministic `hash`/canonicalization capabilities when implemented |
+| `internal/identity`                                            | rework under declared `TYPE`/identity ledger; candidate for generated validators       |
+| `internal/workspace`, `internal/contextpacket`, `internal/cli` | survive as runtime/host surfaces after boundary review                                 |
+| `internal/fixtures`                                            | frozen as the independent protocol-parity oracle during bootstrap                      |
+| `skill/` + 13 projections                                      | candidate for derivation from EIR reference/routing views                              |
+| `fixtures/` 24 cases                                           | frozen parity baseline                                                                 |
+| `docs/`                                                        | audit; substrate collapses to one canonical doc + design history                       |
 
 ## 8. Non-goals for the §7.7 pilot
 
