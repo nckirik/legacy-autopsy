@@ -6,6 +6,22 @@
 
 Go 1.24 or newer is required. The built CLI has no external runtime dependencies. Tests and fixtures are local and require no network, production credentials, or raw exports.
 
+Development tooling is pinned under `scripts/`. Install dprint with the official
+installer at the CI version; `scripts/format.sh` finds it on `PATH` or at
+`~/.dprint/bin/dprint`.
+
+```sh
+curl -fsSL https://dprint.dev/install.sh | sh -s 0.57.4   # pinned; ~/.dprint/bin
+
+scripts/format.sh           # gofmt -w + dprint fmt
+scripts/format.sh --check   # verify formatting only
+scripts/check.sh            # full local gate; mirrors CI
+scripts/goldens.sh          # regenerate CDL/analysis golden assets
+```
+
+The official installer pins by version but does not verify checksums; CI's
+`dprint/check` action verifies the release build attestation.
+
 ## CLI
 
 The commands below are the implemented M0 bootstrap interface. The target CLI becomes a headless observation/administration client to the planned local service, but it does not manually start or claim semantic work during the skill-first stage. Proposed service, adapter, question, and graph commands are intentionally absent until implemented. See the [runtime design](runtime.md) and [roadmap](roadmap.md).
@@ -93,10 +109,32 @@ go test ./cdl/ -run TestUpdateAssets -update
 The M0 code, fixtures, and skill projections remain frozen: bug fixes that preserve all
 fixture outcomes, additive pilot wiring, and no new protocol behavior or refactors.
 
-## Local checks
+## Markdown formatting
+
+Non-Go Markdown is formatted with [dprint](https://dprint.dev) using the pinned plugin in
+[`dprint.json`](../dprint.json). CI runs `dprint check`; formatting is deterministic and
+version-pinned. dprint is a development prerequisite only; it is not part of the Go build
+or runtime, and it never formats Go code.
 
 ```sh
-test -z "$(gofmt -l cmd internal)"
+scripts/format.sh           # format Go and Markdown
+scripts/format.sh --check   # verify only
+```
+
+`protocol.md` is excluded because its bytes are fingerprint-bound. `docs/cdl.md` uses
+intentional ASCII section rules, and `fixtures/`, `examples/spec/` (`.cdl` sources and
+generated goldens), and `analysis/` are source or generated data — they are regenerated,
+never reformatted. Go formatting stays with the Go toolchain.
+
+VS Code support is committed in `.vscode/`: the dprint extension is recommended and
+Markdown format-on-save is configured.
+
+## Local checks
+
+`scripts/check.sh` runs the full gate; the raw commands are:
+
+```sh
+scripts/format.sh --check
 go vet ./...
 go test ./...
 go build -o /tmp/legacy-autopsy ./cmd/legacy-autopsy
