@@ -44,13 +44,14 @@ func (e *diagnosticError) Error() string { return e.Code + ": " + e.Err.Error() 
 func (e *diagnosticError) Unwrap() error { return e.Err }
 
 var operationGroups = map[string]string{
-	"protocol-version":    "protocol-discovery",
-	"protocol-mode-count": "protocol-discovery",
-	"generate-id":         "identity",
-	"normalize-path":      "path-normalization",
-	"basic-markdown-hash": "basic-markdown-hash",
-	"persona-directory":   "persona-directory",
-	"workspace-skeleton":  "workspace-skeleton",
+	"protocol-version":      "protocol-discovery",
+	"protocol-mode-count":   "protocol-discovery",
+	"protocol-section-line": "protocol-discovery",
+	"generate-id":           "identity",
+	"normalize-path":        "path-normalization",
+	"basic-markdown-hash":   "basic-markdown-hash",
+	"persona-directory":     "persona-directory",
+	"workspace-skeleton":    "workspace-skeleton",
 }
 
 var unsupported = []string{
@@ -196,6 +197,27 @@ func execute(repoRoot string, fixture Case) (string, error) {
 			return "", &diagnosticError{Code: "PROTOCOL_MODE_COUNT_MISMATCH", Err: fmt.Errorf("required %d modes, found %d", required, len(model.Modes))}
 		}
 		return strconv.Itoa(len(model.Modes)), nil
+	case "protocol-section-line":
+		model, err := protocol.Load(filepath.Join(repoRoot, "protocol.md"))
+		if err != nil {
+			return "", err
+		}
+		text, err := model.SectionText(fixture.ProtocolSection)
+		if err != nil {
+			return "", err
+		}
+		required := fixture.Input["text"]
+		present := false
+		for _, line := range strings.Split(text, "\n") {
+			if strings.TrimSpace(line) == required {
+				present = true
+				break
+			}
+		}
+		if required == "" || !present {
+			return "", &diagnosticError{Code: "PROTOCOL_SECTION_TEXT_MISSING", Err: fmt.Errorf("section %s does not contain required line %q", fixture.ProtocolSection, required)}
+		}
+		return "present", nil
 	case "basic-markdown-hash":
 		result, err := canonical.BasicMarkdownFingerprint(fixture.Input["markdown"])
 		return result, classified("MARKDOWN_INVALID", err)

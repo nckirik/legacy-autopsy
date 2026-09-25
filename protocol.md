@@ -1,6 +1,6 @@
 # Protocol: Legacy System Deconstruction, Assurance, and Reconstruction
 
-**Version:** 4.1.1 (Canonical Reconstruction-Ready Edition)
+**Version:** 4.1.2 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative  
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
 
@@ -1141,7 +1141,7 @@ Every normalized coordinate has one row:
 
 Allowed states: `Mapped-Atomic`, `Mapped-Container-Only` (temporary and non-closing), `Approved-Excluded`, `Gap`, `Superseded`. A container mapping does not reconcile its children. `Mapped-Atomic + Approved-Excluded == Total Normalized Units` is required for 100% reconciliation.
 
-100% reconciliation blocks `[A-STRUCTURALLY-COMPLETE]`, `[R-SWEPT]`, and Exit A. Entity correlations never satisfy reconciliation.
+Less than 100% reconciliation blocks `[A-STRUCTURALLY-COMPLETE]`, `[R-SWEPT]`, and Exit A. Entity correlations never satisfy reconciliation.
 
 ---
 
@@ -1152,7 +1152,7 @@ Allowed states: `Mapped-Atomic`, `Mapped-Container-Only` (temporary and non-clos
 Every invocation begins with:
 
 ```yaml
-Protocol Version: v4.1.1
+Protocol Version: v4.1.2
 System Namespace: [slug]
 Current Iteration: [canonical §10.6 token ALFA..ZULU]
 Invocation ID: [globally unique]
@@ -2616,4 +2616,4 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 
 ---
 
-**End of Canonical Deconstruction Protocol v4.1.1**
+**End of Canonical Deconstruction Protocol v4.1.2**

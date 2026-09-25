@@ -9,6 +9,17 @@
     "expected_diagnostic": "PROTOCOL_VERSION_MISMATCH"
   },
   {
+    "id": "NEG-EXPORT-RECONCILIATION-INVERSION-001",
+    "protocol_section": "§7.7. Export reconciliation — `13-EXPORT-RECONCILIATION.md`",
+    "group": "protocol-discovery",
+    "operation": "protocol-section-line",
+    "input": {
+      "text": "100% reconciliation blocks `[A-STRUCTURALLY-COMPLETE]`, `[R-SWEPT]`, and Exit A. Entity correlations never satisfy reconciliation."
+    },
+    "expect_error": true,
+    "expected_diagnostic": "PROTOCOL_SECTION_TEXT_MISSING"
+  },
+  {
     "id": "NEG-PROTOCOL-MODES-001",
     "protocol_section": "§8.3. Invocation-mode enum and explicit multi-file modes",
     "group": "protocol-discovery",

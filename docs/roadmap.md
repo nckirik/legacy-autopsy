@@ -10,6 +10,10 @@ The application should become useful and observable while deeper protocol automa
 
 The original persona layout used an unconstrained persona slug while separately assigning each persona a globally unique canonical prefix. That allowed filesystem ownership paths to drift from invocation, ticket, and profile identities. Protocol §2.1 now binds each registered persona to an explicit persona slug and the canonical basename `<persona-prefix>-<persona-slug>` while preserving `personas/_shared/` unchanged. The M0 structural slice validates this basename grammar; complete registry-to-directory agreement, persona purity, and atomic ownership moves remain in M3/M7.
 
+## Resolved protocol defect record: inverted export-reconciliation blocker
+
+Protocol v4.1.1 §7.7 incorrectly said that 100% reconciliation blocks `[A-STRUCTURALLY-COMPLETE]`, `[R-SWEPT]`, and Exit A, contradicting its own equation and §7.5. The sole normative authority is now `protocol.md` v4.1.2, where §7.7 correctly states that less than 100% reconciliation blocks those states and gate. Deterministic reconciliation behavior remains deferred to the milestones that implement export, sweep, coverage, and gate validators.
+
 ## M0 — Repository and skill foundation
 
 Establish authority messaging, contributor rules, architecture/development/workspace/conformance docs, the thin skill and 13 mode projections, provider-neutral Go module/CLI foundation, routing validation, basic deterministic primitives, workspace scaffolding, bootstrap fixtures, and honest CI reporting. This milestone is implemented; later milestones deepen protocol behavior and introduce the service/workbench repository shape.
