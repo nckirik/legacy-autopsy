@@ -1,0 +1,35 @@
+{
+  "generator": "internal/analysis",
+  "source-fingerprint": "sha256:518c9e4922200ae6e8c01a1568aa448c9c28dcde3bf50559d0a82b4cd5fa267c",
+  "headings": 148,
+  "sections": 128,
+  "parts": 20,
+  "drivers": {
+    "AGENT": 8,
+    "CONTAINER": 17,
+    "MACHINE": 59,
+    "MIXED": 64
+  },
+  "tags": {
+    "artifact": 98,
+    "capability": 36,
+    "contract": 50,
+    "gate": 33,
+    "human": 14,
+    "policy": 5,
+    "reuse": 17,
+    "transition": 47
+  },
+  "section-lines": {
+    "AGENT": 229,
+    "MACHINE": 1294,
+    "MIXED": 1352
+  },
+  "section-line-share": {
+    "AGENT": 0.0797,
+    "MACHINE": 0.4501,
+    "MIXED": 0.4703
+  },
+  "structured-agent-sections": 42,
+  "free-prose-sections": 28
+}
