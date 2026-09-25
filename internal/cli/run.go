@@ -37,6 +37,8 @@ func Run(args []string, stdout, stderr io.Writer) int {
 		err = idCommand(args[1:], stdout, stderr)
 	case "context":
 		err = contextCommand(args[1:], stdout, stderr)
+	case "spec":
+		err = specCommand(args[1:], stdout, stderr)
 	case "validate":
 		err = validateCommand(args[1:], stdout, stderr)
 	case "help", "-h", "--help":
@@ -55,7 +57,7 @@ func Run(args []string, stdout, stderr io.Writer) int {
 }
 
 func usage(w io.Writer) {
-	fmt.Fprintln(w, "legacy-autopsy <doctor|init|protocol check|workspace check|id|context|validate fixtures|validate routing>")
+	fmt.Fprintln(w, "legacy-autopsy <doctor|init|protocol check|workspace check|id|context|spec compile|spec render|spec run|validate fixtures|validate routing>")
 }
 
 func flags(name string, stderr io.Writer) *flag.FlagSet {
@@ -83,7 +85,7 @@ func doctor(args []string, stdout, stderr io.Writer) error {
 		return err
 	}
 	fmt.Fprintf(stdout, "usable: protocol v%s, %d invocation modes, %s\n", model.Version, len(model.Modes), runtime.Version())
-	fmt.Fprintln(stdout, "supported: protocol routing, IDs, path normalization, workspace skeleton/check, bounded context packets, bootstrap fixtures")
+	fmt.Fprintln(stdout, "supported: protocol routing, IDs, path normalization, workspace skeleton/check, bounded context packets, bootstrap fixtures, spec pilot (compile/render/run for §7.7)")
 	fmt.Fprintln(stdout, "unsupported: full Protocol Part 19 conformance, Exit A, Exit E, acquisition, synthesis, confirmation, and packaging")
 	return nil
 }

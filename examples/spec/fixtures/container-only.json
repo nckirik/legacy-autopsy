@@ -1,0 +1,27 @@
+{
+  "capabilities": ["hash.sha256", "table.serialize"],
+  "registries": {
+    "normalized-units": [
+      {
+        "normalized-coordinate": "route-a",
+        "export-id": "E-1",
+        "src-id": "SRC-1",
+        "atomic-edge-id": "EDGE-1",
+        "exclusion-decision": "None"
+      },
+      {
+        "normalized-coordinate": "job-b",
+        "export-id": "E-2",
+        "src-id": "SRC-2",
+        "atomic-edge-id": "EDGE-2",
+        "exclusion-decision": "None"
+      }
+    ]
+  },
+  "agent": {
+    "reconcile.classify": {
+      "route-a": { "reconciliation-state": "Mapped-Container-Only", "clm": "CLM-1" },
+      "job-b": { "reconciliation-state": "Approved-Excluded", "clm": "CLM-2" }
+    }
+  }
+}

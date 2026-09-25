@@ -1,0 +1,176 @@
+GLOBAL DECLARATIONS
+  CAPABILITY hash.sha256
+  CAPABILITY table.serialize
+  REGISTRY normalized-units
+  ARTIFACT approved-evidence
+  RULE canonical-fingerprint
+  GATES A-STRUCTURALLY-COMPLETE, R-SWEPT, Exit-A, artifact-fingerprint, artifact-completeness
+  WORKFLOW-TARGET handoff, section-pass
+END
+
+SECTION export-reconciliation
+NUMBER 7.7
+TITLE "Export reconciliation"
+ARTIFACT 13-EXPORT-RECONCILIATION.md
+
+GOAL
+  Every normalized export coordinate has exactly one dispositioned row.
+END
+
+USES REGISTRY normalized-units
+USES RULE canonical-fingerprint
+REQUIRES CAPABILITY hash.sha256, table.serialize
+
+TYPE EXPORT-ID              := string
+TYPE COORDINATE             := path
+TYPE SRC-ID                 := id
+TYPE CMP-OR-POV5-EDGE-ID    := id
+TYPE EXCLUSION-DECISION     := string
+TYPE CLM-ID                 := id
+TYPE CLM-LIST               := set<CLM-ID>
+
+STATE reconciliation-complete
+  VALUES unknown, true, false
+  INITIAL unknown
+  ALLOWS
+    unknown -> true
+    unknown -> false
+    true    -> false
+    false   -> true
+  END
+END
+
+STATE fingerprint-status
+  VALUES unknown, computed, unsupported
+  INITIAL unknown
+  ALLOWS
+    unknown     -> computed
+    unknown     -> unsupported
+    computed    -> unsupported
+    unsupported -> computed
+  END
+END
+
+VALUE fingerprint
+  TYPE hash
+  LIFETIME section
+END
+
+ENUM RECONCILIATION-STATE
+  Mapped-Atomic
+  Mapped-Container-Only
+  Approved-Excluded
+  Gap
+  Superseded
+END
+
+FIELD RECONCILIATION-ROW
+  export-id              -> EXPORT-ID                required
+  normalized-coordinate  -> COORDINATE               required
+  src-id                 -> SRC-ID                   required
+  atomic-edge-id         -> CMP-OR-POV5-EDGE-ID      required
+  exclusion-decision     -> EXCLUSION-DECISION       required
+  reconciliation-state   -> RECONCILIATION-STATE     required
+  clm                    -> CLM-LIST                 optional
+END
+
+TABLE 13-EXPORT-RECONCILIATION
+  ROWS normalized-units
+  ROW-TYPE RECONCILIATION-ROW
+  KEY normalized-coordinate
+END
+
+RULE reconciliation-completeness
+  GOAL
+    Define the exact completion predicate for export reconciliation.
+  END
+  PREDICATE complete :=
+    COUNT(13-EXPORT-RECONCILIATION WHERE reconciliation-state == Mapped-Atomic)
+    + COUNT(13-EXPORT-RECONCILIATION WHERE reconciliation-state == Approved-Excluded)
+    == COUNT(13-EXPORT-RECONCILIATION)
+END
+
+STEP reconcile.populate
+MACHINE:
+  REQUIRES CAPABILITY table.serialize
+  FOR EACH unit IN normalized-units
+    APPEND RECONCILIATION-ROW FOR unit
+  END
+END
+
+STEP reconcile.classify
+AGENT:
+  EVIDENCE
+    approved-evidence
+  END
+  PRODUCES
+    13-EXPORT-RECONCILIATION.reconciliation-state
+    13-EXPORT-RECONCILIATION.clm
+  END
+  RESULT
+    RECONCILIATION-STATE
+  END
+  REQUIRE """
+    Container mappings do not reconcile their children, and entity correlations
+    never satisfy reconciliation.
+  """
+END
+
+STEP reconcile.count
+MACHINE:
+  USES RULE reconciliation-completeness
+  SET reconciliation-complete := reconciliation-completeness.complete
+END
+
+STEP reconcile.guard
+MACHINE:
+  GUARD reconciliation-complete == true
+  OTHERWISE BLOCK A-STRUCTURALLY-COMPLETE, R-SWEPT, Exit-A
+END
+
+STEP reconcile.fingerprint
+MACHINE:
+  REQUIRES CAPABILITY hash.sha256
+  IF AVAILABLE(hash.sha256)
+    SET fingerprint := HASH(13-EXPORT-RECONCILIATION)
+    SET fingerprint-status := computed
+  ELSE
+    SET fingerprint-status := unsupported
+    BLOCK artifact-fingerprint, artifact-completeness
+  END
+END
+
+PROJECTION FULL
+  CHANNEL prompt
+END
+
+PROJECTION LIGHT
+  CHANNELS prompt, native
+  COVERS SECTION export-reconciliation
+
+  STEP reconcile.classify
+    TEXT
+      "Classify every reconciliation row against approved evidence. Container mappings
+       are non-closing until resolved, and entity correlations do not reconcile."
+    END
+  END
+
+  STEP reconcile.guard
+    TEXT
+      "Incomplete reconciliation blocks structural completion and Exit A."
+    END
+  END
+
+  STEP reconcile.count
+    TEXT
+      "Reconciliation is complete only when the mapped-atomic count plus the
+       approved-excluded count equals the total number of normalized units."
+    END
+  END
+
+  OMIT STEP reconcile.fingerprint
+    CHANNELS native
+    REASON "The native harness recomputes the artifact fingerprint from canonical bytes."
+    SUPPLIED-BY native-harness
+  END
+END

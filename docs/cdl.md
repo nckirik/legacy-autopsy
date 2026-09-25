@@ -377,7 +377,7 @@ GLOBAL DECLARATIONS
   REGISTRY normalized-units
   ARTIFACT approved-evidence
   RULE canonical-fingerprint
-  GATES A-STRUCTURALLY-COMPLETE, R-SWEPT, Exit-A, artifact-completeness
+  GATES A-STRUCTURALLY-COMPLETE, R-SWEPT, Exit-A, artifact-fingerprint, artifact-completeness
   WORKFLOW-TARGET handoff, section-pass
 END
 
@@ -509,7 +509,7 @@ MACHINE:
     SET fingerprint-status := computed
   ELSE
     SET fingerprint-status := unsupported
-    BLOCK fingerprint, artifact-completeness
+    BLOCK artifact-fingerprint, artifact-completeness
   END
 END
 
