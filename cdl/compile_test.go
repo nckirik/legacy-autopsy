@@ -11,18 +11,20 @@ import (
 var update = flag.Bool("update", false, "rewrite golden assets and identity ledger")
 
 const (
-	examplePath          = "examples/spec/export-reconciliation.cdl"
-	typedIDPath          = "examples/spec/typed-id.cdl"
-	semanticPayloadPath  = "examples/spec/semantic-payload-identity.cdl"
-	canonicalProfilePath = "examples/spec/canonical-hash-profile.cdl"
-	acquisitionPath      = "examples/spec/export-acquisition-loop.cdl"
-	normalizedMapsPath   = "examples/spec/normalized-maps.cdl"
-	invocationModesPath  = "examples/spec/invocation-modes.cdl"
-	coldResumePath       = "examples/spec/cold-resume.cdl"
-	ledgerPath           = "examples/spec/identity-ledger.json"
-	goldenEIRPath        = "examples/spec/golden/export-reconciliation.eir.json"
-	goldenPromptPath     = "examples/spec/golden/export-reconciliation.light.prompt.md"
-	generatedAt          = "2026-09-25T00:00:00Z"
+	examplePath           = "examples/spec/export-reconciliation.cdl"
+	typedIDPath           = "examples/spec/typed-id.cdl"
+	semanticPayloadPath   = "examples/spec/semantic-payload-identity.cdl"
+	canonicalProfilePath  = "examples/spec/canonical-hash-profile.cdl"
+	acquisitionPath       = "examples/spec/export-acquisition-loop.cdl"
+	normalizedMapsPath    = "examples/spec/normalized-maps.cdl"
+	invocationModesPath   = "examples/spec/invocation-modes.cdl"
+	coldResumePath        = "examples/spec/cold-resume.cdl"
+	ticketFSMPath         = "examples/spec/ticket-fsm.cdl"
+	invocationContextPath = "examples/spec/invocation-context.cdl"
+	ledgerPath            = "examples/spec/identity-ledger.json"
+	goldenEIRPath         = "examples/spec/golden/export-reconciliation.eir.json"
+	goldenPromptPath      = "examples/spec/golden/export-reconciliation.light.prompt.md"
+	generatedAt           = "2026-09-25T00:00:00Z"
 )
 
 func repoPath(rel string) string { return filepath.Join("..", rel) }
@@ -59,7 +61,7 @@ func TestUpdateAssets(t *testing.T) {
 		t.Skip("run with -update to rewrite golden assets and identity ledger")
 	}
 	var ledgerSources []LedgerSource
-	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath, canonicalProfilePath, acquisitionPath, normalizedMapsPath, invocationModesPath, coldResumePath} {
+	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath, canonicalProfilePath, acquisitionPath, normalizedMapsPath, invocationModesPath, coldResumePath, ticketFSMPath, invocationContextPath} {
 		src := Source{Path: rel, Bytes: readRepoFile(t, rel)}
 		prog, diags := Parse(src.Path, src.Bytes)
 		if len(diags) > 0 {
@@ -389,6 +391,58 @@ func TestColdResumeSectionCompiles(t *testing.T) {
 	}
 	if fields != 12 {
 		t.Fatalf("COLD-RESUME-FIELD has %d values, want 12", fields)
+	}
+}
+
+func TestTicketFSMCompiles(t *testing.T) {
+	src := Source{Path: ticketFSMPath, Bytes: readRepoFile(t, ticketFSMPath)}
+	ledger, err := LoadLedger(repoPath(ledgerPath))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.EIR.Sections) != 2 || res.EIR.Sections[0].Number != "9.1" || res.EIR.Sections[1].Number != "9.2" {
+		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
+	}
+	transitions := 0
+	states := 0
+	for _, st := range res.EIR.Declarations.States {
+		if st.ID == "TICKET-STATE" {
+			transitions = len(st.Allows)
+			states = len(st.Values)
+		}
+	}
+	if states != 9 || transitions != 10 {
+		t.Fatalf("TICKET-STATE has %d values and %d transitions, want 9 and 10", states, transitions)
+	}
+}
+
+func TestInvocationContextCompiles(t *testing.T) {
+	src := Source{Path: invocationContextPath, Bytes: readRepoFile(t, invocationContextPath)}
+	ledger, err := LoadLedger(repoPath(ledgerPath))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
+	if err != nil {
+		t.Fatal(err)
+	}
+	numbers := []string{}
+	for _, sec := range res.EIR.Sections {
+		numbers = append(numbers, sec.Number)
+	}
+	if strings.Join(numbers, ",") != "8.1,8.2,8.6,8.7,8.8" {
+		t.Fatalf("unexpected sections: %v", numbers)
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	if counts["INVOCATION-HEADER"] != 21 || counts["INVOCATION-LOG"] != 15 {
+		t.Fatalf("unexpected field counts: %v", counts)
 	}
 }
 

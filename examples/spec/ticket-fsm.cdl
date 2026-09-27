@@ -1,0 +1,97 @@
+GLOBAL DECLARATIONS
+  CAPABILITY hash.sha256
+END
+
+SECTION ticket-schema
+NUMBER 9.1
+TITLE "Ticket schema and canonical IDs"
+
+GOAL
+  Ticket IDs use MONIKER-PERSONA-POV-SEQUENCE; allocation resets per
+  iteration/persona/target POV and is reserved atomically.
+END
+
+STATE TICKET-STATE
+  VALUES T-OPEN, T-PENDING, T-PROBE-REQUIRED, T-COMPLETE, T-FOLLOW-UP, T-INVALID, T-SUPERSEDED, T-OUT-OF-SCOPE, T-HUMAN-REQUIRED
+  INITIAL T-OPEN
+  ALLOWS
+    T-OPEN -> T-PENDING
+    T-OPEN -> T-PROBE-REQUIRED
+    T-OPEN -> T-HUMAN-REQUIRED
+    T-FOLLOW-UP -> T-PROBE-REQUIRED
+    T-FOLLOW-UP -> T-OPEN
+    T-FOLLOW-UP -> T-HUMAN-REQUIRED
+    T-PENDING -> T-COMPLETE
+    T-PENDING -> T-FOLLOW-UP
+    T-PROBE-REQUIRED -> T-PENDING
+    T-PROBE-REQUIRED -> T-HUMAN-REQUIRED
+  END
+END
+
+ENUM TICKET-ESCALATION-REASON
+  None
+  RUNTIME-REQUIRED
+  THIRD-PARTY-OPAQUE
+  UNAUTHORIZED-ACCESS
+  UNSAFE
+  DESTRUCTIVE
+  NO-SANDBOX
+  NO-AUTHORITY-TO-DECIDE
+  DOMAIN-MEANING-REQUIRED
+  EXTERNAL-FACT-UNAVAILABLE
+END
+
+FIELD TICKET
+  source-pov-file-invocation -> string                    required
+  target-pov-ledger          -> string                    required
+  status                     -> TICKET-STATE              required
+  trace-history              -> string                    required
+  affected-ids               -> set<string>               optional
+  memory-anchor              -> string                    required
+  description                -> string                    required
+  static-investigation       -> string                    required
+  escalation-reason          -> TICKET-ESCALATION-REASON  required
+  probe-feasibility          -> string                    required
+  coverage-promotion-effect  -> string                    required
+END
+
+RULE ticket-identity
+  GOAL
+    A ticket record carries TICKET-ID. Ticket IDs use MONIKER-PERSONA-POV-SEQUENCE.
+    Sequence allocation resets per
+    iteration/persona/target POV and is reserved atomically. For buffered concurrent
+    tickets, Sequential Reconciliation sorts unassigned candidates by target POV,
+    normalized source coordinate, source persona prefix, and SHA-256 of the normalized
+    description, then assigns the next free sequence. A directly authorized
+    single-ledger invocation reserves the next free sequence before writing. The tuple
+    and a stored creation fingerprint MUST be unique; an allocated ID is never reused,
+    even when invalidated or superseded.
+  END
+END
+
+SECTION ticket-fsm
+NUMBER 9.2
+TITLE "FSM and write rights"
+
+GOAL
+  The conforming runtime validates every transition, escalation reason, required
+  evidence field, actor right, and source state; an executor cannot assign a terminal
+  or probe state merely by writing its token.
+END
+
+RULE ticket-transitions
+  GOAL
+    Any POV may originate T-OPEN through the correct direct ledger or buffer. Only the
+    target POV updates to T-PENDING or T-PROBE-REQUIRED. Only the origin
+    accepts/rejects pending answers. Origin or target may propose out-of-scope;
+    terminalization requires recorded mutual agreement or Human Hatch approval. Direct
+    creation of T-HUMAN-REQUIRED is forbidden.
+  END
+END
+
+RULE ticket-terminal-transitions
+  GOAL
+    Any active state may transition to T-INVALID or T-SUPERSEDED on valid proof, and to
+    T-OUT-OF-SCOPE on a mutual scope decision.
+  END
+END

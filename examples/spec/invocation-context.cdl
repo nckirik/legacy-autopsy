@@ -1,0 +1,176 @@
+GLOBAL DECLARATIONS
+  CAPABILITY hash.sha256
+  ARTIFACT 0G-DECONSTRUCTION-STATE.md
+  ARTIFACT 0H-CHECKPOINT-SUMMARY.md
+END
+
+SECTION invocation-identity-header
+NUMBER 8.1
+TITLE "Resume identity header"
+
+GOAL
+  Every invocation begins with the identity header, and the conforming runtime
+  independently validates declared actions, exact read/write scope, loaded
+  fingerprints, checkpoint freshness, and mode rights before commit.
+END
+
+FIELD INVOCATION-HEADER
+  protocol-version                      -> string  required
+  system-namespace                      -> string  required
+  current-iteration                     -> string  required
+  invocation-id                         -> id      required
+  invocation-mode                       -> string  required
+  human-hatch-action                    -> string  optional
+  invocation-scope                      -> string  required
+  persona                               -> string  optional
+  persona-prefix                        -> string  optional
+  persona-directory                     -> string  optional
+  entry-cluster                         -> string  optional
+  traversal-track                       -> string  optional
+  active-pov                            -> string  optional
+  active-pov-file                       -> string  optional
+  active-question-ledger                -> string  optional
+  environment-snapshot                  -> string  required
+  max-traversal-depth                   -> int     required
+  allowed-read-targets                  -> set<string> required
+  allowed-write-targets                 -> set<string> required
+  forbidden-write-targets               -> set<string> required
+  loaded-checkpoint-fingerprint         -> hash    optional
+END
+
+RULE header-authorization
+  GOAL
+    The executor MUST declare its intended semantic actions against the identity
+    header before writing. Active POV is POV-1 through POV-5. The conforming runtime
+    MUST independently validate the declared actions, exact read/write scope, loaded
+    fingerprints, checkpoint freshness, and mode rights before commit; an executor's
+    self-assessment cannot authorize mutation.
+  END
+END
+
+SECTION strict-single-scope
+NUMBER 8.2
+TITLE "Strict single-scope modes"
+
+GOAL
+  Discovery, Ticket Resolution, and Promotion Review bind exactly one persona,
+  prefix, directory, cluster, track, POV, POV file, and at most one question ledger.
+END
+
+RULE strict-bindings
+  GOAL
+    Each strict mode has one semantic POV target and optional one semantic ledger
+    target. Its fixed transactional sidecar bundle MAY append only directly produced
+    rows or blocks in 10, 11, 12, 14, 16, persona-local shared buffers,
+    personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md, and 0G; these are
+    assurance and audit side effects, not permission to change scope or another POV's
+    semantics. Cross-POV outputs go to the bound ledger or persona-local buffers. An
+    unmapped discovery MUST use the local buffer and requires Sequential Reconciliation
+    before any later Discovery invocation.
+  END
+END
+
+RULE wildcard-expansion
+  GOAL
+    A cluster containing wildcards MUST be expanded into concrete coordinates before a
+    closing invocation. One invocation may traverse multiple atomic units reachable
+    from its one concrete root, subject to depth and frontier rules, but may not switch
+    roots, personas, POVs, or tracks.
+  END
+END
+
+RULE alfa-start-behavior
+  GOAL
+    ALFA is the first bounded discovery iteration. Every POV may log questions
+    immediately; no maturity phase may suppress cross-boundary ambiguity. On large
+    repositories, ALFA MUST still obey concrete cluster, track, persona, POV, and depth
+    isolation. Branches beyond the bound become frontier records and tickets rather
+    than an attempted full-tree sweep.
+  END
+END
+
+SECTION concurrent-persona-traversal
+NUMBER 8.6
+TITLE "Concurrent persona traversal"
+
+GOAL
+  Personas MAY run concurrently in one named iteration but MUST NOT write canonical
+  shared POV or shared question files directly.
+END
+
+RULE concurrency-buffers
+  GOAL
+    Shared component discoveries go to
+    personas/{persona-directory}/SHARED-STAGING-BUFFER.md; outbound shared questions go
+    to personas/{persona-directory}/SHARED-QUESTIONS-BUFFER.md; unmapped coordinates go
+    to personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md with a same-transaction
+    FRT; persona-owned invocation pointers may be written immediately; depromotion is
+    annotated R-DEPROMOTION-PENDING and deferred.
+  END
+END
+
+RULE sequential-reconciliation-merge
+  GOAL
+    Sequential Reconciliation collects, deterministically sorts, and deduplicates all
+    buffer classes, promotion requests, and synthesis gaps; merges compatible claims
+    without improperly raising BLOCK-CONFIDENCE-RANK or losing profile detail; records
+    contradictions; merges persona sets; commits shared records and tickets; merges
+    unmapped discoveries into 0A; creates required ticket and frontier work from GAP
+    records; executes promotion and depromotion atomically; updates assurance links;
+    and purges consumed buffers atomically. No later Discovery invocation may begin
+    while an unmapped-discovery buffer contains a Pending-Merge entry.
+  END
+END
+
+SECTION stale-checkpoint-guard
+NUMBER 8.7
+TITLE "Stale checkpoint guard"
+
+GOAL
+  Before writing, compare loaded checkpoint and source fingerprints with target record
+  versions.
+END
+
+RULE stale-guard
+  GOAL
+    If any target changed after the checkpoint, stop and request a refreshed read set.
+    Changed serialized fingerprints invalidate affected normalized maps, source
+    records, claims, coverage, and downstream blocks before further mutation.
+  END
+END
+
+SECTION invocation-log
+NUMBER 8.8
+TITLE "0G invocation log"
+
+GOAL
+  Append the invocation log record after every invocation; 0H MAY compress current
+  active states but MUST include its source 0G range and fingerprint.
+END
+
+FIELD INVOCATION-LOG
+  identity-header-summary                          -> string required
+  cold-resume-result-check-fingerprint             -> string required
+  declared-semantic-actions-runtime-authorization-result -> string required
+  loaded-files-fingerprints                        -> string required
+  mutation-summary                                 -> string required
+  tickets-created-updated                          -> string required
+  frontiers-created-closed                         -> string required
+  unmapped-discoveries-gap-records-buffered-merged-or-disposed -> string required
+  exports-acquired-requested                       -> string required
+  src-cmp-clm-ids-updated                          -> string required
+  evidence-changes                                 -> string required
+  promotion-depromotion                            -> string required
+  coverage-reconciliation-changes                  -> string required
+  stale-propagation                                -> string required
+  next-required-loads                              -> string required
+END
+
+RULE invocation-log-append
+  GOAL
+    The appended record heading is [ITERATION] - [INVOCATION-ID] - [Scope] - [Mode].
+    When 0H is used to authorize a later Discovery invocation, it MUST also include a
+    fingerprinted global count and list of every persona-local Pending-Merge unmapped
+    discovery; otherwise the full-buffer fallback read in §8.4 is required.
+  END
+END

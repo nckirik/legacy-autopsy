@@ -683,6 +683,9 @@ func (r *resolver) typeResolves(t string) bool {
 	if _, ok := r.sym.types[t]; ok {
 		return true
 	}
+	if _, ok := r.sym.states[t]; ok {
+		return true
+	}
 	_, ok := r.sym.enums[t]
 	return ok
 }

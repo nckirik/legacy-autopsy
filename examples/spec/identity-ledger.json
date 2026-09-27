@@ -273,6 +273,87 @@
       ]
     },
     {
+      "path": "examples/spec/invocation-context.cdl",
+      "source-fingerprint": "sha256:b04321b9b40017ffce533dc9ac26679e1e5b85f1b69469a30324aec6be7c0b78",
+      "ids": [
+        {
+          "id": "INVOCATION-HEADER",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "INVOCATION-LOG",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "alfa-start-behavior",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "concurrency-buffers",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "concurrent-persona-traversal",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "header-authorization",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "invocation-identity-header",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "invocation-log",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "invocation-log-append",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "sequential-reconciliation-merge",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "stale-checkpoint-guard",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "stale-guard",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "strict-bindings",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "strict-single-scope",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "wildcard-expansion",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/invocation-modes.cdl",
       "source-fingerprint": "sha256:fa81914d889ac2b2573ffc7b7955c40d6b3915f21023ec65d3dbf6cb8864f851",
       "ids": null
@@ -339,6 +420,52 @@
         },
         {
           "id": "semantic-record-version",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "path": "examples/spec/ticket-fsm.cdl",
+      "source-fingerprint": "sha256:baefbd537214845c821bd861f76959e09b7f2824c1ca98bd875671a119625dc3",
+      "ids": [
+        {
+          "id": "TICKET",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "TICKET-ESCALATION-REASON",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "TICKET-STATE",
+          "kind": "STATE",
+          "status": "active"
+        },
+        {
+          "id": "ticket-fsm",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "ticket-identity",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "ticket-schema",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "ticket-terminal-transitions",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "ticket-transitions",
           "kind": "RULE",
           "status": "active"
         }
