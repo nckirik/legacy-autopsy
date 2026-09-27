@@ -11,13 +11,14 @@ import (
 var update = flag.Bool("update", false, "rewrite golden assets and identity ledger")
 
 const (
-	examplePath         = "examples/spec/export-reconciliation.cdl"
-	typedIDPath         = "examples/spec/typed-id.cdl"
-	semanticPayloadPath = "examples/spec/semantic-payload-identity.cdl"
-	ledgerPath          = "examples/spec/identity-ledger.json"
-	goldenEIRPath       = "examples/spec/golden/export-reconciliation.eir.json"
-	goldenPromptPath    = "examples/spec/golden/export-reconciliation.light.prompt.md"
-	generatedAt         = "2026-09-25T00:00:00Z"
+	examplePath          = "examples/spec/export-reconciliation.cdl"
+	typedIDPath          = "examples/spec/typed-id.cdl"
+	semanticPayloadPath  = "examples/spec/semantic-payload-identity.cdl"
+	canonicalProfilePath = "examples/spec/canonical-hash-profile.cdl"
+	ledgerPath           = "examples/spec/identity-ledger.json"
+	goldenEIRPath        = "examples/spec/golden/export-reconciliation.eir.json"
+	goldenPromptPath     = "examples/spec/golden/export-reconciliation.light.prompt.md"
+	generatedAt          = "2026-09-25T00:00:00Z"
 )
 
 func repoPath(rel string) string { return filepath.Join("..", rel) }
@@ -54,7 +55,7 @@ func TestUpdateAssets(t *testing.T) {
 		t.Skip("run with -update to rewrite golden assets and identity ledger")
 	}
 	var ledgerSources []LedgerSource
-	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath} {
+	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath, canonicalProfilePath} {
 		src := Source{Path: rel, Bytes: readRepoFile(t, rel)}
 		prog, diags := Parse(src.Path, src.Bytes)
 		if len(diags) > 0 {
@@ -214,6 +215,30 @@ func TestSemanticPayloadSectionCompiles(t *testing.T) {
 		if !rules[want] {
 			t.Fatalf("missing rule %s", want)
 		}
+	}
+}
+
+func TestCanonicalProfileSectionCompiles(t *testing.T) {
+	src := Source{Path: canonicalProfilePath, Bytes: readRepoFile(t, canonicalProfilePath)}
+	ledger, err := LoadLedger(repoPath(ledgerPath))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "4.1.2" {
+		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
+	}
+	counts := map[string]int{}
+	for _, e := range res.EIR.Declarations.Enums {
+		counts[e.ID] = len(e.Values)
+	}
+	if counts["EVIDENCE-BINDING-KIND"] != 12 || counts["ENVELOPE-KIND"] != 3 ||
+		counts["ARTIFACT-TYPE"] != 5 || counts["BINDING-ROW-KIND"] != 2 ||
+		counts["HASH-DOMAIN-PREFIX"] != 3 {
+		t.Fatalf("unexpected enum counts: %v", counts)
 	}
 }
 

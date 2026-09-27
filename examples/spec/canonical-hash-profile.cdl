@@ -1,0 +1,190 @@
+GLOBAL DECLARATIONS
+  CAPABILITY canonical.markdown
+  CAPABILITY hash.sha256
+END
+
+SECTION canonical-hash-profile
+NUMBER 4.1.2
+TITLE "Normative canonical hash profile and packaging artifacts"
+
+GOAL
+  Unless a schema explicitly requests a raw-source byte fingerprint, all semantic
+  records, DEC, CNF, Exit E Candidate Reports, candidate payload manifests, Exit E
+  Content-Readiness Reports, scope certificates, and outer bundle manifests use this
+  canonical hash profile.
+END
+
+ENUM ENVELOPE-KIND
+  CERTIFICATION
+  DECISION-APPROVAL
+  CNF-DIGEST-SIGNATURE
+END
+
+ENUM EVIDENCE-BINDING-KIND
+  RAW-SOURCE-BYTES
+  RECORD-PAYLOAD
+  SEMANTIC-CONTENT
+  DECISION-CONTENT
+  CNF-PAYLOAD
+  ARTIFACT-PAYLOAD
+  CANONICAL-ENVELOPE
+  FILE-TRANSPORT
+  PACKAGE-MEMBER-FILE
+  VALIDATION-SUMMARY
+  DENOMINATOR-QUERY
+  PROTOCOL-REGISTRY
+END
+
+ENUM BINDING-ROW-KIND
+  CHECK
+  BLOCKER
+END
+
+ENUM ARTIFACT-TYPE
+  EXIT-E-CANDIDATE-REPORT
+  CANDIDATE-PAYLOAD-MANIFEST
+  EXIT-E-CONTENT-READINESS-REPORT
+  SCOPE-CERTIFICATE
+  OUTER-BUNDLE-MANIFEST
+END
+
+ENUM HASH-DOMAIN-PREFIX
+  ENVELOPE
+  PACKAGE-MEMBER
+  EVIDENCE-SET
+END
+
+RULE canonical-profile
+  GOAL
+    The canonical hash profile parses the bounded payload as a normative Markdown AST
+    and rejects malformed or overlapping boundaries; normalizes line endings to LF
+    while preserving Unicode code points exactly without transliteration or implicit
+    Unicode normalization; serializes fields in the deterministic order declared by
+    the applicable schema and serializes tables with declared column order, normalized
+    delimiter/alignment syntax, and insignificant cell-edge whitespace while preserving
+    semantic row order unless the schema declares a deterministic row sort key; removes
+    insignificant trailing whitespace, AST-separator blank-line variance, and
+    transport-only indentation while preserving whitespace in code spans, fenced
+    blocks, diagrams, and other literal nodes, and emits exactly one terminal LF;
+    includes the protocol/schema version, record or artifact identity, and every
+    in-boundary semantic/content node, and excludes only the exact carrier and
+    envelope regions authorized by the applicable schema.
+  END
+END
+
+RULE record-boundary-and-file-transport
+  GOAL
+    For a typed record in a multi-record Markdown file, the hash boundary begins at
+    that record's typed-ID heading and ends immediately before the next typed-record
+    heading of the same or higher level, or at end of file. Each record is canonicalized
+    and hashed independently after applying its exact envelope exclusion. The containing
+    file has a separate FILE-TRANSPORT fingerprint over its normalized relative path
+    and ordered sequence of record type, record ID, record version where applicable,
+    and record payload fingerprint bindings. That file fingerprint detects ordering or
+    transport changes but is not a semantic-record identity, is not substituted for a
+    record fingerprint, and MUST NOT be bound by a CNF.
+  END
+END
+
+RULE record-envelope-exclusions
+  GOAL
+    DEC uses this profile over its heading-delimited decision content and excludes
+    exactly DECISION-CONTENT-FINGERPRINT as its own carrier and the existing
+    DECISION-APPROVAL-ENVELOPE through END-DECISION-APPROVAL-ENVELOPE region. CNF uses
+    this profile over its heading-delimited
+    confirmation payload and excludes exactly CNF Payload Fingerprint as its own carrier
+    and the existing CNF-DIGEST-SIGNATURE-ENVELOPE through
+    END-CNF-DIGEST-SIGNATURE-ENVELOPE region. Semantic synthesis, PRF, and
+    HBK records use §4.1.1 and exclude exactly their existing certification envelope.
+    SEMANTIC-CONTENT-FINGERPRINT and DECISION-CONTENT-FINGERPRINT carriers are excluded
+    from their own preimages.
+  END
+END
+
+RULE envelope-fingerprint-and-binding
+  GOAL
+    Every populated certification envelope, DEC approval envelope, and CNF
+    digest/signature envelope receives an externally stored canonical envelope
+    fingerprint. Its preimage is the UTF-8 domain prefix ENVELOPE followed by the
+    normalized containing path, target typed record ID, envelope kind (CERTIFICATION,
+    DECISION-APPROVAL, or CNF-DIGEST-SIGNATURE), positive envelope version, one LF, and
+    the complete canonically serialized Markdown AST region between the exact envelope
+    markers; fields are separated by a vertical bar. No field in that region is
+    excluded: status, target-content binding, approver/signatory identity, authority,
+    timestamps, audit data, signatures, and any payload-fingerprint carrier inside the
+    envelope are all included. Missing, duplicate, malformed, overlapping, or
+    versionless final envelopes are invalid. An envelope binding is the exact tuple of
+    target typed record ID, envelope kind, envelope version, and canonical envelope
+    fingerprint; the CERTIFICATION, DECISION-APPROVAL, and CNF-DIGEST-SIGNATURE
+    envelope binding fields MUST serialize that tuple and MUST be recomputed rather
+    than trusted.
+  END
+END
+
+RULE package-member-fingerprint
+  GOAL
+    Every final package member also receives an external PACKAGE-MEMBER file
+    fingerprint. For Markdown, its preimage is UTF-8 PACKAGE-MEMBER followed by the
+    normalized package-relative path, one LF, and the complete canonicalized file AST,
+    including every record fingerprint carrier and every certification, approval,
+    digest, and signature envelope with no excluded node. For non-Markdown members, the
+    same path-bound domain prefixes the exact immutable bytes. This fingerprint is
+    stored only in later manifests or reports, never inside the member whose bytes it
+    covers, so it cannot self-reference. Containing File Fingerprint, PACKAGE-MEMBER-FILE,
+    and outer-manifest member fingerprints mean this full finalized-file fingerprint,
+    never the envelope-excluding FILE-TRANSPORT fingerprint.
+  END
+END
+
+RULE evidence-set-fingerprint
+  GOAL
+    An EVIDENCE-SET fingerprint is the value serialized in every Evidence Fingerprint
+    check or blocker cell in §15.1 and binds that row to the exact authoritative
+    evidence and deterministic validation inputs used for its result. Each binding is
+    the tuple of normalized authoritative input path, binding kind, typed record or
+    artifact ID or None, version or None, and authoritative fingerprint, using exactly
+    one declared kind: RAW-SOURCE-BYTES, RECORD-PAYLOAD, SEMANTIC-CONTENT,
+    DECISION-CONTENT, CNF-PAYLOAD, ARTIFACT-PAYLOAD, CANONICAL-ENVELOPE, FILE-TRANSPORT,
+    PACKAGE-MEMBER-FILE, VALIDATION-SUMMARY, DENOMINATOR-QUERY, or PROTOCOL-REGISTRY.
+    Binding kind selects the only legal fingerprint domain for that row input; a
+    different valid fingerprint over the same file or record is a mismatch, not an
+    alternative. The conforming runtime MUST reject an unknown kind, a version
+    inconsistent with the table, or duplicate tuples; sort bindings bytewise by the
+    complete tuple after §4.1 normalization; and compute sha256 over UTF-8 EVIDENCE-SET
+    plus the packaging artifact type, one LF, row kind CHECK or BLOCKER, one LF, stable
+    row ID, one LF, the canonically serialized System / Protocol / Snapshot value, one
+    LF, and the canonical table serialization of the sorted tuples with columns in
+    tuple order. The set MUST contain every input that can change the row result and at
+    least one DENOMINATOR-QUERY, PROTOCOL-REGISTRY, or authoritative record/artifact
+    binding even for an evidence-backed zero domain. It MUST NOT include the containing
+    report, its own carrier, or a later artifact. A conforming runtime MUST recompute
+    this fingerprint; an executor-supplied digest is non-authoritative and a mismatch
+    is a structural failure.
+  END
+END
+
+RULE artifact-payload-boundaries
+  GOAL
+    Each packaging artifact is one bounded payload. Its HASH-DOMAIN identity is exactly
+    artifact type plus a vertical bar plus normalized relative path using §4.1
+    normalization, and that identity is included in the canonical payload hash preimage.
+    The payload fingerprint MUST NOT appear anywhere in its own preimage. After the
+    payload fingerprint is computed, the separate
+    POST-HASH-ARTIFACT-INSTANCE-BINDING is artifact type, normalized relative path, and
+    payload fingerprint; this binding identifies the resulting artifact instance, is
+    computed only post-hash, and is not part of its own preimage. Packaging artifacts
+    MUST use the exact generic ARTIFACT-PAYLOAD boundaries with ARTIFACT-TYPE,
+    ARTIFACT-PATH, PROTOCOL / ARTIFACT-SCHEMA VERSION, and
+    ARTIFACT-PAYLOAD-FINGERPRINT fields and a matching
+    ARTIFACT-DIGEST-SIGNATURE-ENVELOPE; the payload fingerprint covers exactly the AST
+    content between the ARTIFACT-PAYLOAD and END-ARTIFACT-PAYLOAD markers, excluding
+    only ARTIFACT-PAYLOAD-FINGERPRINT and the complete matching digest/signature
+    envelope, which runs to END-ARTIFACT-DIGEST-SIGNATURE-ENVELOPE.
+    The EXIT-E-CANDIDATE-REPORT, CANDIDATE-PAYLOAD-MANIFEST,
+    EXIT-E-CONTENT-READINESS-REPORT, SCOPE-CERTIFICATE, and OUTER-BUNDLE-MANIFEST
+    artifacts MUST use this schema with their literal artifact type. Their type, path,
+    member lists, status fields, references, and content timestamps remain hashed
+    payload. No artifact may specialize or substitute boundary marker names; this
+    generic schema supersedes certificate- or report-specific digest markers.
+  END
+END

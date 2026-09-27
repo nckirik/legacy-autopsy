@@ -4,6 +4,77 @@
   "generated-at": "2026-09-25T00:00:00Z",
   "sources": [
     {
+      "path": "examples/spec/canonical-hash-profile.cdl",
+      "source-fingerprint": "sha256:de766a39804b925c7ecb6b3098655d0bdd66929538baa893fc449967e352895d",
+      "ids": [
+        {
+          "id": "ARTIFACT-TYPE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "BINDING-ROW-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "ENVELOPE-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "EVIDENCE-BINDING-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "HASH-DOMAIN-PREFIX",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "artifact-payload-boundaries",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "canonical-hash-profile",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "canonical-profile",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "envelope-fingerprint-and-binding",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "evidence-set-fingerprint",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "package-member-fingerprint",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "record-boundary-and-file-transport",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "record-envelope-exclusions",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/export-reconciliation.cdl",
       "source-fingerprint": "sha256:0a81326160f45919874739189f3256021c8dbab60ecaf99f8b47dbb670f0bfa6",
       "ids": [
