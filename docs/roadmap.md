@@ -137,6 +137,13 @@ S3 progress:
   baseline, cold-resume fields, header/log labels, and normative tokens, and proves
   read-set equivalence with the frozen Go implementation. Remaining §8: rewire
   `contextpacket` to consume EIR `modes[]`; the equivalence test already pins the data.
+- **§10.1–10.6 implemented (capability-backed):**
+  `examples/spec/coverage-and-exits.cdl` declares sweep records and traversal-cell
+  states, coverage scope/status domains and arithmetic rules, the 12 Exit A
+  conditions, Exit B/C rules, and the iteration-accounting rules;
+  `internal/capabilities.NextIteration` advances the declared token budget
+  fail-closed; `internal/parity` drift-checks the condition list, sweep fields, and
+  the 26 iteration tokens against protocol.md.
 - **§9.1–9.2 implemented (capability-backed):** `examples/spec/ticket-fsm.cdl`
   declares the nine ticket states, the ten allowed transitions, the eleven-field
   ticket schema, and the ten escalation reasons; `internal/parity` drift-checks the
