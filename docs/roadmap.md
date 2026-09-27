@@ -127,13 +127,20 @@ S3 progress:
   `internal/capabilities.ColdResumeFingerprint` implements the `COLD-RESUME|` preimage
   with carrier exclusion and fail-closed field validation; `internal/parity`
   drift-checks the field list against protocol.md §8.5.
-- **§8 invocation declarations started:** `examples/spec/invocation-modes.cdl` declares
-  the 13-mode enum, the three strict modes, the document baseline read set, and every
-  mode's specific read set. Language 0.2 adds `BASE-READS`/`MODE` (EIR format 2), and
-  `internal/parity` drift-checks mode ids against §8.3, strictness against §8.2, the
-  baseline against §8.4, and proves read-set equivalence with the frozen Go
-  implementation before it is retired. Remaining §8: cold-resume fingerprint,
-  concurrency/staleness rules, and rewiring `contextpacket` to EIR `modes[]`.
+- **§8 declarations complete:** `examples/spec/invocation-modes.cdl` declares the
+  13-mode enum, the three strict modes, the document baseline read set, and every
+  mode's specific read set (language 0.2 `BASE-READS`/`MODE`, EIR format 2);
+  `cold-resume.cdl` declares and implements the §8.5 check fingerprint;
+  `invocation-context.cdl` declares §8.1 identity-header fields, §8.2 strict bindings
+  and ALFA behavior, §8.6 concurrency buffers and reconciliation, §8.7 stale guard,
+  and §8.8 invocation-log fields. `internal/parity` drift-checks modes, strictness,
+  baseline, cold-resume fields, header/log labels, and normative tokens, and proves
+  read-set equivalence with the frozen Go implementation. Remaining §8: rewire
+  `contextpacket` to consume EIR `modes[]`; the equivalence test already pins the data.
+- **§9.1–9.2 implemented (capability-backed):** `examples/spec/ticket-fsm.cdl`
+  declares the nine ticket states, the ten allowed transitions, the eleven-field
+  ticket schema, and the ten escalation reasons; `internal/parity` drift-checks the
+  transition table, state domain, and reason enum against protocol.md.
 - **§7.5–7.6 implemented (capability-backed):**
   `examples/spec/export-acquisition-loop.cdl` declares the five-state acquisition
   domain and the eight loop rules, with the state domain drift-checked against the
