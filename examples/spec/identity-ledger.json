@@ -1,179 +1,244 @@
 {
-  "ledger-format": 1,
+  "ledger-format": 2,
   "generator": "cdl/0.1.0",
-  "source": "examples/spec/export-reconciliation.cdl",
-  "source-fingerprint": "sha256:0a81326160f45919874739189f3256021c8dbab60ecaf99f8b47dbb670f0bfa6",
   "generated-at": "2026-09-25T00:00:00Z",
-  "ids": [
+  "sources": [
     {
-      "id": "13-EXPORT-RECONCILIATION",
-      "kind": "TABLE",
-      "status": "active"
+      "path": "examples/spec/export-reconciliation.cdl",
+      "source-fingerprint": "sha256:0a81326160f45919874739189f3256021c8dbab60ecaf99f8b47dbb670f0bfa6",
+      "ids": [
+        {
+          "id": "13-EXPORT-RECONCILIATION",
+          "kind": "TABLE",
+          "status": "active"
+        },
+        {
+          "id": "A-STRUCTURALLY-COMPLETE",
+          "kind": "GATE",
+          "status": "active"
+        },
+        {
+          "id": "CLM-ID",
+          "kind": "TYPE",
+          "status": "active"
+        },
+        {
+          "id": "CLM-LIST",
+          "kind": "TYPE",
+          "status": "active"
+        },
+        {
+          "id": "CMP-OR-POV5-EDGE-ID",
+          "kind": "TYPE",
+          "status": "active"
+        },
+        {
+          "id": "COORDINATE",
+          "kind": "TYPE",
+          "status": "active"
+        },
+        {
+          "id": "EXCLUSION-DECISION",
+          "kind": "TYPE",
+          "status": "active"
+        },
+        {
+          "id": "EXPORT-ID",
+          "kind": "TYPE",
+          "status": "active"
+        },
+        {
+          "id": "Exit-A",
+          "kind": "GATE",
+          "status": "active"
+        },
+        {
+          "id": "FULL",
+          "kind": "PROJECTION",
+          "status": "active"
+        },
+        {
+          "id": "LIGHT",
+          "kind": "PROJECTION",
+          "status": "active"
+        },
+        {
+          "id": "R-SWEPT",
+          "kind": "GATE",
+          "status": "active"
+        },
+        {
+          "id": "RECONCILIATION-ROW",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "RECONCILIATION-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "SRC-ID",
+          "kind": "TYPE",
+          "status": "active"
+        },
+        {
+          "id": "approved-evidence",
+          "kind": "ARTIFACT",
+          "status": "active"
+        },
+        {
+          "id": "artifact-completeness",
+          "kind": "GATE",
+          "status": "active"
+        },
+        {
+          "id": "artifact-fingerprint",
+          "kind": "GATE",
+          "status": "active"
+        },
+        {
+          "id": "canonical-fingerprint",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "export-reconciliation",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "fingerprint",
+          "kind": "VALUE",
+          "status": "active"
+        },
+        {
+          "id": "fingerprint-status",
+          "kind": "STATE",
+          "status": "active"
+        },
+        {
+          "id": "handoff",
+          "kind": "WORKFLOW-TARGET",
+          "status": "active"
+        },
+        {
+          "id": "hash.sha256",
+          "kind": "CAPABILITY",
+          "status": "active"
+        },
+        {
+          "id": "normalized-units",
+          "kind": "REGISTRY",
+          "status": "active"
+        },
+        {
+          "id": "reconcile.classify",
+          "kind": "STEP",
+          "status": "active"
+        },
+        {
+          "id": "reconcile.count",
+          "kind": "STEP",
+          "status": "active"
+        },
+        {
+          "id": "reconcile.fingerprint",
+          "kind": "STEP",
+          "status": "active"
+        },
+        {
+          "id": "reconcile.guard",
+          "kind": "STEP",
+          "status": "active"
+        },
+        {
+          "id": "reconcile.populate",
+          "kind": "STEP",
+          "status": "active"
+        },
+        {
+          "id": "reconciliation-complete",
+          "kind": "STATE",
+          "status": "active"
+        },
+        {
+          "id": "reconciliation-completeness",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "section-pass",
+          "kind": "WORKFLOW-TARGET",
+          "status": "active"
+        },
+        {
+          "id": "table.serialize",
+          "kind": "CAPABILITY",
+          "status": "active"
+        }
+      ]
     },
     {
-      "id": "A-STRUCTURALLY-COMPLETE",
-      "kind": "GATE",
-      "status": "active"
-    },
-    {
-      "id": "CLM-ID",
-      "kind": "TYPE",
-      "status": "active"
-    },
-    {
-      "id": "CLM-LIST",
-      "kind": "TYPE",
-      "status": "active"
-    },
-    {
-      "id": "CMP-OR-POV5-EDGE-ID",
-      "kind": "TYPE",
-      "status": "active"
-    },
-    {
-      "id": "COORDINATE",
-      "kind": "TYPE",
-      "status": "active"
-    },
-    {
-      "id": "EXCLUSION-DECISION",
-      "kind": "TYPE",
-      "status": "active"
-    },
-    {
-      "id": "EXPORT-ID",
-      "kind": "TYPE",
-      "status": "active"
-    },
-    {
-      "id": "Exit-A",
-      "kind": "GATE",
-      "status": "active"
-    },
-    {
-      "id": "FULL",
-      "kind": "PROJECTION",
-      "status": "active"
-    },
-    {
-      "id": "LIGHT",
-      "kind": "PROJECTION",
-      "status": "active"
-    },
-    {
-      "id": "R-SWEPT",
-      "kind": "GATE",
-      "status": "active"
-    },
-    {
-      "id": "RECONCILIATION-ROW",
-      "kind": "FIELD",
-      "status": "active"
-    },
-    {
-      "id": "RECONCILIATION-STATE",
-      "kind": "ENUM",
-      "status": "active"
-    },
-    {
-      "id": "SRC-ID",
-      "kind": "TYPE",
-      "status": "active"
-    },
-    {
-      "id": "approved-evidence",
-      "kind": "ARTIFACT",
-      "status": "active"
-    },
-    {
-      "id": "artifact-completeness",
-      "kind": "GATE",
-      "status": "active"
-    },
-    {
-      "id": "artifact-fingerprint",
-      "kind": "GATE",
-      "status": "active"
-    },
-    {
-      "id": "canonical-fingerprint",
-      "kind": "RULE",
-      "status": "active"
-    },
-    {
-      "id": "export-reconciliation",
-      "kind": "SECTION",
-      "status": "active"
-    },
-    {
-      "id": "fingerprint",
-      "kind": "VALUE",
-      "status": "active"
-    },
-    {
-      "id": "fingerprint-status",
-      "kind": "STATE",
-      "status": "active"
-    },
-    {
-      "id": "handoff",
-      "kind": "WORKFLOW-TARGET",
-      "status": "active"
-    },
-    {
-      "id": "hash.sha256",
-      "kind": "CAPABILITY",
-      "status": "active"
-    },
-    {
-      "id": "normalized-units",
-      "kind": "REGISTRY",
-      "status": "active"
-    },
-    {
-      "id": "reconcile.classify",
-      "kind": "STEP",
-      "status": "active"
-    },
-    {
-      "id": "reconcile.count",
-      "kind": "STEP",
-      "status": "active"
-    },
-    {
-      "id": "reconcile.fingerprint",
-      "kind": "STEP",
-      "status": "active"
-    },
-    {
-      "id": "reconcile.guard",
-      "kind": "STEP",
-      "status": "active"
-    },
-    {
-      "id": "reconcile.populate",
-      "kind": "STEP",
-      "status": "active"
-    },
-    {
-      "id": "reconciliation-complete",
-      "kind": "STATE",
-      "status": "active"
-    },
-    {
-      "id": "reconciliation-completeness",
-      "kind": "RULE",
-      "status": "active"
-    },
-    {
-      "id": "section-pass",
-      "kind": "WORKFLOW-TARGET",
-      "status": "active"
-    },
-    {
-      "id": "table.serialize",
-      "kind": "CAPABILITY",
-      "status": "active"
+      "path": "examples/spec/typed-id.cdl",
+      "source-fingerprint": "sha256:2ec250ba8364b6e8b3539812a826e9856a25ac5da7ed7b2a250298fdf15b1b1a",
+      "ids": [
+        {
+          "id": "ID-ITERATION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "ID-PREFIX",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "canonical-key",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "collision-extension",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "id-registry-checks",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "identity.typed-id",
+          "kind": "CAPABILITY",
+          "status": "active"
+        },
+        {
+          "id": "normalized-relative-path",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "path.normalize",
+          "kind": "CAPABILITY",
+          "status": "active"
+        },
+        {
+          "id": "prf-hbk-identity",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "src-kind-and-coordinates",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "typed-id",
+          "kind": "SECTION",
+          "status": "active"
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,177 @@
+GLOBAL DECLARATIONS
+  CAPABILITY identity.typed-id
+  CAPABILITY path.normalize
+END
+
+SECTION typed-id
+NUMBER 4.1
+TITLE "ID generation"
+
+GOAL
+  Every canonical typed record that participates in identity, reference,
+  traceability, candidacy, or confirmation uses a legal protocol ID generated from
+  its canonical key.
+END
+
+ENUM ID-PREFIX
+  SRC-FILE
+  SRC-SYM
+  SRC-ROUTE
+  SRC-RPC
+  SRC-JOB
+  SRC-QUERY
+  SRC-TABLE
+  SRC-VIEW
+  SRC-DR
+  SRC-CONSTRAINT
+  SRC-GENERATED
+  SRC-CFG
+  SRC-WORKFLOW
+  SRC-NODE
+  SRC-EDGE
+  SRC-PAGE
+  SRC-WIDGET
+  SRC-ACTION
+  SRC-BINDING
+  SRC-QUEUE
+  SRC-EVENT
+  SRC-STORAGE
+  SRC-IFACE
+  SRC-OTHER
+  CMP
+  CLM
+  ER
+  REL
+  BR
+  UC
+  IF
+  DEP
+  CFG
+  SCHED
+  NFR
+  SEC
+  SM
+  DR
+  CAP
+  PRV
+  FLT
+  MOD
+  PRF
+  HBK
+  INV
+  AUTH
+  STATE
+  DEC
+  CON
+  FRT
+  SWP
+  COV
+  CND
+  CLU
+  SHR
+  DSC
+  EXP
+  GAP
+  CNF
+END
+
+ENUM ID-ITERATION
+  ALFA
+  BRAVO
+  CHARLIE
+  DELTA
+  ECHO
+  FOXTROT
+  GOLF
+  HOTEL
+  INDIA
+  JULIETT
+  KILO
+  LIMA
+  MIKE
+  NOVEMBER
+  OSCAR
+  PAPA
+  QUEBEC
+  ROMEO
+  SIERRA
+  TANGO
+  UNIFORM
+  VICTOR
+  WHISKEY
+  X-RAY
+  YANKEE
+  ZULU
+END
+
+RULE canonical-key
+  GOAL
+    canonical-key = protocol-id-type + "|" + system-namespace + "|" +
+    normalized-owner-coordinate + "|" + semantic-discriminator. hash = uppercase
+    first 12 hexadecimal characters of SHA-256 of canonical-key UTF-8. id = TYPE +
+    "-" + hash. Packaging artifacts are not typed records and do not receive protocol
+    record IDs.
+  END
+END
+
+RULE src-kind-and-coordinates
+  GOAL
+    For SRC, include kind: SRC-KIND-HASH, where KIND is one of the declared SRC
+    kinds. Classification uses the most specific executable/data kind; a unit with
+    several roles has one primary SRC kind and explicit typed relationship records to
+    the others, preventing denominator double-counting. Stable platform IDs take
+    precedence in normalized coordinates. Unicode is preserved exactly; path
+    separators and harmless whitespace are normalized, but identifiers are never
+    transliterated. A proven move or rename retains its original identity canonical
+    key and records the new coordinate as versioned location metadata and an alias;
+    the path is not rehashed.
+  END
+END
+
+RULE normalized-relative-path
+  GOAL
+    A normalized relative path is relative to the applicable workspace root or package
+    root, serialized with POSIX "/", has no leading "./", removes repeated separators
+    and "." path segments, and rejects every ".." segment. Path case and Unicode code
+    points are preserved exactly; implicit Unicode normalization, transliteration, and
+    case folding are forbidden. The root used for normalization MUST be declared by the
+    enclosing schema or package operation and remain fixed for the artifact or record
+    set.
+  END
+END
+
+RULE prf-hbk-identity
+  GOAL
+    PRF identifies one persona profile; its normalized owner coordinate is the
+    globally unique persona prefix, and its semantic discriminator is the fixed
+    literal persona-profile. HBK identifies one semantic handbook section; its
+    normalized owner coordinate is the normalized handbook-relative path plus a hash
+    separator plus its explicitly assigned stable section anchor, and its semantic
+    discriminator is the fixed literal handbook-section. The heading text is not an
+    identity source. An HBK stable section anchor is an explicitly assigned opaque
+    ASCII lowercase token matching [a-z0-9]+(?:-[a-z0-9]+)*; it is never
+    renderer-generated or inferred from heading text.
+  END
+END
+
+RULE collision-extension
+  GOAL
+    A collision MUST be resolved by extending both colliding hashes to 16, then 20, up
+    to 64 characters; existing shorter IDs receive aliases and controlled
+    supersession, never silent mutation.
+  END
+END
+
+RULE id-registry-checks
+  GOAL
+    The ID registry in 20-TRACEABILITY.md MUST verify global uniqueness, type
+    correctness, canonical-key uniqueness, ticket-tuple uniqueness, coverage-tuple
+    uniqueness, candidate/action identity uniqueness, PRF-per-persona-prefix
+    uniqueness, HBK path-and-anchor uniqueness, and tombstone reservation. It MUST
+    also verify reciprocal PRF to 0A persona row, HBK to handbook path/anchor and
+    upstream synthesis records, and exact candidate/CNF bindings to PRF/HBK IDs. IDs
+    are stable across movement when semantic identity and stable platform identity
+    remain unchanged. A semantic split creates new IDs and tombstones or supersedes
+    the old record.
+  END
+END

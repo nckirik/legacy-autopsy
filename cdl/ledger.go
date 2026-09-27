@@ -14,22 +14,26 @@ type IDRecord struct {
 	Status string `json:"status"`
 }
 
-// Ledger is the committed identity ledger.
-type Ledger struct {
-	Format            int        `json:"ledger-format"`
-	Generator         string     `json:"generator"`
-	Source            string     `json:"source"`
+// LedgerSource is the identity contribution of one source file.
+type LedgerSource struct {
+	Path              string     `json:"path"`
 	SourceFingerprint string     `json:"source-fingerprint"`
-	GeneratedAt       string     `json:"generated-at"`
 	IDs               []IDRecord `json:"ids"`
+}
+
+// Ledger is the committed identity ledger. Identities are globally unique across
+// every source: §4.1 requires global uniqueness, not per-file uniqueness.
+type Ledger struct {
+	Format      int            `json:"ledger-format"`
+	Generator   string         `json:"generator"`
+	GeneratedAt string         `json:"generated-at"`
+	Sources     []LedgerSource `json:"sources"`
 }
 
 // LedgerProvenance identifies how a ledger was generated.
 type LedgerProvenance struct {
-	Generator         string
-	Source            string
-	SourceFingerprint string
-	GeneratedAt       string
+	Generator   string
+	GeneratedAt string
 }
 
 // LoadLedger reads and validates a committed identity ledger.
@@ -43,26 +47,39 @@ func LoadLedger(path string) (map[string]IDRecord, error) {
 		return nil, fmt.Errorf("identity ledger: %w", err)
 	}
 	out := map[string]IDRecord{}
-	for _, r := range l.IDs {
-		if _, dup := out[r.ID]; dup {
-			return nil, fmt.Errorf("identity ledger: duplicate id %s", r.ID)
+	for _, src := range l.Sources {
+		for _, r := range src.IDs {
+			if existing, dup := out[r.ID]; dup {
+				return nil, fmt.Errorf("identity ledger: id %s is duplicated (%s and %s)", r.ID, existing.Kind, r.Kind)
+			}
+			out[r.ID] = r
 		}
-		out[r.ID] = r
 	}
 	return out, nil
 }
 
-// WriteLedger writes a deterministic, provenance-bearing identity ledger.
-func WriteLedger(path string, ids []IDRecord, prov LedgerProvenance) error {
-	sorted := append([]IDRecord(nil), ids...)
-	sort.Slice(sorted, func(i, j int) bool { return sorted[i].ID < sorted[j].ID })
+// WriteLedger writes a deterministic, provenance-bearing identity ledger with
+// globally unique identities across sources and sources sorted by path.
+func WriteLedger(path string, sources []LedgerSource, prov LedgerProvenance) error {
+	sorted := append([]LedgerSource(nil), sources...)
+	sort.Slice(sorted, func(i, j int) bool { return sorted[i].Path < sorted[j].Path })
+	seen := map[string]string{}
+	for si := range sorted {
+		ids := append([]IDRecord(nil), sorted[si].IDs...)
+		sort.Slice(ids, func(i, j int) bool { return ids[i].ID < ids[j].ID })
+		for _, id := range ids {
+			if other, dup := seen[id.ID]; dup {
+				return fmt.Errorf("identity ledger: id %s is duplicated between %s and %s", id.ID, other, sorted[si].Path)
+			}
+			seen[id.ID] = sorted[si].Path
+		}
+		sorted[si].IDs = ids
+	}
 	ledger := Ledger{
-		Format:            1,
-		Generator:         prov.Generator,
-		Source:            prov.Source,
-		SourceFingerprint: prov.SourceFingerprint,
-		GeneratedAt:       prov.GeneratedAt,
-		IDs:               sorted,
+		Format:      2,
+		Generator:   prov.Generator,
+		GeneratedAt: prov.GeneratedAt,
+		Sources:     sorted,
 	}
 	b, err := json.MarshalIndent(ledger, "", "  ")
 	if err != nil {

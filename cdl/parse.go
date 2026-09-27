@@ -144,7 +144,7 @@ func unquote(s string) string {
 
 func builtinCapabilityKind(id string) string {
 	switch id {
-	case "hash.sha256", "table.serialize":
+	case "hash.sha256", "table.serialize", "identity.typed-id", "path.normalize", "canonical.markdown":
 		return "deterministic"
 	default:
 		return "proposing"

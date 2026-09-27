@@ -12,6 +12,7 @@ var update = flag.Bool("update", false, "rewrite golden assets and identity ledg
 
 const (
 	examplePath      = "examples/spec/export-reconciliation.cdl"
+	typedIDPath      = "examples/spec/typed-id.cdl"
 	ledgerPath       = "examples/spec/identity-ledger.json"
 	goldenEIRPath    = "examples/spec/golden/export-reconciliation.eir.json"
 	goldenPromptPath = "examples/spec/golden/export-reconciliation.light.prompt.md"
@@ -20,13 +21,18 @@ const (
 
 func repoPath(rel string) string { return filepath.Join("..", rel) }
 
-func exampleSource(t *testing.T) Source {
+func readRepoFile(t *testing.T, rel string) []byte {
 	t.Helper()
-	b, err := os.ReadFile(repoPath(examplePath))
+	b, err := os.ReadFile(repoPath(rel))
 	if err != nil {
 		t.Fatal(err)
 	}
-	return Source{Path: examplePath, Bytes: b}
+	return b
+}
+
+func exampleSource(t *testing.T) Source {
+	t.Helper()
+	return Source{Path: examplePath, Bytes: readRepoFile(t, examplePath)}
 }
 
 func compileExample(t *testing.T) *Result {
@@ -46,27 +52,40 @@ func TestUpdateAssets(t *testing.T) {
 	if !*update {
 		t.Skip("run with -update to rewrite golden assets and identity ledger")
 	}
+	var ledgerSources []LedgerSource
+	for _, rel := range []string{examplePath, typedIDPath} {
+		src := Source{Path: rel, Bytes: readRepoFile(t, rel)}
+		prog, diags := Parse(src.Path, src.Bytes)
+		if len(diags) > 0 {
+			t.Fatalf("%s parse: %v", rel, diags)
+		}
+		if semDiags, _ := resolve(prog); len(semDiags) > 0 {
+			t.Fatalf("%s resolve: %v", rel, semDiags)
+		}
+		ledgerSources = append(ledgerSources, LedgerSource{
+			Path:              rel,
+			SourceFingerprint: sourceFingerprint([]Source{src}),
+			IDs:               collectIDs(prog),
+		})
+	}
+	if err := os.MkdirAll(filepath.Dir(repoPath(goldenEIRPath)), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := WriteLedger(repoPath(ledgerPath), ledgerSources, LedgerProvenance{
+		Generator:   GeneratorVersion,
+		GeneratedAt: generatedAt,
+	}); err != nil {
+		t.Fatal(err)
+	}
 	src := exampleSource(t)
 	prog, diags := Parse(src.Path, src.Bytes)
 	if len(diags) > 0 {
 		t.Fatalf("parse: %v", diags)
 	}
-	semDiags, _ := resolve(prog)
-	if len(semDiags) > 0 {
+	if semDiags, _ := resolve(prog); len(semDiags) > 0 {
 		t.Fatalf("resolve: %v", semDiags)
 	}
-	if err := os.MkdirAll(filepath.Dir(repoPath(goldenEIRPath)), 0o755); err != nil {
-		t.Fatal(err)
-	}
 	fingerprint := sourceFingerprint([]Source{src})
-	if err := WriteLedger(repoPath(ledgerPath), collectIDs(prog), LedgerProvenance{
-		Generator:         GeneratorVersion,
-		Source:            examplePath,
-		SourceFingerprint: fingerprint,
-		GeneratedAt:       generatedAt,
-	}); err != nil {
-		t.Fatal(err)
-	}
 	doc, eirBytes, _, err := BuildEIR(prog, Versions{}, fingerprint)
 	if err != nil {
 		t.Fatal(err)
@@ -130,6 +149,43 @@ func TestCompileExample(t *testing.T) {
 	}
 	if res.EIR.Envelope.Protocol != ProtocolVersion {
 		t.Fatalf("protocol %q", res.EIR.Envelope.Protocol)
+	}
+}
+
+func TestTypedIDSectionCompiles(t *testing.T) {
+	src := Source{Path: typedIDPath, Bytes: readRepoFile(t, typedIDPath)}
+	ledger, err := LoadLedger(repoPath(ledgerPath))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "4.1" {
+		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
+	}
+	counts := map[string]int{}
+	for _, e := range res.EIR.Declarations.Enums {
+		counts[e.ID] = len(e.Values)
+	}
+	if counts["ID-PREFIX"] != 59 {
+		t.Fatalf("ID-PREFIX has %d values, want 59", counts["ID-PREFIX"])
+	}
+	if counts["ID-ITERATION"] != 26 {
+		t.Fatalf("ID-ITERATION has %d values, want 26", counts["ID-ITERATION"])
+	}
+	rules := map[string]bool{}
+	for _, r := range res.EIR.Declarations.Rules {
+		rules[r.ID] = true
+	}
+	for _, want := range []string{
+		"canonical-key", "src-kind-and-coordinates", "normalized-relative-path",
+		"prf-hbk-identity", "collision-extension", "id-registry-checks",
+	} {
+		if !rules[want] {
+			t.Fatalf("missing rule %s", want)
+		}
 	}
 }
 
