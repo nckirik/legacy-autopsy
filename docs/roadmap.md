@@ -122,6 +122,12 @@ S3 progress:
   `internal/parity` drift-checks the registries and every normative token against
   `protocol.md`.
 - **Remaining in §4:** collision extension beyond the base 12-character ID hash.
+- **§7.5–7.6 implemented (capability-backed):**
+  `examples/spec/export-acquisition-loop.cdl` declares the five-state acquisition
+  domain and the eight loop rules, with the state domain drift-checked against the
+  bracket tokens in §7.5; `examples/spec/normalized-maps.cdl` declares the
+  normalized-map record and table schema plus the navigation-only rule. §7.7 was the
+  S1 pilot.
 
 ### S4 — Crown
 
