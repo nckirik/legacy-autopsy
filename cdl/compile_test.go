@@ -17,6 +17,7 @@ const (
 	canonicalProfilePath = "examples/spec/canonical-hash-profile.cdl"
 	acquisitionPath      = "examples/spec/export-acquisition-loop.cdl"
 	normalizedMapsPath   = "examples/spec/normalized-maps.cdl"
+	invocationModesPath  = "examples/spec/invocation-modes.cdl"
 	ledgerPath           = "examples/spec/identity-ledger.json"
 	goldenEIRPath        = "examples/spec/golden/export-reconciliation.eir.json"
 	goldenPromptPath     = "examples/spec/golden/export-reconciliation.light.prompt.md"
@@ -57,7 +58,7 @@ func TestUpdateAssets(t *testing.T) {
 		t.Skip("run with -update to rewrite golden assets and identity ledger")
 	}
 	var ledgerSources []LedgerSource
-	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath, canonicalProfilePath, acquisitionPath, normalizedMapsPath} {
+	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath, canonicalProfilePath, acquisitionPath, normalizedMapsPath, invocationModesPath} {
 		src := Source{Path: rel, Bytes: readRepoFile(t, rel)}
 		prog, diags := Parse(src.Path, src.Bytes)
 		if len(diags) > 0 {
@@ -287,6 +288,82 @@ func TestNormalizedMapsSectionCompiles(t *testing.T) {
 	}
 	if tableID != "normalized-map" {
 		t.Fatalf("unexpected table %q", tableID)
+	}
+}
+
+func TestInvocationModesCompile(t *testing.T) {
+	src := Source{Path: invocationModesPath, Bytes: readRepoFile(t, invocationModesPath)}
+	ledger, err := LoadLedger(repoPath(ledgerPath))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
+	if err != nil {
+		t.Fatal(err)
+	}
+	base := res.EIR.Declarations.BaseReads
+	if len(base) != 9 {
+		t.Fatalf("base reads has %d entries, want 9", len(base))
+	}
+	modes := res.EIR.Declarations.Modes
+	if len(modes) != 13 {
+		t.Fatalf("%d modes, want 13", len(modes))
+	}
+	strict := 0
+	for _, mode := range modes {
+		if mode.Strict {
+			strict++
+		}
+		if len(mode.Reads) < len(base) {
+			t.Fatalf("mode %s reads fewer than the base set", mode.ID)
+		}
+	}
+	if strict != 3 {
+		t.Fatalf("%d strict modes, want 3", strict)
+	}
+}
+
+func TestModeDeclarationChecks(t *testing.T) {
+	valid := "GLOBAL DECLARATIONS\n  ARTIFACT 0A-PREFLIGHT.md\nEND\n" +
+		"BASE-READS\n  0A-PREFLIGHT.md\nEND\n" +
+		"MODE Preflight\nEND\n"
+	if _, err := Compile(CompileInput{
+		Sources: []Source{{Path: "inline.cdl", Bytes: []byte(valid)}},
+		Ledger:  map[string]IDRecord{},
+	}); err != nil {
+		t.Fatalf("valid mode source rejected: %v", err)
+	}
+	cases := []struct{ name, in, code string }{
+		{
+			name: "base read unresolved",
+			in:   strings.Replace(valid, "  0A-PREFLIGHT.md\nEND", "  missing.md\nEND", 1),
+			code: "CDL_UNRESOLVED_REFERENCE",
+		},
+		{
+			name: "mode read unresolved",
+			in:   strings.Replace(valid, "MODE Preflight\nEND", "MODE Preflight\n  READS missing.md\nEND", 1),
+			code: "CDL_UNRESOLVED_REFERENCE",
+		},
+		{
+			name: "duplicate mode",
+			in:   valid + "\nMODE Preflight\nEND\n",
+			code: "CDL_DUPLICATE_ID",
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			_, err := Compile(CompileInput{
+				Sources: []Source{{Path: "inline.cdl", Bytes: []byte(tc.in)}},
+				Ledger:  map[string]IDRecord{},
+			})
+			diags, ok := err.(Diagnostics)
+			if !ok {
+				t.Fatalf("expected Diagnostics, got %T (%v)", err, err)
+			}
+			if !diags.Has(tc.code) {
+				t.Fatalf("expected %s, got %v", tc.code, diags)
+			}
+		})
 	}
 }
 

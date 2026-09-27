@@ -48,6 +48,8 @@ func Compile(in CompileInput) (*Result, error) {
 		prog.Globals.Rules = append(prog.Globals.Rules, parsed.Globals.Rules...)
 		prog.Globals.Gates = append(prog.Globals.Gates, parsed.Globals.Gates...)
 		prog.Globals.WorkflowTargets = append(prog.Globals.WorkflowTargets, parsed.Globals.WorkflowTargets...)
+		prog.Globals.BaseReads = append(prog.Globals.BaseReads, parsed.Globals.BaseReads...)
+		prog.Globals.Modes = append(prog.Globals.Modes, parsed.Globals.Modes...)
 		prog.Sections = append(prog.Sections, parsed.Sections...)
 		prog.Projections = append(prog.Projections, parsed.Projections...)
 	}

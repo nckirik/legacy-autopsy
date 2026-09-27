@@ -1,6 +1,6 @@
 {
   "ledger-format": 2,
-  "generator": "cdl/0.1.0",
+  "generator": "cdl/0.2.0",
   "generated-at": "2026-09-25T00:00:00Z",
   "sources": [
     {
@@ -245,6 +245,11 @@
           "status": "active"
         }
       ]
+    },
+    {
+      "path": "examples/spec/invocation-modes.cdl",
+      "source-fingerprint": "sha256:fa81914d889ac2b2573ffc7b7955c40d6b3915f21023ec65d3dbf6cb8864f851",
+      "ids": null
     },
     {
       "path": "examples/spec/normalized-maps.cdl",

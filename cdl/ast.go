@@ -25,6 +25,17 @@ type Globals struct {
 	Rules           []string
 	Gates           []string
 	WorkflowTargets []string
+	BaseReads       []string
+	Modes           []ModeDecl
+}
+
+// ModeDecl is one invocation-mode declaration: identity, strictness, and the
+// mode-specific mandatory read set. The baseline read set is declared once.
+type ModeDecl struct {
+	ID     string
+	Title  string
+	Strict bool
+	Reads  []string
 }
 
 // Capability is a declared supplied capability.

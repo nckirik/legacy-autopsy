@@ -82,6 +82,18 @@ func Parse(file string, src []byte) (*Program, Diagnostics) {
 				return prog, p.diags
 			}
 			prog.Projections = append(prog.Projections, proj)
+		case line == "BASE-READS":
+			p.pos++
+			if !p.parseBaseReads(&prog.Globals) {
+				return prog, p.diags
+			}
+		case strings.HasPrefix(line, "MODE "):
+			p.pos++
+			mode, ok := p.parseMode(strings.TrimSpace(strings.TrimPrefix(line, "MODE ")))
+			if !ok {
+				return prog, p.diags
+			}
+			prog.Globals.Modes = append(prog.Globals.Modes, mode)
 		default:
 			p.failHere("CDL_PARSE", "unexpected top-level line %q", line)
 			return prog, p.diags
@@ -220,6 +232,49 @@ func (p *parser) parseGlobals(g *Globals) bool {
 		default:
 			p.failHere("CDL_PARSE", "unexpected global declaration %q", line)
 			return false
+		}
+	}
+}
+
+func (p *parser) parseBaseReads(g *Globals) bool {
+	for {
+		line, ok := p.peek()
+		if !ok {
+			p.failHere("CDL_PARSE", "unterminated BASE-READS")
+			return false
+		}
+		p.pos++
+		if line == "END" {
+			return true
+		}
+		if line != "" {
+			g.BaseReads = append(g.BaseReads, line)
+		}
+	}
+}
+
+func (p *parser) parseMode(id string) (ModeDecl, bool) {
+	mode := ModeDecl{ID: id}
+	for {
+		line, ok := p.peek()
+		if !ok {
+			p.failHere("CDL_PARSE", "unterminated MODE %s", id)
+			return mode, false
+		}
+		p.pos++
+		switch {
+		case line == "END":
+			return mode, true
+		case line == "":
+		case strings.HasPrefix(line, "TITLE "):
+			mode.Title = unquote(strings.TrimPrefix(line, "TITLE "))
+		case line == "STRICT":
+			mode.Strict = true
+		case strings.HasPrefix(line, "READS "):
+			mode.Reads = append(mode.Reads, csv(strings.TrimPrefix(line, "READS "))...)
+		default:
+			p.failHere("CDL_PARSE", "unexpected MODE line %q", line)
+			return mode, false
 		}
 	}
 }

@@ -5,10 +5,10 @@ import "encoding/json"
 // Frozen pilot identities. They are recorded in every EIR envelope and every
 // generated projection provenance header.
 const (
-	LanguageVersion  = "cdl/0.1"
+	LanguageVersion  = "cdl/0.2"
 	StdlibVersion    = "cdl-stdlib/0.1"
-	GeneratorVersion = "cdl/0.1.0"
-	EIRFormat        = 1
+	GeneratorVersion = "cdl/0.2.0"
+	EIRFormat        = 2
 	ProtocolVersion  = "canonical-deconstruction/4.1.2"
 )
 
@@ -38,6 +38,8 @@ type EIRDeclarations struct {
 	Artifacts       []string        `json:"artifacts"`
 	Gates           []string        `json:"gates"`
 	WorkflowTargets []string        `json:"workflow-targets,omitempty"`
+	BaseReads       []string        `json:"base-reads,omitempty"`
+	Modes           []EIRMode       `json:"modes,omitempty"`
 	Types           []EIRType       `json:"types,omitempty"`
 	States          []EIRState      `json:"states,omitempty"`
 	Values          []EIRValue      `json:"values,omitempty"`
@@ -52,6 +54,15 @@ type EIRCapability struct {
 	ID      string `json:"id"`
 	Kind    string `json:"kind"`
 	Version int    `json:"version"`
+}
+
+// EIRMode is one invocation mode. Reads is the materialized union of the
+// document base read set and the mode-specific reads.
+type EIRMode struct {
+	ID     string   `json:"id"`
+	Title  string   `json:"title,omitempty"`
+	Strict bool     `json:"strict"`
+	Reads  []string `json:"reads,omitempty"`
 }
 
 // EIRType is a named value type.
@@ -190,6 +201,15 @@ func BuildEIR(prog *Program, versions Versions, sourceFingerprint string) (*EIRD
 	doc.Declarations.Artifacts = append(doc.Declarations.Artifacts, prog.Globals.Artifacts...)
 	doc.Declarations.Gates = append(doc.Declarations.Gates, prog.Globals.Gates...)
 	doc.Declarations.WorkflowTargets = append(doc.Declarations.WorkflowTargets, prog.Globals.WorkflowTargets...)
+	doc.Declarations.BaseReads = append(doc.Declarations.BaseReads, prog.Globals.BaseReads...)
+	for _, mode := range prog.Globals.Modes {
+		doc.Declarations.Modes = append(doc.Declarations.Modes, EIRMode{
+			ID:     mode.ID,
+			Title:  mode.Title,
+			Strict: mode.Strict,
+			Reads:  mergeReads(prog.Globals.BaseReads, mode.Reads),
+		})
+	}
 	for _, id := range prog.Globals.Rules {
 		doc.Declarations.Rules = append(doc.Declarations.Rules, EIRRule{ID: id})
 	}
@@ -239,6 +259,20 @@ func DecodeEIR(b []byte) (*EIRDoc, error) {
 		return nil, err
 	}
 	return &doc, nil
+}
+
+func mergeReads(base, extra []string) []string {
+	seen := map[string]bool{}
+	out := make([]string, 0, len(base)+len(extra))
+	for _, list := range [][]string{base, extra} {
+		for _, artifact := range list {
+			if !seen[artifact] {
+				seen[artifact] = true
+				out = append(out, artifact)
+			}
+		}
+	}
+	return out
 }
 
 func sectionTypes(sec Section) []EIRType {

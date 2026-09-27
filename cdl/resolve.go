@@ -64,9 +64,35 @@ func (r *resolver) fail(code, format string, args ...any) {
 func resolve(prog *Program) (Diagnostics, *symbols) {
 	r := &resolver{prog: prog, sym: newSymbols()}
 	r.buildSymbols()
+	r.checkGlobals()
 	r.checkSections()
 	r.checkProjections()
 	return r.diags, r.sym
+}
+
+func (r *resolver) checkGlobals() {
+	for _, artifact := range r.prog.Globals.BaseReads {
+		if !r.sym.artifacts[artifact] {
+			r.fail("CDL_UNRESOLVED_REFERENCE", "BASE-READS entry %q does not resolve to a declared artifact", artifact)
+		}
+	}
+	seen := map[string]bool{}
+	for _, mode := range r.prog.Globals.Modes {
+		if mode.ID == "" {
+			r.fail("CDL_PARSE", "MODE has an empty identifier")
+			continue
+		}
+		if seen[mode.ID] {
+			r.fail("CDL_DUPLICATE_ID", "duplicate mode %q", mode.ID)
+			continue
+		}
+		seen[mode.ID] = true
+		for _, artifact := range mode.Reads {
+			if !r.sym.artifacts[artifact] {
+				r.fail("CDL_UNRESOLVED_REFERENCE", "MODE %s read %q does not resolve to a declared artifact", mode.ID, artifact)
+			}
+		}
+	}
 }
 
 func (r *resolver) buildSymbols() {
