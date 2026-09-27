@@ -67,6 +67,9 @@ func WriteLedger(path string, sources []LedgerSource, prov LedgerProvenance) err
 	seen := map[string]string{}
 	for si := range sorted {
 		ids := append([]IDRecord(nil), sorted[si].IDs...)
+		if ids == nil {
+			ids = []IDRecord{}
+		}
 		sort.Slice(ids, func(i, j int) bool { return ids[i].ID < ids[j].ID })
 		for _, id := range ids {
 			if other, dup := seen[id.ID]; dup {
