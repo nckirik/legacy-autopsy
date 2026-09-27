@@ -90,6 +90,9 @@ independent work untouched, and never licenses an executor-authored substitute.
 - **Kind/determinism:** deterministic, reproducible-exact (when implemented).
 - **Inputs:** Markdown artifact bytes plus the exact exclusion rules of §4.1.2.
 - **Output:** canonical bytes and `sha256` per the normative profile.
+- **Declared semantics:** §4.1.1 payload/envelope identity rules are declared in
+  `examples/spec/semantic-payload-identity.cdl` and drift-checked against
+  `protocol.md`; the canonical engine that these rules reference is not implemented.
 - **Rules:** LF, exact Unicode handling, order/whitespace rules, carrier and envelope
   exclusions exactly as specified; this replaces, and never reuses, the deliberately
   limited bootstrap hash.

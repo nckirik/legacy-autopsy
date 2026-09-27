@@ -107,8 +107,13 @@ S3 progress:
   tested against an independent recomputation of the §4.1 formula; `internal/parity`
   drift-checks both registries against `protocol.md`. The identity ledger is now
   multi-source (format 2) with global uniqueness across sources.
-- **Remaining in §4:** collision extension, §4.1.1 semantic payload/envelope identity,
-  and §4.1.2 canonical hash profile.
+- **§4.1.1 implemented (capability-backed):**
+  `examples/spec/semantic-payload-identity.cdl` declares the payload mandatory fields,
+  semantic record version, semantic-content fingerprint, certification envelope,
+  envelope mutation invariance, and confirmation binding rules; `internal/parity`
+  token-drift-checks every hyphenated normative token in protocol.md §4.1.1 against the
+  CDL text. The `canonical.markdown` engine remains unimplemented (see §4.1.2).
+- **Remaining in §4:** collision extension and §4.1.2 canonical hash profile.
 
 ### S4 — Crown
 
