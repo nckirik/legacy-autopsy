@@ -1,0 +1,40 @@
+GLOBAL DECLARATIONS
+  CAPABILITY hash.sha256
+  REGISTRY normalized-map-units
+END
+
+SECTION normalized-maps
+NUMBER 7.6
+TITLE "Normalized maps"
+
+GOAL
+  Normalized maps are navigation-only indexes over one exploded export.
+END
+
+FIELD NORMALIZED-MAP-ROW
+  metadata               -> string        required
+  virtual-unit           -> id            required
+  stable-id              -> id            required
+  type                   -> string        required
+  primary-pov            -> string        required
+  source-fingerprint     -> hash          required
+  edges                  -> set<string>   optional
+  external-systems       -> set<string>   optional
+  credential-aliases     -> set<string>   optional
+  ambiguities            -> set<string>   optional
+END
+
+TABLE normalized-map
+  ROWS normalized-map-units
+  ROW-TYPE NORMALIZED-MAP-ROW
+  KEY stable-id
+END
+
+RULE normalized-maps-navigation
+  GOAL
+    Normalized maps list metadata, each virtual unit, stable ID, type, primary POV,
+    source fingerprint, edges, external systems, credential aliases, and ambiguities.
+    They are navigation-only indexes. They MUST NOT summarize an export as one routine
+    or bypass persona-driven discovery.
+  END
+END

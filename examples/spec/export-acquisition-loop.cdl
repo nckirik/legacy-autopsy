@@ -1,0 +1,86 @@
+GLOBAL DECLARATIONS
+  CAPABILITY hash.sha256
+  CAPABILITY canonical.markdown
+  ARTIFACT 13-EXPORT-RECONCILIATION.md
+  ARTIFACT 17-ACQUISITION-CANDIDATES.md
+  GATES A-STRUCTURALLY-COMPLETE
+END
+
+SECTION export-acquisition-loop
+NUMBER 7.5
+TITLE "n8n human acquisition loop"
+
+GOAL
+  Register, explode, trace, and reconcile one approved serialized export through a
+  human acquisition loop, stopping at every missing reference boundary.
+END
+
+ENUM ACQUISITION-STATE
+  A-RECEIVED
+  A-EXPLODED
+  A-REQUESTED
+  A-BLOCKED-MISSING-REFERENCE
+  A-STRUCTURALLY-COMPLETE
+END
+
+RULE acquisition-seed
+  GOAL
+    Register available inventory or exports as A-RECEIVED with stable IDs and
+    fingerprints.
+  END
+END
+
+RULE acquisition-explosion
+  GOAL
+    Generate source inventory, normalized units, entry candidates, and edges, then
+    transition to A-EXPLODED.
+  END
+END
+
+RULE reference-discovery
+  GOAL
+    Inspect static sub-workflows, error workflows, IDs or names in expressions or code,
+    queue or event links, and webhook relationships.
+  END
+END
+
+RULE immediate-placeholder
+  GOAL
+    Every missing referenced workflow receives an A-REQUESTED register entry
+    immediately with exact known identity, referring virtual coordinate, and operator
+    action. The referrer becomes A-BLOCKED-MISSING-REFERENCE. Unknown ownership also
+    creates an unmapped discovery. Traversal stops at the boundary; missing behavior is
+    not hypothesized.
+  END
+END
+
+RULE operator-export
+  GOAL
+    Stage a sanitized projection without raw secrets.
+  END
+END
+
+RULE cold-resume
+  GOAL
+    Fingerprint, explode, link, restore the referrer to A-EXPLODED, and resume its open
+    frontier.
+  END
+END
+
+RULE acquisition-closure
+  GOAL
+    Transition to A-STRUCTURALLY-COMPLETE only after static reference closure, 100
+    percent normalized reconciliation, and terminal disposition of every published
+    helper candidate, operator action, inaccessible artifact, and dynamic reference in
+    17-ACQUISITION-CANDIDATES.md. A dynamic reference may close only through inclusion
+    or mapping or an exact approved scope decision; recording it as unresolved is not
+    protocol closure.
+  END
+END
+
+RULE dynamic-references
+  GOAL
+    Dynamic references are recorded as unresolved. After persona or POV assignment,
+    static investigation creates a ticket; they are never guessed.
+  END
+END

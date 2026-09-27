@@ -75,6 +75,62 @@
       ]
     },
     {
+      "path": "examples/spec/export-acquisition-loop.cdl",
+      "source-fingerprint": "sha256:8afae3416b59face8d7d226c28f7ca2143b5ee991e6608b9578914dadb98146e",
+      "ids": [
+        {
+          "id": "ACQUISITION-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "acquisition-closure",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "acquisition-explosion",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "acquisition-seed",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "cold-resume",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "dynamic-references",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "export-acquisition-loop",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "immediate-placeholder",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "operator-export",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "reference-discovery",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/export-reconciliation.cdl",
       "source-fingerprint": "sha256:0a81326160f45919874739189f3256021c8dbab60ecaf99f8b47dbb670f0bfa6",
       "ids": [
@@ -185,6 +241,32 @@
         },
         {
           "id": "reconciliation-completeness",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "path": "examples/spec/normalized-maps.cdl",
+      "source-fingerprint": "sha256:9f18c5bef000d4ea3e1805fadaf9b25b55b75ca2a32fb45f16e061c6eeba25b4",
+      "ids": [
+        {
+          "id": "NORMALIZED-MAP-ROW",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "normalized-map",
+          "kind": "TABLE",
+          "status": "active"
+        },
+        {
+          "id": "normalized-maps",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "normalized-maps-navigation",
           "kind": "RULE",
           "status": "active"
         }
