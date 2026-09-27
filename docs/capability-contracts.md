@@ -106,7 +106,8 @@ independent work untouched, and never licenses an executor-authored substitute.
   fail closed.
 - **Current:** `internal/capabilities/canonical.go`. `internal/canonical` remains the
   deliberately limited bootstrap hash and must not be used for protocol-significant
-  hashing.
+  hashing. The same package implements the §8.5 `COLD-RESUME|` check fingerprint with
+  carrier exclusion and fail-closed field validation.
 
 ## 3. Proposing providers
 

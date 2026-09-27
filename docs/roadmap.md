@@ -122,6 +122,11 @@ S3 progress:
   `internal/parity` drift-checks the registries and every normative token against
   `protocol.md`.
 - **Remaining in §4:** collision extension beyond the base 12-character ID hash.
+- **§8.5 implemented (capability-backed):** `examples/spec/cold-resume.cdl` declares the
+  12-field assessment block and the fingerprint/validation rules;
+  `internal/capabilities.ColdResumeFingerprint` implements the `COLD-RESUME|` preimage
+  with carrier exclusion and fail-closed field validation; `internal/parity`
+  drift-checks the field list against protocol.md §8.5.
 - **§8 invocation declarations started:** `examples/spec/invocation-modes.cdl` declares
   the 13-mode enum, the three strict modes, the document baseline read set, and every
   mode's specific read set. Language 0.2 adds `BASE-READS`/`MODE` (EIR format 2), and
