@@ -101,6 +101,107 @@
       ]
     },
     {
+      "path": "examples/spec/coverage-and-exits.cdl",
+      "source-fingerprint": "sha256:6c83e946d02d42886d6bd1ca9ebfd33413f387e6bb1dce23da6c4a87cac3c28b",
+      "ids": [
+        {
+          "id": "COVERAGE-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "EXIT-A-CONDITION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "SCOPE-CLASS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "SWEEP-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "TRAVERSAL-CELL-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "coverage-arithmetic",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "coverage-arithmetic-formulas",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "coverage-covered-requirements",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "exit-a",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "exit-a-composite",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "exit-b",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "exit-b-stagnation",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "exit-c",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "exit-c-oscillation",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "exit-d",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "iteration-accounting",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "iteration-reopening",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "r-swept-validity",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "sweep-records",
+          "kind": "SECTION",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/export-acquisition-loop.cdl",
       "source-fingerprint": "sha256:8afae3416b59face8d7d226c28f7ca2143b5ee991e6608b9578914dadb98146e",
       "ids": [

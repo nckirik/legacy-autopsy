@@ -21,6 +21,7 @@ const (
 	coldResumePath        = "examples/spec/cold-resume.cdl"
 	ticketFSMPath         = "examples/spec/ticket-fsm.cdl"
 	invocationContextPath = "examples/spec/invocation-context.cdl"
+	coverageExitsPath     = "examples/spec/coverage-and-exits.cdl"
 	ledgerPath            = "examples/spec/identity-ledger.json"
 	goldenEIRPath         = "examples/spec/golden/export-reconciliation.eir.json"
 	goldenPromptPath      = "examples/spec/golden/export-reconciliation.light.prompt.md"
@@ -61,7 +62,7 @@ func TestUpdateAssets(t *testing.T) {
 		t.Skip("run with -update to rewrite golden assets and identity ledger")
 	}
 	var ledgerSources []LedgerSource
-	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath, canonicalProfilePath, acquisitionPath, normalizedMapsPath, invocationModesPath, coldResumePath, ticketFSMPath, invocationContextPath} {
+	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath, canonicalProfilePath, acquisitionPath, normalizedMapsPath, invocationModesPath, coldResumePath, ticketFSMPath, invocationContextPath, coverageExitsPath} {
 		src := Source{Path: rel, Bytes: readRepoFile(t, rel)}
 		prog, diags := Parse(src.Path, src.Bytes)
 		if len(diags) > 0 {
@@ -443,6 +444,41 @@ func TestInvocationContextCompiles(t *testing.T) {
 	}
 	if counts["INVOCATION-HEADER"] != 21 || counts["INVOCATION-LOG"] != 15 {
 		t.Fatalf("unexpected field counts: %v", counts)
+	}
+}
+
+func TestCoverageAndExitsCompile(t *testing.T) {
+	src := Source{Path: coverageExitsPath, Bytes: readRepoFile(t, coverageExitsPath)}
+	ledger, err := LoadLedger(repoPath(ledgerPath))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
+	if err != nil {
+		t.Fatal(err)
+	}
+	numbers := []string{}
+	for _, sec := range res.EIR.Sections {
+		numbers = append(numbers, sec.Number)
+	}
+	if strings.Join(numbers, ",") != "10.1,10.2,10.3,10.4,10.5,10.6" {
+		t.Fatalf("unexpected sections: %v", numbers)
+	}
+	counts := map[string]int{}
+	for _, e := range res.EIR.Declarations.Enums {
+		counts[e.ID] = len(e.Values)
+	}
+	if counts["EXIT-A-CONDITION"] != 12 || counts["TRAVERSAL-CELL-STATE"] != 7 {
+		t.Fatalf("unexpected enum counts: %v", counts)
+	}
+	fieldCount := 0
+	for _, f := range res.EIR.Declarations.Fields {
+		if f.ID == "SWEEP-RECORD" {
+			fieldCount = len(f.Fields)
+		}
+	}
+	if fieldCount != 11 {
+		t.Fatalf("SWEEP-RECORD has %d fields, want 11", fieldCount)
 	}
 }
 

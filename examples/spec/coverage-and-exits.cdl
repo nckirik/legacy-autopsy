@@ -1,0 +1,212 @@
+GLOBAL DECLARATIONS
+  CAPABILITY hash.sha256
+  ARTIFACT 16-SOURCE-COVERAGE.md
+  ARTIFACT 22-GATE-REPORTS.md
+  GATES Exit-A
+END
+
+SECTION sweep-records
+NUMBER 10.1
+TITLE "Evidence-backed R-SWEPT"
+
+GOAL
+  A sweep record carries SWEEP-ID. A required traversal-matrix cell may be R-SWEPT
+  only with a sweep record; every required cell has its own sweep, and claim-backed
+  Not-Applicable cells have no sweep and remain visible in the denominator.
+END
+
+ENUM TRAVERSAL-CELL-STATE
+  R-SWEPT
+  R-UNSWEPT
+  R-IN-PROGRESS
+  R-PENDING-HUMAN-REVIEW
+  R-PENDING-PERSONA-ASSIGNMENT
+  R-DEPROMOTION-PENDING
+  Not-Applicable
+END
+
+FIELD SWEEP-RECORD
+  snapshot-environment                  -> string      required
+  persona-cluster-pov-track             -> string      required
+  expanded-concrete-entry-coordinates   -> set<string> required
+  source-denominator                    -> string      required
+  expected-mapped-excluded-counts-by-kind -> string    required
+  open-terminal-frontier-counts         -> string      required
+  active-terminal-ticket-counts         -> string      required
+  export-reconciliation                 -> string      required
+  coverage-result                       -> string      required
+  closing-invocation                    -> string      required
+  evidence-claims                       -> set<string> required
+END
+
+RULE r-swept-validity
+  GOAL
+    R-SWEPT is invalid if expected counts cannot be reproduced, any discovered
+    boundary lacks exactly one FRT, any frontier is open, any normalized unit is
+    unreconciled, any material contradiction is open, or a wildcard is the only
+    denominator. Terminal-at-discovery frontiers are included in terminal counts and
+    disposition evidence; omission is not an optimization.
+  END
+END
+
+SECTION coverage-arithmetic
+NUMBER 10.2
+TITLE "Per-kind coverage arithmetic"
+
+GOAL
+  Coverage is computed separately for every applicable kind, track, snapshot, and
+  environment, then aggregated; a global percentage MUST NOT hide a failed subgroup.
+END
+
+ENUM SCOPE-CLASS
+  In-Scope
+  Candidate
+  Approved-Excluded
+END
+
+ENUM COVERAGE-STATUS
+  C-COVERED
+  C-PARTIAL
+  C-GAP
+  C-EXCLUDED
+END
+
+RULE coverage-arithmetic-formulas
+  GOAL
+    For each kind k and each environment/snapshot/track scope: Gk is the count of
+    scope-specific rows in 16-SOURCE-COVERAGE where SRC kind is k and Scope is in
+    In-Scope, Candidate, or Approved-Excluded. Xk is the count of rows in Gk where
+    Scope is Approved-Excluded and C Status is C-EXCLUDED with an approved exact DEC.
+    EffectiveDenominator k is Gk minus Xk. Covered k, Partial k, Gap k, and Candidate
+    k count the effective-denominator rows by C Status C-COVERED, C-PARTIAL, C-GAP or
+    Disposition Unmapped or Human-Blocked, and Scope Candidate respectively. The valid
+    partition is EffectiveDenominator k equals Covered k plus Partial k plus Gap k.
+    Kind k is closed when Candidate k, Partial k, and Gap k are zero and Covered k
+    equals EffectiveDenominator k.
+  END
+END
+
+RULE coverage-covered-requirements
+  GOAL
+    C-COVERED for an effective-denominator unit requires a terminal in-scope source
+    disposition, atomic mapping, material CLMs, no unresolved contradiction, required
+    reciprocal references, a terminal frontier, applicable export reconciliation, no
+    active ticket affecting the unit, and, for a Disabled SRC, CMP, or UC, exactly one
+    canonical CAP membership with any overlap explicitly decided. An approved exclusion
+    yields C-EXCLUDED, not C-COVERED, and is governed by the subtraction above.
+  END
+END
+
+SECTION exit-a
+NUMBER 10.3
+TITLE "Composite Exit A — Deconstruction Closure"
+
+GOAL
+  Exit A succeeds only when all declared conditions hold for the pinned scope.
+END
+
+ENUM EXIT-A-CONDITION
+  Ticket closure
+  Acquisition closure
+  Registry closure
+  Source disposition
+  Frontier closure
+  Export reconciliation
+  Sweep validity
+  Atomic coverage
+  Forensic referential integrity
+  Contradiction closure
+  Disabled equality and capability governance
+  Human-required effect
+END
+
+RULE exit-a-composite
+  GOAL
+    Exit A requires ticket closure with zero T-OPEN, T-PENDING, T-FOLLOW-UP, or
+    T-PROBE-REQUIRED entries; every in-scope artifact A-STRUCTURALLY-COMPLETE;
+    registry closure with no R-PENDING-HUMAN-REVIEW, R-PENDING-PERSONA-ASSIGNMENT,
+    R-DEPROMOTION-PENDING, required R-UNSWEPT, or required R-IN-PROGRESS cell; terminal
+    source disposition with no Candidate; every traversal frontier terminal; every
+    normalized logical unit atomically mapped or approved excluded; a valid
+    evidence-backed R-SWEPT per required cell with independent evaluation per Required
+    applicability row; all effective denominator units C-COVERED with no C-PARTIAL or
+    C-GAP; forensic referential integrity with ID uniqueness, existing reciprocal
+    links, no invalid tombstone references, no orphan claims, no dangling references,
+    and canonical ownership; no open material contradiction; disabled, shadow, and
+    conditional units meeting the same static atomic closure rules with exactly one
+    canonical CAP per effective-denominator Disabled SRC, CMP, or UC; and every
+    T-HUMAN-REQUIRED paired with an exact approved exclusion or a scope that does not
+    claim closure. Exit A writes a deterministic report to 22-GATE-REPORTS.md with
+    pass/fail per condition, counts by kind, track, and environment, input
+    fingerprints, validator version, and pinned snapshot.
+  END
+END
+
+SECTION exit-b
+NUMBER 10.4
+TITLE "Exit B — Stagnation"
+
+GOAL
+  If a complete named iteration has zero valid mutations the pipeline halts as
+  stagnant and reports remaining state; cosmetic edits do not count.
+END
+
+RULE exit-b-stagnation
+  GOAL
+    Zero valid mutations means no new atomic source, component, claim, or frontier
+    records, no ticket transition, no acquisition or reconciliation update, and no
+    justified coverage change.
+  END
+END
+
+SECTION exit-c
+NUMBER 10.5
+TITLE "Exit C — Oscillation"
+
+GOAL
+  If an actor-transition sequence of length 1 to 4 repeats for two consecutive
+  completed cycles in one ticket trace, run one neutral Arbitration invocation,
+  normally POV-5.
+END
+
+RULE exit-c-oscillation
+  GOAL
+    If the neutral Arbitration invocation fails to break the cycle, freeze the ticket
+    and escalate through Human Hatch.
+  END
+END
+
+SECTION exit-d
+NUMBER 10.6
+TITLE "Exit D — Limit exhaustion and deterministic iteration accounting"
+
+GOAL
+  The 26 canonical iteration tokens are a total per-system budget across the complete
+  protocol run; the budget never resets, and the system MUST NOT proceed beyond ZULU.
+END
+
+RULE iteration-accounting
+  GOAL
+    Named iterations use exactly the canonical tokens ALFA, BRAVO, CHARLIE, DELTA,
+    ECHO, FOXTROT, GOLF, HOTEL, INDIA, JULIETT, KILO, LIMA, MIKE, NOVEMBER, OSCAR,
+    PAPA, QUEBEC, ROMEO, SIERRA, TANGO, UNIFORM, VICTOR, WHISKEY, X-RAY, YANKEE, and
+    ZULU. Human-facing typography such as X-ray is display-only and MUST be normalized
+    to X-RAY before persistence or comparison; it is not an accepted stored alias. A
+    named iteration begins with its first logged invocation and completes only when all
+    admitted invocations have terminal log entries, all persona-local buffers produced
+    in it have been reconciled, and the iteration checkpoint records mutation count,
+    remaining tickets, frontiers, and candidates, and the next action. Parallel
+    invocations share the same current token and do not consume extra tokens.
+  END
+END
+
+RULE iteration-reopening
+  GOAL
+    A synthesis GAP discovered while an iteration is open is reconciled within that
+    iteration when possible; if that iteration is already complete, reopening consumes
+    the next unused token. Re-running synthesis after closure continues under the
+    current open token or next unused token and MUST NOT return to ALFA or reuse a
+    completed token. Unclosed work at completion of ZULU halts and requires human
+    intervention.
+  END
+END
