@@ -122,6 +122,13 @@ S3 progress:
   `internal/parity` drift-checks the registries and every normative token against
   `protocol.md`.
 - **Remaining in §4:** collision extension beyond the base 12-character ID hash.
+- **§8 invocation declarations started:** `examples/spec/invocation-modes.cdl` declares
+  the 13-mode enum, the three strict modes, the document baseline read set, and every
+  mode's specific read set. Language 0.2 adds `BASE-READS`/`MODE` (EIR format 2), and
+  `internal/parity` drift-checks mode ids against §8.3, strictness against §8.2, the
+  baseline against §8.4, and proves read-set equivalence with the frozen Go
+  implementation before it is retired. Remaining §8: cold-resume fingerprint,
+  concurrency/staleness rules, and rewiring `contextpacket` to EIR `modes[]`.
 - **§7.5–7.6 implemented (capability-backed):**
   `examples/spec/export-acquisition-loop.cdl` declares the five-state acquisition
   domain and the eight loop rules, with the state domain drift-checked against the

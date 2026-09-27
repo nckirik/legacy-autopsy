@@ -90,6 +90,11 @@ Verdict: §8.4 read sets are protocol content currently living in Go, so `EVIDEN
 `USES` alone cannot reproduce them. The leak is bounded and declarative — lists, flags,
 and path templates, not algorithms — and roughly 60 lines retire when §8 migrates.
 
+Status (S3): the read sets are now declared in CDL
+(`examples/spec/invocation-modes.cdl`, language 0.2 `BASE-READS`/`MODE`) and pinned to
+the Go implementation by an equivalence test; the harness still consumes the Go
+function until `contextpacket` is rewired to EIR `modes[]`.
+
 Required S3 shape (no surface added now):
 
 1. `MODE` declarations in CDL (mode id, strictness, mandatory read set, write-target

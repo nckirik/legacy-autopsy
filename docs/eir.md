@@ -36,7 +36,7 @@ or UI concerns.
 Every EIR document starts with an envelope:
 
 ```
-eir-format:        1
+eir-format:        2
 language:          cdl/<version>
 stdlib:            cdl-stdlib/<version>
 protocol:          canonical-deconstruction/<version>
@@ -74,12 +74,12 @@ Execution traces use the same canonicalization; `trace-hash` is defined in
 
 EIR body sections:
 
-| Section        | Contains                                                                                                                                                                                      |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `declarations` | types, values (with lifetime), states (`VALUES`/`INITIAL`/`ALLOWS`), fields, enums, artifacts, registries, tables, gates, workflow targets, capabilities (kind/version), rules and predicates |
-| `sections`     | section identity, number, title, goal, uses/requires edges, ordered steps                                                                                                                     |
-| `steps`        | id, owner, typed contract (evidence/produces/result/require for AGENT), ordered operations (MACHINE)                                                                                          |
-| `projections`  | logical views, channels, overrides, omissions, supplied-by                                                                                                                                    |
+| Section        | Contains                                                                                                                                                                                                                                                    |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `declarations` | types, values (with lifetime), states (`VALUES`/`INITIAL`/`ALLOWS`), fields, enums, artifacts, registries, tables, gates, workflow targets, capabilities (kind/version), rules and predicates, base reads, and invocation modes with materialized read sets |
+| `sections`     | section identity, number, title, goal, uses/requires edges, ordered steps                                                                                                                                                                                   |
+| `steps`        | id, owner, typed contract (evidence/produces/result/require for AGENT), ordered operations (MACHINE)                                                                                                                                                        |
+| `projections`  | logical views, channels, overrides, omissions, supplied-by                                                                                                                                                                                                  |
 
 Resolution requirements: every reference is resolved and bound in EIR; unresolved
 references never reach EIR. Capability kinds are resolved so a MACHINE operation can
@@ -165,7 +165,7 @@ of these files, not a required monolithic edit.
 ```json
 {
   "envelope": {
-    "eir-format": 1,
+    "eir-format": 2,
     "language": "cdl/0.1",
     "stdlib": "cdl-stdlib/0.1",
     "protocol": "canonical-deconstruction/4.1.2",

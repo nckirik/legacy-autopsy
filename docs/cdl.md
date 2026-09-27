@@ -6,10 +6,11 @@ only after a parity report is accepted (see BOOTSTRAP). Until then `protocol.md`
 authoritative, and Markdown, validator, IR, and reference views are generated
 projections that are never hand-edited.
 
-`LANGUAGE-SURFACE: FROZEN-FOR-PILOT` — this revision incorporates the pre-freeze design
-decisions below and Errata 1, and freezes the surface. No further language features until
-the §7.7 pilot and parity fixtures have run; pilot findings may correct semantics but not
-add surface. Pre-freeze design drafts are not retained.
+`LANGUAGE: cdl/0.2` — the pilot surface is frozen and has since received one versioned
+addition: `BASE-READS` and `MODE` declarations (see below), which compile into EIR
+`modes[]`. Every later surface change requires a language-version bump, fixtures, and a
+documented EIR-format change; pilot findings may correct semantics but not add surface
+silently. Pre-freeze design drafts are not retained.
 
 Design decisions incorporated before freeze:
 
@@ -176,6 +177,8 @@ Declarations (global or section-local):
     STEP <id>          executable step identity
     GATES <id>, ...    named gate/completion identifiers that BLOCK may reference
     WORKFLOW-TARGET <id>, ...  workflow destinations that RETURN/LOOP may reference
+    BASE-READS         document-wide mandatory read set (one declaration, artifact IDs)
+    MODE <id>          invocation mode: TITLE, STRICT, READS <artifact ids>
 
 References:
 
@@ -206,6 +209,35 @@ Rules:
 - opaque normative text is explicit: `REQUIRE """..."""` clauses and the text fields
   `GOAL`, `TEXT`, and `REASON`. There is no category of source line that is "sometimes
   syntax, sometimes English"; a semantic clause is always a declared text field.
+
+### Modes and read sets
+
+Invocation modes are document-global declarations; the baseline read set is declared
+once and materialized into every mode:
+
+```
+BASE-READS
+  0A-PREFLIGHT.md
+  0G-DECONSTRUCTION-STATE.md
+END
+
+MODE Discovery
+  STRICT
+  READS 0B-AUTH-MODEL.md, 16-SOURCE-COVERAGE.md
+END
+```
+
+- `READS` entries MUST resolve to declared `ARTIFACT` identifiers; the compiler
+  materializes each mode's `reads` as the baseline plus its specific set, order
+  preserved and de-duplicated.
+- `STRICT` is declared, never inferred; strictness policy beyond that flag remains
+  runtime behavior, and the declared set is drift-checked against `protocol.md` §8.
+- Mode declarations exist so that bounded context assembly can consume EIR `modes[]`
+  instead of procedural harness code. Until the runtime consumes EIR, the harness read
+  sets remain the operational source and an equivalence test pins them to the
+  declarations.
+- Mode identifiers are document-global and are linked at assembly; they are not
+  section-owned ledger identities.
 
 ================================================================================
 3. CAPABILITY CONDUCT (global source rule)
