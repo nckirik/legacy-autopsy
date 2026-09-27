@@ -44,6 +44,30 @@ func compileExample(t *testing.T) *cdl.Result {
 	return res
 }
 
+func protocolPathIn(root string) string { return filepath.Join(root, "protocol.md") }
+
+// compileSection compiles one CDL section source against the committed ledger.
+func compileSection(t *testing.T, rel string) *cdl.Result {
+	t.Helper()
+	root := root(t)
+	src, err := os.ReadFile(filepath.Join(root, rel))
+	if err != nil {
+		t.Fatal(err)
+	}
+	ledger, err := cdl.LoadLedger(filepath.Join(root, "examples/spec/identity-ledger.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := cdl.Compile(cdl.CompileInput{
+		Sources: []cdl.Source{{Path: rel, Bytes: src}},
+		Ledger:  ledger,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return res
+}
+
 func fixturePath(t *testing.T, name string) string {
 	t.Helper()
 	return filepath.Join(root(t), "examples/spec/fixtures", name)

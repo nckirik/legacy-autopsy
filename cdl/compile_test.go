@@ -11,12 +11,13 @@ import (
 var update = flag.Bool("update", false, "rewrite golden assets and identity ledger")
 
 const (
-	examplePath      = "examples/spec/export-reconciliation.cdl"
-	typedIDPath      = "examples/spec/typed-id.cdl"
-	ledgerPath       = "examples/spec/identity-ledger.json"
-	goldenEIRPath    = "examples/spec/golden/export-reconciliation.eir.json"
-	goldenPromptPath = "examples/spec/golden/export-reconciliation.light.prompt.md"
-	generatedAt      = "2026-09-25T00:00:00Z"
+	examplePath         = "examples/spec/export-reconciliation.cdl"
+	typedIDPath         = "examples/spec/typed-id.cdl"
+	semanticPayloadPath = "examples/spec/semantic-payload-identity.cdl"
+	ledgerPath          = "examples/spec/identity-ledger.json"
+	goldenEIRPath       = "examples/spec/golden/export-reconciliation.eir.json"
+	goldenPromptPath    = "examples/spec/golden/export-reconciliation.light.prompt.md"
+	generatedAt         = "2026-09-25T00:00:00Z"
 )
 
 func repoPath(rel string) string { return filepath.Join("..", rel) }
@@ -53,7 +54,7 @@ func TestUpdateAssets(t *testing.T) {
 		t.Skip("run with -update to rewrite golden assets and identity ledger")
 	}
 	var ledgerSources []LedgerSource
-	for _, rel := range []string{examplePath, typedIDPath} {
+	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath} {
 		src := Source{Path: rel, Bytes: readRepoFile(t, rel)}
 		prog, diags := Parse(src.Path, src.Bytes)
 		if len(diags) > 0 {
@@ -182,6 +183,33 @@ func TestTypedIDSectionCompiles(t *testing.T) {
 	for _, want := range []string{
 		"canonical-key", "src-kind-and-coordinates", "normalized-relative-path",
 		"prf-hbk-identity", "collision-extension", "id-registry-checks",
+	} {
+		if !rules[want] {
+			t.Fatalf("missing rule %s", want)
+		}
+	}
+}
+
+func TestSemanticPayloadSectionCompiles(t *testing.T) {
+	src := Source{Path: semanticPayloadPath, Bytes: readRepoFile(t, semanticPayloadPath)}
+	ledger, err := LoadLedger(repoPath(ledgerPath))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "4.1.1" {
+		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
+	}
+	rules := map[string]bool{}
+	for _, r := range res.EIR.Declarations.Rules {
+		rules[r.ID] = true
+	}
+	for _, want := range []string{
+		"payload-mandatory-fields", "semantic-record-version", "semantic-content-fingerprint",
+		"certification-envelope", "envelope-mutation-invariance", "confirmation-binding",
 	} {
 		if !rules[want] {
 			t.Fatalf("missing rule %s", want)

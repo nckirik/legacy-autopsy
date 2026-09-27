@@ -1,14 +1,11 @@
 package parity
 
 import (
-	"os"
-	"path/filepath"
 	"regexp"
 	"sort"
 	"strings"
 	"testing"
 
-	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/protocol"
 )
 
@@ -21,28 +18,13 @@ var (
 // TestTypedIDRegistryDrift checks that the CDL §4.1 registries exactly match the
 // prefix and iteration forms declared in protocol.md.
 func TestTypedIDRegistryDrift(t *testing.T) {
-	root := root(t)
-	src, err := os.ReadFile(filepath.Join(root, "examples/spec/typed-id.cdl"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	ledger, err := cdl.LoadLedger(filepath.Join(root, "examples/spec/identity-ledger.json"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := cdl.Compile(cdl.CompileInput{
-		Sources: []cdl.Source{{Path: "examples/spec/typed-id.cdl", Bytes: src}},
-		Ledger:  ledger,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	res := compileSection(t, "examples/spec/typed-id.cdl")
 	enums := map[string][]string{}
 	for _, e := range res.EIR.Declarations.Enums {
 		enums[e.ID] = e.Values
 	}
 
-	model, err := protocol.Load(filepath.Join(root, "protocol.md"))
+	model, err := protocol.Load(protocolPathIn(root(t)))
 	if err != nil {
 		t.Fatal(err)
 	}

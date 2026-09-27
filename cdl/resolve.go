@@ -827,31 +827,16 @@ func sortedKeys(m map[string]bool) []string {
 	return out
 }
 
-// collectIDs returns every stable identity in the program for ledger checking.
+// collectIDs returns the section-owned stable identities for ledger checking.
+// Document-global declarations (capabilities, registries, artifacts, gates,
+// workflow targets, and document-level rules) are shared across sources and are
+// linked at document assembly, not per source.
 func collectIDs(prog *Program) []IDRecord {
 	var out []IDRecord
 	add := func(id, kind string) {
 		if id != "" {
 			out = append(out, IDRecord{ID: id, Kind: kind, Status: "active"})
 		}
-	}
-	for _, c := range prog.Globals.Capabilities {
-		add(c.ID, "CAPABILITY")
-	}
-	for _, id := range prog.Globals.Registries {
-		add(id, "REGISTRY")
-	}
-	for _, id := range prog.Globals.Artifacts {
-		add(id, "ARTIFACT")
-	}
-	for _, id := range prog.Globals.Rules {
-		add(id, "RULE")
-	}
-	for _, id := range prog.Globals.Gates {
-		add(id, "GATE")
-	}
-	for _, id := range prog.Globals.WorkflowTargets {
-		add(id, "WORKFLOW-TARGET")
 	}
 	for _, sec := range prog.Sections {
 		add(sec.ID, "SECTION")

@@ -1,0 +1,77 @@
+GLOBAL DECLARATIONS
+  CAPABILITY canonical.markdown
+  CAPABILITY hash.sha256
+END
+
+SECTION semantic-payload-identity
+NUMBER 4.1.1
+TITLE "Semantic payload identity and certification envelopes"
+
+GOAL
+  Every synthesis block, persona profile, and semantic handbook section has a
+  canonical semantic payload and a separately delimited certification envelope.
+END
+
+RULE payload-mandatory-fields
+  GOAL
+    A persona profile payload begins with its mandatory PRF-ID; a handbook-section
+    payload begins with its mandatory HBK-ID and includes separately ordered
+    HANDBOOK-RELATIVE-PATH and STABLE-SECTION-ANCHOR fields before its semantic record
+    version and fingerprint carrier. These typed IDs and HBK coordinate fields are part
+    of the semantic payload and candidate/CNF binding; headings are not identity parser
+    inputs.
+  END
+END
+
+RULE semantic-record-version
+  GOAL
+    SEMANTIC-RECORD-VERSION is a positive integer changed only when semantic payload
+    meaning or payload bytes under the canonicalization rules change.
+  END
+END
+
+RULE semantic-content-fingerprint
+  GOAL
+    SEMANTIC-CONTENT-FINGERPRINT is the sha256 of the record's canonical semantic
+    payload under §4.1.2. The hash input includes record ID, semantic record version,
+    schema/protocol version, and all semantic fields, prose, tables, diagrams, examples,
+    and resolved semantic references with their bound versions/fingerprints. The carrier
+    field that stores SEMANTIC-CONTENT-FINGERPRINT is excluded from its own hash input.
+  END
+END
+
+RULE certification-envelope
+  GOAL
+    A certification envelope is status and approval metadata attached after payload
+    generation: BLUEPRINT-STATUS or HANDBOOK-STATUS, CNF references,
+    confirmation-envelope version, approval/signature identities and timestamps, and
+    envelope audit fields. The semantic-content hash and semantic record version MUST
+    exclude the complete certification envelope, including B/handbook status, CNF
+    reference, candidate report or candidate payload manifest references explicitly
+    permitted by the envelope schema, and envelope digests. A certification envelope
+    MUST NOT reference the later Exit E Content-Readiness Report, scope certificate,
+    outer bundle manifest, or any other artifact that did not exist when the envelope
+    was attached.
+  END
+END
+
+RULE envelope-mutation-invariance
+  GOAL
+    Attaching a confirmation or changing B-POPULATED to B-CONFIRMED changes only the
+    envelope and MUST NOT change the semantic record version or semantic-content
+    fingerprint. Any edit to semantic prose, diagrams, examples, claims, derivation
+    references, semantic cross-references, PRF identity, or HBK identity increments
+    SEMANTIC-RECORD-VERSION, recomputes SEMANTIC-CONTENT-FINGERPRINT, invalidates the
+    old envelope, and triggers targeted stale propagation.
+  END
+END
+
+RULE confirmation-binding
+  GOAL
+    A CNF confirms exact typed record IDs including PRF and HBK, SEMANTIC-RECORD-VERSION
+    values, and SEMANTIC-CONTENT-FINGERPRINT values, never mutable whole-file bytes or
+    status-bearing envelopes. Validators MUST parse the payload/envelope boundary from
+    the Markdown AST, recompute payload hashes, and reject envelope fields inside the
+    semantic payload or semantic fields inside the envelope.
+  END
+END

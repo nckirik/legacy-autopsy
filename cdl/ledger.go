@@ -21,8 +21,9 @@ type LedgerSource struct {
 	IDs               []IDRecord `json:"ids"`
 }
 
-// Ledger is the committed identity ledger. Identities are globally unique across
-// every source: §4.1 requires global uniqueness, not per-file uniqueness.
+// Ledger is the committed identity ledger. Section-owned identities are globally
+// unique across every source: §4.1 requires global uniqueness, not per-file
+// uniqueness. Document-global declarations are linked at assembly.
 type Ledger struct {
 	Format      int            `json:"ledger-format"`
 	Generator   string         `json:"generator"`

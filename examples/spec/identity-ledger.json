@@ -13,11 +13,6 @@
           "status": "active"
         },
         {
-          "id": "A-STRUCTURALLY-COMPLETE",
-          "kind": "GATE",
-          "status": "active"
-        },
-        {
           "id": "CLM-ID",
           "kind": "TYPE",
           "status": "active"
@@ -48,11 +43,6 @@
           "status": "active"
         },
         {
-          "id": "Exit-A",
-          "kind": "GATE",
-          "status": "active"
-        },
-        {
           "id": "FULL",
           "kind": "PROJECTION",
           "status": "active"
@@ -60,11 +50,6 @@
         {
           "id": "LIGHT",
           "kind": "PROJECTION",
-          "status": "active"
-        },
-        {
-          "id": "R-SWEPT",
-          "kind": "GATE",
           "status": "active"
         },
         {
@@ -83,26 +68,6 @@
           "status": "active"
         },
         {
-          "id": "approved-evidence",
-          "kind": "ARTIFACT",
-          "status": "active"
-        },
-        {
-          "id": "artifact-completeness",
-          "kind": "GATE",
-          "status": "active"
-        },
-        {
-          "id": "artifact-fingerprint",
-          "kind": "GATE",
-          "status": "active"
-        },
-        {
-          "id": "canonical-fingerprint",
-          "kind": "RULE",
-          "status": "active"
-        },
-        {
           "id": "export-reconciliation",
           "kind": "SECTION",
           "status": "active"
@@ -115,21 +80,6 @@
         {
           "id": "fingerprint-status",
           "kind": "STATE",
-          "status": "active"
-        },
-        {
-          "id": "handoff",
-          "kind": "WORKFLOW-TARGET",
-          "status": "active"
-        },
-        {
-          "id": "hash.sha256",
-          "kind": "CAPABILITY",
-          "status": "active"
-        },
-        {
-          "id": "normalized-units",
-          "kind": "REGISTRY",
           "status": "active"
         },
         {
@@ -166,15 +116,46 @@
           "id": "reconciliation-completeness",
           "kind": "RULE",
           "status": "active"
-        },
+        }
+      ]
+    },
+    {
+      "path": "examples/spec/semantic-payload-identity.cdl",
+      "source-fingerprint": "sha256:f3d509c41f1f90b6df256c1095b0976b915a0c2ab8bfbd2c2128125b8f834b4e",
+      "ids": [
         {
-          "id": "section-pass",
-          "kind": "WORKFLOW-TARGET",
+          "id": "certification-envelope",
+          "kind": "RULE",
           "status": "active"
         },
         {
-          "id": "table.serialize",
-          "kind": "CAPABILITY",
+          "id": "confirmation-binding",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "envelope-mutation-invariance",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "payload-mandatory-fields",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "semantic-content-fingerprint",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "semantic-payload-identity",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "semantic-record-version",
+          "kind": "RULE",
           "status": "active"
         }
       ]
@@ -209,18 +190,8 @@
           "status": "active"
         },
         {
-          "id": "identity.typed-id",
-          "kind": "CAPABILITY",
-          "status": "active"
-        },
-        {
           "id": "normalized-relative-path",
           "kind": "RULE",
-          "status": "active"
-        },
-        {
-          "id": "path.normalize",
-          "kind": "CAPABILITY",
           "status": "active"
         },
         {
