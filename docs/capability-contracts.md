@@ -67,18 +67,23 @@ independent work untouched, and never licenses an executor-authored substitute.
   `contextpacket.confinedRead` (transitional). To re-express as a declared capability
   in S3; `cdl` must not depend on it.
 
-### 2.4 `identity.typed-id` v1 — transitional implementation
+### 2.4 `identity.typed-id` v1 — base generation implemented (S3 §4.1)
 
 - **Kind/determinism:** deterministic, reproducible-exact.
-- **Inputs:** type prefix, namespace/owner, discriminator, snapshot-independent fields
-  per §4.1.
-- **Output:** stable ID with the declared prefix and collision extension.
+- **Inputs:** type prefix, namespace, normalized owner coordinate, semantic
+  discriminator, snapshot-independent fields per §4.1.
+- **Output:** `TYPE-` plus the uppercase first 12 hex characters of
+  `SHA-256(canonical-key UTF-8)`.
 - **Rules:** §4.1 ID generation and §5.1 prefix groups; alias/tombstone handling per
-  §4.6. Prefix registry is authored data, not code.
-- **Failures:** unknown prefix, malformed namespace, exhausted collision space →
-  fail-closed diagnostics.
-- **Current:** `internal/identity` (foundational 12-character IDs only). PRF/HBK
-  semantic hashing is **not** implemented; §4.1.1/§4.1.2 remain unclaimed.
+  §4.6. The prefix and iteration registries are authored CDL declarations
+  (`examples/spec/typed-id.cdl`), drift-checked against `protocol.md@4.1.2`; PRF/HBK
+  fixed-discriminator rules are declared as normative rules.
+- **Failures:** unknown prefix, malformed namespace/owner/discriminator → fail-closed
+  diagnostics.
+- **Current:** `internal/capabilities.TypedID` implements base generation and is tested
+  against an independent recomputation of the §4.1 formula. Collision extension to
+  16/20/…/64 characters and the `20-TRACEABILITY.md` registry checks are **not** yet
+  implemented. §4.1.1/§4.1.2 remain unclaimed.
 
 ### 2.5 `canonical.markdown` v1 — not implemented
 
@@ -119,7 +124,7 @@ filesystem mutation are runtime infrastructure:
 | `hash.sha256`        | deterministic | pilot implemented | §4.1.2, §12.5, §15.x    |
 | `table.serialize`    | deterministic | pilot implemented | schema sections (98)    |
 | `path.normalize`     | deterministic | transitional      | §8 roots, persona paths |
-| `identity.typed-id`  | deterministic | transitional      | §4.1, §5.1, §6–§12, §15 |
+| `identity.typed-id`  | deterministic | base implemented  | §4.1, §5.1, §6–§12, §15 |
 | `canonical.markdown` | deterministic | not implemented   | §4.1.2, §14.5, §15.x    |
 
 ## 6. What this does not prove

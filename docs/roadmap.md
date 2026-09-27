@@ -99,6 +99,17 @@ Harness surfaces are rebased as their protocol backing migrates: context packets
 resolve from EIR, workspace checks derive from declared artifacts, skill projections
 become generated reference/routing views.
 
+S3 progress:
+
+- **§4.1 implemented (capability-backed):** `examples/spec/typed-id.cdl` declares the
+  ID-prefix and iteration registries plus the normative key, path, PRF/HBK, collision,
+  and registry rules; `internal/capabilities.TypedID` implements base generation and is
+  tested against an independent recomputation of the §4.1 formula; `internal/parity`
+  drift-checks both registries against `protocol.md`. The identity ledger is now
+  multi-source (format 2) with global uniqueness across sources.
+- **Remaining in §4:** collision extension, §4.1.1 semantic payload/envelope identity,
+  and §4.1.2 canonical hash profile.
+
 ### S4 — Crown
 
 - machine-generated parity report over source, compiler, stdlib, renderer, fixtures,
