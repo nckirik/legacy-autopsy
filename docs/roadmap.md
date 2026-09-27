@@ -113,7 +113,15 @@ S3 progress:
   envelope mutation invariance, and confirmation binding rules; `internal/parity`
   token-drift-checks every hyphenated normative token in protocol.md §4.1.1 against the
   CDL text. The `canonical.markdown` engine remains unimplemented (see §4.1.2).
-- **Remaining in §4:** collision extension and §4.1.2 canonical hash profile.
+- **§4.1.2 implemented (capability-backed, bounded v1):**
+  `examples/spec/canonical-hash-profile.cdl` declares the canonical profile steps, the
+  envelope/package-member/evidence-set/transport rules, and the closed registries
+  (binding kinds, envelope kinds, artifact types, row kinds, domain prefixes);
+  `internal/capabilities/canonical.go` implements canonical Markdown normalization and
+  the envelope, package-member, transport, and evidence-set fingerprints;
+  `internal/parity` drift-checks the registries and every normative token against
+  `protocol.md`.
+- **Remaining in §4:** collision extension beyond the base 12-character ID hash.
 
 ### S4 — Crown
 

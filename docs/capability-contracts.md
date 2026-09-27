@@ -85,21 +85,28 @@ independent work untouched, and never licenses an executor-authored substitute.
   16/20/…/64 characters and the `20-TRACEABILITY.md` registry checks are **not** yet
   implemented. §4.1.1/§4.1.2 remain unclaimed.
 
-### 2.5 `canonical.markdown` v1 — not implemented
+### 2.5 `canonical.markdown` v1 — bounded implementation (S3 §4.1.2)
 
-- **Kind/determinism:** deterministic, reproducible-exact (when implemented).
-- **Inputs:** Markdown artifact bytes plus the exact exclusion rules of §4.1.2.
-- **Output:** canonical bytes and `sha256` per the normative profile.
-- **Declared semantics:** §4.1.1 payload/envelope identity rules are declared in
-  `examples/spec/semantic-payload-identity.cdl` and drift-checked against
-  `protocol.md`; the canonical engine that these rules reference is not implemented.
-- **Rules:** LF, exact Unicode handling, order/whitespace rules, carrier and envelope
-  exclusions exactly as specified; this replaces, and never reuses, the deliberately
-  limited bootstrap hash.
-- **Failures:** malformed exclusions or unknown carrier fields fail closed.
-- **Current:** `internal/canonical` provides only a basic Markdown fingerprint and is
-  explicitly **not** the §4.1.2 profile; it must not be used for protocol-significant
-  hashing. Migration is S3 §4.1.2.
+- **Kind/determinism:** deterministic, reproducible-exact.
+- **Inputs:** Markdown bytes; a named carrier field; envelope regions; artifact type and
+  normalized path; evidence-set tuples.
+- **Output:** canonical Markdown bytes plus the §4.1.2 fingerprints: semantic content,
+  envelope, package member, file transport, and evidence set.
+- **Rules and limits:** LF normalization, exactly one terminal LF, trailing-whitespace
+  removal, blank-run collapse, and table pipe/separator normalization outside fenced
+  code; fenced content is preserved verbatim. This bounded v1 does not implement a full
+  Markdown AST boundary parser and does not normalize indented literal blocks.
+- **Declared semantics:** §4.1.1 and §4.1.2 rules are declared in
+  `examples/spec/semantic-payload-identity.cdl` and
+  `examples/spec/canonical-hash-profile.cdl`, drift-checked against `protocol.md`
+  (normative tokens, binding-kind table, envelope kinds, artifact types, row kinds,
+  domain prefixes).
+- **Failures:** unknown envelope kind, non-positive envelope version, unknown evidence
+  binding kind, duplicate evidence tuples, missing anchor binding, and invalid row kind
+  fail closed.
+- **Current:** `internal/capabilities/canonical.go`. `internal/canonical` remains the
+  deliberately limited bootstrap hash and must not be used for protocol-significant
+  hashing.
 
 ## 3. Proposing providers
 
@@ -128,7 +135,7 @@ filesystem mutation are runtime infrastructure:
 | `table.serialize`    | deterministic | pilot implemented | schema sections (98)    |
 | `path.normalize`     | deterministic | transitional      | §8 roots, persona paths |
 | `identity.typed-id`  | deterministic | base implemented  | §4.1, §5.1, §6–§12, §15 |
-| `canonical.markdown` | deterministic | not implemented   | §4.1.2, §14.5, §15.x    |
+| `canonical.markdown` | deterministic | bounded v1        | §4.1.2, §14.5, §15.x    |
 
 ## 6. What this does not prove
 
