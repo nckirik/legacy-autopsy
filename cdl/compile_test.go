@@ -18,6 +18,7 @@ const (
 	acquisitionPath      = "examples/spec/export-acquisition-loop.cdl"
 	normalizedMapsPath   = "examples/spec/normalized-maps.cdl"
 	invocationModesPath  = "examples/spec/invocation-modes.cdl"
+	coldResumePath       = "examples/spec/cold-resume.cdl"
 	ledgerPath           = "examples/spec/identity-ledger.json"
 	goldenEIRPath        = "examples/spec/golden/export-reconciliation.eir.json"
 	goldenPromptPath     = "examples/spec/golden/export-reconciliation.light.prompt.md"
@@ -58,7 +59,7 @@ func TestUpdateAssets(t *testing.T) {
 		t.Skip("run with -update to rewrite golden assets and identity ledger")
 	}
 	var ledgerSources []LedgerSource
-	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath, canonicalProfilePath, acquisitionPath, normalizedMapsPath, invocationModesPath} {
+	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath, canonicalProfilePath, acquisitionPath, normalizedMapsPath, invocationModesPath, coldResumePath} {
 		src := Source{Path: rel, Bytes: readRepoFile(t, rel)}
 		prog, diags := Parse(src.Path, src.Bytes)
 		if len(diags) > 0 {
@@ -364,6 +365,30 @@ func TestModeDeclarationChecks(t *testing.T) {
 				t.Fatalf("expected %s, got %v", tc.code, diags)
 			}
 		})
+	}
+}
+
+func TestColdResumeSectionCompiles(t *testing.T) {
+	src := Source{Path: coldResumePath, Bytes: readRepoFile(t, coldResumePath)}
+	ledger, err := LoadLedger(repoPath(ledgerPath))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "8.5" {
+		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
+	}
+	fields := 0
+	for _, e := range res.EIR.Declarations.Enums {
+		if e.ID == "COLD-RESUME-FIELD" {
+			fields = len(e.Values)
+		}
+	}
+	if fields != 12 {
+		t.Fatalf("COLD-RESUME-FIELD has %d values, want 12", fields)
 	}
 }
 

@@ -75,6 +75,32 @@
       ]
     },
     {
+      "path": "examples/spec/cold-resume.cdl",
+      "source-fingerprint": "sha256:167d392cc63fbd740833288aeb53f5f0be639aa432e15906f33948c402100158",
+      "ids": [
+        {
+          "id": "COLD-RESUME-FIELD",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "cold-resume-check",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "cold-resume-fingerprint",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "cold-resume-validation",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/export-acquisition-loop.cdl",
       "source-fingerprint": "sha256:8afae3416b59face8d7d226c28f7ca2143b5ee991e6608b9578914dadb98146e",
       "ids": [
