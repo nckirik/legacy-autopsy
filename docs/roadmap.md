@@ -177,9 +177,15 @@ S3 progress:
   mandatory read sets are declared as rules, and `examples/spec/ticket-fsm.cdl` gains
   the Human Hatch prerequisites, probe specification with safety enum, no-mock
   integrity rule, and no-mock fallback payload.
-- **Remaining S3 inventory (40 sections):** §2.1–2.6, §4.2–4.6, §6.1–6.5,
-  §11.1–11.13, §13.1–13.4, §14.1–14.6, §17.1–17.3, §19.1–19.3, plus the Part-level
-  intros. §2–§10, §12, and §15 are migrated (22 sources).
+- **§13.1–13.4, §14.1–14.6 implemented (authored schema + drift):**
+  `examples/spec/handbook-and-decisions.cdl` declares the audience roles,
+  chapter/disabled-chapter/quality-gate rules, readability-review binding, decision-log
+  projection, modernization prompts, rule ownership, interface baseline, equivalence
+  test kinds, and the sole-input invariant; audience and test-kind enums drift-check
+  against protocol.md.
+- **Remaining S3 inventory (30 sections):** §2.1–2.6, §4.2–4.6, §6.1–6.5,
+  §11.1–11.13, §17.1–17.3, §19.1–19.3, plus the Part-level intros. §2–§10 and §12–§15
+  are migrated (23 sources).
 - **Skill projections decision:** the 13 projections stay hand-maintained with the
   routing validator through S3; generation from EIR reference views is deferred to S4.
 - **Collision extension implemented:** `internal/capabilities.ExtendCollision` extends
