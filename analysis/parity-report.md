@@ -4,7 +4,7 @@
 - Generator: parityreport parityreport/0.1
 - Generated at: 2026-09-25T00:00:00Z
 - Protocol: 4.1.3 (sha256:561b5d78a8e062a89c79309dc2ae46f7ef12b6f91c573ad4b892195ec5a5e999)
-- Language: cdl/0.3 (EIR format 2)
+- Language: cdl/0.3 (EIR format 3)
 
 ## Section coverage
 
@@ -118,9 +118,9 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 27 sources |
 | drift-tests | pass | 23 tests in 23 files |
-| generated-protocol | pass | sha256:4048c7de53f92bb397ea7f22693f7372e741e5e25dd08db522a095292ee38288 |
-| golden-eir | pass | sha256:d350f09398d6a77cc5309ab202b09244437715a51b6e20ef28f6a9ec0701c6e0 |
-| golden-prompt | pass | sha256:9ad28c3a633144646211242131d2721f2045fdd1cf5b25519a6aea1c10b3de92 |
+| generated-protocol | pass | sha256:60e0d76c6f9fe49e4c07e4aa658d82066aa8e5e8da5b88ac9b1e122d4b101feb |
+| golden-eir | pass | sha256:752410ddd97074571ee4e07e8ce658b9d8ddcf47bb189338faa6ba7bd7dccb9a |
+| golden-prompt | pass | sha256:09d9a56977057a427b525a0bd1158a1cd1321872a5de7b7c5bbf3e8dff463b98 |
 | fixture-oracle | pass | 24/24 passed |
 | identity-ledger | pass | 536 identities across 27 sources |
 

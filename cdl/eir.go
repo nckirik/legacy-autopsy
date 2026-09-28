@@ -11,8 +11,8 @@ import (
 const (
 	LanguageVersion  = "cdl/0.3"
 	StdlibVersion    = "cdl-stdlib/0.1"
-	GeneratorVersion = "cdl/0.3.0"
-	EIRFormat        = 2
+	GeneratorVersion = "cdl/0.3.1"
+	EIRFormat        = 3
 	ProtocolVersion  = "canonical-deconstruction/4.1.3"
 )
 

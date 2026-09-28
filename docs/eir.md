@@ -2,9 +2,14 @@
 
 > Non-authoritative implementation contract. Possibly provisional and reviewable; it defines the interchange format below the frozen source language and adds no language surface.
 
-**Status:** draft for the §7.7 pilot.
+**Status:** frozen interchange contract, EIR format 3 (crown complete).
 **Depends on:** [`cdl.md`](cdl.md) (frozen language), [`execution-semantics.md`](execution-semantics.md) (what execution means).
 **Authority:** the CDL sources under [`protocol/`](../protocol/) are normative; [`protocol.md`](../protocol.md) is a generated edition and [`protocol/legacy/protocol-4.1.3.md`](../protocol/legacy/protocol-4.1.3.md) is the frozen parity oracle.
+
+**Format history:** format 3 (CDL 0.3) adds ordered `declarations.parts[]` and derives
+`number` fields for parts and sections from declaration order and `SUBSECTION OF`
+regions; format 2 predates part declarations and derived numbering. Consumers MUST
+reject an unknown `eir-format` rather than guess compatibility.
 
 ## 1. Purpose
 
@@ -36,7 +41,7 @@ or UI concerns.
 Every EIR document starts with an envelope:
 
 ```
-eir-format:        2
+eir-format:        3
 language:          cdl/<version>
 stdlib:            cdl-stdlib/<version>
 protocol:          canonical-deconstruction/<version>
@@ -167,7 +172,7 @@ these files, not a required monolithic edit.
 ```json
 {
   "envelope": {
-    "eir-format": 2,
+    "eir-format": 3,
     "language": "cdl/0.1",
     "stdlib": "cdl-stdlib/0.1",
     "protocol": "canonical-deconstruction/4.1.3",

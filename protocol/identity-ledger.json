@@ -1,6 +1,6 @@
 {
   "ledger-format": 2,
-  "generator": "cdl/0.3.0",
+  "generator": "cdl/0.3.1",
   "generated-at": "2026-09-25T00:00:00Z",
   "sources": [
     {
