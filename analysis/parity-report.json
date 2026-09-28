@@ -4,13 +4,13 @@
   "generator-version": "parityreport/0.1",
   "generated-at": "2026-09-25T00:00:00Z",
   "protocol-version": "4.1.2",
-  "protocol-fingerprint": "sha256:518c9e4922200ae6e8c01a1568aa448c9c28dcde3bf50559d0a82b4cd5fa267c",
+  "protocol-fingerprint": "sha256:c5c310f6e2047398d177ee5eb691ada726887ad0aa6bac676b83d76d3129c825",
   "language-version": "cdl/0.2",
   "eir-format": 2,
   "sources": [
     {
       "path": "protocol/globals.cdl",
-      "fingerprint": "sha256:4f61c2d7cffd630f9f2d35eae91053b7987cc422df76b3880d896b74850c507f",
+      "fingerprint": "sha256:40b869843eb972f22ce7b37502efa2ffbcf0c9ba284fc9a81d04221d8734fcf0",
       "sections": null,
       "identities": 0
     },
@@ -45,7 +45,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "fingerprint": "sha256:6a18eaf13133f2c1d3e49a9f49d90f93ca07bb844ba638a8323d663a29a933b7",
+      "fingerprint": "sha256:6418c22b018c485945e55804664176f02cae1fc0d607610dc6ed57bc0e2994eb",
       "sections": [
         "3.1"
       ],
@@ -89,7 +89,7 @@
     },
     {
       "path": "protocol/status-taxonomy.cdl",
-      "fingerprint": "sha256:663b69623fd1380082a7e403fb284411afec12fb244506669da5f6e190b52ec2",
+      "fingerprint": "sha256:c4a695e8d8d76ce9e782a909d49c8e9ad62a72d31f57b28b71e9c19078b47d2e",
       "sections": [
         "5.1"
       ],
@@ -179,7 +179,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "fingerprint": "sha256:98f14229b3222e63f9485198ed69e853692daf2a19520211a83723a48e69331a",
+      "fingerprint": "sha256:931368ef1ed1706499823d809ec8ec6e493ec3bf76141c71e0ee137ffafd1381",
       "sections": [
         "8.1",
         "8.2",
@@ -283,20 +283,16 @@
       "identities": 50
     },
     {
-      "path": "protocol/migration-and-conformance.cdl",
-      "fingerprint": "sha256:cca9b26fe8136e1ac97c5cf08dfce7766aeb4ccbce46192a5edfff3c5b333e3a",
+      "path": "protocol/conformance.cdl",
+      "fingerprint": "sha256:6aaee306adc0d3c525c8e7b68b9484ae3611902f5a41b70d5bd8f6f97b389f98",
       "sections": [
         "16",
-        "17.1",
-        "17.2",
-        "17.3",
         "19.1",
         "19.2",
         "19.3",
-        "18",
         "20"
       ],
-      "identities": 18
+      "identities": 10
     }
   ],
   "sections": [
@@ -889,39 +885,21 @@
       "status": "implemented"
     },
     {
-      "number": "17.1",
-      "heading": "Required order",
-      "cdl-source": "protocol/migration-and-conformance.cdl",
-      "status": "implemented"
-    },
-    {
-      "number": "17.2",
-      "heading": "Migration guarantees",
-      "cdl-source": "protocol/migration-and-conformance.cdl",
-      "status": "implemented"
-    },
-    {
-      "number": "17.3",
-      "heading": "v3 final-artifact compatibility",
-      "cdl-source": "protocol/migration-and-conformance.cdl",
-      "status": "implemented"
-    },
-    {
       "number": "19.1",
       "heading": "Conforming implementation capabilities",
-      "cdl-source": "protocol/migration-and-conformance.cdl",
+      "cdl-source": "protocol/conformance.cdl",
       "status": "implemented"
     },
     {
       "number": "19.2",
       "heading": "Normative conformance cases",
-      "cdl-source": "protocol/migration-and-conformance.cdl",
+      "cdl-source": "protocol/conformance.cdl",
       "status": "implemented"
     },
     {
       "number": "19.3",
       "heading": "Corpus acceptance",
-      "cdl-source": "protocol/migration-and-conformance.cdl",
+      "cdl-source": "protocol/conformance.cdl",
       "status": "implemented"
     }
   ],
@@ -939,17 +917,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:6d20aa95931b5bdf4f1004044ffd05d6588f7878562c4f12bb4bedbe036ac0d3"
+      "detail": "sha256:2478eecfab1b884bf69c1519482841d6edf2793c6f0c63ab4d26669d49351086"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:c00fa68af9b5ba49aea49726614b4e1c10fd50d3371bb411fdabc353998c6642"
+      "detail": "sha256:e89f43e346edadf332e4959c6ffaa361f5c88237294ada6a4a4c4cbba2e761c6"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:4264e22708b051897bdc37880de0cf2210903fea69bb8d30117cf35e589cec35"
+      "detail": "sha256:b9577733729a5695a131d68ebfc9e75e567ade58eb0836b5afebfdfdc25bc42f"
     },
     {
       "name": "fixture-oracle",
@@ -959,7 +937,7 @@
     {
       "name": "identity-ledger",
       "status": "pass",
-      "detail": "544 identities across 26 sources"
+      "detail": "536 identities across 26 sources"
     }
   ],
   "fixtures": {

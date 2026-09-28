@@ -16,7 +16,6 @@ GOAL
 - **Default Max Traversal Depth:** 3
 - **Included Environments / Snapshots:** [...]
 - **Explicit Scope Policy:** [...]
-- **Protocol-Migration Metadata:** None | [v3.17 migration state]
 
 ## 2. Persona Registry
 
@@ -131,7 +130,6 @@ FIELD PREFLIGHT-HEADER
   default-max-traversal-depth         -> int required
   included-environments-snapshots     -> string required
   explicit-scope-policy               -> string required
-  protocol-migration-metadata         -> string required
 END
 
 FIELD ENTRY-CLUSTER

@@ -81,7 +81,7 @@ gate `artifact-fingerprint` in the example and contract.
 
 Gate **G3** passes via `go test ./internal/analysis/` plus review of the two documents.
 
-### S3 — Section-by-section protocol migration — next
+### S3 — Section-by-section protocol migration — implemented (crown complete)
 
 Migrate `protocol.cdl` in dependency order, each with compiler checks, VM support,
 reference-VM comparison, and dual-source drift against `protocol.md`:
@@ -240,8 +240,14 @@ S3 progress:
   normalized-map record and table schema plus the navigation-only rule. §7.7 was the
   S1 pilot.
 
-### S4 — Crown
+### S4 — Crown — implemented
 
+- **Part 17/18 removed by owner decision:** the v3.17 migration plan
+  (`§17.1–§17.3`) and the Migration Checklist (`§18`) were deleted from both the CDL
+  sources and the oracle text; the `Protocol-Migration Metadata` preflight field and
+  the §8.3 migration note were removed with them. Part numbering keeps the gap (Parts
+  19–20 unchanged) so every existing cross-reference stays valid. The protocol version
+  remains 4.1.2 because the frozen 24-case fixture oracle requires that exact version.
 - **Parity report generator implemented:** `internal/parityreport` deterministically
   builds `analysis/parity-report.json` and `analysis/parity-report.md` over the protocol
   fingerprint, assembly sources/ledger, compiler, renderer goldens, drift-test

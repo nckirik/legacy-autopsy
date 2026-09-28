@@ -302,7 +302,6 @@ Observed legacy facts and target decisions MUST appear in separate fields and ha
 - **Default Max Traversal Depth:** 3
 - **Included Environments / Snapshots:** [...]
 - **Explicit Scope Policy:** [...]
-- **Protocol-Migration Metadata:** None | [v3.17 migration state]
 
 ## 2. Persona Registry
 
@@ -1201,7 +1200,7 @@ Sequential Reconciliation | Profile Synchronization | Cross-Reference-Reconcilia
 Partial-Synthesis | Final-Synthesis | Reconstruction-Handoff | Human Hatch | Validation/Gate
 ```
 
-`Preflight` has one semantic target (`0A`); `Discovery`, `Ticket Resolution`, and `Promotion Review` obey §8.2; `Validation/Gate` writes one report target. All MAY append `0G` and fixed assurance sidecars allowed by their contracts. Probe ingestion executes as `Ticket Resolution`. Neutral arbitration executes as `Ticket Resolution` with the original persona/cluster/track and a recorded neutral POV assignment. Protocol migration is metadata on a sequence of existing modes, not a separate mode. Human confirmation executes only as `Human Hatch: Confirmation` or the equivalent explicitly authorized Reconstruction-Handoff confirmation-envelope action and writes `18-CONFIRMATIONS.md` plus exact envelope transitions without semantic mutation.
+`Preflight` has one semantic target (`0A`); `Discovery`, `Ticket Resolution`, and `Promotion Review` obey §8.2; `Validation/Gate` writes one report target. All MAY append `0G` and fixed assurance sidecars allowed by their contracts. Probe ingestion executes as `Ticket Resolution`. Neutral arbitration executes as `Ticket Resolution` with the original persona/cluster/track and a recorded neutral POV assignment. Human confirmation executes only as `Human Hatch: Confirmation` or the equivalent explicitly authorized Reconstruction-Handoff confirmation-envelope action and writes `18-CONFIRMATIONS.md` plus exact envelope transitions without semantic mutation.
 
 Only these modes may intentionally span multiple semantic targets:
 
@@ -2437,66 +2436,6 @@ The result fingerprint covers every preceding field except `Validator Implementa
 7. Security/privacy findings are evidence and risk inputs for qualified human review, not legal conclusions.
 8. Secret scanning failures block publication. Unknown field categories fail closed.
 9. Snapshot mixing is forbidden. A source changed during acquisition/traversal requires a consistent re-snapshot and stale propagation.
-
----
-
-# Part 17. Migration from v3.17 Workspaces
-
-Migration is an explicit procedure identified by `Protocol-Migration Metadata` and executed through the existing invocation modes; it is not a separate invocation mode or status prefix and does not claim closure during conversion.
-
-## 17.1. Required order
-
-1. Freeze and fingerprint the v3.17 workspace and source snapshot.
-2. Create the v4 source inventory denominator before interpreting old coverage.
-3. Allocate deterministic IDs for source, components, claims, and synthesis candidates; preserve old headings as aliases.
-4. Expand wildcard clusters and exclusions into concrete coordinates.
-5. Split routine families, modules, serialized containers, and aggregated blocks into universal atomic records; retain non-promotable grouping containers for navigation.
-6. Inventory and classify Normal, Shadow/Conditional, and Disabled tracks separately by environment/snapshot.
-7. Apply deterministic persona-prefix uniqueness and entry ownership; create shared-entry records where intentional.
-8. Move each legacy unprefixed persona directory to its registered `<persona-prefix>-<persona-slug>` basename as a proven path move; preserve record IDs and history, record the prior path as an alias, update every path reference and invocation target, and recompute affected file-transport fingerprints without changing prefix-derived PRF identity.
-9. Re-run logical explosion and reconcile every normalized export coordinate.
-10. Convert block-level evidence into one-fact CLM records; split mixed evidence and derive `BLOCK-CONFIDENCE-RANK` plus `BLOCK-EVIDENCE-PROFILE` mechanically.
-11. Build traversal frontier records from depth boundaries, unresolved dependencies, missing exports, and old tickets.
-12. Convert direct human-required records into migration findings; reopen them at the static-investigation/probe stage unless an existing authorized exclusion proves the scope disposition.
-13. Populate traceability, reciprocal references, contradiction records, and coverage arithmetic.
-14. Mark old synthesis-like outputs provisional `[B-DRAFT]`; do not inherit confirmation.
-15. Expose all gaps before enabling strict validators. Never backfill evidence merely to satisfy a gate.
-16. Run Sequential and Cross-Reference Reconciliation, then evidence-backed sweep validation.
-17. Enable Composite Exit A validators only after denominator and frontier stabilization.
-18. Run Final Synthesis, handbook projection, human review, and Exit E.
-
-## 17.2. Migration guarantees
-
-Migration MUST preserve ticket history, evidence anchors, fingerprints, old identifiers as aliases, promotion/depromotion history, and uncertainty. It MUST NOT convert disabled to dead, terminal tickets to covered source, inferred evidence to direct, or old synthesis to confirmed. The Draft Principle remains in force; `[B-CONFIRMED]` always requires fresh human confirmation against the pinned v4 bundle.
-
-## 17.3. v3 final-artifact compatibility
-
-v4 supersedes v3 `FINAL-WORKFLOW-ATLAS.md` semantically with `93-USE-CASES.md` plus the corresponding handbook use-case, background-processing, and architecture chapters. v4 supersedes v3 `FINAL-HUMAN-AUDIT-QUEUE.md` semantically with the ticket/contradiction/decision/confirmation/known-gap and gate artifacts in the Forensic, Assurance, and Handbook planes. Neither v3 file is authoritative in a v4 workspace and neither satisfies an Exit A or Exit E requirement.
-
-A migration MAY retain either filename only as a `NON-AUTHORITATIVE-COMPATIBILITY-PROJECTION` for legacy consumers. Such a projection MUST identify its v4 upstream IDs, semantic versions/fingerprints, generation time, projection schema, and staleness state; MUST contain no independent claims, approvals, queue state, or decisions; and MUST be excluded from authoritative denominator and certification inputs except as a listed derivative package member. Conflicts resolve in favor of canonical v4 records.
-
----
-
-# Part 18. Migration Checklist
-
-- [ ] Snapshot and v3.17 workspace fingerprints pinned.
-- [ ] `10-SOURCE-INVENTORY.md` built for every applicable kind.
-- [ ] Stable IDs allocated and collision-checked.
-- [ ] Wildcards expanded to concrete units.
-- [ ] Family/container blocks split into atomic records.
-- [ ] Normal, Shadow/Conditional, and Disabled tracks classified separately.
-- [ ] Capability-state environment matrices recorded.
-- [ ] Persona prefixes, explicit persona slugs, canonical `<persona-prefix>-<persona-slug>` basenames, and canonical entry owners validated.
-- [ ] Legacy unprefixed persona directories migrated as proven path moves with aliases, updated references, and stable prefix-derived PRF identity.
-- [ ] DB-autonomous ownership applied deterministically.
-- [ ] Serialized coordinates fully exploded and reconciled.
-- [ ] Material evidence converted to single-fact CLMs.
-- [ ] Frontiers reconstructed and terminal dispositions validated.
-- [ ] Direct human-required shortcuts removed or justified through Human Hatch/exclusion.
-- [ ] Traceability and reciprocal references populated.
-- [ ] Coverage gaps exposed before strict gating.
-- [ ] Old synthesis marked draft and re-derived.
-- [ ] Exit A, Final Synthesis, handbook review, content-readiness validation, scope certificate, and signed outer-manifest Exit E transition run in order.
 
 ---
 

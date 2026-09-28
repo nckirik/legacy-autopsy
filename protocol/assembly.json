@@ -25,6 +25,6 @@
     "protocol/traceability.cdl",
     "protocol/handbook-and-decisions.cdl",
     "protocol/packaging.cdl",
-    "protocol/migration-and-conformance.cdl"
+    "protocol/conformance.cdl"
   ]
 }

@@ -11,7 +11,7 @@ import (
 // TestMigrationAndConformanceDrift checks the §19.2 conformance-case enum and the
 // Part 20 artifact-ownership matrix shape against protocol.md.
 func TestMigrationAndConformanceDrift(t *testing.T) {
-	res := compileWithRegistry(t, "protocol/migration-and-conformance.cdl")
+	res := compileWithRegistry(t, "protocol/conformance.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

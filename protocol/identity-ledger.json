@@ -157,6 +157,62 @@
       ]
     },
     {
+      "path": "protocol/conformance.cdl",
+      "source-fingerprint": "sha256:ad4f400e2bbb3e662b2d52f8e8f59090eb8ec04e2da91421c3694b7a03b3f75f",
+      "ids": [
+        {
+          "id": "ARTIFACT-OWNERSHIP-ROW",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CONFORMANCE-CASE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "artifact-ownership",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "conformance-cases",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "conforming-capabilities",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "conforming-implementation-capabilities",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "corpus-acceptance",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "corpus-acceptance-requirements",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "normative-conformance-cases",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "security-guardrails",
+          "kind": "SECTION",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "protocol/coverage-and-exits.cdl",
       "source-fingerprint": "sha256:bcffd9020b6c0325ac6bc9d4ca705f209afc8c034c99641f37d207d2d986a270",
       "ids": [
@@ -739,7 +795,7 @@
     },
     {
       "path": "protocol/globals.cdl",
-      "source-fingerprint": "sha256:cb3e2818bc93fe9db2be1cf369a338e54670fe0f1426ec4b9ed965b2724c9c6d",
+      "source-fingerprint": "sha256:3139565f4cbe87f63b0d0726182121fd4c9a30408367ba51ae21d91cd77d228c",
       "ids": []
     },
     {
@@ -986,7 +1042,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "source-fingerprint": "sha256:70eea809d661c0469850ec00e51baa376cee69ee62e3467a28c7c9a62e30be31",
+      "source-fingerprint": "sha256:1d1e8e440f7324eb75f87c31db883a7924c4ca65d8b73a4b34f2a1d006e6f779",
       "ids": [
         {
           "id": "INVOCATION-HEADER",
@@ -1119,102 +1175,6 @@
       "path": "protocol/invocation-modes.cdl",
       "source-fingerprint": "sha256:215238ca7073ea3f0a350e8ea10b99e0a623ad858368e3e6a8bfbfba4f900dbf",
       "ids": []
-    },
-    {
-      "path": "protocol/migration-and-conformance.cdl",
-      "source-fingerprint": "sha256:ac41baca91092830c5c08a574dc5cc1e495a55f324f4f8065b504cee679ad6b8",
-      "ids": [
-        {
-          "id": "ARTIFACT-OWNERSHIP-ROW",
-          "kind": "FIELD",
-          "status": "active"
-        },
-        {
-          "id": "CONFORMANCE-CASE",
-          "kind": "ENUM",
-          "status": "active"
-        },
-        {
-          "id": "artifact-ownership",
-          "kind": "SECTION",
-          "status": "active"
-        },
-        {
-          "id": "compatibility-projection",
-          "kind": "RULE",
-          "status": "active"
-        },
-        {
-          "id": "conformance-cases",
-          "kind": "SECTION",
-          "status": "active"
-        },
-        {
-          "id": "conforming-capabilities",
-          "kind": "SECTION",
-          "status": "active"
-        },
-        {
-          "id": "conforming-implementation-capabilities",
-          "kind": "RULE",
-          "status": "active"
-        },
-        {
-          "id": "corpus-acceptance",
-          "kind": "SECTION",
-          "status": "active"
-        },
-        {
-          "id": "corpus-acceptance-requirements",
-          "kind": "RULE",
-          "status": "active"
-        },
-        {
-          "id": "migration-checklist",
-          "kind": "SECTION",
-          "status": "active"
-        },
-        {
-          "id": "migration-guarantees",
-          "kind": "SECTION",
-          "status": "active"
-        },
-        {
-          "id": "migration-order",
-          "kind": "SECTION",
-          "status": "active"
-        },
-        {
-          "id": "migration-preservation",
-          "kind": "RULE",
-          "status": "active"
-        },
-        {
-          "id": "normative-conformance-cases",
-          "kind": "RULE",
-          "status": "active"
-        },
-        {
-          "id": "required-migration-order",
-          "kind": "RULE",
-          "status": "active"
-        },
-        {
-          "id": "security-guardrails",
-          "kind": "SECTION",
-          "status": "active"
-        },
-        {
-          "id": "v3-compatibility",
-          "kind": "SECTION",
-          "status": "active"
-        },
-        {
-          "id": "v3-supersession",
-          "kind": "RULE",
-          "status": "active"
-        }
-      ]
     },
     {
       "path": "protocol/normalized-maps.cdl",
@@ -1596,7 +1556,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "source-fingerprint": "sha256:490ea48035aedb35c496d828cb9d1e43e07d2137343f78f8fe05744a70fd5d85",
+      "source-fingerprint": "sha256:9767234a46d7d51cce2b78c6fa03521d1da51e0a053ff15a5b8a4c4fdd812c96",
       "ids": [
         {
           "id": "DISCOVERY-BUFFER",
@@ -1688,7 +1648,7 @@
     },
     {
       "path": "protocol/status-taxonomy.cdl",
-      "source-fingerprint": "sha256:cb584fc42f5d11ef1d1ef8a6a5476b3b55c4f5a7e0e21c6afe304e7220d8a830",
+      "source-fingerprint": "sha256:c748e0d2c0528234f57640a0fdc9a21df89d45d6bc48e7b7a6fc93e205afee0a",
       "ids": [
         {
           "id": "PREFIX-ACQUISITION",

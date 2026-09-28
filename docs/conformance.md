@@ -1,6 +1,6 @@
 # Conformance
 
-> Non-authoritative Legacy Autopsy implementation policy. The normative conformance cases live in the CDL source `protocol/migration-and-conformance.cdl` (§19.2) and win on conflict; this repository's JSON files, Go runner, CLI output, and CI workflow are one concrete test realization, not protocol prerequisites. After crown, the CDL sources under `protocol/` are the normative authority and `protocol.md` is a generated render; `protocol/legacy/protocol-4.1.2.md` is the frozen bootstrap parity oracle.
+> Non-authoritative Legacy Autopsy implementation policy. The normative conformance cases live in the CDL source `protocol/conformance.cdl` (§19.2) and win on conflict; this repository's JSON files, Go runner, CLI output, and CI workflow are one concrete test realization, not protocol prerequisites. After crown, the CDL sources under `protocol/` are the normative authority and `protocol.md` is a generated render; `protocol/legacy/protocol-4.1.2.md` is the frozen bootstrap parity oracle.
 
 Protocol v4.1.2 conformance requires satisfying every applicable positive and negative case in §19.2. A passing Legacy Autopsy unit test, file-presence check, bootstrap fixture, or unsupported/skipped family is not conformance and cannot establish a gate result.
 
@@ -40,8 +40,10 @@ section heading is present, enforced by `TestGeneratedProtocolCoversOracle`. The
 remaining gate is the [standalone protocol quality
 test](#standalone-protocol-quality-test) against the generated edition with a fresh
 harness; until that run is recorded, the generated edition is content-complete but not
-independently validated as a prompt. The frozen
-`protocol/legacy/protocol-4.1.2.md` remains the bootstrap parity oracle.
+independently validated as a prompt. The
+`protocol/legacy/protocol-4.1.2.md` text remains the bootstrap parity oracle (revised
+in the crown revision by removing the v3.17 migration plan and checklist, Parts
+17–18; the version stays 4.1.2 for the frozen fixture oracle).
 
 ## Crown parity report
 

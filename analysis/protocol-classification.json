@@ -1,6 +1,6 @@
 {
   "protocol": "canonical-deconstruction/4.1.2",
-  "source-fingerprint": "sha256:518c9e4922200ae6e8c01a1568aa448c9c28dcde3bf50559d0a82b4cd5fa267c",
+  "source-fingerprint": "sha256:c5c310f6e2047398d177ee5eb691ada726887ad0aa6bac676b83d76d3129c825",
   "rubric": "Authored section classification in the CDL vocabulary. driver: MACHINE = predominantly deterministic rules/algorithms/registries/arithmetic; AGENT = predominantly semantic judgement/prose; MIXED = both load-bearing; CONTAINER = level-1 Part with subsections. tags: gate, transition, artifact, capability, reuse, contract (structurally checkable AGENT outputs), human, policy. Source fingerprint changes invalidate the classification.",
   "entries": [
     {
@@ -1096,44 +1096,6 @@
         "policy",
         "capability",
         "human"
-      ]
-    },
-    {
-      "heading": "Part 17. Migration from v3.17 Workspaces",
-      "driver": "CONTAINER",
-      "tags": []
-    },
-    {
-      "heading": "17.1. Required order",
-      "driver": "MACHINE",
-      "tags": [
-        "transition",
-        "artifact"
-      ]
-    },
-    {
-      "heading": "17.2. Migration guarantees",
-      "driver": "MIXED",
-      "tags": [
-        "transition",
-        "artifact"
-      ]
-    },
-    {
-      "heading": "17.3. v3 final-artifact compatibility",
-      "driver": "MACHINE",
-      "tags": [
-        "artifact",
-        "capability"
-      ]
-    },
-    {
-      "heading": "Part 18. Migration Checklist",
-      "driver": "MIXED",
-      "tags": [
-        "contract",
-        "capability",
-        "artifact"
       ]
     },
     {

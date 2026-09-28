@@ -129,7 +129,7 @@ Sequential Reconciliation | Profile Synchronization | Cross-Reference-Reconcilia
 Partial-Synthesis | Final-Synthesis | Reconstruction-Handoff | Human Hatch | Validation/Gate
 ```
 
-`Preflight` has one semantic target (`0A`); `Discovery`, `Ticket Resolution`, and `Promotion Review` obey §8.2; `Validation/Gate` writes one report target. All MAY append `0G` and fixed assurance sidecars allowed by their contracts. Probe ingestion executes as `Ticket Resolution`. Neutral arbitration executes as `Ticket Resolution` with the original persona/cluster/track and a recorded neutral POV assignment. Protocol migration is metadata on a sequence of existing modes, not a separate mode. Human confirmation executes only as `Human Hatch: Confirmation` or the equivalent explicitly authorized Reconstruction-Handoff confirmation-envelope action and writes `18-CONFIRMATIONS.md` plus exact envelope transitions without semantic mutation.
+`Preflight` has one semantic target (`0A`); `Discovery`, `Ticket Resolution`, and `Promotion Review` obey §8.2; `Validation/Gate` writes one report target. All MAY append `0G` and fixed assurance sidecars allowed by their contracts. Probe ingestion executes as `Ticket Resolution`. Neutral arbitration executes as `Ticket Resolution` with the original persona/cluster/track and a recorded neutral POV assignment. Human confirmation executes only as `Human Hatch: Confirmation` or the equivalent explicitly authorized Reconstruction-Handoff confirmation-envelope action and writes `18-CONFIRMATIONS.md` plus exact envelope transitions without semantic mutation.
 
 Only these modes may intentionally span multiple semantic targets:
 

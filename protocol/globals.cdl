@@ -53,8 +53,6 @@ GLOBAL DECLARATIONS
   PART 14 "Decisions, Reconstruction, Equivalence, and Compatibility"
   PART 15 "Exit E — Reconstruction Readiness"
   PART 16 "Security, Privacy, and Operational Guardrails"
-  PART 17 "Migration from v3.17 Workspaces"
-  PART 18 "Migration Checklist"
   PART 19 "Conformance and Acceptance Checklist"
   PART 20 "Compact Artifact Ownership Matrix"
 END

@@ -37,7 +37,7 @@ const (
 	handbookDecisionsPath = "protocol/handbook-and-decisions.cdl"
 	goldenProtocolPath    = "protocol/golden/protocol.generated.md"
 	synthesisCatalogsPath = "protocol/synthesis-catalogs.cdl"
-	migrationConfPath     = "protocol/migration-and-conformance.cdl"
+	migrationConfPath     = "protocol/conformance.cdl"
 	globalsPath           = "protocol/globals.cdl"
 	assemblyPath          = "protocol/assembly.json"
 	ledgerPath            = "protocol/identity-ledger.json"
@@ -655,7 +655,7 @@ func TestPreflightRegistryCompiles(t *testing.T) {
 	for _, f := range res.EIR.Declarations.Fields {
 		counts[f.ID] = len(f.Fields)
 	}
-	want := map[string]int{"PREFLIGHT-HEADER": 9, "ENTRY-CLUSTER": 10, "UNMAPPED-DISCOVERY": 4, "DISCOVERY-BUFFER": 7, "PERSONA-REGISTRY": 8, "REQUIRED-TRAVERSAL-MATRIX": 10}
+	want := map[string]int{"PREFLIGHT-HEADER": 8, "ENTRY-CLUSTER": 10, "UNMAPPED-DISCOVERY": 4, "DISCOVERY-BUFFER": 7, "PERSONA-REGISTRY": 8, "REQUIRED-TRAVERSAL-MATRIX": 10}
 	for id, size := range want {
 		if counts[id] != size {
 			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)
@@ -967,7 +967,7 @@ func TestMigrationAndConformanceCompiles(t *testing.T) {
 	for _, sec := range res.EIR.Sections {
 		numbers[sec.Number] = true
 	}
-	for _, want := range []string{"17.1", "17.2", "17.3", "19.1", "19.2", "19.3", "20"} {
+	for _, want := range []string{"16", "19.1", "19.2", "19.3", "20"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}

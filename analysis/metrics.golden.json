@@ -1,35 +1,35 @@
 {
   "generator": "internal/analysis",
-  "source-fingerprint": "sha256:518c9e4922200ae6e8c01a1568aa448c9c28dcde3bf50559d0a82b4cd5fa267c",
-  "headings": 148,
-  "sections": 128,
-  "parts": 20,
+  "source-fingerprint": "sha256:c5c310f6e2047398d177ee5eb691ada726887ad0aa6bac676b83d76d3129c825",
+  "headings": 143,
+  "sections": 125,
+  "parts": 18,
   "drivers": {
     "AGENT": 8,
-    "CONTAINER": 17,
-    "MACHINE": 59,
-    "MIXED": 64
+    "CONTAINER": 16,
+    "MACHINE": 57,
+    "MIXED": 62
   },
   "tags": {
-    "artifact": 98,
-    "capability": 36,
-    "contract": 50,
+    "artifact": 94,
+    "capability": 34,
+    "contract": 49,
     "gate": 33,
     "human": 14,
     "policy": 5,
     "reuse": 17,
-    "transition": 47
+    "transition": 45
   },
   "section-lines": {
     "AGENT": 229,
-    "MACHINE": 1294,
-    "MIXED": 1352
+    "MACHINE": 1265,
+    "MIXED": 1347
   },
   "section-line-share": {
-    "AGENT": 0.0797,
-    "MACHINE": 0.4501,
-    "MIXED": 0.4703
+    "AGENT": 0.0806,
+    "MACHINE": 0.4453,
+    "MIXED": 0.4741
   },
   "structured-agent-sections": 42,
-  "free-prose-sections": 28
+  "free-prose-sections": 27
 }
