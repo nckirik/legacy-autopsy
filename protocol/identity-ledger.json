@@ -386,7 +386,7 @@
     },
     {
       "path": "protocol/export-reconciliation.cdl",
-      "source-fingerprint": "sha256:8bd24060bd0399309ad658e5f254c77715c0544b95a9e6ee7abdfac0c6d9553b",
+      "source-fingerprint": "sha256:5cf77c89d8b82bde535cb6161eab272334d8037c6947d51ecdbb40fed5262c13",
       "ids": [
         {
           "id": "13-EXPORT-RECONCILIATION",

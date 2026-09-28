@@ -249,6 +249,10 @@ S3 progress:
   regenerated (`go test ./internal/parityreport -update`). Report shows 104/104
   substantive protocol sections implemented (the §0 wrapper is a `wrapper`), all six
   checks pass, 24/24 fixtures pass, and four declared deferrals.
+- **Prompt renders are per-projection:** a `PROJECTION` MUST declare `COVERS SECTION`
+  (the renderer now fails closed otherwise); repository goldens carry the §7.7 pilot
+  prompt as `protocol/golden/protocol.pilot.prompt.md`. The full standalone edition is
+  `protocol.md`; a whole-document prompt render is not yet declared.
 - **S4 follow-up — generated-edition prompt usability:** verbatim enrichment is done —
   section GOALs now carry the oracle body verbatim (prose, lists, tables, fences,
   field bullets), Parts 16/18/20 were added as sections, `PART` declarations render

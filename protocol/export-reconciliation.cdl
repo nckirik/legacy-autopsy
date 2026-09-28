@@ -140,6 +140,7 @@ END
 
 PROJECTION FULL
   CHANNEL prompt
+  COVERS SECTION export-reconciliation
 END
 
 PROJECTION LIGHT

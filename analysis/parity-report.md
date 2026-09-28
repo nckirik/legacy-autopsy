@@ -121,9 +121,9 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 26 sources |
 | drift-tests | pass | 23 tests in 23 files |
-| generated-protocol | pass | sha256:d83e10cf5da9bf61fe7dcd063eeea17675d7fe394877affdb6a19cf367a95cc8 |
-| golden-eir | pass | sha256:24fd3fe3b3961b7cc331e8583a64e963b6ddcad2e5a8e48d66113106b20d105e |
-| golden-prompt | pass | sha256:dd9cb508fce4af1a4b52d0bd25ad27c4316d66b47f9e19577260f6f5b0dd69e9 |
+| generated-protocol | pass | sha256:6d20aa95931b5bdf4f1004044ffd05d6588f7878562c4f12bb4bedbe036ac0d3 |
+| golden-eir | pass | sha256:c00fa68af9b5ba49aea49726614b4e1c10fd50d3371bb411fdabc353998c6642 |
+| golden-prompt | pass | sha256:4264e22708b051897bdc37880de0cf2210903fea69bb8d30117cf35e589cec35 |
 | fixture-oracle | pass | 24/24 passed |
 | identity-ledger | pass | 544 identities across 26 sources |
 
@@ -150,7 +150,7 @@
 | protocol/acquisition-trust.cdl | 4 | 10 | sha256:a43b2fd0489321e5108c58b8a2e78a5713e7146c93808b821fede517e8caa809 |
 | protocol/export-acquisition-loop.cdl | 1 | 10 | sha256:165ca179fe3a9a7bfd1a97d67491cafad44bdde76a2f7112a12376f25801d2a8 |
 | protocol/normalized-maps.cdl | 1 | 4 | sha256:4afabe97b491546b5d1dc78ffeb9e35f43ff4b2378873a0202ddc8debc8bcff9 |
-| protocol/export-reconciliation.cdl | 1 | 22 | sha256:b77c7710d420a6c9dd34c675387f21bafd1ea454f6766e3893025e0549591410 |
+| protocol/export-reconciliation.cdl | 1 | 22 | sha256:12bed9f7c30f871446665180b1a35e647b3ec88e2c98500a8a28c45f97caea4e |
 | protocol/invocation-modes.cdl | 0 | 0 | sha256:c599bd58c22d06daf961ddd6952a1d5e78598178f762efc7c2242f792ed75b57 |
 | protocol/cold-resume.cdl | 1 | 4 | sha256:63288693e96ac576e139a553576cd50c8bba68490b52afb656bc9f4a8b0cb9f1 |
 | protocol/invocation-context.cdl | 7 | 25 | sha256:98f14229b3222e63f9485198ed69e853692daf2a19520211a83723a48e69331a |

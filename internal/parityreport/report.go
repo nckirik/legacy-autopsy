@@ -199,7 +199,7 @@ func Build(repoRoot string) (Report, error) {
 		return Report{}, err
 	}
 	report.Checks = append(report.Checks, CheckReport{Name: "golden-eir", Status: "pass", Detail: fingerprint(goldenEIR)})
-	prompt, err := os.ReadFile(filepath.Join(repoRoot, "protocol/golden/protocol.light.prompt.md"))
+	prompt, err := os.ReadFile(filepath.Join(repoRoot, "protocol/golden/protocol.pilot.prompt.md"))
 	if err != nil {
 		return Report{}, err
 	}

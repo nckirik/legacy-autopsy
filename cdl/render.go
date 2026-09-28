@@ -72,8 +72,11 @@ func findProjection(doc *EIRDoc, id string) (EIRProjection, bool) {
 }
 
 func coveredSection(doc *EIRDoc, proj EIRProjection) (EIRSection, bool) {
+	if proj.Covers == "" {
+		return EIRSection{}, false
+	}
 	for _, s := range doc.Sections {
-		if proj.Covers == "" || s.ID == proj.Covers {
+		if s.ID == proj.Covers {
 			return s, true
 		}
 	}

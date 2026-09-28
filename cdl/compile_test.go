@@ -42,7 +42,7 @@ const (
 	assemblyPath          = "protocol/assembly.json"
 	ledgerPath            = "protocol/identity-ledger.json"
 	goldenEIRPath         = "protocol/golden/protocol.eir.json"
-	goldenPromptPath      = "protocol/golden/protocol.light.prompt.md"
+	goldenPromptPath      = "protocol/golden/protocol.pilot.prompt.md"
 	generatedAt           = "2026-09-25T00:00:00Z"
 )
 
@@ -300,6 +300,15 @@ func TestGoldenProtocolRender(t *testing.T) {
 		if !strings.Contains(string(got), marker) {
 			t.Fatalf("generated protocol missing %q", marker)
 		}
+	}
+}
+
+func TestRenderPromptRequiresCoveredSection(t *testing.T) {
+	res := compileAssembly(t)
+	doc := *res.EIR
+	doc.Projections = append([]EIRProjection{{ID: "UNSCOPED", Channels: []string{"prompt"}}}, doc.Projections...)
+	if _, err := RenderPrompt(&doc, "UNSCOPED", "prompt", Provenance{}); err == nil {
+		t.Fatal("projection without COVERS SECTION rendered successfully")
 	}
 }
 

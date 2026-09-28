@@ -44,7 +44,7 @@ func TestSpecRenderCommand(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit %d: %s", code, errOut)
 	}
-	golden, err := os.ReadFile(filepath.Join(specRepoRoot, "protocol/golden/protocol.light.prompt.md"))
+	golden, err := os.ReadFile(filepath.Join(specRepoRoot, "protocol/golden/protocol.pilot.prompt.md"))
 	if err != nil {
 		t.Fatal(err)
 	}

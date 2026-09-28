@@ -157,7 +157,7 @@
     },
     {
       "path": "protocol/export-reconciliation.cdl",
-      "fingerprint": "sha256:b77c7710d420a6c9dd34c675387f21bafd1ea454f6766e3893025e0549591410",
+      "fingerprint": "sha256:12bed9f7c30f871446665180b1a35e647b3ec88e2c98500a8a28c45f97caea4e",
       "sections": [
         "7.7"
       ],
@@ -939,17 +939,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:d83e10cf5da9bf61fe7dcd063eeea17675d7fe394877affdb6a19cf367a95cc8"
+      "detail": "sha256:6d20aa95931b5bdf4f1004044ffd05d6588f7878562c4f12bb4bedbe036ac0d3"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:24fd3fe3b3961b7cc331e8583a64e963b6ddcad2e5a8e48d66113106b20d105e"
+      "detail": "sha256:c00fa68af9b5ba49aea49726614b4e1c10fd50d3371bb411fdabc353998c6642"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:dd9cb508fce4af1a4b52d0bd25ad27c4316d66b47f9e19577260f6f5b0dd69e9"
+      "detail": "sha256:4264e22708b051897bdc37880de0cf2210903fea69bb8d30117cf35e589cec35"
     },
     {
       "name": "fixture-oracle",
