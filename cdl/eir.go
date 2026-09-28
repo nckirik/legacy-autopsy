@@ -7,7 +7,7 @@ import "encoding/json"
 const (
 	LanguageVersion  = "cdl/0.2"
 	StdlibVersion    = "cdl-stdlib/0.1"
-	GeneratorVersion = "cdl/0.2.0"
+	GeneratorVersion = "cdl/0.2.1"
 	EIRFormat        = 2
 	ProtocolVersion  = "canonical-deconstruction/4.1.2"
 )
@@ -39,6 +39,7 @@ type EIRDeclarations struct {
 	Gates           []string        `json:"gates"`
 	WorkflowTargets []string        `json:"workflow-targets,omitempty"`
 	BaseReads       []string        `json:"base-reads,omitempty"`
+	Parts           []EIRPart       `json:"parts,omitempty"`
 	Modes           []EIRMode       `json:"modes,omitempty"`
 	Types           []EIRType       `json:"types,omitempty"`
 	States          []EIRState      `json:"states,omitempty"`
@@ -54,6 +55,12 @@ type EIRCapability struct {
 	ID      string `json:"id"`
 	Kind    string `json:"kind"`
 	Version int    `json:"version"`
+}
+
+// EIRPart is a document part heading.
+type EIRPart struct {
+	Number string `json:"number"`
+	Title  string `json:"title"`
 }
 
 // EIRMode is one invocation mode. Reads is the materialized union of the
@@ -202,6 +209,9 @@ func BuildEIR(prog *Program, versions Versions, sourceFingerprint string) (*EIRD
 	doc.Declarations.Gates = append(doc.Declarations.Gates, prog.Globals.Gates...)
 	doc.Declarations.WorkflowTargets = append(doc.Declarations.WorkflowTargets, prog.Globals.WorkflowTargets...)
 	doc.Declarations.BaseReads = append(doc.Declarations.BaseReads, prog.Globals.BaseReads...)
+	for _, part := range prog.Globals.Parts {
+		doc.Declarations.Parts = append(doc.Declarations.Parts, EIRPart{Number: part.Number, Title: part.Title})
+	}
 	for _, mode := range prog.Globals.Modes {
 		doc.Declarations.Modes = append(doc.Declarations.Modes, EIRMode{
 			ID:     mode.ID,

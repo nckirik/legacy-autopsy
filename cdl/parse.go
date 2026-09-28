@@ -163,22 +163,47 @@ func builtinCapabilityKind(id string) string {
 	}
 }
 
+// readOpaque reads an opaque text block until a line whose trimmed content is
+// END. Text blocks preserve blank lines, comment markers, and relative
+// indentation; a common leading indentation is stripped from non-blank lines.
 func (p *parser) readOpaque() string {
-	var parts []string
+	var lines []string
 	for {
-		line, ok := p.peek()
-		if !ok {
+		if p.pos >= len(p.lines) {
 			p.failHere("CDL_PARSE", "unterminated text block")
 			return ""
 		}
+		raw := p.lines[p.pos]
 		p.pos++
-		if line == "END" {
-			return strings.Join(parts, " ")
+		if strings.TrimSpace(raw) == "END" {
+			break
 		}
-		if line != "" {
-			parts = append(parts, line)
+		lines = append(lines, raw)
+	}
+	for len(lines) > 0 && strings.TrimSpace(lines[0]) == "" {
+		lines = lines[1:]
+	}
+	for len(lines) > 0 && strings.TrimSpace(lines[len(lines)-1]) == "" {
+		lines = lines[:len(lines)-1]
+	}
+	indent := -1
+	for _, line := range lines {
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+		width := len(line) - len(strings.TrimLeft(line, " \t"))
+		if indent < 0 || width < indent {
+			indent = width
 		}
 	}
+	if indent > 0 {
+		for i, line := range lines {
+			if len(line) >= indent {
+				lines[i] = line[indent:]
+			}
+		}
+	}
+	return strings.Join(lines, "\n")
 }
 
 func (p *parser) readList() []string {
@@ -227,6 +252,14 @@ func (p *parser) parseGlobals(g *Globals) bool {
 			g.Rules = append(g.Rules, strings.TrimSpace(strings.TrimPrefix(line, "RULE ")))
 		case strings.HasPrefix(line, "GATES "):
 			g.Gates = append(g.Gates, csv(strings.TrimPrefix(line, "GATES "))...)
+		case strings.HasPrefix(line, "PART "):
+			rest := strings.TrimSpace(strings.TrimPrefix(line, "PART "))
+			fields := strings.SplitN(rest, " ", 2)
+			if len(fields) != 2 {
+				p.failHere("CDL_PARSE", "PART expects <number> \"<title>\"")
+				return false
+			}
+			g.Parts = append(g.Parts, PartDecl{Number: fields[0], Title: unquote(strings.TrimSpace(fields[1]))})
 		case strings.HasPrefix(line, "WORKFLOW-TARGET "):
 			g.WorkflowTargets = append(g.WorkflowTargets, csv(strings.TrimPrefix(line, "WORKFLOW-TARGET "))...)
 		default:

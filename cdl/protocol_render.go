@@ -14,6 +14,8 @@ func RenderProtocol(doc *EIRDoc) []byte {
 	var b strings.Builder
 	fmt.Fprintf(&b, "# Protocol: Legacy System Deconstruction, Assurance, and Reconstruction\n\n")
 	fmt.Fprintf(&b, "**Version:** 4.1.2 (Canonical Reconstruction-Ready Edition)\n")
+	fmt.Fprintf(&b, "**Status:** Normative\n")
+	fmt.Fprintf(&b, "**Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.\n")
 	fmt.Fprintf(&b, "**Generated-From:** %s (%s)\n", doc.Envelope.Generator, doc.Envelope.SourceFingerprint)
 	fmt.Fprintf(&b, "**Language:** %s (eir-format %d)\n", doc.Envelope.Language, doc.Envelope.EIRFormat)
 	fmt.Fprintf(&b, "**Authority:** generated render of the canonical CDL sources; do not edit.\n\n")
@@ -21,11 +23,21 @@ func RenderProtocol(doc *EIRDoc) []byte {
 
 	renderGlobals(&b, doc)
 
+	partTitles := map[string]string{}
+	for _, part := range doc.Declarations.Parts {
+		partTitles[part.Number] = part.Title
+	}
 	sections := append([]EIRSection(nil), doc.Sections...)
 	sort.SliceStable(sections, func(i, j int) bool {
 		return compareNumbers(sections[i].Number, sections[j].Number) < 0
 	})
+	currentPart := ""
 	for _, section := range sections {
+		top := strings.SplitN(section.Number, ".", 2)[0]
+		if title, ok := partTitles[top]; ok && top != currentPart {
+			fmt.Fprintf(&b, "# Part %s. %s\n\n", top, title)
+			currentPart = top
+		}
 		renderSection(&b, doc, section)
 	}
 
@@ -75,13 +87,13 @@ func renderSection(b *strings.Builder, doc *EIRDoc, section EIRSection) {
 	}
 	if goal := strings.TrimSpace(section.Goal); goal != "" {
 		fmt.Fprintf(b, "%s\n\n", goal)
-	}
-	if section.Number == "8.3" && len(doc.Declarations.Modes) > 0 {
-		var ids []string
-		for _, mode := range doc.Declarations.Modes {
-			ids = append(ids, mode.ID)
+		for _, rule := range doc.Declarations.Rules {
+			if rule.Section != section.ID || rule.Predicate == "" {
+				continue
+			}
+			fmt.Fprintf(b, "### Rule: %s\n\nPredicate: %s\n\n", rule.ID, rule.Predicate)
 		}
-		fmt.Fprintf(b, "```text\n%s\n```\n\n", strings.Join(ids, " | "))
+		return
 	}
 
 	for _, rule := range doc.Declarations.Rules {

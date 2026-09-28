@@ -27,6 +27,13 @@ type Globals struct {
 	WorkflowTargets []string
 	BaseReads       []string
 	Modes           []ModeDecl
+	Parts           []PartDecl
+}
+
+// PartDecl is a document part heading: number and title.
+type PartDecl struct {
+	Number string
+	Title  string
 }
 
 // ModeDecl is one invocation-mode declaration: identity, strictness, and the

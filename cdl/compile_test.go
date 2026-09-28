@@ -123,6 +123,7 @@ func mergeInto(dst, src *Program) {
 	dst.Globals.WorkflowTargets = append(dst.Globals.WorkflowTargets, src.Globals.WorkflowTargets...)
 	dst.Globals.BaseReads = append(dst.Globals.BaseReads, src.Globals.BaseReads...)
 	dst.Globals.Modes = append(dst.Globals.Modes, src.Globals.Modes...)
+	dst.Globals.Parts = append(dst.Globals.Parts, src.Globals.Parts...)
 	dst.Sections = append(dst.Sections, src.Sections...)
 	dst.Projections = append(dst.Projections, src.Projections...)
 }
