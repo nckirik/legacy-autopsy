@@ -105,6 +105,10 @@ S3 progress:
   declarations once; `examples/spec/assembly.json` orders the sources; the compiler
   emits one EIR with cross-section resolution; `internal/spec` compiles it in-process
   for the runtime; assembly EIR and prompt goldens replace the per-section goldens.
+- **§3.1 implemented (authored schema + drift):** `examples/spec/preflight-registry.cdl`
+  declares the preflight header, entry-cluster, unmapped-discovery, and persona-local
+  discovery-buffer schemas plus the boundary and DB-autonomous-cluster rules; field
+  lists drift-check against protocol.md.
 - **§3.2 implemented (authored schema + drift):** `examples/spec/workspace-registries.cdl`
   declares the shared-entry, auth, privacy, capability, routine cross-reference,
   invariant, and shared-state record schemas plus the append-only 0G and derived 0H
