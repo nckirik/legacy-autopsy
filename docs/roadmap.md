@@ -146,7 +146,9 @@ S3 progress:
   the envelope, package-member, transport, and evidence-set fingerprints;
   `internal/parity` drift-checks the registries and every normative token against
   `protocol.md`.
-- **Remaining in §4:** collision extension beyond the base 12-character ID hash.
+- **Collision extension implemented:** `internal/capabilities.ExtendCollision` extends
+  colliding hashes to the declared 16/20/.../64 lengths and fails closed on identical
+  or non-colliding input; aliases and supersession remain registry concerns (§12.1).
 - **§8.5 implemented (capability-backed):** `examples/spec/cold-resume.cdl` declares the
   12-field assessment block and the fingerprint/validation rules;
   `internal/capabilities.ColdResumeFingerprint` implements the `COLD-RESUME|` preimage
