@@ -532,6 +532,572 @@
       ]
     },
     {
+      "path": "examples/spec/status-taxonomy.cdl",
+      "source-fingerprint": "sha256:dd36dcf988f7fd812bf13b53700cc762328a064d5aa03f225788043ebd9d7eea",
+      "ids": [
+        {
+          "id": "PREFIX-ACQUISITION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "PREFIX-BLUEPRINT",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "PREFIX-COVERAGE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "PREFIX-EVIDENCE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "PREFIX-REGISTRY-TRAVERSAL",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "PREFIX-STAGING",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "PREFIX-TICKETS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ACQUISITIONCANDIDATES-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ATOMICCOMPONENT-BLOCK-CONFIDENCE-RANK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ATOMICCOMPONENT-BLOCK-EVIDENCE-PROFILE-EVIDENCE-LEVEL",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ATOMICCOMPONENT-CAPABILITY-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ATOMICCOMPONENT-COVERAGE-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ATOMICCOMPONENT-POV-OWNER",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ATOMICCOMPONENT-RECORD-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ATOMICCOMPONENT-RUNTIME-STATE-MATRIX-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ATOMICCOMPONENT-STAGING-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ATOMICCOMPONENT-TRAVERSAL-TRACKS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-BUSINESSRULE-CAPABILITY-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-BUSINESSRULE-VIOLATION-POLICY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CAPABILITYRECORD-RECORD-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CAPABILITYRECORD-TARGET-DECISION-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CAPABILITYREGISTRY-CAPABILITY-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CAPABILITYREGISTRY-RUNTIME-STATE-MATRIX-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CLAIM-EVIDENCE-LEVEL",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CLAIM-MATERIALITY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CLAIM-PROJECTION-CLASSIFICATION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-COLDRESUME-COLD-RESUME-RESULT",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-COLDRESUME-RUNTIME-SCOPE-MODE-WRITE-RIGHT-CHECK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-COLDRESUME-RUNTIME-STALE-CHECK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CONFIGURATION-MEDIUM",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CONFIRMATION-HANDBOOK-READABILITY-REVIEW",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CONFIRMATION-HUMAN-HATCH-ACTION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CONFIRMATION-INVALIDATED-BY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-CONTRADICTION-RESOLUTION-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-DATABASEROUTINE-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-DATABASEROUTINE-TARGET-DECISION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-DECISION-APPROVAL-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-DECISION-TYPE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-DEPLOYMENT-SINGLE-POINT-OF-FAILURE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ENTITY-STORAGE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ENTRYCLUSTER-PRIMARY-POV",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ENTRYCLUSTER-REQUIRED-TRAVERSAL-MATRIX-APPLICABILITY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ENTRYCLUSTER-REQUIRED-TRAVERSAL-MATRIX-POV",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ENTRYCLUSTER-REQUIRED-TRAVERSAL-MATRIX-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ENTRYCLUSTER-REQUIRED-TRAVERSAL-MATRIX-TRACK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ENTRYCLUSTER-TRAVERSAL-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-ENTRYCLUSTER-TRAVERSAL-TRACK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-EXITECANDIDATEREPORT-CANDIDATE-RESULT",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-EXITECANDIDATEREPORT-CHECK-RESULTS-RESULT",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-EXITECONTENTREADINESSREPORT-CHECK-RESULTS-RESULT",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-EXITECONTENTREADINESSREPORT-CONTENT-READINESS-RESULT",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-EXITECONTENTREADINESSREPORT-EXIT-E-PREPACKAGE-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-EXPORT-ACQUISITION-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-EXPORT-PLATFORM",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-EXPORTRECONCILIATION-RECONCILIATION-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-FINALVERIFICATIONRECEIPT-CHECK-RESULTS-RESULT",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-FINALVERIFICATIONRECEIPT-OVERALL-RESULT",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-FRONTIER-DISCOVERY-METHOD",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-FRONTIER-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-GROUPINGCONTAINER-RECORD-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-HANDBOOKSECTION-HANDBOOK-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-INVOCATIONHEADER-ACTIVE-POV",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-INVOCATIONHEADER-CURRENT-ITERATION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-INVOCATIONHEADER-HUMAN-HATCH-ACTION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-INVOCATIONHEADER-INVOCATION-MODE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-INVOCATIONHEADER-TRAVERSAL-TRACK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-NFR-ATTRIBUTE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-OUTERBUNDLEMANIFEST-EXIT-E-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-PACKAGINGARTIFACT-ARTIFACT-TYPE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-PERSONAPROFILE-BLOCK-CONFIDENCE-RANK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-PERSONAPROFILE-BLOCK-EVIDENCE-PROFILE-EVIDENCE-LEVEL",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-PERSONAPROFILE-BLUEPRINT-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-PERSONAREGISTRY-REGISTRY-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-PREFLIGHT-CURRENT-ITERATION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-PROBE-SAFETY-CLASSIFICATION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-RECORDSUPERSESSION-TOMBSTONE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-RELATIONSHIP-CARDINALITY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-RELATIONSHIP-DELETE-UPDATE-SEMANTICS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-RELATIONSHIP-ENFORCEMENT",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SCHEDULEDJOB-CAPABILITY-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SECURITY-CATEGORY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SECURITY-RISK-LEVEL",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SHAREDREFERENCE-CANONICAL-STAGING-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SHAREDREFERENCE-CAPABILITY-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SHAREDREFERENCE-TRACK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SOURCECOVERAGE-C-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SOURCECOVERAGE-DISPOSITION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SOURCECOVERAGE-SCOPE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SOURCECOVERAGE-TRACK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SOURCEINVENTORY-COVERAGE-SUMMARY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SOURCEINVENTORY-DISCOVERY-METHOD",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SOURCEINVENTORY-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SOURCEINVENTORY-TRAVERSAL-TRACK-S",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SYNTHESISBLOCK-BLOCK-CONFIDENCE-RANK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SYNTHESISBLOCK-BLOCK-EVIDENCE-PROFILE-EVIDENCE-LEVEL",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SYNTHESISBLOCK-BLUEPRINT-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SYNTHESISBLOCK-COVERAGE-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SYNTHESISGAP-DISPOSITION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-SYNTHESISGAP-MATERIALITY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-TICKET-ESCALATION-REASON",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-TICKET-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-TRACEABILITY-C-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-TRACEABILITY-LIFECYCLE-ELIGIBILITY-CLASSIFICATION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-UNMAPPEDDISCOVERY-TRAVERSAL-STATUS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-UNMAPPEDDISCOVERYBUFFER-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-USECASE-CAPABILITY-CLASSIFICATION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-USECASE-TARGET-DECISION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "REGISTRY-VALIDATIONSUMMARY-EVIDENCE-BINDINGS-BINDING-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "finite-enum-registry",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "status-taxonomy",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "traversal-matrix-status",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/ticket-fsm.cdl",
       "source-fingerprint": "sha256:4f8195541d35f9d7eb838c51a2d91422e1632202b74a076341dada5fc23d2ca9",
       "ids": [

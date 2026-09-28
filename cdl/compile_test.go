@@ -22,6 +22,7 @@ const (
 	ticketFSMPath         = "examples/spec/ticket-fsm.cdl"
 	invocationContextPath = "examples/spec/invocation-context.cdl"
 	coverageExitsPath     = "examples/spec/coverage-and-exits.cdl"
+	statusTaxonomyPath    = "examples/spec/status-taxonomy.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -472,6 +473,29 @@ func TestCoverageAndExitsCompile(t *testing.T) {
 	}
 	if fieldCount != 11 {
 		t.Fatalf("SWEEP-RECORD has %d fields, want 11", fieldCount)
+	}
+}
+
+func TestStatusTaxonomyCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath)
+	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "5.1" {
+		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
+	}
+	enums := map[string][]string{}
+	for _, e := range res.EIR.Declarations.Enums {
+		enums[e.ID] = e.Values
+	}
+	if len(enums) != 109 {
+		t.Fatalf("%d enums, want 109", len(enums))
+	}
+	if len(enums["PREFIX-STAGING"]) != 5 {
+		t.Fatalf("PREFIX-STAGING has %d values", len(enums["PREFIX-STAGING"]))
+	}
+	if len(enums["REGISTRY-TICKET-STATUS"]) != 9 {
+		t.Fatalf("REGISTRY-TICKET-STATUS has %d values", len(enums["REGISTRY-TICKET-STATUS"]))
+	}
+	if len(enums["REGISTRY-CONFIGURATION-MEDIUM"]) != 5 {
+		t.Fatalf("REGISTRY-CONFIGURATION-MEDIUM has %d values", len(enums["REGISTRY-CONFIGURATION-MEDIUM"]))
 	}
 }
 
