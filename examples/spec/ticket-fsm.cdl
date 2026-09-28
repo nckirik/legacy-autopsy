@@ -91,3 +91,129 @@ RULE ticket-terminal-transitions
     T-OUT-OF-SCOPE on a mutual scope decision.
   END
 END
+
+SECTION human-hatch-prerequisites
+NUMBER 9.3
+TITLE "Human Hatch action prerequisites"
+
+GOAL
+  Each Human Hatch subtype has distinct prerequisites; a fake probe or transition through
+  T-PROBE-REQUIRED is forbidden.
+END
+
+RULE ticket-escalation-prerequisites
+  GOAL
+    Only Ticket Escalation may terminalize an unresolved ticket as human-required. Before
+    Human Hatch: Ticket Escalation: perform and record bounded static investigation with
+    exact methods, evidence, and remaining ambiguity; select exactly one closed
+    Escalation Reason and record the probe feasibility/inapplicability assessment; for
+    RUNTIME-REQUIRED, transition to T-PROBE-REQUIRED, propose a safe observable probe,
+    and record the attempted probe or why it cannot be attempted safely, legally, or
+    technically; for every non-runtime reason, remain T-OPEN or T-FOLLOW-UP and record
+    why runtime observation is inapplicable, unauthorized, unsafe, destructive,
+    unavailable, or incapable of resolving the required domain meaning/external fact;
+    and invoke the subtype with exact ticket, scope, denominator, risk, and coverage
+    consequences plus reviewer authority. Direct creation of T-HUMAN-REQUIRED, an
+    escalation with Escalation Reason: None, or a reason inconsistent with the recorded
+    feasibility assessment is invalid. Ticket Escalation may terminalize the ticket as
+    T-HUMAN-REQUIRED, but the affected source remains C-GAP or C-PARTIAL unless an
+    authorized human separately or concurrently approves an exact C-EXCLUDED decision
+    under Decision/Scope Approval. No terminal ticket silently implies coverage.
+    Human-required is an honest unresolved orchestration outcome distinct from
+    exclusion: it blocks Exit A for any scope claiming the affected unit's closure,
+    remains visible in partial synthesis and final risk reporting, and permits
+    independent unaffected work to continue.
+  END
+END
+
+RULE decision-scope-approval
+  GOAL
+    Decision/Scope Approval does not require a fake static investigation or probe. It
+    requires exact proposed DEC content; observed SRC/CLM/ticket/contradiction inputs
+    and immutable fingerprints; exact affected COV tuples and denominator arithmetic;
+    alternatives, rationale, residual risks, rollout/rollback where applicable; and
+    reviewer identity, authority basis, and timestamp. If used to resolve a ticket, the
+    Ticket Escalation prerequisites still apply to that ticket.
+  END
+END
+
+RULE confirmation-prerequisites
+  GOAL
+    Confirmation does not require a static investigation or probe. It requires a passing
+    Exit E Candidate Report; candidate payload manifest; exact typed record IDs including
+    PRF/HBK where applicable; exact SEMANTIC-RECORD-VERSION and
+    SEMANTIC-CONTENT-FINGERPRINT bindings; required approved
+    DECISION-CONTENT-VERSION/DECISION-CONTENT-FINGERPRINT bindings and matching approval
+    envelopes; review scope and limitations; and reviewer identity and authority basis.
+    For a PRF it MUST validate the complete §8.4 dependency closure; for other semantic
+    records it MUST validate the complete applicable DERIVED-FROM closure. It may create
+    CNF records and attach certification envelopes only; semantic payload edits are
+    forbidden.
+  END
+END
+
+SECTION probe-specification
+NUMBER 9.4
+TITLE "Probe specification and asynchronous handoff"
+
+ENUM SAFETY-CLASSIFICATION
+  non-destructive
+  controlled mutation
+END
+
+FIELD PROBE-SPECIFICATION
+  probe-id                              -> string required
+  target-src-cmp                        -> string required
+  question-expected-observable          -> string required
+  exact-inputs-preconditions            -> string required
+  required-environment-headers-config   -> string required
+  safety-classification                 -> SAFETY-CLASSIFICATION required
+  data-masking-isolation-approval       -> string required
+  disabled-capability-authorization     -> string required
+  logs-db-diffs-payloads-to-capture     -> string required
+  success-failure-interpretation        -> string required
+END
+
+RULE probe-handoff
+  GOAL
+    The operator executes in an isolated sandbox and writes .extracted/probes/[PROBE-ID].log.
+    In a bound Ticket Resolution invocation, the target POV ingests the log, creates
+    runtime claims, updates affected records, and moves the ticket to T-PENDING. The
+    originating POV then accepts it as T-COMPLETE or rejects it as T-FOLLOW-UP; probe
+    ingestion never bypasses origin validation. Probe output MUST be fingerprinted and
+    scrubbed of secrets/PII before agent exposure.
+  END
+END
+
+SECTION no-mock-integrity
+NUMBER 9.5
+TITLE "No-mock integrity"
+
+RULE no-mock-rules
+  GOAL
+    When static analysis is insufficient and a sandbox is unavailable: do not fabricate
+    paths, values, payloads, mocks, or specifications as evidence; keep claims E-INFERRED
+    or E-UNKNOWN; keep affected components S-DISCOVERED and ineligible for promotion;
+    and use the Human Hatch path and preserve the coverage gap/partial state. A test
+    double used to exercise already-proven local logic MAY be a testing mechanism but
+    MUST NOT be treated as observation of an opaque dependency.
+  END
+END
+
+SECTION no-mock-fallback
+NUMBER 9.6
+TITLE "No-mock fallback payload"
+
+GOAL
+  The no-mock fallback payload schema is declared below.
+END
+
+FIELD NO-MOCK-FALLBACK
+  suspected-behavior                    -> string required
+  evidence-claims-anchors               -> string required
+  missing-runtime-observation           -> string required
+  static-methods-attempted              -> string required
+  probe-feasibility-attempt-result      -> string required
+  proposed-human-verification           -> string required
+  affected-promotion-coverage-exit-scope -> string required
+END

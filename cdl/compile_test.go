@@ -454,8 +454,12 @@ func TestColdResumeSectionCompiles(t *testing.T) {
 
 func TestTicketFSMCompiles(t *testing.T) {
 	res := compileSources(t, ticketFSMPath)
-	if len(res.EIR.Sections) != 2 || res.EIR.Sections[0].Number != "9.1" || res.EIR.Sections[1].Number != "9.2" {
-		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
+	numbers := []string{}
+	for _, sec := range res.EIR.Sections {
+		numbers = append(numbers, sec.Number)
+	}
+	if strings.Join(numbers, ",") != "9.1,9.2,9.3,9.4,9.5,9.6" {
+		t.Fatalf("unexpected sections: %v", numbers)
 	}
 	transitions := 0
 	states := 0
@@ -476,7 +480,7 @@ func TestInvocationContextCompiles(t *testing.T) {
 	for _, sec := range res.EIR.Sections {
 		numbers = append(numbers, sec.Number)
 	}
-	if strings.Join(numbers, ",") != "8.1,8.2,8.6,8.7,8.8" {
+	if strings.Join(numbers, ",") != "8.1,8.2,8.3,8.4,8.6,8.7,8.8" {
 		t.Fatalf("unexpected sections: %v", numbers)
 	}
 	counts := map[string]int{}
@@ -794,6 +798,44 @@ func TestExtractionEvolutionCompiles(t *testing.T) {
 	for _, e := range res.EIR.Declarations.Enums {
 		if e.ID == "BLOCK-CONFIDENCE-RANK" && len(e.Values) != 4 {
 			t.Fatalf("BLOCK-CONFIDENCE-RANK has %d values, want 4", len(e.Values))
+		}
+	}
+}
+
+func TestModeReadSetsCompiles(t *testing.T) {
+	res := compileSources(t, invocationContextPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"8.3", "8.4"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+}
+
+func TestHumanHatchProbeCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, ticketFSMPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"9.3", "9.4", "9.5", "9.6"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	if counts["PROBE-SPECIFICATION"] != 10 || counts["NO-MOCK-FALLBACK"] != 7 {
+		t.Fatalf("unexpected probe field counts: %v", counts)
+	}
+	for _, e := range res.EIR.Declarations.Enums {
+		if e.ID == "SAFETY-CLASSIFICATION" && len(e.Values) != 2 {
+			t.Fatalf("SAFETY-CLASSIFICATION has %d values, want 2", len(e.Values))
 		}
 	}
 }

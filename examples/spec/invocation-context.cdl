@@ -83,6 +83,137 @@ RULE alfa-start-behavior
   END
 END
 
+SECTION invocation-mode-enum
+NUMBER 8.3
+TITLE "Invocation-mode enum and explicit multi-file modes"
+
+GOAL
+  The exhaustive invocation-mode enum is the declared registry; multi-file modes
+  enumerate their exact targets.
+END
+
+RULE mode-targets
+  GOAL
+    Preflight has one semantic target (0A); Discovery, Ticket Resolution, and Promotion
+    Review obey §8.2; Validation/Gate writes one report target. All MAY append 0G and
+    fixed assurance sidecars allowed by their contracts. Probe ingestion executes as
+    Ticket Resolution. Neutral arbitration executes as Ticket Resolution with the
+    original persona/cluster/track and a recorded neutral POV assignment. Protocol
+    migration is metadata on a sequence of existing modes, not a separate mode. Human
+    confirmation executes only as Human Hatch: Confirmation or the equivalent explicitly
+    authorized Reconstruction-Handoff confirmation-envelope action and writes
+    18-CONFIRMATIONS.md plus exact envelope transitions without semantic mutation.
+  END
+END
+
+RULE multi-file-modes
+  GOAL
+    Only these modes may intentionally span multiple semantic targets. Export
+    Acquisition: acquisition register, inventory/reconciliation/candidate sections,
+    normalized maps, security findings, and 0G. Sequential Reconciliation: canonical
+    personas/_shared/ merges plus persona-local shared-staging, promotion-request,
+    question, unmapped-discovery, and synthesis-gap buffer merges; atomic promotion and
+    depromotion; buffered ticket/frontier creation; deterministic deduplication;
+    indexes; traceability; frontier dispositions; and 0G. Profile Synchronization:
+    exactly one persona profile semantic payload plus its atomic 0A registry/ownership
+    updates and 0G, with an authorized confirmation action later updating only its
+    certification envelope. Cross-Reference-Reconciliation: only already-existing ID
+    reference fields, reciprocal links, traceability, and 0G; no new legacy facts, and
+    changed semantic reference bindings increment semantic versions/fingerprints.
+    Partial-Synthesis: bounded provisional 90-96 blocks and a synthesis gap buffer.
+    Final-Synthesis: closed-corpus 90-96 blocks and synthesis gap buffer.
+    Reconstruction-Handoff: populated handbook payloads, approved-decision projection,
+    authorized confirmation envelopes, equivalence suite, candidate/outer payload
+    manifests, scope certificate, and package assembly in the exact §15.4 stages; it
+    does not write Validation/Gate reports. Human Hatch has three mandatory action
+    subtypes in its identity header: Ticket Escalation, Decision/Scope Approval, and
+    Confirmation, each limited to its declared prerequisites and rights; a subtype
+    cannot borrow another subtype's rights, and Human Hatch writes only the records
+    authorized by its declared subtype plus exact coverage/traceability effects and 0G.
+    Each multi-file mode MUST enumerate exact files and record sections in its identity
+    header; the mode name alone grants no broad write access. Validation/Gate reads
+    authoritative inputs and writes only its named report block plus 0G. Human
+    confirmation writes 18-CONFIRMATIONS.md and exact envelope transitions only, never
+    semantic profile/synthesis/handbook payloads.
+  END
+END
+
+SECTION mandatory-read-sets
+NUMBER 8.4
+TITLE "Mandatory read sets"
+
+GOAL
+  All modes load protocol constants/statuses, 0A, 0D, 0E, 0F, 0G or 0H, relevant
+  source inventory/frontier/claim records, and the active snapshot metadata.
+END
+
+RULE applicability-provenance
+  GOAL
+    Semantic decisions that a dependency or scope dimension is applicable or not
+    applicable MUST carry the §0.1 classifier provenance and claim/evidence bindings.
+    Unknown applicability is fail-inclusive: the dependency remains in the required
+    read/validation closure and blocks mutation if it cannot be loaded and validated.
+  END
+END
+
+RULE strict-mode-read-sets
+  GOAL
+    Strict single-scope modes additionally load the active POV file, at most one active
+    ledger, the matching shared POV/ledger for persona scope, the persona's
+    UNMAPPED-DISCOVERY-BUFFER.md, concrete source excerpts, and relevant normalized map.
+    Before Discovery, the invocation MUST verify from a current 0H global buffer summary
+    or a deterministic read of every persona-local unmapped buffer that no Pending-Merge
+    entry exists; an absent/stale summary without the full fallback read blocks the
+    invocation. Load 0B for auth; 0C for sensitive data; dependency source excerpts for
+    cross-boundary references; probe logs for matching probe tickets; persona siblings
+    only for promotion uniqueness.
+  END
+END
+
+RULE acquisition-read-sets
+  GOAL
+    Acquisition loads 0A, 0C, 0G/0H, supplied approved projections,
+    lineage/sanitization reports, existing normalized maps, source inventory, and export
+    reconciliation.
+  END
+END
+
+RULE reconciliation-read-sets
+  GOAL
+    Sequential Reconciliation loads all relevant canonical personas/_shared/ files,
+    persona-local shared-staging/promotion-request/question/unmapped-discovery buffers,
+    synthesis-gap buffers, and destination records.
+  END
+END
+
+RULE profile-closure-read-sets
+  GOAL
+    Profile Synchronization MUST load 0A, the target PRF profile, and every record
+    directly referenced by or applicable to any profile field, then recursively load the
+    complete transitive DERIVED-FROM closure of those records. This closure explicitly
+    includes every applicable AUTH, CLM, SRC, CMP, ER, REL, BR, UC, IF, CFG, SCHED, DR,
+    SM, STATE, DEP, MOD, CAP, DEC, SEC, NFR, and FLT record, plus relevant source
+    inventory, coverage, traceability, contradiction, decision-approval, and snapshot
+    records needed to prove currency. Every loaded dependency MUST have its exact record
+    ID, version where applicable, semantic/content fingerprint, source snapshot, and
+    reciprocal binding verified. Profile Synchronization MUST reject mutation if any
+    directly applicable record or any transitive dependency is absent, unresolved,
+    stale, version-mismatched, fingerprint-mismatched, or read from a mixed snapshot.
+    Confirmation validation of a PRF MUST load and validate this identical closure
+    against the candidate-bound versions and fingerprints before attaching or accepting
+    its envelope.
+  END
+END
+
+RULE synthesis-read-sets
+  GOAL
+    Partial/Final Synthesis loads required closed or bounded forensic and assurance
+    inputs plus existing synthesis blocks. Final Synthesis MUST load all active personas,
+    all POV/ledger files, all relevant claims, reconciliation, coverage, contradictions,
+    and gate inputs.
+  END
+END
+
 SECTION concurrent-persona-traversal
 NUMBER 8.6
 TITLE "Concurrent persona traversal"

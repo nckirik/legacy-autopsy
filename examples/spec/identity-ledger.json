@@ -709,7 +709,7 @@
     },
     {
       "path": "examples/spec/invocation-context.cdl",
-      "source-fingerprint": "sha256:5d20c22d710275e32556f6815fd31b45a73d61da938f44e1a96efc0ef3b2513b",
+      "source-fingerprint": "sha256:0ae02077ada202c4c471ba7b618522bae7a9e7885a4a6202fbe00aac7f544c0e",
       "ids": [
         {
           "id": "INVOCATION-HEADER",
@@ -722,7 +722,17 @@
           "status": "active"
         },
         {
+          "id": "acquisition-read-sets",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
           "id": "alfa-start-behavior",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "applicability-provenance",
           "kind": "RULE",
           "status": "active"
         },
@@ -757,6 +767,36 @@
           "status": "active"
         },
         {
+          "id": "invocation-mode-enum",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "mandatory-read-sets",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "mode-targets",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "multi-file-modes",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "profile-closure-read-sets",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "reconciliation-read-sets",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
           "id": "sequential-reconciliation-merge",
           "kind": "RULE",
           "status": "active"
@@ -777,8 +817,18 @@
           "status": "active"
         },
         {
+          "id": "strict-mode-read-sets",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
           "id": "strict-single-scope",
           "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "synthesis-read-sets",
+          "kind": "RULE",
           "status": "active"
         },
         {
@@ -1831,8 +1881,23 @@
     },
     {
       "path": "examples/spec/ticket-fsm.cdl",
-      "source-fingerprint": "sha256:4f8195541d35f9d7eb838c51a2d91422e1632202b74a076341dada5fc23d2ca9",
+      "source-fingerprint": "sha256:378697e6d0eb087f47759f8c26f6c20c7aa8e1437dd537fa9ab4b8ac08117de9",
       "ids": [
+        {
+          "id": "NO-MOCK-FALLBACK",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "PROBE-SPECIFICATION",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "SAFETY-CLASSIFICATION",
+          "kind": "ENUM",
+          "status": "active"
+        },
         {
           "id": "TICKET",
           "kind": "FIELD",
@@ -1846,6 +1911,51 @@
         {
           "id": "TICKET-STATE",
           "kind": "STATE",
+          "status": "active"
+        },
+        {
+          "id": "confirmation-prerequisites",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "decision-scope-approval",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "human-hatch-prerequisites",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "no-mock-fallback",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "no-mock-integrity",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "no-mock-rules",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "probe-handoff",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "probe-specification",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "ticket-escalation-prerequisites",
+          "kind": "RULE",
           "status": "active"
         },
         {
