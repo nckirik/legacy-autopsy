@@ -56,7 +56,7 @@ func RenderPrompt(doc *EIRDoc, projectionID, channel string, prov Provenance) ([
 				return nil, err
 			}
 		}
-		fmt.Fprintf(&b, "\n- **%s** — %s", step.ID, text)
+		fmt.Fprintf(&b, "\n- **%s** - %s", step.ID, text)
 	}
 	b.WriteString("\n")
 	return []byte(b.String()), nil

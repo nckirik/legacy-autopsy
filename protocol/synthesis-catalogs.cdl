@@ -154,7 +154,7 @@ RULE common-header-requirements
 END
 
 SECTION architecture-blueprint
-TITLE "Architecture blueprint — `90-ARCH-BLUEPRINT.md`"
+TITLE "Architecture blueprint - `90-ARCH-BLUEPRINT.md`"
 
 GOAL
 Contains system boundary and context diagrams; actors/personas and external systems; observed legacy technology separated from target decisions; atomic `MOD` records; inter-module contracts and error propagation; deployment topology; architectural invariants and modernization consequences; capability navigation; and a prominent active-versus-disabled architecture view. Purely navigational module indexes are grouping containers under §4.2 and list `MOD` IDs only.
@@ -202,7 +202,7 @@ RULE module-requirements
 END
 
 SECTION entity-catalog
-TITLE "Entity — `91-DATA-MODEL.md`"
+TITLE "Entity - `91-DATA-MODEL.md`"
 
 GOAL
 ```markdown
@@ -267,7 +267,7 @@ FIELD ENTITY-RECORD
 END
 
 SECTION relationship-catalog
-TITLE "Relationship — `91-DATA-MODEL.md`"
+TITLE "Relationship - `91-DATA-MODEL.md`"
 
 GOAL
 ```markdown
@@ -314,7 +314,7 @@ FIELD RELATIONSHIP-RECORD
 END
 
 SECTION state-machine-catalog
-TITLE "State machine — `91-DATA-MODEL.md`"
+TITLE "State machine - `91-DATA-MODEL.md`"
 
 GOAL
 A state machine is required only for an **eligible lifecycle scope**: an entity aggregate or capability with a finite, behaviorally meaningful lifecycle, not every boolean or presentation state.
@@ -366,7 +366,7 @@ RULE state-machine-eligibility
 END
 
 SECTION database-routine-catalog
-TITLE "Database routine — `91-DATA-MODEL.md`"
+TITLE "Database routine - `91-DATA-MODEL.md`"
 
 GOAL
 ```markdown
@@ -432,7 +432,7 @@ RULE database-routine-drift
 END
 
 SECTION business-rule-catalog
-TITLE "Business rule — `92-BUSINESS-RULES.md`"
+TITLE "Business rule - `92-BUSINESS-RULES.md`"
 
 GOAL
 ```markdown
@@ -494,7 +494,7 @@ RULE single-rule-owner
 END
 
 SECTION use-case-catalog
-TITLE "Use case — `93-USE-CASES.md`"
+TITLE "Use case - `93-USE-CASES.md`"
 
 GOAL
 ```markdown
@@ -580,7 +580,7 @@ RULE use-case-visibility
 END
 
 SECTION interface-catalog
-TITLE "Interface — `94-INTERFACES.md`"
+TITLE "Interface - `94-INTERFACES.md`"
 
 GOAL
 ```markdown
@@ -651,7 +651,7 @@ RULE interface-compatibility-baseline
 END
 
 SECTION deployment-catalog
-TITLE "Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`"
+TITLE "Deployment, configuration, and scheduling - `95-DEPLOYMENT.md`"
 
 GOAL
 ```markdown
@@ -733,7 +733,7 @@ RULE configuration-effect
 END
 
 SECTION nfr-security-catalog
-TITLE "NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`"
+TITLE "NFR and security - `96-NON-FUNCTIONAL-SECURITY.md`"
 
 GOAL
 ```markdown

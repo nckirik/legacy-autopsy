@@ -1,6 +1,6 @@
 # Cross-Reference-Reconciliation
 
-> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** — `protocol.md` is normative.
+> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** - `protocol.md` is normative.
 
 ## Purpose
 
@@ -14,7 +14,7 @@ Bind exact existing record IDs, fields, reciprocal destinations, traceability/in
 
 - §8.1. `Resume identity header`; §8.3. `Invocation-mode enum and explicit multi-file modes`; §8.4. `Mandatory read sets`; §8.5. `Cold resume check`; §8.7. `Stale checkpoint guard`; §8.8. `` `0G` invocation log ``
 - §11.1. `Partial versus Final Synthesis`
-- §12.1. `Traceability — `20-TRACEABILITY.md``; §12.2. `Required reciprocal references`; §12.3. `Synthesis-ID timing`; §12.4. `Dependency and impact provenance`; §12.5. `Deterministic validation summary`
+- §12.1. `Traceability - `20-TRACEABILITY.md``; §12.2. `Required reciprocal references`; §12.3. `Synthesis-ID timing`; §12.4. `Dependency and impact provenance`; §12.5. `Deterministic validation summary`
 
 ## Mandatory read set
 

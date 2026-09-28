@@ -34,7 +34,7 @@ When followed completely, this protocol guarantees that:
 4. active, conditional, shadow, disabled, retired, and unknown capabilities remain distinct across environments and snapshots;
 5. serialized exports are acquired, exploded, reconciled, and traced at logical-unit level without exposing raw secrets;
 6. personas and POVs retain strict ownership and isolation during discovery;
-7. cross-layer ambiguity is resolved through a finite-state ticket lifecycle, runtime probes, or an explicit human hatch—never by guessing;
+7. cross-layer ambiguity is resolved through a finite-state ticket lifecycle, runtime probes, or an explicit human hatch-never by guessing;
 8. synthesis artifacts are structured semantic projections of closed forensic and assurance records, with derivation provenance and targeted stale propagation;
 9. a separate human reconstruction handbook is navigable without using dense identifier catalogs as its primary interface;
 10. reconstruction may treat the delivered bundle as its sole input only after the signed outer bundle manifest authoritatively attests `EXIT-E-STATUS: Passed` under the strict non-cyclic Exit E sequence.
@@ -78,7 +78,7 @@ Partial synthesis MAY run before Exit A for bounded review. It is provisional an
 
 # Part 1. Four-Plane Information Model
 
-## 1.1. Plane 1 — Forensic Plane
+## 1.1. Plane 1 - Forensic Plane
 
 **Purpose:** Preserve what was directly found, where it was found, how it is invoked, and what remains uncertain.
 
@@ -117,7 +117,7 @@ Partial synthesis MAY run before Exit A for bounded review. It is provisional an
 
 **Writers:** isolated POV invocations have exactly one semantic POV target and at most one semantic ledger target; their fixed transaction bundle MAY also append directly produced source, frontier, claim, contradiction, coverage, persona-local unmapped-discovery-buffer, and audit-log records explicitly allowed by the identity header. They cannot mutate unrelated semantic files. Acquisition writes the acquisition register, normalized maps, reconciliation records, approved registry fragments, and its directly allowed discovery placeholders. Profile Synchronization exclusively writes persona semantic payloads and synchronized `0A` persona rows. Authorized `Human Hatch: Confirmation` or `Reconstruction-Handoff` confirmation actions MAY update only the separately delimited profile certification envelope; they MUST NOT change profile semantic content, `SEMANTIC-RECORD-VERSION`, or `SEMANTIC-CONTENT-FINGERPRINT`. Sequential Reconciliation owns cross-persona/shared merges, atomic promotion and depromotion, buffered tickets, and merging persona-local unmapped discoveries into `0A`.
 
-## 1.2. Plane 2 — Assurance Plane
+## 1.2. Plane 2 - Assurance Plane
 
 **Purpose:** Prove denominator completeness, traversal closure, evidence support, export reconciliation, reference integrity, and gate outcomes.
 
@@ -143,7 +143,7 @@ Partial synthesis MAY run before Exit A for bounded review. It is provisional an
 
 **Writers:** Acquisition, isolated traversal invocations, Sequential Reconciliation, Cross-Reference-Reconciliation, Human Hatch, and deterministic validators write only their explicitly owned assurance sections. Gate reports MUST be generated from the authoritative records and MUST include deterministic input fingerprints.
 
-## 1.3. Plane 3 — Synthesis Plane
+## 1.3. Plane 3 - Synthesis Plane
 
 **Purpose:** Transform closed forensic facts and assurance proofs into coherent reconstruction semantics.
 
@@ -164,7 +164,7 @@ Partial synthesis MAY run before Exit A for bounded review. It is provisional an
 
 **Writers:** Partial-Synthesis and Final-Synthesis create or update semantic payloads and their semantic versions/fingerprints. Cross-Reference-Reconciliation MAY update only reference fields after IDs exist; any reference field included in the semantic payload is a semantic change and MUST increment the semantic record version and fingerprint. Authorized confirmation attaches only the certification envelope and transitions eligible blocks from `[B-POPULATED]` to `[B-CONFIRMED]` without regenerating or changing semantic content. Synthesis writes discovered gaps only to a synthesis gap buffer; it never opens tickets directly.
 
-## 1.4. Plane 4 — Human Reconstruction Handbook
+## 1.4. Plane 4 - Human Reconstruction Handbook
 
 **Purpose:** Present the confirmed bundle through progressive disclosure for architects, developers, domain experts, security reviewers, data engineers, QA, and operators.
 
@@ -497,7 +497,7 @@ Every synthesis block, persona profile, and semantic handbook section has a cano
 
 The semantic-content hash and semantic record version MUST exclude the complete certification envelope, including B/handbook status, CNF reference, confirmation-envelope version, approval/signature identities and timestamps, candidate report or candidate payload manifest references explicitly permitted by the envelope schema, and envelope digests. A certification envelope MUST NOT reference the later Exit E Content-Readiness Report, scope certificate, outer bundle manifest, or any other artifact that did not exist when the envelope was attached. Attaching a confirmation or changing `[B-POPULATED]` to `[B-CONFIRMED]` therefore changes only the envelope and MUST NOT change the semantic record version or semantic-content fingerprint. Any edit to semantic prose, diagrams, examples, claims, derivation references, semantic cross-references, PRF identity, or HBK identity increments `SEMANTIC-RECORD-VERSION`, recomputes `SEMANTIC-CONTENT-FINGERPRINT`, invalidates the old envelope, and triggers targeted stale propagation.
 
-A `CNF` confirms exact typed record IDs—including `PRF` and `HBK`—`SEMANTIC-RECORD-VERSION` values, and `SEMANTIC-CONTENT-FINGERPRINT` values, never mutable whole-file bytes or status-bearing envelopes. Validators MUST parse the payload/envelope boundary from the Markdown AST, recompute payload hashes, and reject envelope fields inside the semantic payload or semantic fields inside the envelope.
+A `CNF` confirms exact typed record IDs-including `PRF` and `HBK`-`SEMANTIC-RECORD-VERSION` values, and `SEMANTIC-CONTENT-FINGERPRINT` values, never mutable whole-file bytes or status-bearing envelopes. Validators MUST parse the payload/envelope boundary from the Markdown AST, recompute payload hashes, and reject envelope fields inside the semantic payload or semantic fields inside the envelope.
 
 ## 4.1.2. Normative canonical hash profile and packaging artifacts
 
@@ -563,13 +563,13 @@ The payload fingerprint covers exactly the AST content between the artifact-payl
 
 Each promotable forensic record and each independently meaningful synthesis record MUST describe exactly one independently evidenced unit: one function, method, route, query, job, workflow node, graph edge, action, binding, DB routine, constraint, widget behavior, interface operation, architecture module/bounded context, or equivalent.
 
-A **purely navigational grouping container**—for example a family index, class overview, workflow overview, capability index, module index, or use-case index—MUST be marked `RECORD-KIND: GROUPING-CONTAINER`. It has only a title, navigation metadata, and an explicit member-ID list; it MUST NOT carry independent semantic claims, `STAGING-STATUS`, `COVERAGE-STATUS`, blueprint/handbook status, `BLOCK-CONFIDENCE-RANK`, `BLOCK-EVIDENCE-PROFILE`, semantic record version/fingerprint, or confirmation, and MUST NOT inherit any such value from children.
+A **purely navigational grouping container**-for example a family index, class overview, workflow overview, capability index, module index, or use-case index-MUST be marked `RECORD-KIND: GROUPING-CONTAINER`. It has only a title, navigation metadata, and an explicit member-ID list; it MUST NOT carry independent semantic claims, `STAGING-STATUS`, `COVERAGE-STATUS`, blueprint/handbook status, `BLOCK-CONFIDENCE-RANK`, `BLOCK-EVIDENCE-PROFILE`, semantic record version/fingerprint, or confirmation, and MUST NOT inherit any such value from children.
 
 A module or bounded context that states responsibility, public interfaces, encapsulation boundary, dependencies, invariants, or data passed is not a grouping container. It is an atomic semantic `MOD` block governed by the common synthesis header, material CLMs, reciprocal references, coverage, semantic version/fingerprint, and confirmation. Module indexes MAY remain purely navigational grouping containers. A `CAP` is the governed capability container defined in §2.6 and §3.2: it may carry its own claim-backed governance metadata, but it remains non-promotable and never inherits member evidence or coverage.
 
 Serialized files are containers. A whole export MUST NOT be represented as one component. A container SRC is `[C-COVERED]` only when its child-enumeration claim is complete for the pinned snapshot and every child coverage row is terminally covered or exactly excluded; it never inherits a child evidence rank/profile and never requires an aggregate promotable CMP. A container with no children requires an evidence-backed zero-child enumeration claim.
 
-## 4.3. Source inventory denominator — `10-SOURCE-INVENTORY.md`
+## 4.3. Source inventory denominator - `10-SOURCE-INVENTORY.md`
 
 One record exists per concrete source unit:
 
@@ -603,7 +603,7 @@ Inventory MUST cover, where applicable: files; symbols; routes; RPC handlers; jo
 
 Absence of a kind MUST be proven by an inventory-backed enumerator record specifying inspected roots/catalogs, method, snapshot, result count zero, limitations, and CLM evidence. An empty section or zero rows without this proof is invalid.
 
-## 4.4. Traversal frontier — `11-TRAVERSAL-FRONTIER.md`
+## 4.4. Traversal frontier - `11-TRAVERSAL-FRONTIER.md`
 
 Every discovered traversal boundary MUST create exactly one `FRT` record, including a boundary recognized as terminal, duplicate, excluded, or already mapped at discovery time. Immediate recognition MAY create the record directly in its terminal state, but MUST NOT omit it. Every discovered but not yet terminal traversal boundary remains open until terminally disposed:
 
@@ -625,7 +625,7 @@ Every discovered traversal boundary MUST create exactly one `FRT` record, includ
 
 Depth bounds create open frontier records; they do not silently terminate traversal. Every frontier MUST be terminal for Exit A. `Terminal-Human-Blocked` remains a coverage gap or partial unless the underlying unit is separately approved as excluded.
 
-## 4.5. Scope-specific source coverage — `16-SOURCE-COVERAGE.md`
+## 4.5. Scope-specific source coverage - `16-SOURCE-COVERAGE.md`
 
 One row exists per immutable SRC version × persona/owner × track × environment × snapshot scope. Rows are disjoint within a subgroup; a source participating in several tracks has separate rows and is counted once in each declared track report, while the aggregate unique-SRC report deduplicates by SRC version.
 
@@ -826,7 +826,7 @@ FinalVerificationReceipt.Overall Result                 -> Pass | Fail
 
 Fields that merely contain descriptive prose or domain-defined values are not finite protocol enums. In particular, `PersonaProfile.UI Surfaces and State`, state names inside an eligible `SM`, free-form environment names, and narrative state summaries MUST NOT be dispatched through this registry. Conversely, any field intended to carry a finite protocol enum must have a declared path above; encountering a finite-enum-like value at an undeclared path is an error rather than permission to infer an enum from its label or token.
 
-## 5.2. Claim-level evidence — `12-CLAIM-EVIDENCE.md`
+## 5.2. Claim-level evidence - `12-CLAIM-EVIDENCE.md`
 
 Each claim MUST contain exactly one fact and exactly one evidence level. Mixed evidence in one claim is forbidden; split it into multiple claims.
 
@@ -868,7 +868,7 @@ A sanitized export produced by an approved local helper is an agent-visible evid
 
 Entity-correlation output is a candidate-discovery aid only. It MUST NOT become evidence, a call edge, ownership proof, or automatic inclusion without a direct structural signal or explicit human scope decision. Private matching hints and private entity-usage indexes MUST NOT enter agent-visible inventory.
 
-## 5.4. Contradictions — `14-CONTRADICTIONS.md`
+## 5.4. Contradictions - `14-CONTRADICTIONS.md`
 
 Conflicting material claims MUST NOT be silently resolved by selecting one. Record:
 
@@ -885,7 +885,7 @@ Conflicting material claims MUST NOT be silently resolved by selecting one. Reco
 
 An open material contradiction blocks applicable coverage, Exit A, and confirmation.
 
-## 5.5. Authoritative decisions — `15-DECISIONS.md`
+## 5.5. Authoritative decisions - `15-DECISIONS.md`
 
 `15-DECISIONS.md` exists from Preflight onward and is the source of truth for scope exclusions, contradiction resolutions, disabled-capability choices, migration choices, and reconstruction decisions. `Human Hatch: Decision/Scope Approval` may append decision content or attach approval envelopes; Reconstruction-Handoff projects approved records into the handbook but does not create a second semantic log.
 
@@ -913,7 +913,7 @@ An open material contradiction blocks applicable coverage, Exit A, and confirmat
 
 The candidate payload manifest binds immutable decision-content versions/fingerprints. Each `DEC` is canonicalized as an individual heading-delimited record under §4.1.2 and excludes exactly its fingerprint carrier and the literal decision-approval envelope shown above. Changing options, decision, rationale, risks, scope effect, rollout, rollback, or observed inputs increments the decision-content version and changes its fingerprint. Human approval after candidacy attaches only the approval envelope and does not change decision content or its fingerprint; approving content other than the candidate binding is invalid. Every decision reference includes the content version/fingerprint and, when approval is required, the matching approval-envelope status.
 
-## 5.6. Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md`
+## 5.6. Acquisition-candidate reconciliation - `17-ACQUISITION-CANDIDATES.md`
 
 Every helper-published candidate and operator action receives a row:
 
@@ -925,7 +925,7 @@ Each helper-published candidate or operator action receives a deterministic `CND
 
 States are `Included`, `Rejected-With-Operator-Decision`, `Approved-Excluded`, or `Pending`. The helper manifest MUST attest that all accessible workflow metadata was scanned for the pinned snapshot, all direct structural matches were included, all high-confidence entity-only matches were human-reviewed, and all configured medium-confidence candidates received an operator decision; scoring thresholds and policy versions are recorded. Lower-confidence omissions follow the configured, approved scope policy. Helper publication completeness means safe approved outputs were produced; protocol `[A-STRUCTURALLY-COMPLETE]` additionally requires every candidate/operator action/dynamic reference row terminal. Correlation remains discovery/scope input only, never behavioral evidence or an automatic edge.
 
-## 5.7. Human confirmations — `18-CONFIRMATIONS.md`
+## 5.7. Human confirmations - `18-CONFIRMATIONS.md`
 
 ```markdown
 ### [CNF-ID] [Confirmation]
@@ -998,7 +998,7 @@ When a persona entry discovers a component:
 2. immediately create a persona invocation pointer in `personas/{persona-directory}/XX-*-POV.md`.
 
 ```markdown
-### [CMP-ID] [Name] — Shared Reference
+### [CMP-ID] [Name] - Shared Reference
 
 - **Canonical Location:** `personas/_shared/XX-*-POV.md` -> [CMP-ID]
 - **Local Trigger SRC / Coordinate:** [...]
@@ -1130,7 +1130,7 @@ Dynamic references are recorded as unresolved. After persona/POV assignment, sta
 
 Normalized maps list metadata, each virtual unit, stable ID, type, primary POV, source fingerprint, edges, external systems, credential aliases, and ambiguities. They are navigation-only indexes. They MUST NOT summarize an export as one routine or bypass persona-driven discovery.
 
-## 7.7. Export reconciliation — `13-EXPORT-RECONCILIATION.md`
+## 7.7. Export reconciliation - `13-EXPORT-RECONCILIATION.md`
 
 Every normalized coordinate has one row:
 
@@ -1208,8 +1208,8 @@ Only these modes may intentionally span multiple semantic targets:
 - `Sequential Reconciliation`: canonical `personas/_shared/` merges plus persona-local shared-staging, promotion-request, question, unmapped-discovery, and synthesis-gap buffer merges; atomic promotion and depromotion; buffered ticket/frontier creation; deterministic deduplication; indexes; traceability; frontier dispositions; and `0G`.
 - `Profile Synchronization`: exactly one persona profile semantic payload plus its atomic `0A` registry/ownership updates and `0G`; an authorized confirmation action may later update only its certification envelope.
 - `Cross-Reference-Reconciliation`: only already-existing ID reference fields, reciprocal links, traceability, and `0G`; no new legacy facts. Changed semantic reference bindings increment semantic versions/fingerprints.
-- `Partial-Synthesis`: bounded provisional `90`–`96` blocks and a synthesis gap buffer.
-- `Final-Synthesis`: closed-corpus `90`–`96` blocks and synthesis gap buffer.
+- `Partial-Synthesis`: bounded provisional `90`-`96` blocks and a synthesis gap buffer.
+- `Final-Synthesis`: closed-corpus `90`-`96` blocks and synthesis gap buffer.
 - `Reconstruction-Handoff`: populated handbook payloads, approved-decision projection, authorized confirmation envelopes, equivalence suite, candidate/outer payload manifests, scope certificate, and package assembly in the exact §15.4 stages; it does not write Validation/Gate reports.
 - `Human Hatch` has three mandatory action subtypes in its identity header:
   - `Ticket Escalation`: after §9.3 prerequisites, terminalizes the ticket, records exact coverage/scope/risk effects, and MAY create an exact exclusion decision when authorized;
@@ -1262,7 +1262,7 @@ Personas MAY run concurrently in one named iteration. They MUST NOT write canoni
 - persona-owned invocation pointers may be written immediately;
 - depromotion is annotated `[R-DEPROMOTION-PENDING]` and deferred.
 
-Sequential Reconciliation collects, deterministically sorts and deduplicates all buffer classes, promotion requests, and synthesis gaps; merges compatible claims without improperly raising `BLOCK-CONFIDENCE-RANK` or losing profile detail; records contradictions; merges persona sets; commits shared records/tickets; merges unmapped discoveries into `0A`; creates required ticket/frontier work from `GAP` records; executes promotion and depromotion atomically under §§6.3–6.4; updates assurance links; and purges consumed buffers atomically. No later Discovery invocation may begin while an unmapped-discovery buffer contains `Pending-Merge`.
+Sequential Reconciliation collects, deterministically sorts and deduplicates all buffer classes, promotion requests, and synthesis gaps; merges compatible claims without improperly raising `BLOCK-CONFIDENCE-RANK` or losing profile detail; records contradictions; merges persona sets; commits shared records/tickets; merges unmapped discoveries into `0A`; creates required ticket/frontier work from `GAP` records; executes promotion and depromotion atomically under §§6.3-6.4; updates assurance links; and purges consumed buffers atomically. No later Discovery invocation may begin while an unmapped-discovery buffer contains `Pending-Merge`.
 
 ## 8.7. Stale checkpoint guard
 
@@ -1444,7 +1444,7 @@ An excluded unit remains in the gross discovered population `Gk` and exclusion/r
 
 `[C-COVERED]` for an effective-denominator unit requires: a terminal in-scope source disposition; atomic mapping; material CLMs; no unresolved contradiction; required reciprocal references; terminal frontier; applicable export reconciliation; no active ticket affecting the unit; and, for a Disabled SRC/CMP/UC, exactly one canonical CAP membership with any overlap explicitly decided. An approved exclusion yields `[C-EXCLUDED]`, not `[C-COVERED]`, and is governed by the subtraction above.
 
-## 10.3. Composite Exit A — Deconstruction Closure
+## 10.3. Composite Exit A - Deconstruction Closure
 
 Exit A succeeds only when all conditions hold for the pinned scope:
 
@@ -1463,15 +1463,15 @@ Exit A succeeds only when all conditions hold for the pinned scope:
 
 Exit A writes a deterministic report to `22-GATE-REPORTS.md` containing pass/fail per condition, counts by kind/track/environment, input fingerprints, validator version, and pinned snapshot.
 
-## 10.4. Exit B — Stagnation
+## 10.4. Exit B - Stagnation
 
-If a complete named iteration has zero valid mutations—no new atomic source/component/claim/frontier records, no ticket transition, no acquisition/reconciliation update, and no justified coverage change—the pipeline halts as stagnant and reports remaining state. Cosmetic edits do not count.
+If a complete named iteration has zero valid mutations-no new atomic source/component/claim/frontier records, no ticket transition, no acquisition/reconciliation update, and no justified coverage change-the pipeline halts as stagnant and reports remaining state. Cosmetic edits do not count.
 
-## 10.5. Exit C — Oscillation
+## 10.5. Exit C - Oscillation
 
-If an actor-transition sequence of length 1–4 repeats for two consecutive completed cycles in one ticket trace, run one neutral Arbitration invocation, normally POV-5. If it fails to break the cycle, freeze the ticket and escalate through Human Hatch.
+If an actor-transition sequence of length 1-4 repeats for two consecutive completed cycles in one ticket trace, run one neutral Arbitration invocation, normally POV-5. If it fails to break the cycle, freeze the ticket and escalate through Human Hatch.
 
-## 10.6. Exit D — Limit exhaustion and deterministic iteration accounting
+## 10.6. Exit D - Limit exhaustion and deterministic iteration accounting
 
 Named iterations use exactly these canonical tokens wherever stored, compared, or consumed by an ID or state machine: `ALFA`, `BRAVO`, `CHARLIE`, `DELTA`, `ECHO`, `FOXTROT`, `GOLF`, `HOTEL`, `INDIA`, `JULIETT`, `KILO`, `LIMA`, `MIKE`, `NOVEMBER`, `OSCAR`, `PAPA`, `QUEBEC`, `ROMEO`, `SIERRA`, `TANGO`, `UNIFORM`, `VICTOR`, `WHISKEY`, `X-RAY`, `YANKEE`, `ZULU`. These 26 tokens are a total per-system budget across the complete protocol run, including every deconstruction pass reopened by synthesis gaps; the budget never resets after Exit A, synthesis, confirmation failure, or re-entry. Human-facing typography such as “X-ray” is display-only and MUST be normalized to `X-RAY` before persistence or comparison; it is not an accepted stored alias.
 
@@ -1534,7 +1534,7 @@ Every atomic synthesis block MUST contain a semantic payload followed by a separ
 
 Coverage is semantic payload; blueprint status is envelope metadata. `[B-CONFIRMED]` requires `[C-COVERED]`, no stale dependency, a passing candidate binding, and a valid human confirmation of the exact semantic version/fingerprint. Attaching confirmation MUST NOT change semantic bytes. Empty domains require inventory-backed zero claims and may then be confirmed as empty.
 
-## 11.3. Architecture blueprint — `90-ARCH-BLUEPRINT.md`
+## 11.3. Architecture blueprint - `90-ARCH-BLUEPRINT.md`
 
 Contains system boundary and context diagrams; actors/personas and external systems; observed legacy technology separated from target decisions; atomic `MOD` records; inter-module contracts and error propagation; deployment topology; architectural invariants and modernization consequences; capability navigation; and a prominent active-versus-disabled architecture view. Purely navigational module indexes are grouping containers under §4.2 and list `MOD` IDs only.
 
@@ -1557,7 +1557,7 @@ Contains system boundary and context diagrams; actors/personas and external syst
 
 Every semantic architecture statement about responsibility, public interface, encapsulation, dependency, or data passing MUST belong to an atomic `MOD` and have material CLMs. `MOD <-> IF/ER/DEP/BR/UC/CAP/FLT` reciprocal references are required where applicable.
 
-## 11.4. Entity — `91-DATA-MODEL.md`
+## 11.4. Entity - `91-DATA-MODEL.md`
 
 ```markdown
 ### [ER-ID] [Entity]
@@ -1582,7 +1582,7 @@ Every semantic architecture statement about responsibility, public interface, en
 - **Schema Drift Matrix:** [environment/snapshot -> differences + claims]
 ```
 
-## 11.5. Relationship — `91-DATA-MODEL.md`
+## 11.5. Relationship - `91-DATA-MODEL.md`
 
 ```markdown
 ### [REL-ID] [EntityA.field -> EntityB.field]
@@ -1597,7 +1597,7 @@ Every semantic architecture statement about responsibility, public interface, en
 - **Reciprocal Entity References:** [ER IDs]
 ```
 
-## 11.6. State machine — `91-DATA-MODEL.md`
+## 11.6. State machine - `91-DATA-MODEL.md`
 
 A state machine is required only for an **eligible lifecycle scope**: an entity aggregate or capability with a finite, behaviorally meaningful lifecycle, not every boolean or presentation state.
 
@@ -1618,7 +1618,7 @@ A state machine is required only for an **eligible lifecycle scope**: an entity 
 
 Eligibility decisions use the §12.1 lifecycle table so absence cannot be assumed. `Unknown` requires a ticket, is treated as eligible for closure, and blocks Exit E until resolved to `Eligible` with a complete `SM` or `Ineligible` with claim-backed provenance.
 
-## 11.7. Database routine — `91-DATA-MODEL.md`
+## 11.7. Database routine - `91-DATA-MODEL.md`
 
 ```markdown
 ### [DR-ID] [Routine]
@@ -1641,7 +1641,7 @@ Eligibility decisions use the §12.1 lifecycle table so absence cannot be assume
 
 A production DB routine absent from the canonical DB source creates a material drift contradiction and follows the ticket/Human Hatch path.
 
-## 11.8. Business rule — `92-BUSINESS-RULES.md`
+## 11.8. Business rule - `92-BUSINESS-RULES.md`
 
 ```markdown
 ### [BR-ID] [Rule]
@@ -1664,7 +1664,7 @@ A production DB routine absent from the canonical DB source creates a material d
 
 One authoritative rule owner is REQUIRED. Multiple physical enforcement points are allowed only as consistent defense-in-depth mirrors, not competing authorities.
 
-## 11.9. Use case — `93-USE-CASES.md`
+## 11.9. Use case - `93-USE-CASES.md`
 
 ```markdown
 ### [UC-ID] [Use Case]
@@ -1702,7 +1702,7 @@ One authoritative rule owner is REQUIRED. Multiple physical enforcement points a
 
 Disabled use cases remain visible, are not presented as current normal behavior, and require an explicit target decision.
 
-## 11.10. Interface — `94-INTERFACES.md`
+## 11.10. Interface - `94-INTERFACES.md`
 
 ```markdown
 ### [IF-ID] [Interface]
@@ -1729,7 +1729,7 @@ Disabled use cases remain visible, are not presented as current normal behavior,
 
 External semantics are compatibility baselines, not absolutely frozen. Breaking changes require an approved, versioned migration decision, consumer impact, rollout, and rollback plan.
 
-## 11.11. Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`
+## 11.11. Deployment, configuration, and scheduling - `95-DEPLOYMENT.md`
 
 ```markdown
 ### [DEP-ID] [Deployment Element]
@@ -1767,7 +1767,7 @@ External semantics are compatibility baselines, not absolutely frozen. Breaking 
 
 Every configuration flag requires a known effect or a gap. Secret values are never recorded.
 
-## 11.12. NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`
+## 11.12. NFR and security - `96-NON-FUNCTIONAL-SECURITY.md`
 
 ```markdown
 ### [NFR-ID] [Attribute]
@@ -1851,7 +1851,7 @@ Profile Synchronization is the only writer of profile semantic payload and synch
 
 # Part 12. Traceability, Referential Integrity, and Staleness
 
-## 12.1. Traceability — `20-TRACEABILITY.md`
+## 12.1. Traceability - `20-TRACEABILITY.md`
 
 One atomic row per source-to-semantic mapping:
 
@@ -2081,15 +2081,15 @@ Anything absent from that certified scope is out of reconstruction scope and req
 
 ---
 
-# Part 15. Exit E — Reconstruction Readiness
+# Part 15. Exit E - Reconstruction Readiness
 
 ## 15.1. Strict conditions
 
-Exit E remains `Pending` through steps 1–5 of §15.4. The stage-4 Exit E Content-Readiness Report validates all content, decision, confirmation, and package-member conditions available at that stage, but it is not the Exit E pass artifact and MUST NOT state or imply `Passed`. Exit E transitions to `Passed` only at step 6 when all conditions below are true and the signed outer bundle manifest's hashed payload validates with the literal field `EXIT-E-STATUS: Passed`:
+Exit E remains `Pending` through steps 1-5 of §15.4. The stage-4 Exit E Content-Readiness Report validates all content, decision, confirmation, and package-member conditions available at that stage, but it is not the Exit E pass artifact and MUST NOT state or imply `Passed`. Exit E transitions to `Passed` only at step 6 when all conditions below are true and the signed outer bundle manifest's hashed payload validates with the literal field `EXIT-E-STATUS: Passed`:
 
 1. Composite Exit A passed for the same pinned snapshot, or a documented later non-semantic packaging change preserves its inputs.
 2. Every effective in-scope source unit is `[C-COVERED]`; all approved exclusions are exact, risk-assessed, disclosed, and removed from denominator arithmetic; no `[C-GAP]` or `[C-PARTIAL]` remains.
-3. All `90`–`96` mandatory domains are complete with evidence-backed zero-domain records where genuinely empty; every semantic block has a valid semantic version/fingerprint.
+3. All `90`-`96` mandatory domains are complete with evidence-backed zero-domain records where genuinely empty; every semantic block has a valid semantic version/fingerprint.
 4. The complete handbook semantic payload exists as `[B-POPULATED]` before candidacy, passes quality gates, is synchronized to synthesis, and is included in the candidate payload manifest without later semantic regeneration.
 5. All reciprocal references, legal typed IDs including `COV`/`CND`/`MOD`/`PRF`/`HBK`, claims, ownership, persona purity, diagrams, and links validate.
 6. Every eligible lifecycle scope has a complete `SM`; each ineligible decision is explicit.
@@ -2141,14 +2141,14 @@ The required Exit E report check registry is `EXIT-E-CHECKS-v1`. Its canonical r
 | CANDIDATE         | CANDIDATE-10-DISABLED-CAPABILITIES        | §15.1 condition 10                                                                                   |
 | CANDIDATE         | CANDIDATE-11-FAULTS                       | §15.1 condition 11                                                                                   |
 | CANDIDATE         | CANDIDATE-12-PROFILES                     | populated PRF identity, dependency closure, and candidate eligibility portions of §15.1 condition 12 |
-| CANDIDATE         | CANDIDATE-13-PENDING-AND-CONTRADICTIONS   | pre-confirmation portions of §15.1 conditions 16–17                                                  |
+| CANDIDATE         | CANDIDATE-13-PENDING-AND-CONTRADICTIONS   | pre-confirmation portions of §15.1 conditions 16-17                                                  |
 | CANDIDATE         | CANDIDATE-14-SNAPSHOT-INPUTS              | candidate-stage portions of §15.1 condition 18                                                       |
 | CONTENT-READINESS | READINESS-01-CANDIDATE-IMMUTABILITY       | unchanged candidate report, manifest, semantic payloads, decisions, and dependencies                 |
-| CONTENT-READINESS | READINESS-02-CONFIRMATIONS                | confirmed semantic bindings and §15.1 conditions 12–13 and 19                                        |
+| CONTENT-READINESS | READINESS-02-CONFIRMATIONS                | confirmed semantic bindings and §15.1 conditions 12-13 and 19                                        |
 | CONTENT-READINESS | READINESS-03-DECISION-APPROVALS           | §15.1 condition 14                                                                                   |
 | CONTENT-READINESS | READINESS-04-EQUIVALENCE                  | §15.1 condition 15                                                                                   |
 | CONTENT-READINESS | READINESS-05-HANDBOOK-READABILITY         | complete fingerprint-bound human review under §13.4                                                  |
-| CONTENT-READINESS | READINESS-06-NO-PENDING-OR-CONTRADICTIONS | §15.1 conditions 16–17 after review                                                                  |
+| CONTENT-READINESS | READINESS-06-NO-PENDING-OR-CONTRADICTIONS | §15.1 conditions 16-17 after review                                                                  |
 | CONTENT-READINESS | READINESS-07-ENVELOPE-INTEGRITY           | every certification, approval, and CNF envelope binding available at stage 4                         |
 | CONTENT-READINESS | READINESS-08-PREPACKAGE-MEMBERS           | complete stage-4 member set and package-member file fingerprints                                     |
 | CONTENT-READINESS | READINESS-09-SNAPSHOT-CONSISTENCY         | exact system/protocol/environment/snapshot equality across the chain and members                     |
@@ -2328,7 +2328,7 @@ Confirmed bindings sort by `(Record Type, Typed Record ID)`, approved decisions 
 The certified package contains:
 
 - human reconstruction handbook;
-- structured `90`–`96` synthesis catalogs;
+- structured `90`-`96` synthesis catalogs;
 - assurance plane records and deterministic validation summaries;
 - persona profiles and necessary forensic reference records;
 - decision log;
@@ -2497,7 +2497,7 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 - **Canonicalization and exact exclusions:** positive cases cover normalized LF, exact Unicode preservation, schema field/table order, insignificant whitespace, every semantic certification envelope, the exact DEC approval envelope, the exact CNF digest/signature envelope, every generic artifact payload/envelope boundary, every fingerprint-carrier exclusion, and an allowed candidate binding whose attachment preserves the semantic fingerprint while changing envelope and package-member fingerprints; negative cases mutate one included byte or move content across a boundary and require a hash change or structural rejection, reject a certification-envelope reference to content-readiness/certificate/outer artifacts, and prove that only explicitly authorized envelope changes leave the corresponding semantic/content fingerprint unchanged.
 - **Final envelope and package-member integrity:** positive cases compute identity/version-bound fingerprints for certification, DEC-approval, and CNF-signature envelopes, serialize their exact bindings, and compute external path-bound package-member file fingerprints over complete finalized files while preserving unchanged semantic/decision/CNF payload fingerprints; negative cases remove or mutate only each envelope, signature, timestamp, binding, fingerprint carrier, or finalized file byte after content-readiness and require content-readiness/outer validation to fail, and reject use of the envelope-excluding transport fingerprint as a package-member fingerprint or storage of a package-member fingerprint inside its own member.
 - **Packaging schemas, gate completeness, and deterministic ordering:** positive cases instantiate all five exact §15 schemas, require exact candidate/content-readiness registry sets, reproduce each evidence-set fingerprint from complete authoritative row bindings independent of source order, canonicalize semantically identical rows supplied in different source orders to one hash, serialize empty scalars as `None`, retain header/separator-only empty non-check tables, and verify declared counts/arithmetic; negative cases reject an empty required check table, one missing required check, unknown/duplicate/wrong-stage check, failed check without blocker, fabricated omission/`Not-Applicable`, wrong evidence domain, omitted/duplicate/stale/self/later evidence binding, executor-authored digest mismatch, unknown/duplicate/reordered/missing/extra fields, duplicate sort keys, noncanonical row order after normalization, omitted empty values, malformed empty tables, report-to-manifest back-reference, and any forbidden later-artifact reference.
-- **Acyclic, snapshot-consistent Exit E and final verification:** positive cases execute candidate report -> candidate manifest -> DEC/CNF and confirmation envelopes -> Exit E Content-Readiness Report with Exit E `Pending` -> scope certificate -> outer manifest validation/signature -> exact step-6 transition to `EXIT-E-STATUS: Passed`, bind one direct snapshot identity across the chain, execute every `EXIT-E-FINAL-CHECKS-v1` check, and reproduce a non-authoritative receipt without changing the bundle; negative cases reject `Passed` at steps 1–5, a content-readiness report presented as the pass artifact, a certificate emitted before its content-readiness input, an outer manifest missing the report/certificate/direct identity/registry/input-set field, candidate-readiness-certificate-outer snapshot mismatch, a mixed-snapshot member despite valid individual hashes, payload self-reference, missing/invalid signature, missing/unknown/failed final check, a `Passed` field outside the hashed outer payload, a receipt treated as a package member or authority, and any authoritative post-step-6 completion artifact.
+- **Acyclic, snapshot-consistent Exit E and final verification:** positive cases execute candidate report -> candidate manifest -> DEC/CNF and confirmation envelopes -> Exit E Content-Readiness Report with Exit E `Pending` -> scope certificate -> outer manifest validation/signature -> exact step-6 transition to `EXIT-E-STATUS: Passed`, bind one direct snapshot identity across the chain, execute every `EXIT-E-FINAL-CHECKS-v1` check, and reproduce a non-authoritative receipt without changing the bundle; negative cases reject `Passed` at steps 1-5, a content-readiness report presented as the pass artifact, a certificate emitted before its content-readiness input, an outer manifest missing the report/certificate/direct identity/registry/input-set field, candidate-readiness-certificate-outer snapshot mismatch, a mixed-snapshot member despite valid individual hashes, payload self-reference, missing/invalid signature, missing/unknown/failed final check, a `Passed` field outside the hashed outer payload, a receipt treated as a package member or authority, and any authoritative post-step-6 completion artifact.
 
 ## 17.3. Corpus acceptance
 
@@ -2528,8 +2528,8 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 | `0B` / `0C` / `0D` / `0F`                               | auth, security/privacy, glossary, global state                  | Forensic                  | scoped POV buffers + Sequential Reconciliation                                                                               | Synthesis/Handoff                                            |
 | `0E-INDEX.md`                                           | forensic cross-reference index                                  | Forensic                  | Sequential/Cross-Reference Reconciliation                                                                                    | isolated POV direct global edits                             |
 | `0G` / `0H`                                             | append-only history / derived checkpoint                        | Forensic                  | every mode appends `0G`; conforming implementation derives `0H`                                                              | no overwrite of `0G`                                         |
-| `personas/_shared/01–05 POV`                            | canonical shared atomic components                              | Forensic                  | Sequential Reconciliation for merge, promotion, and depromotion transactions                                                 | parallel persona agents; Promotion Review direct moves       |
-| `personas/{persona-directory}/01–05 POV`                | persona invocation references/promoted atoms                    | Forensic                  | bound isolated POV for references; Sequential Reconciliation for atomic promotion/depromotion                                | other personas; Promotion Review direct moves                |
+| `personas/_shared/01-05 POV`                            | canonical shared atomic components                              | Forensic                  | Sequential Reconciliation for merge, promotion, and depromotion transactions                                                 | parallel persona agents; Promotion Review direct moves       |
+| `personas/{persona-directory}/01-05 POV`                | persona invocation references/promoted atoms                    | Forensic                  | bound isolated POV for references; Sequential Reconciliation for atomic promotion/depromotion                                | other personas; Promotion Review direct moves                |
 | persona-local staging/question/unmapped buffers         | concurrent handoff and unmapped discovery                       | Forensic workflow         | bound isolated POV appends; Sequential Reconciliation consumes atomically                                                    | direct `personas/_shared/` or `0A` mutation by isolated POVs |
 | `*-QUESTIONS.md`                                        | ticket FSM                                                      | Forensic                  | bound origin/target rights; Sequential Reconciliation for buffered creation                                                  | Synthesis direct writes                                      |
 | normalized maps / probes                                | navigation / runtime telemetry                                  | Forensic                  | Acquisition / operator-controlled probe ingestion path                                                                       | behavioral synthesis as source authority                     |
@@ -2545,7 +2545,7 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 | `20-TRACEABILITY.md`                                    | reciprocal mappings and ID registry                             | Assurance                 | Sequential/Cross-Reference Reconciliation and validators                                                                     | isolated semantic invention                                  |
 | `21-COVERAGE-REPORT.md`                                 | per-kind arithmetic                                             | Assurance                 | deterministic validator                                                                                                      | manual evidence-rank claims                                  |
 | `22-GATE-REPORTS.md`                                    | Exit A, Exit E Candidate, Content-Readiness, validation reports | Assurance                 | deterministic gate runner; content-readiness is pre-package and cannot pass Exit E                                           | isolated POVs                                                |
-| `90–96`                                                 | structured reconstruction semantics                             | Synthesis                 | Partial/Final Synthesis semantic payloads; semantic-reference reconciliation; confirmation envelope only                     | Discovery/Ticket modes                                       |
+| `90-96`                                                 | structured reconstruction semantics                             | Synthesis                 | Partial/Final Synthesis semantic payloads; semantic-reference reconciliation; confirmation envelope only                     | Discovery/Ticket modes                                       |
 | `PERSONA-PROFILE.md` / `PRF`                            | typed complete persona semantics                                | Forensic/Synthesis bridge | Profile Synchronization semantic payload and PRF/`0A` binding; authorized confirmation envelope writers                      | ordinary POV and Synthesis direct edits                      |
 | synthesis gap buffer                                    | proposed gaps                                                   | Synthesis workflow        | Partial/Final Synthesis; consumed by Sequential Reconciliation                                                               | direct ledger mutation                                       |
 | handbook / `HBK`                                        | typed browsable reconstruction projection                       | Human Handbook            | Reconstruction-Handoff generates HBK-identified populated payload; authorized confirmation actions attach envelope only      | independent semantic edits                                   |

@@ -147,7 +147,7 @@ are fixed here so the pilot cannot accidentally invent them later.
   values (CDL §1).
 - Staged effects that fail to commit leave no authority trace.
 - AGENT outputs are `draft` until confirmed; `proposed` never appears in native VM
-  outcomes — it belongs to the prompt-emulation channel outside the VM.
+  outcomes - it belongs to the prompt-emulation channel outside the VM.
 - The canonical execution trace records authority per committed effect.
 
 ## 9. Checkpoints and resume

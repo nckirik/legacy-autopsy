@@ -1,6 +1,6 @@
 # Reconstruction-Handoff
 
-> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** — `protocol.md` is normative.
+> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** - `protocol.md` is normative.
 
 ## Purpose
 
@@ -13,7 +13,7 @@ Bind the exact §15.4 stage, pinned snapshot/input fingerprints, and every stage
 ## Normative protocol sections
 
 - §4.1.1. `Semantic payload identity and certification envelopes`; §4.1.2. `Normative canonical hash profile and packaging artifacts`
-- §5.5. `Authoritative decisions — `15-DECISIONS.md``; §5.7. `Human confirmations — `18-CONFIRMATIONS.md``
+- §5.5. `Authoritative decisions - `15-DECISIONS.md``; §5.7. `Human confirmations - `18-CONFIRMATIONS.md``
 - §8.1. `Resume identity header`; §8.3. `Invocation-mode enum and explicit multi-file modes`; §8.4. `Mandatory read sets`; §8.5. `Cold resume check`; §8.7. `Stale checkpoint guard`; §8.8. `` `0G` invocation log ``
 - §13.1. `Audience paths and progressive disclosure`; §13.2. `Required chapter behavior`; §13.3. `Disabled and Dormant Features chapter`; §13.4. `Handbook quality gate`
 - §14.1. `Decision log`; §14.5. `Equivalence and acceptance suite`; §14.6. `Sole-input invariant`

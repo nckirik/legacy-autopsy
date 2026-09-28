@@ -1,7 +1,7 @@
 PART status-evidence "Status Taxonomy and Evidence"
 
 SECTION claim-evidence
-TITLE "Claim-level evidence — `12-CLAIM-EVIDENCE.md`"
+TITLE "Claim-level evidence - `12-CLAIM-EVIDENCE.md`"
 
 GOAL
 Each claim MUST contain exactly one fact and exactly one evidence level. Mixed evidence in one claim is forbidden; split it into multiple claims.
@@ -86,7 +86,7 @@ RULE sanitized-projections-rules
 END
 
 SECTION contradictions
-TITLE "Contradictions — `14-CONTRADICTIONS.md`"
+TITLE "Contradictions - `14-CONTRADICTIONS.md`"
 
 GOAL
 Conflicting material claims MUST NOT be silently resolved by selecting one. Record:
@@ -115,7 +115,7 @@ FIELD CONTRADICTION
 END
 
 SECTION authoritative-decisions
-TITLE "Authoritative decisions — `15-DECISIONS.md`"
+TITLE "Authoritative decisions - `15-DECISIONS.md`"
 
 GOAL
 `15-DECISIONS.md` exists from Preflight onward and is the source of truth for scope exclusions, contradiction resolutions, disabled-capability choices, migration choices, and reconstruction decisions. `Human Hatch: Decision/Scope Approval` may append decision content or attach approval envelopes; Reconstruction-Handoff projects approved records into the handbook but does not create a second semantic log.
@@ -162,7 +162,7 @@ FIELD DECISION
 END
 
 SECTION acquisition-candidates
-TITLE "Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md`"
+TITLE "Acquisition-candidate reconciliation - `17-ACQUISITION-CANDIDATES.md`"
 
 GOAL
 Every helper-published candidate and operator action receives a row:
@@ -194,7 +194,7 @@ RULE candidate-reconciliation
 END
 
 SECTION human-confirmations
-TITLE "Human confirmations — `18-CONFIRMATIONS.md`"
+TITLE "Human confirmations - `18-CONFIRMATIONS.md`"
 
 GOAL
 ```markdown

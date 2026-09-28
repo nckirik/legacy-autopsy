@@ -7,12 +7,12 @@
 The project runs two dependency-ordered tracks:
 
 ```
-S — Spec track     protocol ownership: language, EIR, native VM, prompt backends
-M — Harness track  runtime services: workspace, service, agents, UI, operations
+S - Spec track     protocol ownership: language, EIR, native VM, prompt backends
+M - Harness track  runtime services: workspace, service, agents, UI, operations
 ```
 
-Ownership rule: protocol semantics — modes, states, gates, hashing, coverage,
-packaging, confirmation transitions, iteration, reconciliation — are defined in
+Ownership rule: protocol semantics - modes, states, gates, hashing, coverage,
+packaging, confirmation transitions, iteration, reconciliation - are defined in
 `protocol.cdl` and executed through EIR. Harness milestones implement runtime
 services, orchestration, persistence, UI, and capability implementations; they never
 restate protocol rules in Go. Prompt editions are render backends over EIR, not
@@ -25,7 +25,7 @@ them.
 
 ## Spec track
 
-### S0 — Contracts and freeze — implemented (documents only)
+### S0 - Contracts and freeze - implemented (documents only)
 
 Deliver the frozen source-language contract, execution contracts, and migration
 discipline before any runtime code:
@@ -37,7 +37,7 @@ discipline before any runtime code:
 
 No runtime code exists yet. No semantic, gate, or conformance claim is implied.
 
-### S1 — §7.7 end-to-end pilot — implemented
+### S1 - §7.7 end-to-end pilot - implemented
 
 Additive pilot for one section, proving the contracts are implementable:
 
@@ -63,7 +63,7 @@ conditions held: no grammar growth. One pilot finding corrected example data onl
 `BLOCK` target must resolve to a declared gate, so `fingerprint` became the declared
 gate `artifact-fingerprint` in the example and contract.
 
-### S2 — Coverage profile, capability contracts, context design — implemented
+### S2 - Coverage profile, capability contracts, context design - implemented
 
 - classified all 148 headings (20 Parts + 128 sections) in
   `analysis/protocol-classification.json`; deterministic coverage, vocabulary,
@@ -81,13 +81,13 @@ gate `artifact-fingerprint` in the example and contract.
 
 Gate **G3** passes via `go test ./internal/analysis/` plus review of the two documents.
 
-### S3 — Section-by-section protocol migration — implemented (crown complete)
+### S3 - Section-by-section protocol migration - implemented (crown complete)
 
 Migrate `protocol.cdl` in dependency order, each with compiler checks, VM support,
 reference-VM comparison, and dual-source drift against `protocol.md`:
 
 1. §4 identity, paths, canonical hashing;
-2. §7.5–7.7 acquisition and export reconciliation;
+2. §7.5-7.7 acquisition and export reconciliation;
 3. §8 invocation identity, context, cold resume;
 4. §10 iteration accounting;
 5. §3 workspace registries and schema gradients;
@@ -105,7 +105,7 @@ S3 progress:
   declarations once; `protocol/assembly.json` orders the sources; the compiler
   emits one EIR with cross-section resolution; `internal/spec` compiles it in-process
   for the runtime; assembly EIR and prompt goldens replace the per-section goldens.
-- **§7.1–7.4 implemented (authored schema + drift):**
+- **§7.1-7.4 implemented (authored schema + drift):**
   `protocol/acquisition-trust.cdl` declares the helper trust-boundary rules, the
   export acquisition register schema, the virtual-coordinate rule, and the n8n/Appsmith
   inventory-kind enums; field and enum lists drift-check against protocol.md.
@@ -117,7 +117,7 @@ S3 progress:
   declares the shared-entry, auth, privacy, capability, routine cross-reference,
   invariant, and shared-state record schemas plus the append-only 0G and derived 0H
   rule; `internal/parity` drift-checks every block field label against protocol.md.
-- **§5.2–5.7 implemented (authored schemas + drift):**
+- **§5.2-5.7 implemented (authored schemas + drift):**
   `protocol/evidence-and-decisions.cdl` declares the claim and block-summary,
   contradiction, decision, and confirmation record schemas plus the sanitized-projection
   and candidate-reconciliation rules; `internal/parity` drift-checks every record field
@@ -161,35 +161,35 @@ S3 progress:
   runtime-state matrix, and the target-decision enum; labels, matrix columns, and enum
   drift-check against protocol.md. The §3.1 persona-registry and traversal-matrix table
   shapes were added to `preflight-registry.cdl` and drift-checked.
-- **§4.2–4.6 implemented (authored schema + drift):**
+- **§4.2-4.6 implemented (authored schema + drift):**
   `protocol/inventory-and-frontier.cdl` declares the atomic-unit and
   container-semantics rules, the source-inventory record with discovery-method and
   coverage-summary enums plus the 23 required inventory kinds, the frontier record with
   state/method enums, the coverage row with scope/disposition enums, and the
   supersession/tombstone block; schemas and enums drift-check against protocol.md.
-- **§6.1–6.5 implemented (authored schema + drift):**
+- **§6.1-6.5 implemented (authored schema + drift):**
   `protocol/extraction-evolution.cdl` declares the atomic-component record with
   the block-confidence-rank enum, the shared-reference schema, and the dual-entry,
   promotion-lock/execution, dead-code, depromotion, and surgical-patching rules;
   schemas and enum drift-check against protocol.md.
-- **§8.3–8.4, §9.3–9.6 implemented (authored schema + drift):** the invocation-mode
+- **§8.3-8.4, §9.3-9.6 implemented (authored schema + drift):** the invocation-mode
   enum drift-checks against the generated registry, the multi-file mode targets and
   mandatory read sets are declared as rules, and `protocol/ticket-fsm.cdl` gains
   the Human Hatch prerequisites, probe specification with safety enum, no-mock
   integrity rule, and no-mock fallback payload.
-- **§13.1–13.4, §14.1–14.6 implemented (authored schema + drift):**
+- **§13.1-13.4, §14.1-14.6 implemented (authored schema + drift):**
   `protocol/handbook-and-decisions.cdl` declares the audience roles,
   chapter/disabled-chapter/quality-gate rules, readability-review binding, decision-log
   projection, modernization prompts, rule ownership, interface baseline, equivalence
   test kinds, and the sole-input invariant; audience and test-kind enums drift-check
   against protocol.md.
-- **§11.1–11.13 implemented (authored schema + drift):**
+- **§11.1-11.13 implemented (authored schema + drift):**
   `protocol/synthesis-catalogs.cdl` declares the synthesis gap buffer, common
   block header and certification envelope, and all ten synthesis catalogs (MOD, ER,
   REL, SM, DR, BR, UC, IF, DEP/CFG/SCHED, NFR/SEC/FLT) plus the persona profile;
   every record field list, nested table shape, and closed enum drift-checks against
   protocol.md.
-- **§0.1–0.4, §1.1–1.5 implemented (authored schema + drift):**
+- **§0.1-0.4, §1.1-1.5 implemented (authored schema + drift):**
   `protocol/foundations.cdl` declares the normative keywords, authority classes,
   predicate kinds, guarantees/non-guarantees, conceptual flow stages, the four-plane
   model with its sources/writers rules, and the non-authoritative sidecar rule; enums
@@ -197,8 +197,8 @@ S3 progress:
 - **S3 section migration complete:** every substantive protocol section now has a CDL
   source (26 sources, 542 identities). The only remaining `## N.` matches without a CDL
   section are the §0 wrapper heading and the internal `0A-PREFLIGHT.md` template
-  headings (`## 1.`–`## 5.`), whose content is covered by §3.1/§3.2 and §7.2.
-- **Historical remaining inventory (superseded by completion above):** §2.1–2.6, §4.2–4.6, §6.1–6.5,
+  headings (`## 1.`-`## 5.`), whose content is covered by §3.1/§3.2 and §7.2.
+- **Historical remaining inventory (superseded by completion above):** §2.1-2.6, §4.2-4.6, §6.1-6.5,
   none beyond the internal template headings.
 - **Skill projections decision:** the 13 projections stay hand-maintained with the
   routing validator through S3; generation from EIR reference views is deferred to S4.
@@ -222,36 +222,36 @@ S3 progress:
   EIR `modes[]` and the declared iteration tokens through `internal/spec`; the hardcoded
   read sets, strict-mode switch, and iteration list are retired, closing the
   context-assembly leakage.
-- **§10.1–10.6 implemented (capability-backed):**
+- **§10.1-10.6 implemented (capability-backed):**
   `protocol/coverage-and-exits.cdl` declares sweep records and traversal-cell
   states, coverage scope/status domains and arithmetic rules, the 12 Exit A
   conditions, Exit B/C rules, and the iteration-accounting rules;
   `internal/capabilities.NextIteration` advances the declared token budget
   fail-closed; `internal/parity` drift-checks the condition list, sweep fields, and
   the 26 iteration tokens against protocol.md.
-- **§9.1–9.2 implemented (capability-backed):** `protocol/ticket-fsm.cdl`
+- **§9.1-9.2 implemented (capability-backed):** `protocol/ticket-fsm.cdl`
   declares the nine ticket states, the ten allowed transitions, the eleven-field
   ticket schema, and the ten escalation reasons; `internal/parity` drift-checks the
   transition table, state domain, and reason enum against protocol.md.
-- **§7.5–7.6 implemented (capability-backed):**
+- **§7.5-7.6 implemented (capability-backed):**
   `protocol/export-acquisition-loop.cdl` declares the five-state acquisition
   domain and the eight loop rules, with the state domain drift-checked against the
   bracket tokens in §7.5; `protocol/normalized-maps.cdl` declares the
   normalized-map record and table schema plus the navigation-only rule. §7.7 was the
   S1 pilot.
 
-### S4 — Crown — implemented
+### S4 - Crown - implemented
 
 - **Numbering removed from CDL (language 0.3):** `NUMBER` is gone; sections declare an
   ordered `PART <id> "<title>"` and optional `SUBSECTION OF <parent-id>`, and the
   compiler derives section/part numbers from declaration order and part boundaries at
-  EIR/render time. Parts formerly numbered 19–20 are renumbered 17–18. Parser,
+  EIR/render time. Parts formerly numbered 19-20 are renumbered 17-18. Parser,
   resolver, renderer, generator, docs, and goldens are updated; numbering is now purely
   a rendering artifact.
 - **Part 17/18 removed by owner decision:** the v3.17 migration plan
-  (`§17.1–§17.3`) and the Migration Checklist (`§18`) were deleted from both the CDL
+  (`§17.1-§17.3`) and the Migration Checklist (`§18`) were deleted from both the CDL
   sources and the oracle text; the `Protocol-Migration Metadata` preflight field and
-  the §8.3 migration note were removed with them. Part numbering derives from declaration order and the 19–20 gap was closed by the
+  the §8.3 migration note were removed with them. Part numbering derives from declaration order and the 19-20 gap was closed by the
   numbering refactor. The frozen text and fixtures were bumped to 4.1.3 at owner
   request.
 - **Parity report generator implemented:** `internal/parityreport` deterministically
@@ -265,7 +265,7 @@ S3 progress:
   (the renderer now fails closed otherwise); repository goldens carry the §7.7 pilot
   prompt as `protocol/golden/protocol.pilot.prompt.md`. The full standalone edition is
   `protocol.md`; a whole-document prompt render is not yet declared.
-- **S4 follow-up — generated-edition prompt usability:** verbatim enrichment is done —
+- **S4 follow-up - generated-edition prompt usability:** verbatim enrichment is done -
   section GOALs now carry the oracle body verbatim (prose, lists, tables, fences,
   field bullets), Parts 16/18/20 were added as sections, `PART` declarations render
   the 20 Part headings, and text blocks preserve newlines/blank lines/comments.
@@ -290,9 +290,9 @@ S3 progress:
 - Part 17.2 conformance is re-expressed as EIR/VM conformance plus protocol parity;
 - Prompt editions are released as backend renders with fingerprints.
 
-No crown before G1–G3 and G4 (S2/S3 review) pass.
+No crown before G1-G3 and G4 (S2/S3 review) pass.
 
-### S5 — CDL editor tooling — implemented
+### S5 - CDL editor tooling - implemented
 
 Depends only on the language toolchain (`cdl`), never on Legacy Autopsy runtime code:
 
@@ -326,7 +326,7 @@ Identified after crown; scheduled with the runtime milestones that own them:
 
 ## Harness track
 
-### M0 — Repository and skill foundation — implemented
+### M0 - Repository and skill foundation - implemented
 
 Establish authority messaging, contributor rules, architecture/development/workspace/
 conformance docs, the thin skill and 13 mode projections, provider-neutral Go
@@ -334,14 +334,14 @@ module/CLI foundation, routing validation, basic deterministic primitives, works
 scaffolding, bootstrap fixtures, and honest CI reporting. Frozen as the parity oracle
 per the [migration audit](migration-audit.md).
 
-### M1 — Protocol model and routing — partially implemented, remainder in Spec track
+### M1 - Protocol model and routing - partially implemented, remainder in Spec track
 
 The M0 slice already provides structural Markdown parsing, protocol version/mode
 discovery, and routing validation. Remaining protocol-model depth is folded into
 S2/S3; no new protocol logic is added to Go. Skill projections stay hand-maintained
 until S3 decides generation.
 
-### M2 — Deterministic IDs/path normalization — Spec-track capability contract (S2/S3)
+### M2 - Deterministic IDs/path normalization - Spec-track capability contract (S2/S3)
 
 Normalized relative paths, traversal rejection, exact Unicode/case preservation,
 canonical ID keys, SHA-256 prefix and deterministic collision extension,
@@ -349,7 +349,7 @@ aliases/tombstones, and PRF/HBK coordinate foundations become declared
 capabilities+spec sections in S2/S3. The harness consumes them; `internal/identity`
 remains a frozen transitional primitive until then.
 
-### M3 — Workspace initialization and structural validators — harness
+### M3 - Workspace initialization and structural validators - harness
 
 Implement `doctor`, non-fabricating `init`, workspace discovery, four-plane skeletons,
 persona/shared ownership boundaries, atomic file writes, `0G`/derived `0H` mechanics,
@@ -357,7 +357,7 @@ and initial structural validation. Initialization must not create covered, confi
 or passed semantic state. Structural checks migrate to declarations generated from EIR
 as sections land.
 
-### M4 — Local autopsy runtime foundation — harness (depends S1/S3)
+### M4 - Local autopsy runtime foundation - harness (depends S1/S3)
 
 Introduce the first observable application shell without claiming semantic mode
 execution. The scheduler and workspace transactions execute EIR steps through the
@@ -384,14 +384,14 @@ native VM; policy remains harness-owned per `execution-semantics.md` §1:
 Empty scaffolds and operational metadata must not fabricate graph semantics, coverage,
 Human Hatch outcomes, Exit A, or conformance.
 
-### M5 — Claims/source/frontier primitives — Spec-track migration + runtime
+### M5 - Claims/source/frontier primitives - Spec-track migration + runtime
 
 Source inventory, denominator rows, claim-level evidence, frontiers, status/path
 enum dispatch, acquisition register primitives, atomic record constraints, and
 zero-domain proofs are protocol semantics; they migrate in S3 with harness projections
 afterward.
 
-### M6 — Invocation context, cold resume, and executor rollout — harness (depends S2/S3)
+### M6 - Invocation context, cold resume, and executor rollout - harness (depends S2/S3)
 
 Implement mode routing, §8.1 identity headers, mandatory read sets, minimum-sufficient
 authoritative section packets, strict-scope verification, stale-checkpoint guards,
@@ -411,7 +411,7 @@ Execution channels in order:
 Adapter configuration is operational, not protocol authority; credentials stay outside
 the repository and `.extracted/`.
 
-### M7 — Ticket FSM, reconciliation, and human dependencies — Spec-track migration + runtime
+### M7 - Ticket FSM, reconciliation, and human dependencies - Spec-track migration + runtime
 
 Ticket identities/transitions, closed escalation reasons, Human Hatch prerequisites,
 honest gap/partial outcomes, probe ingestion, persona-local buffers, deterministic
@@ -419,7 +419,7 @@ Sequential Reconciliation, promotion/depromotion atomicity, unmapped discovery m
 concurrency locks, and reciprocal audit effects migrate as protocol semantics; the
 questions inbox is the runtime surface and dependency impact comes from EIR state.
 
-### M8 — Coverage and Exit A — Spec-track migration + runtime
+### M8 - Coverage and Exit A - Spec-track migration + runtime
 
 Per-kind/track/environment/snapshot coverage arithmetic, evidence-backed sweeps,
 source/frontier/ticket/export closure, dynamic-caller dead-code proof,
@@ -428,7 +428,7 @@ integrity, disabled-capability governance, contradiction checks, deterministic
 reports, and Composite Exit A conditions migrate to `protocol.cdl`; the workbench
 projects validated status and never establishes a gate.
 
-### M9 — Export acquisition helper — operator tool
+### M9 - Export acquisition helper - operator tool
 
 Implement the independently runnable operator-controlled Appsmith/n8n helper: dry-run
 default, safe credential channels, private state outside the repository, field-aware
@@ -437,28 +437,28 @@ explosion, reconciliation candidates, and atomic approved publication. No produc
 mutation or third-party transmission. The reconciliation behavior itself is §7.7 spec
 from S1/S3.
 
-### M10 — Structured synthesis — Spec-track migration + runtime
+### M10 - Structured synthesis - Spec-track migration + runtime
 
 Partial/Final-Synthesis boundaries, common semantic headers, `DERIVED-FROM` graphs,
-semantic versions/fingerprints, gap buffering, evidence profiles, catalogs `90`–`96`,
+semantic versions/fingerprints, gap buffering, evidence profiles, catalogs `90`-`96`,
 and Cross-Reference-Reconciliation with targeted stale propagation migrate as spec;
 Atlas expands only from committed records with inspectable provenance.
 
-### M11 — Confirmation/staleness — Spec-track migration + runtime
+### M11 - Confirmation/staleness - Spec-track migration + runtime
 
 Candidate-bound `CNF` records, decision approvals, payload/envelope separation,
 human-only confirmation transitions, dependency impact, semantic staleness, and
 invalidation/re-entry behavior. Attestations are append-only and bound to immutable
 payload hashes (`execution-semantics.md` §5, §10).
 
-### M12 — Handbook and Atlas linking — backend + runtime
+### M12 - Handbook and Atlas linking - backend + runtime
 
 HBK identities and anchors, synchronized handbook generation, progressive-disclosure
 navigation, non-vacuity/link/diagram checks, readability-review coverage, upstream-first
 correction, staleness, confirmation envelopes, and stable bidirectional links. The
 handbook is a backend projection, not a hand-maintained document.
 
-### M13 — Canonical packaging/hashing — Spec-track capabilities (S2/S3)
+### M13 - Canonical packaging/hashing - Spec-track capabilities (S2/S3)
 
 The §4.1.2 canonical hash profile, typed-record hashes, file-transport fingerprints,
 carrier/envelope exclusions, canonical envelope bindings, evidence-set fingerprints,
@@ -467,7 +467,7 @@ packaging schemas become stdlib/capability contracts plus spec sections. This re
 the deliberately limited `internal/canonical` primitive, which is never used for
 protocol-significant hashing.
 
-### M14 — Exit E — Spec-track migration + runtime
+### M14 - Exit E - Spec-track migration + runtime
 
 Content/decision readiness, stage-specific check registries, equivalence validation,
 exact confirmations, candidate report/manifest, content-readiness report, scope
@@ -475,14 +475,14 @@ certificate, snapshot-bound signed outer manifest, cross-chain snapshot equality
 signature validation, reproducible verification, and the strict acyclic six-step
 sequence. Only the validated signed outer payload may state `EXIT-E-STATUS: Passed`.
 
-### M15 — Full Part 17 conformance — Spec-track
+### M15 - Full Part 17 conformance - Spec-track
 
 Every required deterministic positive/negative family is expressed as EIR/VM
 conformance plus protocol parity. Diagnostics stabilize, all groups run in CI, and
 applicable gates block on failures. A requirement-to-fixture audit precedes any
 conformance claim. This milestone no longer means hand-written Go validators.
 
-### M16 — First real legacy-system dry run — harness
+### M16 - First real legacy-system dry run - harness
 
 Run a controlled, non-production pilot with pinned snapshots and approved sanitized
 evidence. Exercise the workbench and all three execution stages in order, plus
@@ -492,20 +492,20 @@ through S3/M milestones without weakening protocol rules.
 
 ## Deferred Protocol §17.2 families and their targets
 
-1. **Persona workspace layout and ownership** — S3 §2 migration, M3/M7 runtime.
-2. **Context-qualified finite enums and registry completeness** — S3 §3/§5, M1 remainder.
-3. **Invocation ownership and cold resume** — S3 §8, M6 runtime and leakage fix.
-4. **Ticket escalation and honest unresolved coverage** — S3, M7/M8 runtime.
-5. **Dead-code and semantic-predicate closure** — S3, M5/M8/M12 runtime.
-6. **Deterministic iteration accounting** — S3 §10, M6/M7/M10 runtime.
-7. **PRF identity and semantic hashing** — S3 §4/§5, M2 capability, M10/M11.
-8. **HBK identity and path/anchor normalization** — S3 §4, M12.
-9. **Profile Synchronization closure** — S3 §8, M6/M10/M11.
-10. **Record versus artifact hashing** — S2 capability, S3 §4/§15, M13.
-11. **Canonicalization and exact exclusions** — S2 capability, S3, M11/M13.
-12. **Final envelope and package-member integrity** — S3 §15, M11/M13/M14.
-13. **Packaging schemas, gate completeness, ordering** — S3 §15, M13/M14.
-14. **Acyclic, snapshot-consistent Exit E and final verification** — S3 §15, M14.
+1. **Persona workspace layout and ownership** - S3 §2 migration, M3/M7 runtime.
+2. **Context-qualified finite enums and registry completeness** - S3 §3/§5, M1 remainder.
+3. **Invocation ownership and cold resume** - S3 §8, M6 runtime and leakage fix.
+4. **Ticket escalation and honest unresolved coverage** - S3, M7/M8 runtime.
+5. **Dead-code and semantic-predicate closure** - S3, M5/M8/M12 runtime.
+6. **Deterministic iteration accounting** - S3 §10, M6/M7/M10 runtime.
+7. **PRF identity and semantic hashing** - S3 §4/§5, M2 capability, M10/M11.
+8. **HBK identity and path/anchor normalization** - S3 §4, M12.
+9. **Profile Synchronization closure** - S3 §8, M6/M10/M11.
+10. **Record versus artifact hashing** - S2 capability, S3 §4/§15, M13.
+11. **Canonicalization and exact exclusions** - S2 capability, S3, M11/M13.
+12. **Final envelope and package-member integrity** - S3 §15, M11/M13/M14.
+13. **Packaging schemas, gate completeness, ordering** - S3 §15, M13/M14.
+14. **Acyclic, snapshot-consistent Exit E and final verification** - S3 §15, M14.
 
 ## Resolved protocol issue: persona path/prefix drift
 
@@ -535,5 +535,5 @@ S3, S4 (crown), and S5 (editor tooling) are complete. Remaining known work, in o
    is pending);
 2. generation of the 13 skill projections from EIR reference/routing views;
 3. a whole-document prompt render if a document-level prompt edition is desired;
-4. the harness track (M2–M16, including the Part 17.2 conformance families and the
+4. the harness track (M2-M16, including the Part 17.2 conformance families and the
    deferred runtime hardening list above).

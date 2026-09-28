@@ -123,7 +123,7 @@ RULE coverage-covered-requirements
 END
 
 SECTION exit-a
-TITLE "Composite Exit A — Deconstruction Closure"
+TITLE "Composite Exit A - Deconstruction Closure"
 
 GOAL
 Exit A succeeds only when all conditions hold for the pinned scope:
@@ -182,10 +182,10 @@ RULE exit-a-composite
 END
 
 SECTION exit-b
-TITLE "Exit B — Stagnation"
+TITLE "Exit B - Stagnation"
 
 GOAL
-If a complete named iteration has zero valid mutations—no new atomic source/component/claim/frontier records, no ticket transition, no acquisition/reconciliation update, and no justified coverage change—the pipeline halts as stagnant and reports remaining state. Cosmetic edits do not count.
+If a complete named iteration has zero valid mutations-no new atomic source/component/claim/frontier records, no ticket transition, no acquisition/reconciliation update, and no justified coverage change-the pipeline halts as stagnant and reports remaining state. Cosmetic edits do not count.
 END
 
 RULE exit-b-stagnation
@@ -197,10 +197,10 @@ RULE exit-b-stagnation
 END
 
 SECTION exit-c
-TITLE "Exit C — Oscillation"
+TITLE "Exit C - Oscillation"
 
 GOAL
-If an actor-transition sequence of length 1–4 repeats for two consecutive completed cycles in one ticket trace, run one neutral Arbitration invocation, normally POV-5. If it fails to break the cycle, freeze the ticket and escalate through Human Hatch.
+If an actor-transition sequence of length 1-4 repeats for two consecutive completed cycles in one ticket trace, run one neutral Arbitration invocation, normally POV-5. If it fails to break the cycle, freeze the ticket and escalate through Human Hatch.
 END
 
 RULE exit-c-oscillation
@@ -211,7 +211,7 @@ RULE exit-c-oscillation
 END
 
 SECTION exit-d
-TITLE "Exit D — Limit exhaustion and deterministic iteration accounting"
+TITLE "Exit D - Limit exhaustion and deterministic iteration accounting"
 
 GOAL
 Named iterations use exactly these canonical tokens wherever stored, compared, or consumed by an ID or state machine: `ALFA`, `BRAVO`, `CHARLIE`, `DELTA`, `ECHO`, `FOXTROT`, `GOLF`, `HOTEL`, `INDIA`, `JULIETT`, `KILO`, `LIMA`, `MIKE`, `NOVEMBER`, `OSCAR`, `PAPA`, `QUEBEC`, `ROMEO`, `SIERRA`, `TANGO`, `UNIFORM`, `VICTOR`, `WHISKEY`, `X-RAY`, `YANKEE`, `ZULU`. These 26 tokens are a total per-system budget across the complete protocol run, including every deconstruction pass reopened by synthesis gaps; the budget never resets after Exit A, synthesis, confirmation failure, or re-entry. Human-facing typography such as “X-ray” is display-only and MUST be normalized to `X-RAY` before persistence or comparison; it is not an accepted stored alias.

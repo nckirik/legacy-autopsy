@@ -107,7 +107,7 @@ When followed completely, this protocol guarantees that:
 4. active, conditional, shadow, disabled, retired, and unknown capabilities remain distinct across environments and snapshots;
 5. serialized exports are acquired, exploded, reconciled, and traced at logical-unit level without exposing raw secrets;
 6. personas and POVs retain strict ownership and isolation during discovery;
-7. cross-layer ambiguity is resolved through a finite-state ticket lifecycle, runtime probes, or an explicit human hatch—never by guessing;
+7. cross-layer ambiguity is resolved through a finite-state ticket lifecycle, runtime probes, or an explicit human hatch-never by guessing;
 8. synthesis artifacts are structured semantic projections of closed forensic and assurance records, with derivation provenance and targeted stale propagation;
 9. a separate human reconstruction handbook is navigable without using dense identifier catalogs as its primary interface;
 10. reconstruction may treat the delivered bundle as its sole input only after the signed outer bundle manifest authoritatively attests `EXIT-E-STATUS: Passed` under the strict non-cyclic Exit E sequence.
@@ -225,7 +225,7 @@ END
 PART four-plane "Four-Plane Information Model"
 
 SECTION forensic-plane
-TITLE "Plane 1 — Forensic Plane"
+TITLE "Plane 1 - Forensic Plane"
 
 GOAL
 **Purpose:** Preserve what was directly found, where it was found, how it is invoked, and what remains uncertain.
@@ -302,7 +302,7 @@ RULE forensic-plane-writers
 END
 
 SECTION assurance-plane
-TITLE "Plane 2 — Assurance Plane"
+TITLE "Plane 2 - Assurance Plane"
 
 GOAL
 **Purpose:** Prove denominator completeness, traversal closure, evidence support, export reconciliation, reference integrity, and gate outcomes.
@@ -348,7 +348,7 @@ RULE assurance-plane-writers
 END
 
 SECTION synthesis-plane
-TITLE "Plane 3 — Synthesis Plane"
+TITLE "Plane 3 - Synthesis Plane"
 
 GOAL
 **Purpose:** Transform closed forensic facts and assurance proofs into coherent reconstruction semantics.
@@ -394,7 +394,7 @@ RULE synthesis-plane-writers
 END
 
 SECTION handbook-plane
-TITLE "Plane 4 — Human Reconstruction Handbook"
+TITLE "Plane 4 - Human Reconstruction Handbook"
 
 GOAL
 **Purpose:** Present the confirmed bundle through progressive disclosure for architects, developers, domain experts, security reviewers, data engineers, QA, and operators.

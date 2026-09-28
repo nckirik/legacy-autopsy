@@ -92,7 +92,7 @@ profile/availability (OS, tool, version) where applicable
 ```
 
 Proposing outputs carry provenance: provider id/version, inputs hash, method,
-reproducibility class. They are evidence, and evidence is falsifiable — never an
+reproducibility class. They are evidence, and evidence is falsifiable - never an
 authoritative value.
 
 ## 5. AGENT scheduling and context assembly
@@ -112,10 +112,10 @@ coverage profile must count context-assembly logic separately.
 
 Backends consuming the same EIR:
 
-- native — Legacy Autopsy VM;
-- prompt — `full.prompt.md` / `light.prompt.md` rendering;
-- reference — documentation projection;
-- optional generated validators — optimization/export artifacts derived from EIR, never
+- native - Legacy Autopsy VM;
+- prompt - `full.prompt.md` / `light.prompt.md` rendering;
+- reference - documentation projection;
+- optional generated validators - optimization/export artifacts derived from EIR, never
   the fundamental native execution mechanism, and never the oracle for the interpreter.
   The "native validator projection" named in CDL §14 is therefore realized as EIR
   execution by the native VM, not as bespoke generated Go validator logic.

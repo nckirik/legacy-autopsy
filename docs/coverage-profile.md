@@ -1,4 +1,4 @@
-# Coverage profile — protocol.md@4.1.3 in CDL vocabulary
+# Coverage profile - protocol.md@4.1.3 in CDL vocabulary
 
 > Non-authoritative analysis. The CDL sources under [`protocol/`](../protocol/) are normative and `protocol.md` is their generated edition; this profile classifies the frozen oracle sections and proves nothing about conformance.
 
@@ -11,11 +11,11 @@
 Each of the 148 headings (20 Part containers + 128 sections) is classified in the CDL
 vocabulary with one driver and zero or more tags.
 
-- **MACHINE** — predominantly deterministic rules, algorithms, registries, arithmetic,
+- **MACHINE** - predominantly deterministic rules, algorithms, registries, arithmetic,
   or state transitions.
-- **AGENT** — predominantly semantic judgement or prose.
-- **MIXED** — both are load-bearing.
-- **CONTAINER** — a level-1 Part with subsections; excluded from section metrics.
+- **AGENT** - predominantly semantic judgement or prose.
+- **MIXED** - both are load-bearing.
+- **CONTAINER** - a level-1 Part with subsections; excluded from section metrics.
 
 Tags: `gate`, `transition`, `artifact`, `capability`, `reuse`, `contract`
 (AGENT/MIXED outputs that are structurally checkable), `human`, `policy`.
@@ -40,7 +40,7 @@ From [`analysis/metrics.golden.json`](../analysis/metrics.golden.json):
 | MACHINE                         |       59 |         1,294 |      45.0% |
 | MIXED                           |       64 |         1,352 |      47.0% |
 | AGENT                           |        8 |           229 |       8.0% |
-| CONTAINER (Parts, unclassified) |       17 |             — |          — |
+| CONTAINER (Parts, unclassified) |       17 |             - |          - |
 
 Tag frequency across the 128 sections: `artifact` 98, `contract` 50, `transition` 47,
 `capability` 36, `gate` 33, `reuse` 17, `human` 14, `policy` 5. Structured outputs:
@@ -87,8 +87,8 @@ Current state is a leak, quantified in `internal/contextpacket` and `skill/modes
   sections as routing metadata.
 
 Verdict: §8.4 read sets are protocol content currently living in Go, so `EVIDENCE`/
-`USES` alone cannot reproduce them. The leak is bounded and declarative — lists, flags,
-and path templates, not algorithms — and roughly 60 lines retire when §8 migrates.
+`USES` alone cannot reproduce them. The leak is bounded and declarative - lists, flags,
+and path templates, not algorithms - and roughly 60 lines retire when §8 migrates.
 
 Status (S3): resolved. Read sets are declared in CDL
 (`protocol/invocation-modes.cdl`, language 0.2 `BASE-READS`/`MODE`), compiled into
@@ -110,12 +110,12 @@ mechanics, transport, and scheduling.
 
 ## Recommended S3 order
 
-1. **§4.1–4.1.2** — identity, payload envelopes, canonical hash profile; highest reuse.
-2. **§7.5–7.7** — acquisition and export reconciliation; pilot already done.
-3. **§8** — invocation identity, read sets, cold resume; retires the leakage above.
-4. **§10** — sweep, coverage arithmetic, Exit A–D.
-5. **§3 + §5** — registries, prefix groups, finite-enum validation, evidence/decisions.
-6. **§15 + §12** — packaging, evidence bindings, validation summary.
+1. **§4.1-4.1.2** - identity, payload envelopes, canonical hash profile; highest reuse.
+2. **§7.5-7.7** - acquisition and export reconciliation; pilot already done.
+3. **§8** - invocation identity, read sets, cold resume; retires the leakage above.
+4. **§10** - sweep, coverage arithmetic, Exit A-D.
+5. **§3 + §5** - registries, prefix groups, finite-enum validation, evidence/decisions.
+6. **§15 + §12** - packaging, evidence bindings, validation summary.
 7. Remaining MIXED schema sections, then AGENT-only guidance (Parts 0, 13).
 
 ## What this does not prove

@@ -1,7 +1,7 @@
 PART acquisition "Serialized Export Acquisition and Local Helper Trust Model"
 
 SECTION export-reconciliation
-TITLE "Export reconciliation — `13-EXPORT-RECONCILIATION.md`"
+TITLE "Export reconciliation - `13-EXPORT-RECONCILIATION.md`"
 ARTIFACT 13-EXPORT-RECONCILIATION.md
 USES REGISTRY normalized-units
 USES RULE canonical-fingerprint

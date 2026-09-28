@@ -152,7 +152,7 @@ scripts/format.sh --check   # verify only
 
 `protocol.md`, `protocol/golden/`, and generated analysis artifacts are excluded because
 their bytes are fingerprint-bound. `docs/cdl.md` uses intentional ASCII section rules,
-and `fixtures/` and `analysis/` are source or generated data — they are regenerated,
+and `fixtures/` and `analysis/` are source or generated data - they are regenerated,
 never reformatted. `protocol/*.cdl` are formatted with `cdl fmt`, not dprint. Go
 formatting stays with the Go toolchain.
 

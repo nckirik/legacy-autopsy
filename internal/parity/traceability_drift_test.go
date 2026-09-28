@@ -31,7 +31,7 @@ func TestTraceabilityDrift(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	text, err := model.SectionText("12.1. Traceability — `20-TRACEABILITY.md`")
+	text, err := model.SectionText("12.1. Traceability - `20-TRACEABILITY.md`")
 	if err != nil {
 		t.Fatal(err)
 	}

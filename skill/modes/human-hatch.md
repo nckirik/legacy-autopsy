@@ -1,6 +1,6 @@
 # Human Hatch
 
-> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** — `protocol.md` is normative.
+> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** - `protocol.md` is normative.
 
 ## Purpose
 
@@ -12,7 +12,7 @@ Bind `Invocation Mode: Human Hatch`, exactly one non-`None` action (`Ticket Esca
 
 ## Normative protocol sections
 
-- §5.5. `Authoritative decisions — `15-DECISIONS.md``; §5.7. `Human confirmations — `18-CONFIRMATIONS.md``
+- §5.5. `Authoritative decisions - `15-DECISIONS.md``; §5.7. `Human confirmations - `18-CONFIRMATIONS.md``
 - §8.1. `Resume identity header`; §8.3. `Invocation-mode enum and explicit multi-file modes`; §8.4. `Mandatory read sets`; §8.5. `Cold resume check`; §8.7. `Stale checkpoint guard`; §8.8. `` `0G` invocation log ``
 - §9.1. `Ticket schema and canonical IDs`; §9.2. `FSM and write rights`; §9.3. `Human Hatch action prerequisites`; §9.4. `Probe specification and asynchronous handoff`
 - §10.2. `Per-kind coverage arithmetic`; §12.5. `Deterministic validation summary`; §13.4. `Handbook quality gate`

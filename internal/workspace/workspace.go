@@ -118,7 +118,7 @@ func writeScaffold(root, rel string) error {
 	case strings.HasPrefix(filepath.Base(rel), "9"):
 		plane = "Synthesis Plane"
 	}
-	content := fmt.Sprintf("# %s\n\n> Initialization scaffold — %s. No source facts, evidence claims, coverage, confirmations, or gate outcomes have been asserted.\n", title, plane)
+	content := fmt.Sprintf("# %s\n\n> Initialization scaffold - %s. No source facts, evidence claims, coverage, confirmations, or gate outcomes have been asserted.\n", title, plane)
 	path := filepath.Join(root, filepath.FromSlash(rel))
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return err

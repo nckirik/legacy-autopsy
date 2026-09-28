@@ -91,7 +91,7 @@ When a persona entry discovers a component:
 2. immediately create a persona invocation pointer in `personas/{persona-directory}/XX-*-POV.md`.
 
 ```markdown
-### [CMP-ID] [Name] — Shared Reference
+### [CMP-ID] [Name] - Shared Reference
 
 - **Canonical Location:** `personas/_shared/XX-*-POV.md` -> [CMP-ID]
 - **Local Trigger SRC / Coordinate:** [...]

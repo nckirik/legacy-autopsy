@@ -36,7 +36,7 @@ func TestCoverageAndExitsDrift(t *testing.T) {
 	}
 
 	// 1. §10.3 numbered conditions == EXIT-A-CONDITION.
-	text103, err := model.SectionText("10.3. Composite Exit A — Deconstruction Closure")
+	text103, err := model.SectionText("10.3. Composite Exit A - Deconstruction Closure")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -75,7 +75,7 @@ func TestCoverageAndExitsDrift(t *testing.T) {
 			iteration = e.Values
 		}
 	}
-	text106, err := model.SectionText("10.6. Exit D — Limit exhaustion and deterministic iteration accounting")
+	text106, err := model.SectionText("10.6. Exit D - Limit exhaustion and deterministic iteration accounting")
 	if err != nil {
 		t.Fatal(err)
 	}

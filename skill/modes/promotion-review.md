@@ -1,10 +1,10 @@
 # Promotion Review
 
-> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** — `protocol.md` is normative.
+> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** - `protocol.md` is normative.
 
 ## Purpose
 
-Evaluate promotion locks for one bound component or cohort and request—not execute—an atomic promotion.
+Evaluate promotion locks for one bound component or cohort and request-not execute-an atomic promotion.
 
 ## Required identity bindings
 

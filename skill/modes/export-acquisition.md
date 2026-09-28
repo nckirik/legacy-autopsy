@@ -1,6 +1,6 @@
 # Export Acquisition
 
-> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** — `protocol.md` is normative.
+> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** - `protocol.md` is normative.
 
 ## Purpose
 
@@ -12,9 +12,9 @@ Bind Protocol v4.1.3, namespace, iteration/invocation, `Invocation Mode: Export 
 
 ## Normative protocol sections
 
-- §4.2. `Atomic unit rule`; §4.3. `Source inventory denominator — `10-SOURCE-INVENTORY.md``
-- §5.3. `Sanitized projections and helper limitations`; §5.6. `Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md``
-- §7.1. `Trust boundary`; §7.2. `Acquisition register`; §7.3. `Logical explosion and virtual coordinates`; §7.4. `Required explosion coverage`; §7.5. `n8n human acquisition loop`; §7.6. `Normalized maps`; §7.7. `Export reconciliation — `13-EXPORT-RECONCILIATION.md``
+- §4.2. `Atomic unit rule`; §4.3. `Source inventory denominator - `10-SOURCE-INVENTORY.md``
+- §5.3. `Sanitized projections and helper limitations`; §5.6. `Acquisition-candidate reconciliation - `17-ACQUISITION-CANDIDATES.md``
+- §7.1. `Trust boundary`; §7.2. `Acquisition register`; §7.3. `Logical explosion and virtual coordinates`; §7.4. `Required explosion coverage`; §7.5. `n8n human acquisition loop`; §7.6. `Normalized maps`; §7.7. `Export reconciliation - `13-EXPORT-RECONCILIATION.md``
 - §8.1. `Resume identity header`; §8.3. `Invocation-mode enum and explicit multi-file modes`; §8.4. `Mandatory read sets`; §8.5. `Cold resume check`; §8.7. `Stale checkpoint guard`; §8.8. `` `0G` invocation log ``
 - §12.5. `Deterministic validation summary`
 

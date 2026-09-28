@@ -64,7 +64,7 @@ func TestEvidenceAndDecisionsDrift(t *testing.T) {
 	}
 
 	// §5.2 splits into the claim record and the block evidence summary.
-	text52, err := model.SectionText("5.2. Claim-level evidence — `12-CLAIM-EVIDENCE.md`")
+	text52, err := model.SectionText("5.2. Claim-level evidence - `12-CLAIM-EVIDENCE.md`")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -90,9 +90,9 @@ func TestEvidenceAndDecisionsDrift(t *testing.T) {
 	compareSets(t, "BLOCK-EVIDENCE-SUMMARY", fields["BLOCK-EVIDENCE-SUMMARY"], blockLabels)
 
 	for ref, fieldID := range map[string]string{
-		"5.4. Contradictions — `14-CONTRADICTIONS.md`":     "CONTRADICTION",
-		"5.5. Authoritative decisions — `15-DECISIONS.md`": "DECISION",
-		"5.7. Human confirmations — `18-CONFIRMATIONS.md`": "CONFIRMATION",
+		"5.4. Contradictions - `14-CONTRADICTIONS.md`":     "CONTRADICTION",
+		"5.5. Authoritative decisions - `15-DECISIONS.md`": "DECISION",
+		"5.7. Human confirmations - `18-CONFIRMATIONS.md`": "CONFIRMATION",
 	} {
 		text, err := model.SectionText(ref)
 		if err != nil {
@@ -109,7 +109,7 @@ func TestEvidenceAndDecisionsDrift(t *testing.T) {
 
 	for _, ref := range []string{
 		"5.3. Sanitized projections and helper limitations",
-		"5.6. Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md`",
+		"5.6. Acquisition-candidate reconciliation - `17-ACQUISITION-CANDIDATES.md`",
 	} {
 		text, err := model.SectionText(ref)
 		if err != nil {

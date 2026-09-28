@@ -1,4 +1,4 @@
-# Canonical Deconstruction Language (CDL) — frozen source-language contract
+# Canonical Deconstruction Language (CDL) - frozen source-language contract
 
 The CDL sources under [`protocol/`](../protocol/) are the normative source language of
 the Canonical Deconstruction Protocol after the accepted crown parity report;
@@ -7,7 +7,7 @@ the Canonical Deconstruction Protocol after the accepted crown parity report;
 frozen bootstrap parity oracle. Validator, IR, and reference views are generated
 projections that are never hand-edited.
 
-`LANGUAGE: cdl/0.3` — the pilot surface is frozen and has received one versioned
+`LANGUAGE: cdl/0.3` - the pilot surface is frozen and has received one versioned
 addition plus one structural revision:
 
 - 0.2: `BASE-READS` and `MODE` declarations (see below), which compile into EIR
@@ -399,7 +399,7 @@ Evaluation rules:
   predicate-typed state is compared explicitly (`state == true`) and an `unknown`
   value fails closed;
 - runtime evaluation errors are fail-closed: record a diagnostic, treat the result as
-  unavailable, and block dependent effects — never continue with a guessed value;
+  unavailable, and block dependent effects - never continue with a guessed value;
 - `COUNT`/`ALL`/`ANY` selectors reference declared registries and fields only;
 - `HASH`/`NEXT` and any future operation are stdlib operations with one versioned
   owner; the Go runtime is tested for conformance to that stdlib, not vice versa.
@@ -447,7 +447,7 @@ fields exist. The runtime MUST NOT claim the semantic judgment was correct; that
 obligation remains AGENT-owned and human-confirmable.
 
 ================================================================================
-6. EXAMPLE 1 — export reconciliation (§7.7), full
+6. EXAMPLE 1 - export reconciliation (§7.7), full
 ================================================================================
 
 GLOBAL DECLARATIONS
@@ -665,7 +665,7 @@ Compiler checks: an omission without `SUPPLIED-BY`; a `SUPPLIED-BY RULE` that na
 step, a rule that does not define the omitted computation, or a step carrying `SET`
 effects; a `SUPPLIED-BY native-harness` in a prompt-channel projection; an omitted
 guard whose behavior is not rendered elsewhere; an override that references a deleted
-step identity — all are compile errors.
+step identity - all are compile errors.
 
 Renderer:
 
@@ -685,7 +685,7 @@ Renderer:
     generated-at: <deterministic-or-declared timestamp input>
 
 ================================================================================
-8. EXAMPLE 2 — cold resume (§8.5), channel-annotated
+8. EXAMPLE 2 - cold resume (§8.5), channel-annotated
 ================================================================================
 
 PART invocation "Invocation Isolation, Concurrency, and Reconciliation"
@@ -774,7 +774,7 @@ Notes:
   recomputed or revalidated after a cold resume.
 
 ================================================================================
-9. EXAMPLE 3 — workflow control (§10.6)
+9. EXAMPLE 3 - workflow control (§10.6)
 ================================================================================
 
 PART closure "Evidence-Backed Sweep and Composite Deconstruction Closure"
@@ -964,7 +964,7 @@ whether the substrate exists.
    compiler, stdlib, renderer, fixtures, and generated outputs.
 
 ================================================================================
-14. PILOT SCOPE — §7.7 END-TO-END (next concrete work)
+14. PILOT SCOPE - §7.7 END-TO-END (next concrete work)
 ================================================================================
 
 Deliverables:
@@ -982,16 +982,16 @@ Deliverables:
 Golden negative fixtures already identified by the errata (the first compiler must
 reject each):
 
-1. `OMIT STEP reconcile.count` in a prompt channel — omitted step carries a `SET`
+1. `OMIT STEP reconcile.count` in a prompt channel - omitted step carries a `SET`
    effect and `SUPPLIED-BY RULE` cannot supply it;
-2. `SET fingerprint := ...` where `fingerprint` is a `FIELD` — assignment targets
+2. `SET fingerprint := ...` where `fingerprint` is a `FIELD` - assignment targets
    must be `STATE`/`VALUE`;
-3. `GUARD reconciliation-complete` without `== true` — no truthiness, `unknown`
+3. `GUARD reconciliation-complete` without `== true` - no truthiness, `unknown`
    must fail closed;
-4. `SET reconciliation-complete := COMPUTE reconciliation-completeness` — `COMPUTE`
+4. `SET reconciliation-complete := COMPUTE reconciliation-completeness` - `COMPUTE`
    is not in the grammar; the rule predicate is a qualified path;
-5. `BLOCK undeclared-target` — block targets must resolve to declared gates;
-6. `SET iteration-state := running` from `exhausted` — a value change not listed in
+5. `BLOCK undeclared-target` - block targets must resolve to declared gates;
+6. `SET iteration-state := running` from `exhausted` - a value change not listed in
    `ALLOWS` (the example avoids the stutter case, so a true violation is testable).
 
 Exit criteria: all compiler checks pass; generated outputs reproduce byte-for-byte; the

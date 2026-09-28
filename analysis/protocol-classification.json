@@ -1,6 +1,6 @@
 {
   "protocol": "canonical-deconstruction/4.1.3",
-  "source-fingerprint": "sha256:561b5d78a8e062a89c79309dc2ae46f7ef12b6f91c573ad4b892195ec5a5e999",
+  "source-fingerprint": "sha256:83fdc34e836de75ce1141c2861b5a74b1dc14db377dac7122f4fed85037f2466",
   "rubric": "Authored section classification in the CDL vocabulary. driver: MACHINE = predominantly deterministic rules/algorithms/registries/arithmetic; AGENT = predominantly semantic judgement/prose; MIXED = both load-bearing; CONTAINER = level-1 Part with subsections. tags: gate, transition, artifact, capability, reuse, contract (structurally checkable AGENT outputs), human, policy. Source fingerprint changes invalidate the classification.",
   "entries": [
     {
@@ -43,21 +43,21 @@
       "tags": []
     },
     {
-      "heading": "1.1. Plane 1 — Forensic Plane",
+      "heading": "1.1. Plane 1 - Forensic Plane",
       "driver": "AGENT",
       "tags": [
         "artifact"
       ]
     },
     {
-      "heading": "1.2. Plane 2 — Assurance Plane",
+      "heading": "1.2. Plane 2 - Assurance Plane",
       "driver": "AGENT",
       "tags": [
         "artifact"
       ]
     },
     {
-      "heading": "1.3. Plane 3 — Synthesis Plane",
+      "heading": "1.3. Plane 3 - Synthesis Plane",
       "driver": "AGENT",
       "tags": [
         "artifact",
@@ -65,7 +65,7 @@
       ]
     },
     {
-      "heading": "1.4. Plane 4 — Human Reconstruction Handbook",
+      "heading": "1.4. Plane 4 - Human Reconstruction Handbook",
       "driver": "AGENT",
       "tags": [
         "artifact",
@@ -237,7 +237,7 @@
       ]
     },
     {
-      "heading": "4.3. Source inventory denominator — `10-SOURCE-INVENTORY.md`",
+      "heading": "4.3. Source inventory denominator - `10-SOURCE-INVENTORY.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -254,7 +254,7 @@
       ]
     },
     {
-      "heading": "4.4. Traversal frontier — `11-TRAVERSAL-FRONTIER.md`",
+      "heading": "4.4. Traversal frontier - `11-TRAVERSAL-FRONTIER.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -262,7 +262,7 @@
       ]
     },
     {
-      "heading": "4.5. Scope-specific source coverage — `16-SOURCE-COVERAGE.md`",
+      "heading": "4.5. Scope-specific source coverage - `16-SOURCE-COVERAGE.md`",
       "driver": "MACHINE",
       "tags": [
         "artifact",
@@ -355,7 +355,7 @@
       ]
     },
     {
-      "heading": "5.2. Claim-level evidence — `12-CLAIM-EVIDENCE.md`",
+      "heading": "5.2. Claim-level evidence - `12-CLAIM-EVIDENCE.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -380,7 +380,7 @@
       ]
     },
     {
-      "heading": "5.4. Contradictions — `14-CONTRADICTIONS.md`",
+      "heading": "5.4. Contradictions - `14-CONTRADICTIONS.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -388,7 +388,7 @@
       ]
     },
     {
-      "heading": "5.5. Authoritative decisions — `15-DECISIONS.md`",
+      "heading": "5.5. Authoritative decisions - `15-DECISIONS.md`",
       "driver": "MIXED",
       "tags": [
         "human",
@@ -397,7 +397,7 @@
       ]
     },
     {
-      "heading": "5.6. Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md`",
+      "heading": "5.6. Acquisition-candidate reconciliation - `17-ACQUISITION-CANDIDATES.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -406,7 +406,7 @@
       ]
     },
     {
-      "heading": "5.7. Human confirmations — `18-CONFIRMATIONS.md`",
+      "heading": "5.7. Human confirmations - `18-CONFIRMATIONS.md`",
       "driver": "MIXED",
       "tags": [
         "human",
@@ -517,7 +517,7 @@
       ]
     },
     {
-      "heading": "7.7. Export reconciliation — `13-EXPORT-RECONCILIATION.md`",
+      "heading": "7.7. Export reconciliation - `13-EXPORT-RECONCILIATION.md`",
       "driver": "MACHINE",
       "tags": [
         "gate",
@@ -709,7 +709,7 @@
       ]
     },
     {
-      "heading": "10.3. Composite Exit A — Deconstruction Closure",
+      "heading": "10.3. Composite Exit A - Deconstruction Closure",
       "driver": "MACHINE",
       "tags": [
         "gate",
@@ -718,7 +718,7 @@
       ]
     },
     {
-      "heading": "10.4. Exit B — Stagnation",
+      "heading": "10.4. Exit B - Stagnation",
       "driver": "MACHINE",
       "tags": [
         "gate",
@@ -726,7 +726,7 @@
       ]
     },
     {
-      "heading": "10.5. Exit C — Oscillation",
+      "heading": "10.5. Exit C - Oscillation",
       "driver": "MACHINE",
       "tags": [
         "gate",
@@ -735,7 +735,7 @@
       ]
     },
     {
-      "heading": "10.6. Exit D — Limit exhaustion and deterministic iteration accounting",
+      "heading": "10.6. Exit D - Limit exhaustion and deterministic iteration accounting",
       "driver": "MACHINE",
       "tags": [
         "gate",
@@ -775,7 +775,7 @@
       ]
     },
     {
-      "heading": "11.3. Architecture blueprint — `90-ARCH-BLUEPRINT.md`",
+      "heading": "11.3. Architecture blueprint - `90-ARCH-BLUEPRINT.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -783,7 +783,7 @@
       ]
     },
     {
-      "heading": "11.4. Entity — `91-DATA-MODEL.md`",
+      "heading": "11.4. Entity - `91-DATA-MODEL.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -791,7 +791,7 @@
       ]
     },
     {
-      "heading": "11.5. Relationship — `91-DATA-MODEL.md`",
+      "heading": "11.5. Relationship - `91-DATA-MODEL.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -799,7 +799,7 @@
       ]
     },
     {
-      "heading": "11.6. State machine — `91-DATA-MODEL.md`",
+      "heading": "11.6. State machine - `91-DATA-MODEL.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -808,7 +808,7 @@
       ]
     },
     {
-      "heading": "11.7. Database routine — `91-DATA-MODEL.md`",
+      "heading": "11.7. Database routine - `91-DATA-MODEL.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -816,7 +816,7 @@
       ]
     },
     {
-      "heading": "11.8. Business rule — `92-BUSINESS-RULES.md`",
+      "heading": "11.8. Business rule - `92-BUSINESS-RULES.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -824,7 +824,7 @@
       ]
     },
     {
-      "heading": "11.9. Use case — `93-USE-CASES.md`",
+      "heading": "11.9. Use case - `93-USE-CASES.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -832,7 +832,7 @@
       ]
     },
     {
-      "heading": "11.10. Interface — `94-INTERFACES.md`",
+      "heading": "11.10. Interface - `94-INTERFACES.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -840,7 +840,7 @@
       ]
     },
     {
-      "heading": "11.11. Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`",
+      "heading": "11.11. Deployment, configuration, and scheduling - `95-DEPLOYMENT.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -848,7 +848,7 @@
       ]
     },
     {
-      "heading": "11.12. NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`",
+      "heading": "11.12. NFR and security - `96-NON-FUNCTIONAL-SECURITY.md`",
       "driver": "MIXED",
       "tags": [
         "artifact",
@@ -870,7 +870,7 @@
       "tags": []
     },
     {
-      "heading": "12.1. Traceability — `20-TRACEABILITY.md`",
+      "heading": "12.1. Traceability - `20-TRACEABILITY.md`",
       "driver": "MACHINE",
       "tags": [
         "artifact",
@@ -1008,7 +1008,7 @@
       ]
     },
     {
-      "heading": "Part 15. Exit E — Reconstruction Readiness",
+      "heading": "Part 15. Exit E - Reconstruction Readiness",
       "driver": "CONTAINER",
       "tags": []
     },

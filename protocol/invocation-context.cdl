@@ -136,8 +136,8 @@ Only these modes may intentionally span multiple semantic targets:
 - `Sequential Reconciliation`: canonical `personas/_shared/` merges plus persona-local shared-staging, promotion-request, question, unmapped-discovery, and synthesis-gap buffer merges; atomic promotion and depromotion; buffered ticket/frontier creation; deterministic deduplication; indexes; traceability; frontier dispositions; and `0G`.
 - `Profile Synchronization`: exactly one persona profile semantic payload plus its atomic `0A` registry/ownership updates and `0G`; an authorized confirmation action may later update only its certification envelope.
 - `Cross-Reference-Reconciliation`: only already-existing ID reference fields, reciprocal links, traceability, and `0G`; no new legacy facts. Changed semantic reference bindings increment semantic versions/fingerprints.
-- `Partial-Synthesis`: bounded provisional `90`–`96` blocks and a synthesis gap buffer.
-- `Final-Synthesis`: closed-corpus `90`–`96` blocks and synthesis gap buffer.
+- `Partial-Synthesis`: bounded provisional `90`-`96` blocks and a synthesis gap buffer.
+- `Final-Synthesis`: closed-corpus `90`-`96` blocks and synthesis gap buffer.
 - `Reconstruction-Handoff`: populated handbook payloads, approved-decision projection, authorized confirmation envelopes, equivalence suite, candidate/outer payload manifests, scope certificate, and package assembly in the exact §15.4 stages; it does not write Validation/Gate reports.
 - `Human Hatch` has three mandatory action subtypes in its identity header:
   - `Ticket Escalation`: after §9.3 prerequisites, terminalizes the ticket, records exact coverage/scope/risk effects, and MAY create an exact exclusion decision when authorized;

@@ -158,7 +158,7 @@
     },
     {
       "path": "protocol/conformance.cdl",
-      "source-fingerprint": "sha256:92c5a2b9c2f377b056611bf684204c7be6f1f14bea86e134c76b7fcc9fd51a1e",
+      "source-fingerprint": "sha256:8bf43223a0641cdbf2c90fdf83bb71df751af1e29bc17fb069565dee3ff605d1",
       "ids": [
         {
           "id": "ARTIFACT-OWNERSHIP-ROW",
@@ -214,7 +214,7 @@
     },
     {
       "path": "protocol/coverage-and-exits.cdl",
-      "source-fingerprint": "sha256:06ef178429ea7b93f9b93fef805d6e75d6843e8a15c3722ff4a267797386408c",
+      "source-fingerprint": "sha256:8af1f9cc34708caae02c48d637ec2efb76ab6de58ef4d894cbc41bcdd9635b6f",
       "ids": [
         {
           "id": "COVERAGE-STATUS",
@@ -315,7 +315,7 @@
     },
     {
       "path": "protocol/evidence-and-decisions.cdl",
-      "source-fingerprint": "sha256:156297e4ca2db17d5f44c2c8429204b4aeb21febc2178880da43fec5645e3fb1",
+      "source-fingerprint": "sha256:d5e0a1baa420c71462e1a80160a778804e9b1ed1224963fcf3d766c6378b9bbc",
       "ids": [
         {
           "id": "BLOCK-EVIDENCE-SUMMARY",
@@ -442,7 +442,7 @@
     },
     {
       "path": "protocol/export-reconciliation.cdl",
-      "source-fingerprint": "sha256:b79e7c9f36fdaad8fee4d5b4d0157e205f705c2651642c5ed6cfb31bb79a2f21",
+      "source-fingerprint": "sha256:9c7684f813fce879e7058231f1faf2403befdb64ccb9850d790928e4e053aa7e",
       "ids": [
         {
           "id": "13-EXPORT-RECONCILIATION",
@@ -558,7 +558,7 @@
     },
     {
       "path": "protocol/extraction-evolution.cdl",
-      "source-fingerprint": "sha256:b8f8660e58c9e8c58b19c4cffb8f146793c7b0f5469a2d1477e53831edbb5500",
+      "source-fingerprint": "sha256:dc63d35ccb9d1345e7fc5c1fe4103b3d872d22874a885cb5991df6cf93ad6d59",
       "ids": [
         {
           "id": "ATOMIC-COMPONENT",
@@ -639,7 +639,7 @@
     },
     {
       "path": "protocol/foundations.cdl",
-      "source-fingerprint": "sha256:27420306e45a8558c2f51b9ace02a49c4bf64803b28155259eea3d299fc019bd",
+      "source-fingerprint": "sha256:215739ccb3397e65a60bdb570760d571f2daecaa0cfd75d6be1d15721eccd20e",
       "ids": [
         {
           "id": "AUTHORITY-CLASS",
@@ -921,7 +921,7 @@
     },
     {
       "path": "protocol/inventory-and-frontier.cdl",
-      "source-fingerprint": "sha256:b51d9ccecef056ebafe8a1ab97fc63a2ee36c1847a40e1b46a1ea591dd76ab54",
+      "source-fingerprint": "sha256:542b01488ccff979ad859c86b9484b1fa5c1af8097e0b68bc6fa5c53d61c0dd2",
       "ids": [
         {
           "id": "COVERAGE-DISPOSITION",
@@ -1042,7 +1042,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "source-fingerprint": "sha256:c4838f6c686cdcd7fac6fab10d8952bfc667f5d524414115ebc011405290ea6e",
+      "source-fingerprint": "sha256:6f395562f18820bb6a7dd526a95ad2bb4766f291b4737aa6583d5fbe86abd1b4",
       "ids": [
         {
           "id": "INVOCATION-HEADER",
@@ -1133,7 +1133,7 @@
     },
     {
       "path": "protocol/invocation-lifecycle.cdl",
-      "source-fingerprint": "sha256:9b5ef0e62a60a09441f80b19a6f7112f382135d9572bc7595544316c1a89d806",
+      "source-fingerprint": "sha256:623a5af65d45a3da6575a8c32583910384dc8f648160054fd7d94595b6ec813e",
       "ids": [
         {
           "id": "INVOCATION-LOG",
@@ -1210,7 +1210,7 @@
     },
     {
       "path": "protocol/packaging.cdl",
-      "source-fingerprint": "sha256:314584365fd195eb2afa28e7608218d593d19784e52a1d4d1c2e7692423b5ee3",
+      "source-fingerprint": "sha256:a2c2688ac7f2086c146d0c4c36648a65a3c0606cb3e75e63702a15cf3f062d5f",
       "ids": [
         {
           "id": "APPROVED-DEC-BINDING",
@@ -1613,7 +1613,7 @@
     },
     {
       "path": "protocol/semantic-payload-identity.cdl",
-      "source-fingerprint": "sha256:38dd04eb4364733e3d69ad51364ced96967e7bdd976fa46c9ee5176522a7bbec",
+      "source-fingerprint": "sha256:97533aa310a1f9640ef5ad17d88bd34e53f8b1768e09b4bfd314a2e057496a79",
       "ids": [
         {
           "id": "certification-envelope",
@@ -1654,7 +1654,7 @@
     },
     {
       "path": "protocol/status-taxonomy.cdl",
-      "source-fingerprint": "sha256:ff27f4b1cfbf6d91c6f38d5f6b9c4cea893ab4d85d27b6e2d20d804997a1791b",
+      "source-fingerprint": "sha256:4a808e2b4ff67a2401908dd1b333303251937e4fd4267c6e774add8f8cff3225",
       "ids": [
         {
           "id": "PREFIX-ACQUISITION",
@@ -2220,7 +2220,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "source-fingerprint": "sha256:1d23e578a1a9d80b2c1122ce9bf5174b13a31507da16bc3e5e27bf82a9ee4b4e",
+      "source-fingerprint": "sha256:6d7cf39a4614dc65663ecd8003f18c45e7c89a0c2d099c011706a4ea9751c2c9",
       "ids": [
         {
           "id": "ARCHITECTURE-MODULE",
@@ -2662,7 +2662,7 @@
     },
     {
       "path": "protocol/traceability.cdl",
-      "source-fingerprint": "sha256:dc3af51cca021639e56696e7fe274206450c04a23b10953680300f19763df591",
+      "source-fingerprint": "sha256:4b0519dd8f7286de3eee6a29ae5c07ab4fe5b7eae84682e2d9a3a23936b61de2",
       "ids": [
         {
           "id": "CLASSIFICATION",

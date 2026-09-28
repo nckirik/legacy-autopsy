@@ -1,6 +1,6 @@
 # Ticket Resolution
 
-> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** — `protocol.md` is normative.
+> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** - `protocol.md` is normative.
 
 ## Purpose
 
@@ -12,7 +12,7 @@ Bind exactly one persona, prefix, canonical persona directory, cluster, track, P
 
 ## Normative protocol sections
 
-- §5.4. `Contradictions — `14-CONTRADICTIONS.md``; §6.5. `Surgical evolution`
+- §5.4. `Contradictions - `14-CONTRADICTIONS.md``; §6.5. `Surgical evolution`
 - §8.1. `Resume identity header`; §8.2. `Strict single-scope modes`; §8.3. `Invocation-mode enum and explicit multi-file modes`; §8.4. `Mandatory read sets`; §8.5. `Cold resume check`; §8.7. `Stale checkpoint guard`; §8.8. `` `0G` invocation log ``
 - §9.1. `Ticket schema and canonical IDs`; §9.2. `FSM and write rights`; §9.4. `Probe specification and asynchronous handoff`; §9.5. `No-mock integrity`; §9.6. `No-mock fallback payload`
 - §12.5. `Deterministic validation summary`

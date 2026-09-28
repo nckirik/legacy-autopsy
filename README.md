@@ -2,11 +2,11 @@
 
 Legacy Autopsy is a **local-first reference/tooling implementation** for evidence-backed deconstruction and reconstruction of legacy systems. It helps humans and coding agents build a persistent, reviewable model of a system instead of relying on one-shot summaries or conversation memory.
 
-The project is built around the CDL protocol sources under [`protocol/`](protocol/) and their generated standalone edition [`protocol.md`](protocol.md), which can be used directly with any capable coding agent. Legacy Autopsy adds orchestration, deterministic validation, persistent workspace management, and—over time—an interactive workbench.
+The project is built around the CDL protocol sources under [`protocol/`](protocol/) and their generated standalone edition [`protocol.md`](protocol.md), which can be used directly with any capable coding agent. Legacy Autopsy adds orchestration, deterministic validation, persistent workspace management, and-over time-an interactive workbench.
 
-> **Project status — M0 foundation + Spec track crown (S4)**
+> **Project status - M0 foundation + Spec track crown (S4)**
 >
-> The generated [`protocol.md`](protocol.md) carries the complete frozen oracle content verbatim — every paragraph, list, table, fenced block, field bullet, Part heading, and section — enforced by `TestGeneratedProtocolCoversOracle`, and it is the intended standalone prompt edition. The [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md) text remains the bootstrap parity oracle. The standalone protocol-quality test (fresh harness, generated edition only) has not yet been run, so the generated edition is not yet independently validated as a prompt; report issues if a harness run exposes any. The Spec track completed the section-by-section migration and crown: one compiled EIR assembly, a deterministic renderer with goldens, per-section drift tests against the frozen oracle [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md), the 24-case fixture oracle, and an accepted [crown parity report](analysis/parity-report.md). The harness track implements its M0 foundations: protocol/skill routing, an empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets, and bootstrap fixtures. The repository does **not** execute semantic deconstruction modes, prove Exit A or Exit E, or claim Protocol v4 conformance.
+> The generated [`protocol.md`](protocol.md) carries the complete frozen oracle content verbatim - every paragraph, list, table, fenced block, field bullet, Part heading, and section - enforced by `TestGeneratedProtocolCoversOracle`, and it is the intended standalone prompt edition. The [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md) text remains the bootstrap parity oracle. The standalone protocol-quality test (fresh harness, generated edition only) has not yet been run, so the generated edition is not yet independently validated as a prompt; report issues if a harness run exposes any. The Spec track completed the section-by-section migration and crown: one compiled EIR assembly, a deterministic renderer with goldens, per-section drift tests against the frozen oracle [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md), the 24-case fixture oracle, and an accepted [crown parity report](analysis/parity-report.md). The harness track implements its M0 foundations: protocol/skill routing, an empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets, and bootstrap fixtures. The repository does **not** execute semantic deconstruction modes, prove Exit A or Exit E, or claim Protocol v4 conformance.
 
 > **Normative authority**
 >
@@ -16,16 +16,16 @@ The project is built around the CDL protocol sources under [`protocol/`](protoco
 
 There are three intended ways to run the protocol. Only the first is usable today, and it remains a manual workflow rather than proof of conformance.
 
-1. **Manual run with your own coding agent — available today.** Give the agent `protocol.md` and the execution prompt below. It works directly in the legacy repository and pauses when it needs scope, access, evidence, or an authorized human answer.
-2. **Legacy Autopsy skill with your own coding agent — planned for M6.** Invoke the skill from a compatible coding harness. Legacy Autopsy will attach the project, schedule bounded protocol tasks, assemble exact context, validate results, persist `.extracted/`, and surface questions while your agent performs semantic work. Complete Exit A–Exit E automation still depends on later milestones.
-3. **Legacy Autopsy UI — future, milestone not yet assigned.** Select a repository, start and monitor an autopsy, answer questions and tickets, inspect the Atlas and handbook, and retrieve the final bundle without manually driving an external agent session. M4/M6 intentionally keep semantic-work start and claim control outside the UI.
+1. **Manual run with your own coding agent - available today.** Give the agent `protocol.md` and the execution prompt below. It works directly in the legacy repository and pauses when it needs scope, access, evidence, or an authorized human answer.
+2. **Legacy Autopsy skill with your own coding agent - planned for M6.** Invoke the skill from a compatible coding harness. Legacy Autopsy will attach the project, schedule bounded protocol tasks, assemble exact context, validate results, persist `.extracted/`, and surface questions while your agent performs semantic work. Complete Exit A-Exit E automation still depends on later milestones.
+3. **Legacy Autopsy UI - future, milestone not yet assigned.** Select a repository, start and monitor an autopsy, answer questions and tickets, inspect the Atlas and handbook, and retrieve the final bundle without manually driving an external agent session. M4/M6 intentionally keep semantic-work start and claim control outside the UI.
 
 All three paths use the same standalone protocol. The skill and UI add reliability, observability, and convenience; they do not redefine protocol behavior or authority. The [roadmap](docs/roadmap.md) runs two tracks: the Spec track (protocol ownership through the CDL sources and EIR) and the harness track (runtime services and workbench).
 
 ### Try it today with your own coding agent
 
 > [!IMPORTANT]
-> This is a manual, agent-driven protocol run—not Legacy Autopsy-managed execution or proof of Protocol v4 conformance.
+> This is a manual, agent-driven protocol run-not Legacy Autopsy-managed execution or proof of Protocol v4 conformance.
 
 Work on a clean branch in an approved, non-production copy of the legacy repository. Copy the generated standalone edition into that repository's root:
 
@@ -63,7 +63,7 @@ The protocol has a clear forward lifecycle. When work is blocked or validation f
 flowchart LR
     subgraph lifecycle["PROTOCOL LIFECYCLE"]
         direction LR
-        scope(["Scope & snapshots"]) --> decon["Deconstruct<br/>ALFA–ZULU"] --> exitA{"Exit A"}
+        scope(["Scope & snapshots"]) --> decon["Deconstruct<br/>ALFA-ZULU"] --> exitA{"Exit A"}
         exitA == "passed" ==> synth["Synthesize"] --> review["Handbook<br/>& review"]
         review == "approved" ==> exitE{"Exit E"}
         exitE == "passed" ==> bundle(["Certified bundle"])
@@ -82,7 +82,7 @@ flowchart TB
     end
 ```
 
-- **Deconstruction is bounded.** Parallel work shares the current named iteration. Reopening completed deconstruction consumes the next unused token in the single ALFA–ZULU budget; the budget never resets, and work cannot proceed beyond ZULU.
+- **Deconstruction is bounded.** Parallel work shares the current named iteration. Reopening completed deconstruction consumes the next unused token in the single ALFA-ZULU budget; the budget never resets, and work cannot proceed beyond ZULU.
 - **Evidence work loops through controlled resolution.** Gaps, contradictions, frontiers, tickets, and probes return through reconciliation rather than being guessed away.
 - **Exit A is repeatable but never inherited.** A material gap found during synthesis invalidates the pinned Exit A report, marks dependent synthesis stale, and re-arms deconstruction until a new Exit A passes.
 - **Human review can require revision.** Changed semantics or stale dependencies return to synthesis and invalidate affected confirmations.
@@ -157,7 +157,7 @@ Legacy Autopsy is not a generic code summarizer, automatic rewrite tool, moderni
 - [`analysis/parity-report.md`](analysis/parity-report.md): accepted S4 crown parity report.
 - [Minimal example](examples/minimal/README.md): shortest implemented tooling flow.
 - [Workspace guide](docs/workspace.md): the four planes and initialization boundary.
-- [Roadmap](docs/roadmap.md): Spec track S0–S4 (crown complete) and harness track M0–M16.
+- [Roadmap](docs/roadmap.md): Spec track S0-S4 (crown complete) and harness track M0-M16.
 
 **Spec track (design contracts)**
 

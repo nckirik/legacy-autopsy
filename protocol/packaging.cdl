@@ -1,14 +1,14 @@
-PART exit-e "Exit E — Reconstruction Readiness"
+PART exit-e "Exit E - Reconstruction Readiness"
 
 SECTION exit-e-strict-conditions
 TITLE "Strict conditions"
 
 GOAL
-Exit E remains `Pending` through steps 1–5 of §15.4. The stage-4 Exit E Content-Readiness Report validates all content, decision, confirmation, and package-member conditions available at that stage, but it is not the Exit E pass artifact and MUST NOT state or imply `Passed`. Exit E transitions to `Passed` only at step 6 when all conditions below are true and the signed outer bundle manifest's hashed payload validates with the literal field `EXIT-E-STATUS: Passed`:
+Exit E remains `Pending` through steps 1-5 of §15.4. The stage-4 Exit E Content-Readiness Report validates all content, decision, confirmation, and package-member conditions available at that stage, but it is not the Exit E pass artifact and MUST NOT state or imply `Passed`. Exit E transitions to `Passed` only at step 6 when all conditions below are true and the signed outer bundle manifest's hashed payload validates with the literal field `EXIT-E-STATUS: Passed`:
 
 1. Composite Exit A passed for the same pinned snapshot, or a documented later non-semantic packaging change preserves its inputs.
 2. Every effective in-scope source unit is `[C-COVERED]`; all approved exclusions are exact, risk-assessed, disclosed, and removed from denominator arithmetic; no `[C-GAP]` or `[C-PARTIAL]` remains.
-3. All `90`–`96` mandatory domains are complete with evidence-backed zero-domain records where genuinely empty; every semantic block has a valid semantic version/fingerprint.
+3. All `90`-`96` mandatory domains are complete with evidence-backed zero-domain records where genuinely empty; every semantic block has a valid semantic version/fingerprint.
 4. The complete handbook semantic payload exists as `[B-POPULATED]` before candidacy, passes quality gates, is synchronized to synthesis, and is included in the candidate payload manifest without later semantic regeneration.
 5. All reciprocal references, legal typed IDs including `COV`/`CND`/`MOD`/`PRF`/`HBK`, claims, ownership, persona purity, diagrams, and links validate.
 6. Every eligible lifecycle scope has a complete `SM`; each ineligible decision is explicit.
@@ -127,14 +127,14 @@ The required Exit E report check registry is `EXIT-E-CHECKS-v1`. Its canonical r
 | CANDIDATE         | CANDIDATE-10-DISABLED-CAPABILITIES        | §15.1 condition 10                                                                                   |
 | CANDIDATE         | CANDIDATE-11-FAULTS                       | §15.1 condition 11                                                                                   |
 | CANDIDATE         | CANDIDATE-12-PROFILES                     | populated PRF identity, dependency closure, and candidate eligibility portions of §15.1 condition 12 |
-| CANDIDATE         | CANDIDATE-13-PENDING-AND-CONTRADICTIONS   | pre-confirmation portions of §15.1 conditions 16–17                                                  |
+| CANDIDATE         | CANDIDATE-13-PENDING-AND-CONTRADICTIONS   | pre-confirmation portions of §15.1 conditions 16-17                                                  |
 | CANDIDATE         | CANDIDATE-14-SNAPSHOT-INPUTS              | candidate-stage portions of §15.1 condition 18                                                       |
 | CONTENT-READINESS | READINESS-01-CANDIDATE-IMMUTABILITY       | unchanged candidate report, manifest, semantic payloads, decisions, and dependencies                 |
-| CONTENT-READINESS | READINESS-02-CONFIRMATIONS                | confirmed semantic bindings and §15.1 conditions 12–13 and 19                                        |
+| CONTENT-READINESS | READINESS-02-CONFIRMATIONS                | confirmed semantic bindings and §15.1 conditions 12-13 and 19                                        |
 | CONTENT-READINESS | READINESS-03-DECISION-APPROVALS           | §15.1 condition 14                                                                                   |
 | CONTENT-READINESS | READINESS-04-EQUIVALENCE                  | §15.1 condition 15                                                                                   |
 | CONTENT-READINESS | READINESS-05-HANDBOOK-READABILITY         | complete fingerprint-bound human review under §13.4                                                  |
-| CONTENT-READINESS | READINESS-06-NO-PENDING-OR-CONTRADICTIONS | §15.1 conditions 16–17 after review                                                                  |
+| CONTENT-READINESS | READINESS-06-NO-PENDING-OR-CONTRADICTIONS | §15.1 conditions 16-17 after review                                                                  |
 | CONTENT-READINESS | READINESS-07-ENVELOPE-INTEGRITY           | every certification, approval, and CNF envelope binding available at stage 4                         |
 | CONTENT-READINESS | READINESS-08-PREPACKAGE-MEMBERS           | complete stage-4 member set and package-member file fingerprints                                     |
 | CONTENT-READINESS | READINESS-09-SNAPSHOT-CONSISTENCY         | exact system/protocol/environment/snapshot equality across the chain and members                     |
@@ -660,7 +660,7 @@ GOAL
 The certified package contains:
 
 - human reconstruction handbook;
-- structured `90`–`96` synthesis catalogs;
+- structured `90`-`96` synthesis catalogs;
 - assurance plane records and deterministic validation summaries;
 - persona profiles and necessary forensic reference records;
 - decision log;

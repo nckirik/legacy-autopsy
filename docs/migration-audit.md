@@ -2,7 +2,7 @@
 
 > Non-authoritative implementation planning. Possibly provisional and reviewable. The CDL sources under [`protocol/`](../protocol/) are normative after the accepted crown parity report; [`cdl.md`](cdl.md) is the frozen language contract.
 
-**Status:** completed migration record; phases 0–4 done (crown accepted).
+**Status:** completed migration record; phases 0-4 done (crown accepted).
 **Scope:** every committed code, fixture, skill, doc, and tool artifact, plus the untracked session archive.
 **Companion:** [`runtime-architecture.md`](runtime-architecture.md) §7 defines the target shape; this document decides what happens to what already exists.
 
@@ -130,4 +130,4 @@ It is not a migration concern.
    every section is migrated and a reference renderer exists. Mode identifiers are
    already pinned to the compiled EIR modes by `internal/parity`.
 4. Whether the Spec track is a new milestone series or a re-scoped M1.
-5. When to regenerate `README.md`/`roadmap.md` — after G4, per Phase 2.
+5. When to regenerate `README.md`/`roadmap.md` - after G4, per Phase 2.

@@ -36,18 +36,18 @@ func TestInventoryAndFrontierDrift(t *testing.T) {
 		return text
 	}
 
-	text43 := load("4.3. Source inventory denominator — `10-SOURCE-INVENTORY.md`")
+	text43 := load("4.3. Source inventory denominator - `10-SOURCE-INVENTORY.md`")
 	compareSets(t, "SOURCE-INVENTORY-RECORD", fields["SOURCE-INVENTORY-RECORD"], sectionLabels(text43, true))
 	compareSets(t, "DISCOVERY-METHOD", enums["DISCOVERY-METHOD"], enumValuesFromFieldLine(text43, "discovery-method"))
 	compareSets(t, "COVERAGE-SUMMARY", enums["COVERAGE-SUMMARY"], enumValuesFromFieldLine(text43, "coverage-summary"))
 	compareSets(t, "INVENTORY-KIND", enums["INVENTORY-KIND"], inventoryKindsFromSentence(t, text43))
 
-	text44 := load("4.4. Traversal frontier — `11-TRAVERSAL-FRONTIER.md`")
+	text44 := load("4.4. Traversal frontier - `11-TRAVERSAL-FRONTIER.md`")
 	compareSets(t, "FRONTIER-RECORD", fields["FRONTIER-RECORD"], sectionLabels(text44, false))
 	compareSets(t, "FRONTIER-DISCOVERY-METHOD", enums["FRONTIER-DISCOVERY-METHOD"], enumValuesFromFieldLine(text44, "discovery-method"))
 	compareSets(t, "FRONTIER-STATE", enums["FRONTIER-STATE"], enumValuesFromFieldLine(text44, "state"))
 
-	text45 := load("4.5. Scope-specific source coverage — `16-SOURCE-COVERAGE.md`")
+	text45 := load("4.5. Scope-specific source coverage - `16-SOURCE-COVERAGE.md`")
 	var row []string
 	for _, line := range strings.Split(text45, "\n") {
 		trimmed := strings.TrimSpace(line)

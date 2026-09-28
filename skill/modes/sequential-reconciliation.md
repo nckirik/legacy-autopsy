@@ -1,6 +1,6 @@
 # Sequential Reconciliation
 
-> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** — `protocol.md` is normative.
+> **NON-AUTHORITATIVE OPERATIONAL PROJECTION** - `protocol.md` is normative.
 
 ## Purpose
 
@@ -15,7 +15,7 @@ Use a multi-file header naming every source buffer, destination file/section, tr
 - §3.1. `` `0A-PREFLIGHT.md` ``; §3.2. `Foundational registries`
 - §6.3. `Staging and promotion`; §6.4. `Depromotion`
 - §8.1. `Resume identity header`; §8.3. `Invocation-mode enum and explicit multi-file modes`; §8.4. `Mandatory read sets`; §8.5. `Cold resume check`; §8.6. `Concurrent persona traversal`; §8.7. `Stale checkpoint guard`; §8.8. `` `0G` invocation log ``
-- §9.1. `Ticket schema and canonical IDs`; §11.1. `Partial versus Final Synthesis`; §12.1. `Traceability — `20-TRACEABILITY.md``; §12.5. `Deterministic validation summary`
+- §9.1. `Ticket schema and canonical IDs`; §11.1. `Partial versus Final Synthesis`; §12.1. `Traceability - `20-TRACEABILITY.md``; §12.5. `Deterministic validation summary`
 
 ## Mandatory read set
 
@@ -27,7 +27,7 @@ Enumerated canonical merges; atomic promotion/depromotion; buffered tickets/fron
 
 ## Allowed assurance/audit side effects
 
-Owned index, `10`–`16`, contradiction, traceability, frontier, stale-propagation, and append-only `0G` updates.
+Owned index, `10`-`16`, contradiction, traceability, frontier, stale-propagation, and append-only `0G` updates.
 
 ## Forbidden mutations
 

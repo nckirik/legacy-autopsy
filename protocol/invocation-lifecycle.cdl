@@ -12,7 +12,7 @@ Personas MAY run concurrently in one named iteration. They MUST NOT write canoni
 - persona-owned invocation pointers may be written immediately;
 - depromotion is annotated `[R-DEPROMOTION-PENDING]` and deferred.
 
-Sequential Reconciliation collects, deterministically sorts and deduplicates all buffer classes, promotion requests, and synthesis gaps; merges compatible claims without improperly raising `BLOCK-CONFIDENCE-RANK` or losing profile detail; records contradictions; merges persona sets; commits shared records/tickets; merges unmapped discoveries into `0A`; creates required ticket/frontier work from `GAP` records; executes promotion and depromotion atomically under §§6.3–6.4; updates assurance links; and purges consumed buffers atomically. No later Discovery invocation may begin while an unmapped-discovery buffer contains `Pending-Merge`.
+Sequential Reconciliation collects, deterministically sorts and deduplicates all buffer classes, promotion requests, and synthesis gaps; merges compatible claims without improperly raising `BLOCK-CONFIDENCE-RANK` or losing profile detail; records contradictions; merges persona sets; commits shared records/tickets; merges unmapped discoveries into `0A`; creates required ticket/frontier work from `GAP` records; executes promotion and depromotion atomically under §§6.3-6.4; updates assurance links; and purges consumed buffers atomically. No later Discovery invocation may begin while an unmapped-discovery buffer contains `Pending-Merge`.
 END
 
 RULE concurrency-buffers

@@ -4,7 +4,7 @@
 
 **Status:** S2 deliverable (contracts defined; implementation only where noted).
 **Related:** [`runtime-architecture.md`](runtime-architecture.md) §4 (taxonomy),
-[`execution-semantics.md`](execution-semantics.md) §3–4 (availability and fail-closed),
+[`execution-semantics.md`](execution-semantics.md) §3-4 (availability and fail-closed),
 [`coverage-profile.md`](coverage-profile.md) (36 capability-dependent sections).
 
 ## 1. Registration model
@@ -25,13 +25,13 @@ A `proposing` provider used in a MACHINE step is a registration/compile error, n
 runtime downgrade. Effect services are applied at commit and never appear as expression
 values.
 
-Availability: `REQUIRES CAPABILITY` plus `NO-SUBSTITUTE-MACHINERY` — an unavailable
+Availability: `REQUIRES CAPABILITY` plus `NO-SUBSTITUTE-MACHINERY` - an unavailable
 capability marks dependent results `unsupported`, blocks dependent effects, leaves
 independent work untouched, and never licenses an executor-authored substitute.
 
 ## 2. Deterministic capability contracts
 
-### 2.1 `hash.sha256` v1 — implemented (pilot)
+### 2.1 `hash.sha256` v1 - implemented (pilot)
 
 - **Kind/determinism:** deterministic, reproducible-exact.
 - **Inputs:** exact byte sequence, or a declared table for table hashing.
@@ -42,7 +42,7 @@ independent work untouched, and never licenses an executor-authored substitute.
   any I/O failure is fail-closed.
 - **Current:** `internal/capabilities` (pilot), used by `hash` EIR expression.
 
-### 2.2 `table.serialize` v1 — implemented (pilot)
+### 2.2 `table.serialize` v1 - implemented (pilot)
 
 - **Kind/determinism:** deterministic, reproducible-exact.
 - **Inputs:** a declared table with `ROWS`, `ROW-TYPE`, `KEY`.
@@ -53,7 +53,7 @@ independent work untouched, and never licenses an executor-authored substitute.
   evaluation error.
 - **Current:** `internal/runtime.tableBytes`; canonical form via `cdl.CanonicalBytes`.
 
-### 2.3 `path.normalize` v1 — transitional implementation
+### 2.3 `path.normalize` v1 - transitional implementation
 
 - **Kind/determinism:** deterministic, reproducible-exact.
 - **Inputs:** a declared root and a candidate relative path.
@@ -67,7 +67,7 @@ independent work untouched, and never licenses an executor-authored substitute.
   `contextpacket.confinedRead` (transitional). To re-express as a declared capability
   in S3; `cdl` must not depend on it.
 
-### 2.4 `identity.typed-id` v1 — base generation implemented (S3 §4.1)
+### 2.4 `identity.typed-id` v1 - base generation implemented (S3 §4.1)
 
 - **Kind/determinism:** deterministic, reproducible-exact.
 - **Inputs:** type prefix, namespace, normalized owner coordinate, semantic
@@ -85,7 +85,7 @@ independent work untouched, and never licenses an executor-authored substitute.
   16/20/…/64 characters and the `20-TRACEABILITY.md` registry checks are **not** yet
   implemented. §4.1.1/§4.1.2 remain unclaimed.
 
-### 2.5 `canonical.markdown` v1 — bounded implementation (S3 §4.1.2)
+### 2.5 `canonical.markdown` v1 - bounded implementation (S3 §4.1.2)
 
 - **Kind/determinism:** deterministic, reproducible-exact.
 - **Inputs:** Markdown bytes; a named carrier field; envelope regions; artifact type and
@@ -135,7 +135,7 @@ filesystem mutation are runtime infrastructure:
 | `hash.sha256`        | deterministic | pilot implemented | §4.1.2, §12.5, §15.x    |
 | `table.serialize`    | deterministic | pilot implemented | schema sections (98)    |
 | `path.normalize`     | deterministic | transitional      | §8 roots, persona paths |
-| `identity.typed-id`  | deterministic | base implemented  | §4.1, §5.1, §6–§12, §15 |
+| `identity.typed-id`  | deterministic | base implemented  | §4.1, §5.1, §6-§12, §15 |
 | `canonical.markdown` | deterministic | bounded v1        | §4.1.2, §14.5, §15.x    |
 
 ## 6. What this does not prove

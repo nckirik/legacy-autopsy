@@ -17,10 +17,10 @@ generated render (`cdl/protocol_render.go`, freshness-tested against the root fi
 `protocol/golden/protocol.generated.md`). Conformance separates into two orthogonal
 tests defined in the [runtime architecture](runtime-architecture.md) §6:
 
-- **Test A — backend conformance:** the native runtime and the reference VM consume the
+- **Test A - backend conformance:** the native runtime and the reference VM consume the
   same EIR and inputs and must produce the same canonical execution trace hash
   ([execution semantics](execution-semantics.md) §13).
-- **Test B — protocol parity:** EIR behavior must match the frozen oracle
+- **Test B - protocol parity:** EIR behavior must match the frozen oracle
   `protocol/legacy/protocol-4.1.3.md` using the unchanged 24-fixture runner as an
   independent oracle. The oracle is never rewritten by the system it verifies, and
   `internal/parity` drift-checks every migrated section against it.
@@ -43,7 +43,7 @@ harness; until that run is recorded, the generated edition is content-complete b
 independently validated as a prompt. The
 `protocol/legacy/protocol-4.1.3.md` text remains the bootstrap parity oracle.
 
-## Prose–structure joint normativity
+## Prose-structure joint normativity
 
 Normative prose and structured semantics are jointly normative. A section that carries
 both a `GOAL`/opaque text block and structured declarations (`RULE`, `ENUM`, `FIELD`,

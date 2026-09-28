@@ -6,7 +6,7 @@ TITLE "Atomic unit rule"
 GOAL
 Each promotable forensic record and each independently meaningful synthesis record MUST describe exactly one independently evidenced unit: one function, method, route, query, job, workflow node, graph edge, action, binding, DB routine, constraint, widget behavior, interface operation, architecture module/bounded context, or equivalent.
 
-A **purely navigational grouping container**—for example a family index, class overview, workflow overview, capability index, module index, or use-case index—MUST be marked `RECORD-KIND: GROUPING-CONTAINER`. It has only a title, navigation metadata, and an explicit member-ID list; it MUST NOT carry independent semantic claims, `STAGING-STATUS`, `COVERAGE-STATUS`, blueprint/handbook status, `BLOCK-CONFIDENCE-RANK`, `BLOCK-EVIDENCE-PROFILE`, semantic record version/fingerprint, or confirmation, and MUST NOT inherit any such value from children.
+A **purely navigational grouping container**-for example a family index, class overview, workflow overview, capability index, module index, or use-case index-MUST be marked `RECORD-KIND: GROUPING-CONTAINER`. It has only a title, navigation metadata, and an explicit member-ID list; it MUST NOT carry independent semantic claims, `STAGING-STATUS`, `COVERAGE-STATUS`, blueprint/handbook status, `BLOCK-CONFIDENCE-RANK`, `BLOCK-EVIDENCE-PROFILE`, semantic record version/fingerprint, or confirmation, and MUST NOT inherit any such value from children.
 
 A module or bounded context that states responsibility, public interfaces, encapsulation boundary, dependencies, invariants, or data passed is not a grouping container. It is an atomic semantic `MOD` block governed by the common synthesis header, material CLMs, reciprocal references, coverage, semantic version/fingerprint, and confirmation. Module indexes MAY remain purely navigational grouping containers. A `CAP` is the governed capability container defined in §2.6 and §3.2: it may carry its own claim-backed governance metadata, but it remains non-promotable and never inherits member evidence or coverage.
 
@@ -49,7 +49,7 @@ RULE module-and-container-semantics
 END
 
 SECTION source-inventory
-TITLE "Source inventory denominator — `10-SOURCE-INVENTORY.md`"
+TITLE "Source inventory denominator - `10-SOURCE-INVENTORY.md`"
 
 GOAL
 One record exists per concrete source unit:
@@ -170,7 +170,7 @@ RULE inventory-absence-proof
 END
 
 SECTION traversal-frontier
-TITLE "Traversal frontier — `11-TRAVERSAL-FRONTIER.md`"
+TITLE "Traversal frontier - `11-TRAVERSAL-FRONTIER.md`"
 
 GOAL
 Every discovered traversal boundary MUST create exactly one `FRT` record, including a boundary recognized as terminal, duplicate, excluded, or already mapped at discovery time. Immediate recognition MAY create the record directly in its terminal state, but MUST NOT omit it. Every discovered but not yet terminal traversal boundary remains open until terminally disposed:
@@ -239,7 +239,7 @@ RULE frontier-terminality
 END
 
 SECTION source-coverage
-TITLE "Scope-specific source coverage — `16-SOURCE-COVERAGE.md`"
+TITLE "Scope-specific source coverage - `16-SOURCE-COVERAGE.md`"
 
 GOAL
 One row exists per immutable SRC version × persona/owner × track × environment × snapshot scope. Rows are disjoint within a subgroup; a source participating in several tracks has separate rows and is counted once in each declared track report, while the aggregate unique-SRC report deduplicates by SRC version.

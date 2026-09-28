@@ -9,7 +9,7 @@
   },
   {
     "id": "POS-EXPORT-RECONCILIATION-BLOCKER-001",
-    "protocol_section": "§7.7. Export reconciliation — `13-EXPORT-RECONCILIATION.md`",
+    "protocol_section": "§7.7. Export reconciliation - `13-EXPORT-RECONCILIATION.md`",
     "group": "protocol-discovery",
     "operation": "protocol-section-line",
     "input": {
@@ -78,7 +78,7 @@
   },
   {
     "id": "POS-WORKSPACE-001",
-    "protocol_section": "§1.1. Plane 1 — Forensic Plane",
+    "protocol_section": "§1.1. Plane 1 - Forensic Plane",
     "group": "workspace-skeleton",
     "operation": "workspace-skeleton",
     "input": {},

@@ -1,7 +1,7 @@
 PART traceability "Traceability, Referential Integrity, and Staleness"
 
 SECTION traceability
-TITLE "Traceability — `20-TRACEABILITY.md`"
+TITLE "Traceability - `20-TRACEABILITY.md`"
 
 GOAL
 One atomic row per source-to-semantic mapping:

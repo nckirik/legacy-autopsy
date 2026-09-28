@@ -13,11 +13,11 @@ import (
 var (
 	boldToken     = regexp.MustCompile(`\*\*([^*]+)\*\*`)
 	authorityItem = regexp.MustCompile(`(?m)^\d+\. \*\*([^*]+):\*\*`)
-	planeHeading  = regexp.MustCompile(`^## 1\.[1-4]\. Plane \d+ — (.+)$`)
+	planeHeading  = regexp.MustCompile(`^## 1\.[1-4]\. Plane \d+ - (.+)$`)
 )
 
 // TestFoundationsDrift checks §0.1 normative keywords/authority classes/predicate
-// kinds, §0.4 flow stages, and the §1.1–§1.4 plane enum against protocol.md.
+// kinds, §0.4 flow stages, and the §1.1-§1.4 plane enum against protocol.md.
 func TestFoundationsDrift(t *testing.T) {
 	res := compileWithRegistry(t, "protocol/foundations.cdl")
 	enums := map[string][]string{}
