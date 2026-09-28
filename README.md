@@ -4,13 +4,13 @@ Legacy Autopsy is a **local-first reference/tooling implementation** for evidenc
 
 The project is built around the CDL protocol sources under [`protocol/`](protocol/) and their generated standalone edition [`protocol.md`](protocol.md), which can be used directly with any capable coding agent. Legacy Autopsy adds orchestration, deterministic validation, persistent workspace management, and—over time—an interactive workbench.
 
-> **Project status — M0 foundation + S1 spec pilot**
+> **Project status — M0 foundation + Spec track crown (S4)**
 >
-> The protocol is available and usable today. The tooling implements its M0 foundations: protocol/skill routing, an empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets, and bootstrap fixtures. The Spec track implements the S1 §7.7 pilot: CDL source for one section, canonical EIR, a native MACHINE VM, an independent reference VM, a prompt backend, and backend/protocol parity tests. The repository does **not** execute semantic deconstruction modes, prove Exit A or Exit E, or claim Protocol v4 conformance.
+> The protocol is available and usable today as the generated [`protocol.md`](protocol.md) edition of the normative CDL sources under [`protocol/`](protocol/). The Spec track completed the section-by-section migration and crown: one compiled EIR assembly, a deterministic renderer with goldens, per-section drift tests against the frozen oracle [`protocol/legacy/protocol-4.1.2.md`](protocol/legacy/protocol-4.1.2.md), the unchanged 24-case fixture oracle, and an accepted [crown parity report](analysis/parity-report.md). The harness track implements its M0 foundations: protocol/skill routing, an empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets, and bootstrap fixtures. The repository does **not** execute semantic deconstruction modes, prove Exit A or Exit E, or claim Protocol v4 conformance.
 
 > **Normative authority**
 >
-> The CDL sources under `protocol/` are the sole normative authority; `protocol.md` is their generated, implementation-independent standalone edition. Legacy Autopsy is one non-authoritative implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, fixtures, or validators. If any implementation or projection conflicts with `protocol.md`, the protocol wins.
+> The CDL sources under `protocol/` are the sole normative authority; `protocol.md` is their generated, implementation-independent standalone edition. Legacy Autopsy is one non-authoritative implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, fixtures, or validators. If any implementation or projection conflicts with the normative CDL sources, the protocol wins.
 
 ## How to use Legacy Autopsy
 
@@ -20,7 +20,7 @@ There are three intended ways to run the protocol. Only the first is usable toda
 2. **Legacy Autopsy skill with your own coding agent — planned for M6.** Invoke the skill from a compatible coding harness. Legacy Autopsy will attach the project, schedule bounded protocol tasks, assemble exact context, validate results, persist `.extracted/`, and surface questions while your agent performs semantic work. Complete Exit A–Exit E automation still depends on later milestones.
 3. **Legacy Autopsy UI — future, milestone not yet assigned.** Select a repository, start and monitor an autopsy, answer questions and tickets, inspect the Atlas and handbook, and retrieve the final bundle without manually driving an external agent session. M4/M6 intentionally keep semantic-work start and claim control outside the UI.
 
-All three paths use the same standalone protocol. The skill and UI add reliability, observability, and convenience; they do not redefine protocol behavior or authority. The [roadmap](docs/roadmap.md) runs two tracks: the Spec track (protocol ownership through `protocol.cdl`/EIR) and the harness track (runtime services and workbench).
+All three paths use the same standalone protocol. The skill and UI add reliability, observability, and convenience; they do not redefine protocol behavior or authority. The [roadmap](docs/roadmap.md) runs two tracks: the Spec track (protocol ownership through the CDL sources and EIR) and the harness track (runtime services and workbench).
 
 ### Try it today with your own coding agent
 
@@ -137,7 +137,7 @@ See the [architecture](docs/architecture.md), [runtime design](docs/runtime.md),
 
 ## Design principles
 
-- **Normative law stays singular:** `protocol.md` defines behavior; secondary material routes to or implements it.
+- **Normative law stays singular:** the CDL sources under `protocol/` define behavior and `protocol.md` is their generated edition; secondary material routes to or implements it.
 - **Orchestration and semantics stay separate:** tooling coordinates deterministic state; executors perform bounded semantic work.
 - **Reasoning and mechanics stay separate:** models interpret evidence and semantics; code handles identity, parsing, scope, ordering, hashing, validation, and state transitions.
 - **Filesystem state survives sessions:** `.extracted/` is persistent execution state; conversation memory is disposable.
@@ -154,9 +154,10 @@ Legacy Autopsy is not a generic code summarizer, automatic rewrite tool, moderni
 - [`protocol/`](protocol/): normative CDL sources and assembly.
 - [`protocol.md`](protocol.md): generated standalone specification edition.
 - [`protocol/legacy/protocol-4.1.2.md`](protocol/legacy/protocol-4.1.2.md): frozen bootstrap parity oracle.
+- [`analysis/parity-report.md`](analysis/parity-report.md): accepted S4 crown parity report.
 - [Minimal example](examples/minimal/README.md): shortest implemented tooling flow.
 - [Workspace guide](docs/workspace.md): the four planes and initialization boundary.
-- [Roadmap](docs/roadmap.md): Spec track S0–S4 and harness track M0–M16.
+- [Roadmap](docs/roadmap.md): Spec track S0–S4 (crown complete) and harness track M0–M16.
 
 **Spec track (design contracts)**
 
