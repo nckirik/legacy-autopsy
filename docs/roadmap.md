@@ -105,6 +105,11 @@ S3 progress:
   declarations once; `examples/spec/assembly.json` orders the sources; the compiler
   emits one EIR with cross-section resolution; `internal/spec` compiles it in-process
   for the runtime; assembly EIR and prompt goldens replace the per-section goldens.
+- **§5.2–5.7 implemented (authored schemas + drift):**
+  `examples/spec/evidence-and-decisions.cdl` declares the claim and block-summary,
+  contradiction, decision, and confirmation record schemas plus the sanitized-projection
+  and candidate-reconciliation rules; `internal/parity` drift-checks every record field
+  label against protocol.md and requires §5.3/§5.6 token coverage.
 - **§5.1 implemented (generated closed lists):** `internal/migration` deterministically
   extracts the seven prefix groups and the exhaustive finite-enum registry from
   protocol.md and renders `examples/spec/status-taxonomy.cdl` (109 enums) with a
