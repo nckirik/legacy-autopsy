@@ -937,7 +937,7 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:ed777187fb2c9f0047ea141ff4c3216b911f0a2843f02dcab3ad8ec1c9284b14"
+      "detail": "sha256:eb301ede9212a96019ed7a954f67e7b2db6c2c5797e8612a61f3eaa1fc236e72"
     },
     {
       "name": "golden-eir",

@@ -121,7 +121,7 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 26 sources |
 | drift-tests | pass | 23 tests in 23 files |
-| generated-protocol | pass | sha256:ed777187fb2c9f0047ea141ff4c3216b911f0a2843f02dcab3ad8ec1c9284b14 |
+| generated-protocol | pass | sha256:eb301ede9212a96019ed7a954f67e7b2db6c2c5797e8612a61f3eaa1fc236e72 |
 | golden-eir | pass | sha256:ed9c391cef76da15af913d6a5c0c3032f2b11ae138ca6e080d041c63c5c64855 |
 | golden-prompt | pass | sha256:119c21b56526c8f646615769ebfd762c7b1171f80c4910cc47195e21155dec05 |
 | fixture-oracle | pass | 24/24 passed |

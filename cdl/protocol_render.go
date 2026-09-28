@@ -35,7 +35,7 @@ func RenderProtocol(doc *EIRDoc) []byte {
 }
 
 func renderGlobals(b *strings.Builder, doc *EIRDoc) {
-	fmt.Fprintf(b, "# Document Declarations\n\n")
+	fmt.Fprintf(b, "## Document Declarations\n\n")
 	if len(doc.Declarations.Capabilities) > 0 {
 		fmt.Fprintf(b, "### Capabilities\n\n| Capability | Kind | Version |\n| :-- | :-- | --: |\n")
 		for _, capability := range doc.Declarations.Capabilities {

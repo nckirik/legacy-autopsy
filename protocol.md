@@ -7,7 +7,7 @@
 
 ---
 
-# Document Declarations
+## Document Declarations
 
 ### Capabilities
 
