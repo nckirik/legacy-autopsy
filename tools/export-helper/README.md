@@ -31,7 +31,7 @@ Correlations and normalized maps are navigation aids, not behavioral truth. Brid
 The helper must:
 
 - default to dry-run;
-- accept credentials only through environment variables, standard input, or operating-system credential storage-never command-line arguments;
+- accept credentials only through environment variables, standard input, or operating-system credential storage - never command-line arguments;
 - keep raw exports, temporary sensitive data, and private matching state outside the repository with restrictive permissions and best-effort cleanup;
 - perform field-aware sanitization and secret scanning rather than blind text replacement;
 - fail closed on unsupported schemas, unknown sensitive fields, unresolved high-confidence secret findings, missing lineage, mixed snapshots, or rejected operator review;

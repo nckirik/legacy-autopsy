@@ -101,7 +101,7 @@ flowchart TB
 
 ## Authority and isolation
 
-Service registry, scheduler, lease, event, browser, and `.legacy-autopsy/` project-configuration state are operational state-not semantic, evidence, or gate authority. `.legacy-autopsy/` must remain distinct from authoritative `.extracted/` records and must not contain credentials or secret values. Every service operation must carry `autopsy_id`; every filesystem operation must also bind declared repository/workspace roots and snapshot identity, reject traversal and symlink escape, and prevent cross-autopsy access.
+Service registry, scheduler, lease, event, browser, and `.legacy-autopsy/` project-configuration state are operational state - not semantic, evidence, or gate authority. `.legacy-autopsy/` must remain distinct from authoritative `.extracted/` records and must not contain credentials or secret values. Every service operation must carry `autopsy_id`; every filesystem operation must also bind declared repository/workspace roots and snapshot identity, reject traversal and symlink escape, and prevent cross-autopsy access.
 
 The service may manage many autopsies in one process, but each `.extracted/` workspace remains independently validated and transacted. Service-owned writes publish revisions through a deterministic post-commit hook. An optional filesystem watcher handles only out-of-band changes and forces re-read/revalidation, with full startup reconciliation as fallback. Atlas updates run afterward as lower-priority, regenerable representation work and emit their own readiness events. Atlas lag or failure cannot block extraction, consume semantic-executor priority, or invalidate authoritative state. Speculative executor reasoning never becomes evidence or committed graph truth.
 

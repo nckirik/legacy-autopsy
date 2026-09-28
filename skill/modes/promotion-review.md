@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Evaluate promotion locks for one bound component or cohort and request-not execute-an atomic promotion.
+Evaluate promotion locks for one bound component or cohort and request - not execute - an atomic promotion.
 
 ## Required identity bindings
 

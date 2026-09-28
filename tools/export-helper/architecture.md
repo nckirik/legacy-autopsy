@@ -167,7 +167,7 @@ It inventories nodes, pages, widgets, actions, queries, bindings, and graph edge
 
 Builds a private reverse index from normalized entity keys to the Appsmith and n8n artifacts that use them. This is the primary mechanism for discovering relevant workflows that have no exposed endpoint.
 
-The private index exists only within the operator-side trust boundary and must never be persisted under `inventory/`. The Inventory Writer may derive `inventory/manifests/entity-correlation-summary.json` only after sanitization and operator approval. That projection contains aliases, non-sensitive entity classes, relationship categories, candidate scores, and approved explanations-not the raw values used for matching.
+The private index exists only within the operator-side trust boundary and must never be persisted under `inventory/`. The Inventory Writer may derive `inventory/manifests/entity-correlation-summary.json` only after sanitization and operator approval. That projection contains aliases, non-sensitive entity classes, relationship categories, candidate scores, and approved explanations - not the raw values used for matching.
 
 ### 6.5. Workflow Graph Resolver
 
@@ -241,7 +241,7 @@ Secret-bearing fields are scanned before indexing. Matching may occur in private
 
 ### 7.4. n8n Entity Extraction
 
-The n8n indexer scans all accessible workflow definitions-not only active or webhook-triggered workflows-for:
+The n8n indexer scans all accessible workflow definitions - not only active or webhook-triggered workflows - for:
 
 - node types and trigger types;
 - workflow/sub-workflow IDs;
@@ -258,7 +258,7 @@ The index is built locally before sanitization. Only selected and approved workf
 
 ### 7.5. Private Matching Hints
 
-Some relationships cannot be inferred safely from exports-for example, an Appsmith datasource and an n8n credential may refer to the same database but use unrelated names. The operator may provide a private hints file outside the repository:
+Some relationships cannot be inferred safely from exports - for example, an Appsmith datasource and an n8n credential may refer to the same database but use unrelated names. The operator may provide a private hints file outside the repository:
 
 ```yaml
 aliases:
@@ -294,7 +294,7 @@ Suggested handling:
 - **30-59:** Record as a weak candidate; do not export without approval or another corroborating signal.
 - **Below 30:** Ignore unless explicitly requested.
 
-Multiple independent signals may combine, but scores should be capped at 100. Negative evidence-such as incompatible database engines or conflicting entity roles-should reduce the score. Candidate records must distinguish `structural-link` from `entity-correlation`; only the former may become an edge without human confirmation.
+Multiple independent signals may combine, but scores should be capped at 100. Negative evidence - such as incompatible database engines or conflicting entity roles - should reduce the score. Candidate records must distinguish `structural-link` from `entity-correlation`; only the former may become an edge without human confirmation.
 
 Each candidate record must explain its score without exposing sensitive values:
 
@@ -388,7 +388,7 @@ Publication must fail if:
 - output lineage cannot be linked to a source fingerprint;
 - the operator rejects the review.
 
-The sanitization report records categories, counts, artifact aliases, and locations-not secret values.
+The sanitization report records categories, counts, artifact aliases, and locations - not secret values.
 
 ### 11.5. Evidence Semantics Under Sanitization
 

@@ -4,7 +4,7 @@
   "generator-version": "parityreport/0.1",
   "generated-at": "2026-09-25T00:00:00Z",
   "protocol-version": "4.1.3",
-  "protocol-fingerprint": "sha256:83fdc34e836de75ce1141c2861b5a74b1dc14db377dac7122f4fed85037f2466",
+  "protocol-fingerprint": "sha256:49ee766a3aa0d20b401120dac6cbc04577a6a7494d22afa16431a065ebacb094",
   "language-version": "cdl/0.3",
   "eir-format": 3,
   "sources": [
@@ -22,7 +22,7 @@
     },
     {
       "path": "protocol/foundations.cdl",
-      "fingerprint": "sha256:743e214e97bd134c42fdb07337c80e6ab9450ab398d00374a66e88e5e0c2c578",
+      "fingerprint": "sha256:eecc53a95fe0796c938de88f6e8dde78bb9b85a86bde996bee381f263beabb6c",
       "sections": [
         "0.1",
         "0.2",
@@ -75,7 +75,7 @@
     },
     {
       "path": "protocol/semantic-payload-identity.cdl",
-      "fingerprint": "sha256:d78df3368de3d40ebadbaa4cd4102e60ed5f7f7c6d8a7afdea17add49e640290",
+      "fingerprint": "sha256:76fabcee6b8afcf3c37907f03c65aad9929badd62c8a3a27420c41a64f6f99d9",
       "sections": [
         "4.1.1"
       ],
@@ -91,7 +91,7 @@
     },
     {
       "path": "protocol/inventory-and-frontier.cdl",
-      "fingerprint": "sha256:7e3d5bc018d0c6e839c4ed4abc6c7c3b04af4e9f479dc2c355afdf6e6361c852",
+      "fingerprint": "sha256:174b2b15ca2df2604c311c78d85a70ed69055f2e8a77c2e8b2bb512fb4813754",
       "sections": [
         "4.2",
         "4.3",
@@ -103,7 +103,7 @@
     },
     {
       "path": "protocol/status-taxonomy.cdl",
-      "fingerprint": "sha256:837073c49ea714eee7089266521f7311da1e77116d0f02bff19dee26bf230696",
+      "fingerprint": "sha256:f57baa323d813e24e2886f322967736e28e42f8e2817294b0cc50f7b7fd1cce3",
       "sections": [
         "5.1"
       ],
@@ -213,7 +213,7 @@
     },
     {
       "path": "protocol/coverage-and-exits.cdl",
-      "fingerprint": "sha256:42d32582c59b576d1bfebc03265173039d19ef83e7572b1ef043b2cad9f89f8d",
+      "fingerprint": "sha256:72cb2b377c1fc6f743c0371db785876b0ad750bbe764a43c79bfcbe470a3b2aa",
       "sections": [
         "10.1",
         "10.2",
@@ -924,17 +924,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:9cb45eed43bdb848524b7b5f46e9973cfcf8a3c20df6b1918f2d2b01e1dd49e7"
+      "detail": "sha256:9e4b001a848f31876c8720dd809093553df95ba5adcf58ff827d158b25c18f57"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:92d1e4e469837285ac6503bef51ae777ff1cf1b524a487ae0d4629d014ad8be9"
+      "detail": "sha256:7543077b0c82cebfa1a354870a9b0b18b9d7cb54dd9073e89d9c8ac46b54e7ce"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:59d808dd186978ce848e2b5bbee9438a0e8df51b266da9bdd592e105b323db92"
+      "detail": "sha256:8723695a2d17bd2826b2e2be67fd25595e8f308fac23be51ddefd9dc3166e061"
     },
     {
       "name": "fixture-oracle",

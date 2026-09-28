@@ -1,6 +1,6 @@
 {
   "protocol": "canonical-deconstruction/4.1.3",
-  "source-fingerprint": "sha256:83fdc34e836de75ce1141c2861b5a74b1dc14db377dac7122f4fed85037f2466",
+  "source-fingerprint": "sha256:49ee766a3aa0d20b401120dac6cbc04577a6a7494d22afa16431a065ebacb094",
   "rubric": "Authored section classification in the CDL vocabulary. driver: MACHINE = predominantly deterministic rules/algorithms/registries/arithmetic; AGENT = predominantly semantic judgement/prose; MIXED = both load-bearing; CONTAINER = level-1 Part with subsections. tags: gate, transition, artifact, capability, reuse, contract (structurally checkable AGENT outputs), human, policy. Source fingerprint changes invalidate the classification.",
   "entries": [
     {

@@ -2,7 +2,7 @@
 
 Legacy Autopsy is a **local-first reference/tooling implementation** for evidence-backed deconstruction and reconstruction of legacy systems. It helps humans and coding agents build a persistent, reviewable model of a system instead of relying on one-shot summaries or conversation memory.
 
-The project is built around the CDL protocol sources under [`protocol/`](protocol/) and their generated standalone edition [`protocol.md`](protocol.md), which can be used directly with any capable coding agent. Legacy Autopsy adds orchestration, deterministic validation, persistent workspace management, and-over time-an interactive workbench.
+The project is built around the CDL protocol sources under [`protocol/`](protocol/) and their generated standalone edition [`protocol.md`](protocol.md), which can be used directly with any capable coding agent. Legacy Autopsy adds orchestration, deterministic validation, persistent workspace management, and - over time - an interactive workbench.
 
 > **Project status - M0 foundation + Spec track crown (S4)**
 >
@@ -25,7 +25,7 @@ All three paths use the same standalone protocol. The skill and UI add reliabili
 ### Try it today with your own coding agent
 
 > [!IMPORTANT]
-> This is a manual, agent-driven protocol run-not Legacy Autopsy-managed execution or proof of Protocol v4 conformance.
+> This is a manual, agent-driven protocol run - not Legacy Autopsy-managed execution or proof of Protocol v4 conformance.
 
 Work on a clean branch in an approved, non-production copy of the legacy repository. Copy the generated standalone edition into that repository's root:
 

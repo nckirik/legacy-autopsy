@@ -185,7 +185,7 @@ SECTION exit-b
 TITLE "Exit B - Stagnation"
 
 GOAL
-If a complete named iteration has zero valid mutations-no new atomic source/component/claim/frontier records, no ticket transition, no acquisition/reconciliation update, and no justified coverage change-the pipeline halts as stagnant and reports remaining state. Cosmetic edits do not count.
+If a complete named iteration has zero valid mutations - no new atomic source/component/claim/frontier records, no ticket transition, no acquisition/reconciliation update, and no justified coverage change - the pipeline halts as stagnant and reports remaining state. Cosmetic edits do not count.
 END
 
 RULE exit-b-stagnation

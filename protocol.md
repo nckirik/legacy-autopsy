@@ -3,7 +3,7 @@
 **Version:** 4.1.3 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
-**Generated-From:** cdl/0.3.1 (sha256:1e1c95ef81222831a2d66215c99cb91c9bcceb54040771491a4f19ebcee71088)
+**Generated-From:** cdl/0.3.1 (sha256:a72619bb0e5d9cc838e84514ecfcff8e6445362af2bd357f3c2e031c4869b4d0)
 **Language:** cdl/0.3 (eir-format 3)
 **Authority:** generated render of the canonical CDL sources; do not edit.
 
@@ -126,7 +126,7 @@ When followed completely, this protocol guarantees that:
 4. active, conditional, shadow, disabled, retired, and unknown capabilities remain distinct across environments and snapshots;
 5. serialized exports are acquired, exploded, reconciled, and traced at logical-unit level without exposing raw secrets;
 6. personas and POVs retain strict ownership and isolation during discovery;
-7. cross-layer ambiguity is resolved through a finite-state ticket lifecycle, runtime probes, or an explicit human hatch-never by guessing;
+7. cross-layer ambiguity is resolved through a finite-state ticket lifecycle, runtime probes, or an explicit human hatch - never by guessing;
 8. synthesis artifacts are structured semantic projections of closed forensic and assurance records, with derivation provenance and targeted stale propagation;
 9. a separate human reconstruction handbook is navigable without using dense identifier catalogs as its primary interface;
 10. reconstruction may treat the delivered bundle as its sole input only after the signed outer bundle manifest authoritatively attests `EXIT-E-STATUS: Passed` under the strict non-cyclic Exit E sequence.
@@ -581,7 +581,7 @@ Every synthesis block, persona profile, and semantic handbook section has a cano
 
 The semantic-content hash and semantic record version MUST exclude the complete certification envelope, including B/handbook status, CNF reference, confirmation-envelope version, approval/signature identities and timestamps, candidate report or candidate payload manifest references explicitly permitted by the envelope schema, and envelope digests. A certification envelope MUST NOT reference the later Exit E Content-Readiness Report, scope certificate, outer bundle manifest, or any other artifact that did not exist when the envelope was attached. Attaching a confirmation or changing `[B-POPULATED]` to `[B-CONFIRMED]` therefore changes only the envelope and MUST NOT change the semantic record version or semantic-content fingerprint. Any edit to semantic prose, diagrams, examples, claims, derivation references, semantic cross-references, PRF identity, or HBK identity increments `SEMANTIC-RECORD-VERSION`, recomputes `SEMANTIC-CONTENT-FINGERPRINT`, invalidates the old envelope, and triggers targeted stale propagation.
 
-A `CNF` confirms exact typed record IDs-including `PRF` and `HBK`-`SEMANTIC-RECORD-VERSION` values, and `SEMANTIC-CONTENT-FINGERPRINT` values, never mutable whole-file bytes or status-bearing envelopes. Validators MUST parse the payload/envelope boundary from the Markdown AST, recompute payload hashes, and reject envelope fields inside the semantic payload or semantic fields inside the envelope.
+A `CNF` confirms exact typed record IDs - including `PRF` and `HBK` - `SEMANTIC-RECORD-VERSION` values, and `SEMANTIC-CONTENT-FINGERPRINT` values, never mutable whole-file bytes or status-bearing envelopes. Validators MUST parse the payload/envelope boundary from the Markdown AST, recompute payload hashes, and reject envelope fields inside the semantic payload or semantic fields inside the envelope.
 
 ## 4.1.2. Normative canonical hash profile and packaging artifacts
 
@@ -647,7 +647,7 @@ The payload fingerprint covers exactly the AST content between the artifact-payl
 
 Each promotable forensic record and each independently meaningful synthesis record MUST describe exactly one independently evidenced unit: one function, method, route, query, job, workflow node, graph edge, action, binding, DB routine, constraint, widget behavior, interface operation, architecture module/bounded context, or equivalent.
 
-A **purely navigational grouping container**-for example a family index, class overview, workflow overview, capability index, module index, or use-case index-MUST be marked `RECORD-KIND: GROUPING-CONTAINER`. It has only a title, navigation metadata, and an explicit member-ID list; it MUST NOT carry independent semantic claims, `STAGING-STATUS`, `COVERAGE-STATUS`, blueprint/handbook status, `BLOCK-CONFIDENCE-RANK`, `BLOCK-EVIDENCE-PROFILE`, semantic record version/fingerprint, or confirmation, and MUST NOT inherit any such value from children.
+A **purely navigational grouping container** - for example a family index, class overview, workflow overview, capability index, module index, or use-case index - MUST be marked `RECORD-KIND: GROUPING-CONTAINER`. It has only a title, navigation metadata, and an explicit member-ID list; it MUST NOT carry independent semantic claims, `STAGING-STATUS`, `COVERAGE-STATUS`, blueprint/handbook status, `BLOCK-CONFIDENCE-RANK`, `BLOCK-EVIDENCE-PROFILE`, semantic record version/fingerprint, or confirmation, and MUST NOT inherit any such value from children.
 
 A module or bounded context that states responsibility, public interfaces, encapsulation boundary, dependencies, invariants, or data passed is not a grouping container. It is an atomic semantic `MOD` block governed by the common synthesis header, material CLMs, reciprocal references, coverage, semantic version/fingerprint, and confirmation. Module indexes MAY remain purely navigational grouping containers. A `CAP` is the governed capability container defined in §2.6 and §3.2: it may carry its own claim-backed governance metadata, but it remains non-promotable and never inherits member evidence or coverage.
 
@@ -1543,7 +1543,7 @@ Exit A writes a deterministic report to `22-GATE-REPORTS.md` containing pass/fai
 
 ## 10.4. Exit B - Stagnation
 
-If a complete named iteration has zero valid mutations-no new atomic source/component/claim/frontier records, no ticket transition, no acquisition/reconciliation update, and no justified coverage change-the pipeline halts as stagnant and reports remaining state. Cosmetic edits do not count.
+If a complete named iteration has zero valid mutations - no new atomic source/component/claim/frontier records, no ticket transition, no acquisition/reconciliation update, and no justified coverage change - the pipeline halts as stagnant and reports remaining state. Cosmetic edits do not count.
 
 ## 10.5. Exit C - Oscillation
 

@@ -214,7 +214,7 @@
     },
     {
       "path": "protocol/coverage-and-exits.cdl",
-      "source-fingerprint": "sha256:8af1f9cc34708caae02c48d637ec2efb76ab6de58ef4d894cbc41bcdd9635b6f",
+      "source-fingerprint": "sha256:b02f0b8ce6ad8d9a18d5bd7e6048c8549753e32871e77138791deb7bd020c1b2",
       "ids": [
         {
           "id": "COVERAGE-STATUS",
@@ -639,7 +639,7 @@
     },
     {
       "path": "protocol/foundations.cdl",
-      "source-fingerprint": "sha256:215739ccb3397e65a60bdb570760d571f2daecaa0cfd75d6be1d15721eccd20e",
+      "source-fingerprint": "sha256:48348621800eefaa122b7c9705fa780fd6ddb454ec484ab8a024d464b24b4875",
       "ids": [
         {
           "id": "AUTHORITY-CLASS",
@@ -921,7 +921,7 @@
     },
     {
       "path": "protocol/inventory-and-frontier.cdl",
-      "source-fingerprint": "sha256:542b01488ccff979ad859c86b9484b1fa5c1af8097e0b68bc6fa5c53d61c0dd2",
+      "source-fingerprint": "sha256:bbad793bcceb1e9144f607c9446bae46884a9d74f62ffbe326b98a9b0b191fe3",
       "ids": [
         {
           "id": "COVERAGE-DISPOSITION",
@@ -1613,7 +1613,7 @@
     },
     {
       "path": "protocol/semantic-payload-identity.cdl",
-      "source-fingerprint": "sha256:97533aa310a1f9640ef5ad17d88bd34e53f8b1768e09b4bfd314a2e057496a79",
+      "source-fingerprint": "sha256:9bb77f5488fc9c77aff8a5b420e5940a2765e22174ec1e49da3dd1924255c98b",
       "ids": [
         {
           "id": "certification-envelope",
@@ -1654,7 +1654,7 @@
     },
     {
       "path": "protocol/status-taxonomy.cdl",
-      "source-fingerprint": "sha256:4a808e2b4ff67a2401908dd1b333303251937e4fd4267c6e774add8f8cff3225",
+      "source-fingerprint": "sha256:64d5bf4c77192dcb9a72a48a53e012e4bd3479f5bfdd4741a7fc3064951fb15a",
       "ids": [
         {
           "id": "PREFIX-ACQUISITION",

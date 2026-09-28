@@ -107,7 +107,7 @@ When followed completely, this protocol guarantees that:
 4. active, conditional, shadow, disabled, retired, and unknown capabilities remain distinct across environments and snapshots;
 5. serialized exports are acquired, exploded, reconciled, and traced at logical-unit level without exposing raw secrets;
 6. personas and POVs retain strict ownership and isolation during discovery;
-7. cross-layer ambiguity is resolved through a finite-state ticket lifecycle, runtime probes, or an explicit human hatch-never by guessing;
+7. cross-layer ambiguity is resolved through a finite-state ticket lifecycle, runtime probes, or an explicit human hatch - never by guessing;
 8. synthesis artifacts are structured semantic projections of closed forensic and assurance records, with derivation provenance and targeted stale propagation;
 9. a separate human reconstruction handbook is navigable without using dense identifier catalogs as its primary interface;
 10. reconstruction may treat the delivered bundle as its sole input only after the signed outer bundle manifest authoritatively attests `EXIT-E-STATUS: Passed` under the strict non-cyclic Exit E sequence.
