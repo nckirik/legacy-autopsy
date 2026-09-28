@@ -1,16 +1,24 @@
 # Canonical Deconstruction Language (CDL) — frozen source-language contract
 
-Not normative relative to [`protocol.md`](../protocol.md). CDL is the source language of
-the Canonical Deconstruction Protocol and becomes the sole normative protocol source
-only after a parity report is accepted (see BOOTSTRAP). Until then `protocol.md` remains
-authoritative, and Markdown, validator, IR, and reference views are generated
+The CDL sources under [`protocol/`](../protocol/) are the normative source language of
+the Canonical Deconstruction Protocol after the accepted crown parity report;
+[`protocol.md`](../protocol.md) is the generated Markdown edition, and
+[`protocol/legacy/protocol-4.1.3.md`](../protocol/legacy/protocol-4.1.3.md) is the
+frozen bootstrap parity oracle. Validator, IR, and reference views are generated
 projections that are never hand-edited.
 
-`LANGUAGE: cdl/0.2` — the pilot surface is frozen and has since received one versioned
-addition: `BASE-READS` and `MODE` declarations (see below), which compile into EIR
-`modes[]`. Every later surface change requires a language-version bump, fixtures, and a
-documented EIR-format change; pilot findings may correct semantics but not add surface
-silently. Pre-freeze design drafts are not retained.
+`LANGUAGE: cdl/0.3` — the pilot surface is frozen and has received one versioned
+addition plus one structural revision:
+
+- 0.2: `BASE-READS` and `MODE` declarations (see below), which compile into EIR
+  `modes[]`;
+- 0.3: ordered `PART <id> "<title>"` declarations, optional
+  `SUBSECTION OF <section-id>` nesting, and removal of the `NUMBER` directive; section
+  and part numbers are rendering artifacts derived from declaration order.
+
+Every later surface change requires a language-version bump, fixtures, and a documented
+EIR-format change; findings may correct semantics but not add surface silently.
+Pre-freeze design drafts are not retained.
 
 Design decisions incorporated before freeze:
 
@@ -58,7 +66,7 @@ any normative rule.
 ================================================================================
 
 BOOTSTRAP
-  SOURCE-OF-TRUTH protocol.md@4.1.3 UNTIL parity-report accepted-by-human
+  SOURCE-OF-TRUTH protocol/ CDL sources (protocol.md is a generated edition)
   PARITY
     machine-generated parity-report OVER hashes-of
       source protocol.md

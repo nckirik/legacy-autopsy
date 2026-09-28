@@ -118,9 +118,9 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 27 sources |
 | drift-tests | pass | 23 tests in 23 files |
-| generated-protocol | pass | sha256:cbe7f2a768b635bbf410498e4e2e8dce6c31e91b26e2a3c76c207cf15e42b3e8 |
-| golden-eir | pass | sha256:35db4396e0dfcfbf653041bc2bb88d221af86354f5981d542973e9a092fe58ac |
-| golden-prompt | pass | sha256:469688636148b488fce03232c36ab7c64439fca83db2b43b7a339b7845c63db5 |
+| generated-protocol | pass | sha256:2ac887e7f5e122e4572c592d5a2b8a0868bf7465639ed19251e0c26087a74cb2 |
+| golden-eir | pass | sha256:0c0654af94fc32250368b388925f1c0f9f18807adf246e517c3aab3335f667e9 |
+| golden-prompt | pass | sha256:66c7ab5cf48197f7d071e38ce5d0fc853d00feffa4ea943fdbb445beae314bcf |
 | fixture-oracle | pass | 24/24 passed |
 | identity-ledger | pass | 536 identities across 27 sources |
 
@@ -142,7 +142,7 @@
 | protocol/semantic-payload-identity.cdl | 1 | 7 | sha256:07747c57e064fc03ec144bec16d87a8be378b613990e2711caa7e0742e2579d9 |
 | protocol/canonical-hash-profile.cdl | 1 | 13 | sha256:a5712ff3df7c69210cd914ddb769c75ce746d128a5aadbaa59da5becf487f200 |
 | protocol/inventory-and-frontier.cdl | 5 | 23 | sha256:c78e877ce0b1e919dc1eabe424f9c3df2ebac1df19a26af02ce1fbf541b05437 |
-| protocol/status-taxonomy.cdl | 1 | 112 | sha256:a4f149fcb7777b4474ca0181fc16c21c467e7d035de117aa2d9f529bea0611b9 |
+| protocol/status-taxonomy.cdl | 1 | 112 | sha256:74c45eb3fbc87f14fc049f8f3e662d2f309a93616a292e60f19968d9dc74aa71 |
 | protocol/evidence-and-decisions.cdl | 6 | 13 | sha256:c5a90679f6dff72b9c5c906f13065ceb7faae8802c4f13cffbb29faa62b75b2e |
 | protocol/extraction-evolution.cdl | 5 | 15 | sha256:3ed11f0af3a85ac3e31d19b339376c3ad4ad4ce6d66cd5246a8449e15aeb239b |
 | protocol/acquisition-trust.cdl | 4 | 10 | sha256:3df535ce5dc7213a68c728f99750e82fd9a4ad4add1408057acc663c7fc004a4 |

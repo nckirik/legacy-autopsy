@@ -1654,7 +1654,7 @@
     },
     {
       "path": "protocol/status-taxonomy.cdl",
-      "source-fingerprint": "sha256:d03f71aa4e2f78d745bf1dc7eb5440fe1cc601c012d7e569876739e094a3bb74",
+      "source-fingerprint": "sha256:bb081f198241300227a710b204732a049f6de2e54f1f82f1f0c94ce726731757",
       "ids": [
         {
           "id": "PREFIX-ACQUISITION",

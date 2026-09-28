@@ -4,7 +4,7 @@
 
 **Status:** draft for the §7.7 pilot.
 **Depends on:** [`cdl.md`](cdl.md) (frozen source-language contract), [`eir.md`](eir.md) (interchange), [`runtime-architecture.md`](runtime-architecture.md) (components).
-**Authority:** `protocol.md@4.1.3` remains the sole normative authority until a parity report is accepted. This document defines what it means to execute the frozen language; it must not contradict CDL.
+**Authority:** the CDL sources under [`protocol/`](../protocol/) are normative. This document defines what it means to execute the frozen language; it must not contradict CDL.
 
 ## 1. Two layers: VM semantics versus harness policy
 

@@ -1,6 +1,6 @@
 # Local autopsy runtime and workbench
 
-> Non-authoritative target design for one reference/tooling implementation. [`protocol.md`](../protocol.md) is a standalone, implementation-independent specification and remains the sole normative authority. None of the Legacy Autopsy service, scheduler, executor adapters, Atlas, browser, or CLI behavior described here is required to execute the protocol or implemented in M0 unless stated otherwise.
+> Non-authoritative target design for one reference/tooling implementation. The CDL sources under [`protocol/`](../protocol/) are the normative protocol; [`protocol.md`](../protocol.md) is their generated standalone edition. None of the Legacy Autopsy service, scheduler, executor adapters, Atlas, browser, or CLI behavior described here is required to execute the protocol or implemented in M0 unless stated otherwise.
 
 ## Product boundary
 
@@ -16,7 +16,7 @@ Execution channels arrive in a strict user-facing order: first a generic skill t
 
 | Layer                                                   | Role                                                                                                 | Authority                                         |
 | :------------------------------------------------------ | :--------------------------------------------------------------------------------------------------- | :------------------------------------------------ |
-| `protocol.md`                                           | Normative rules, modes, invariants, records, and gates                                               | Sole normative authority                          |
+| `protocol/` CDL sources                                 | Normative rules, modes, invariants, records, and gates                                               | Sole normative source; `protocol.md` generated    |
 | Committed `.extracted/` records                         | Persistent forensic, assurance, synthesis, and handbook state within their protocol-defined concerns | Authoritative protocol state                      |
 | Source snapshots and approved projections               | Evidence inputs cited by records                                                                     | Evidence authority as defined by the protocol     |
 | Service registry, scheduler, leases, and event delivery | Operational coordination                                                                             | Not semantic or gate authority                    |

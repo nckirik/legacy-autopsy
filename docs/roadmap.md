@@ -1,6 +1,6 @@
 # Roadmap
 
-> Non-authoritative planning projection. Milestone completion never overrides [`protocol.md`](../protocol.md), and it does not imply Protocol v4 conformance unless the required Part 17 fixtures pass. The source-language contract is frozen in [`cdl.md`](cdl.md); execution contracts are in [`eir.md`](eir.md), [`execution-semantics.md`](execution-semantics.md), and [`runtime-architecture.md`](runtime-architecture.md).
+> Non-authoritative planning projection. Milestone completion never overrides the normative CDL sources under [`protocol/`](../protocol/), and it does not imply Protocol v4 conformance unless the required Part 17 fixtures pass. The source-language contract is frozen in [`cdl.md`](cdl.md); execution contracts are in [`eir.md`](eir.md), [`execution-semantics.md`](execution-semantics.md), and [`runtime-architecture.md`](runtime-architecture.md).
 
 ## Two tracks
 

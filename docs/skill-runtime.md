@@ -50,7 +50,7 @@ For each claimed task, the combined service/executor flow must:
 ```text
 conversation memory = disposable
 .extracted/ = persistent execution state
-protocol.md = normative execution law
+protocol/ CDL sources = normative execution law (protocol.md generated)
 service scheduling/UI state = operational, not semantic authority
 ```
 

@@ -4,7 +4,7 @@
 
 **Status:** draft for the §7.7 pilot.
 **Depends on:** [`cdl.md`](cdl.md) (frozen language), [`execution-semantics.md`](execution-semantics.md) (what execution means).
-**Authority:** `protocol.md@4.1.3` remains sole normative authority until parity.
+**Authority:** the CDL sources under [`protocol/`](../protocol/) are normative; [`protocol.md`](../protocol.md) is a generated edition and [`protocol/legacy/protocol-4.1.3.md`](../protocol/legacy/protocol-4.1.3.md) is the frozen parity oracle.
 
 ## 1. Purpose
 

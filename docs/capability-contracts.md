@@ -1,6 +1,6 @@
 # Deterministic capability contracts
 
-> Non-authoritative design contract. Below the frozen CDL surface; adds no language surface. `protocol.md` remains the sole normative authority until a parity report is accepted.
+> Non-authoritative design contract. Below the frozen CDL surface; adds no language surface. The CDL sources under [`protocol/`](../protocol/) are normative; `protocol.md` is their generated edition.
 
 **Status:** S2 deliverable (contracts defined; implementation only where noted).
 **Related:** [`runtime-architecture.md`](runtime-architecture.md) §4 (taxonomy),

@@ -103,7 +103,7 @@
     },
     {
       "path": "protocol/status-taxonomy.cdl",
-      "fingerprint": "sha256:a4f149fcb7777b4474ca0181fc16c21c467e7d035de117aa2d9f529bea0611b9",
+      "fingerprint": "sha256:74c45eb3fbc87f14fc049f8f3e662d2f309a93616a292e60f19968d9dc74aa71",
       "sections": [
         "5.1"
       ],
@@ -924,17 +924,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:cbe7f2a768b635bbf410498e4e2e8dce6c31e91b26e2a3c76c207cf15e42b3e8"
+      "detail": "sha256:2ac887e7f5e122e4572c592d5a2b8a0868bf7465639ed19251e0c26087a74cb2"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:35db4396e0dfcfbf653041bc2bb88d221af86354f5981d542973e9a092fe58ac"
+      "detail": "sha256:0c0654af94fc32250368b388925f1c0f9f18807adf246e517c3aab3335f667e9"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:469688636148b488fce03232c36ab7c64439fca83db2b43b7a339b7845c63db5"
+      "detail": "sha256:66c7ab5cf48197f7d071e38ce5d0fc853d00feffa4ea943fdbb445beae314bcf"
     },
     {
       "name": "fixture-oracle",

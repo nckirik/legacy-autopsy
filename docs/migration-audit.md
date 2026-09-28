@@ -1,6 +1,6 @@
 # Repository migration and disposition audit
 
-> Non-authoritative implementation planning. Possibly provisional and reviewable. [`protocol.md`](../protocol.md) remains the sole normative authority until a parity report is accepted; [`cdl.md`](cdl.md) is the frozen language contract.
+> Non-authoritative implementation planning. Possibly provisional and reviewable. The CDL sources under [`protocol/`](../protocol/) are normative after the accepted crown parity report; [`cdl.md`](cdl.md) is the frozen language contract.
 
 **Status:** proposal for review before the §7.7 pilot.
 **Scope:** every committed code, fixture, skill, doc, and tool artifact, plus the untracked session archive.
@@ -46,7 +46,7 @@
 
 | Doc                                                                          | Status                                     | Disposition                                                                               |
 | ---------------------------------------------------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------------------- |
-| `protocol.md`                                                                | sole normative authority                   | Keep frozen except demonstrated defects; generated later from `protocol.cdl`              |
+| `protocol/legacy/protocol-4.1.3.md`                                          | frozen parity oracle                       | Read-only except demonstrated protocol defects; generated Markdown is `protocol.md`       |
 | `docs/cdl.md`                                                                | frozen source-language contract            | Canonical; change only via errata or a new version                                        |
 | `docs/execution-semantics.md`, `docs/eir.md`, `docs/runtime-architecture.md` | design contracts (below language)          | Maintain through pilot findings                                                           |
 | `docs/spec-language-substrate-v0/v1/v2.md`                                   | superseded drafts                          | Deleted; [`cdl.md`](cdl.md) is the frozen contract                                        |

@@ -1,6 +1,6 @@
 # Architecture
 
-> Non-authoritative implementation guide. [`protocol.md`](../protocol.md) is a standalone, implementation-independent specification, is normative, and resolves every conflict. Legacy Autopsy is one reference/tooling implementation; its service, CLI, UI, Atlas, adapters, and runtime architecture are optional implementation features rather than protocol prerequisites.
+> Non-authoritative implementation guide. The CDL sources under [`protocol/`](../protocol/) are the normative, implementation-independent specification and resolve every conflict; [`protocol.md`](../protocol.md) is their generated standalone edition. Legacy Autopsy is one reference/tooling implementation; its service, CLI, UI, Atlas, adapters, and runtime architecture are optional implementation features rather than protocol prerequisites.
 
 ## Product direction
 
