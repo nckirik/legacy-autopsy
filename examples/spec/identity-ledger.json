@@ -582,6 +582,162 @@
       ]
     },
     {
+      "path": "examples/spec/foundations.cdl",
+      "source-fingerprint": "sha256:861a3c3bc9f73d6890b357189c93b5da93ae05ecd09c2e6afe4a10122a5eb6e4",
+      "ids": [
+        {
+          "id": "AUTHORITY-CLASS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "FLOW-STAGE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "NORMATIVE-KEYWORD",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "PLANE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "PREDICATE-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "assurance-plane",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "assurance-plane-sources",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "assurance-plane-writers",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "authority-classes",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "conceptual-flow",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "conceptual-flow-stages",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "forensic-plane",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "forensic-plane-sources",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "forensic-plane-writers",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "guarantees",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "handbook-plane",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "handbook-plane-sources",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "handbook-plane-writers",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "non-authoritative-sidecars",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "non-guarantees",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "normative-keywords",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "normative-language",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "predicate-classification",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "protocol-guarantees",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "protocol-non-guarantees",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "sidecar-derivatives",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "source-units-and-claims",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "synthesis-plane",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "synthesis-plane-sources",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "synthesis-plane-writers",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/globals.cdl",
       "source-fingerprint": "sha256:b3d8abf123bc97cb91360ae7e35744b6e50ff95b49532ac2a3eeec043f8fdc1c",
       "ids": []
@@ -963,6 +1119,92 @@
       "path": "examples/spec/invocation-modes.cdl",
       "source-fingerprint": "sha256:5aa6c7b5a1ee503c9a626ea75309fc6483e52533960d49a6021ccdf40ed9d01b",
       "ids": []
+    },
+    {
+      "path": "examples/spec/migration-and-conformance.cdl",
+      "source-fingerprint": "sha256:2c7c8c29ebd70b0d3fc9b542e6e1223e47e6fae715f3a2472297a48aa72b443b",
+      "ids": [
+        {
+          "id": "ARTIFACT-OWNERSHIP-ROW",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CONFORMANCE-CASE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "artifact-ownership",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "compatibility-projection",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "conformance-cases",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "conforming-capabilities",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "conforming-implementation-capabilities",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "corpus-acceptance",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "corpus-acceptance-requirements",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "migration-guarantees",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "migration-order",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "migration-preservation",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "normative-conformance-cases",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "required-migration-order",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "v3-compatibility",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "v3-supersession",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
     },
     {
       "path": "examples/spec/normalized-maps.cdl",

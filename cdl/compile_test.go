@@ -30,11 +30,13 @@ const (
 	acquisitionTrustPath  = "examples/spec/acquisition-trust.cdl"
 	traceabilityPath      = "examples/spec/traceability.cdl"
 	packagingPath         = "examples/spec/packaging.cdl"
+	foundationsPath       = "examples/spec/foundations.cdl"
 	personasPovsPath      = "examples/spec/personas-povs.cdl"
 	inventoryFrontierPath = "examples/spec/inventory-and-frontier.cdl"
 	extractionEvoPath     = "examples/spec/extraction-evolution.cdl"
 	handbookDecisionsPath = "examples/spec/handbook-and-decisions.cdl"
 	synthesisCatalogsPath = "examples/spec/synthesis-catalogs.cdl"
+	migrationConfPath     = "examples/spec/migration-and-conformance.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -907,6 +909,60 @@ func TestSynthesisCatalogsCompile(t *testing.T) {
 		"CONFIG-MEDIUM": 5, "NFR-ATTRIBUTE": 8, "SECURITY-CATEGORY": 10, "RISK-LEVEL": 4,
 	}
 	for id, size := range wantEnums {
+		if enumCounts[id] != size {
+			t.Fatalf("%s has %d values, want %d", id, enumCounts[id], size)
+		}
+	}
+}
+
+func TestMigrationAndConformanceCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, migrationConfPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"17.1", "17.2", "17.3", "19.1", "19.2", "19.3", "20"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	if counts["ARTIFACT-OWNERSHIP-ROW"] != 5 {
+		t.Fatalf("ARTIFACT-OWNERSHIP-ROW has %d fields, want 5", counts["ARTIFACT-OWNERSHIP-ROW"])
+	}
+	for _, e := range res.EIR.Declarations.Enums {
+		if e.ID == "CONFORMANCE-CASE" && len(e.Values) != 14 {
+			t.Fatalf("CONFORMANCE-CASE has %d values, want 14", len(e.Values))
+		}
+	}
+}
+
+func TestFoundationsCompile(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, foundationsPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"0.1", "0.2", "0.3", "0.4", "1.1", "1.2", "1.3", "1.4", "1.5"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+	enumCounts := map[string]int{}
+	for _, e := range res.EIR.Declarations.Enums {
+		enumCounts[e.ID] = len(e.Values)
+	}
+	want := map[string]int{
+		"NORMATIVE-KEYWORD": 6,
+		"AUTHORITY-CLASS":   3,
+		"PREDICATE-KIND":    3,
+		"FLOW-STAGE":        14,
+		"PLANE":             4,
+	}
+	for id, size := range want {
 		if enumCounts[id] != size {
 			t.Fatalf("%s has %d values, want %d", id, enumCounts[id], size)
 		}

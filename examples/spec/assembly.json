@@ -1,6 +1,7 @@
 {
   "sources": [
     "examples/spec/globals.cdl",
+    "examples/spec/foundations.cdl",
     "examples/spec/personas-povs.cdl",
     "examples/spec/preflight-registry.cdl",
     "examples/spec/typed-id.cdl",
@@ -23,6 +24,7 @@
     "examples/spec/synthesis-catalogs.cdl",
     "examples/spec/traceability.cdl",
     "examples/spec/handbook-and-decisions.cdl",
-    "examples/spec/packaging.cdl"
+    "examples/spec/packaging.cdl",
+    "examples/spec/migration-and-conformance.cdl"
   ]
 }
