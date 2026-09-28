@@ -3,10 +3,10 @@
 package identity
 
 import (
-	"crypto/sha256"
 	"fmt"
-	"path"
 	"strings"
+
+	"github.com/nckirik/legacy-autopsy/internal/capabilities"
 )
 
 var allowedTypes = set("CMP", "CLM", "ER", "REL", "BR", "UC", "IF", "DEP", "CFG", "SCHED", "NFR", "SEC", "SM", "DR", "CAP", "PRV", "FLT", "MOD", "INV", "AUTH", "STATE", "DEC", "CON", "FRT", "SWP", "CLU", "SHR", "DSC", "EXP", "GAP", "CNF")
@@ -58,37 +58,18 @@ func Generate(recordType, sourceKind, namespace, ownerCoordinate, discriminator 
 		return Result{}, fmt.Errorf("canonical-key components must not contain the delimiter '|'")
 	}
 	canonicalKey := strings.Join([]string{keyType, namespace, ownerCoordinate, discriminator}, "|")
-	sum := sha256.Sum256([]byte(canonicalKey))
-	hash := strings.ToUpper(fmt.Sprintf("%x", sum))[:12]
-	return Result{ID: keyType + "-" + hash, CanonicalKey: canonicalKey}, nil
+	id, err := capabilities.TypedID(keyType, namespace, ownerCoordinate, discriminator)
+	if err != nil {
+		return Result{}, err
+	}
+	return Result{ID: id, CanonicalKey: canonicalKey}, nil
 }
 
 func normalizeCoordinate(value string) string {
 	return strings.Join(strings.Fields(strings.TrimSpace(value)), " ")
 }
 
+// NormalizeRelativePath delegates to the declared path.normalize capability.
 func NormalizeRelativePath(value string) (string, error) {
-	value = strings.ReplaceAll(strings.TrimSpace(value), "\\", "/")
-	if value == "" {
-		return "", fmt.Errorf("relative path is empty")
-	}
-	if strings.HasPrefix(value, "/") || (len(value) >= 2 && value[1] == ':') {
-		return "", fmt.Errorf("path must be relative: %q", value)
-	}
-	parts := strings.Split(value, "/")
-	cleaned := make([]string, 0, len(parts))
-	for _, part := range parts {
-		switch part {
-		case "", ".":
-			continue
-		case "..":
-			return "", fmt.Errorf("path traversal is forbidden: %q", value)
-		default:
-			cleaned = append(cleaned, part)
-		}
-	}
-	if len(cleaned) == 0 {
-		return "", fmt.Errorf("relative path resolves to root")
-	}
-	return path.Join(cleaned...), nil
+	return capabilities.NormalizeRelativePath(value)
 }

@@ -316,13 +316,15 @@ Depends only on the language toolchain (`cdl`), never on Legacy Autopsy runtime 
 
 Identified after crown; scheduled with the runtime milestones that own them:
 
-- validated EIR loading with hash/version verification (fail closed on unknown
-  `eir-format`, mismatched fingerprint, or missing declarations);
 - deterministic capability registry with explicit availability and version negotiation;
 - AGENT evidence/provenance contract validation before MACHINE state changes;
 - canonical registry iteration semantics and ordering guarantees;
-- strict canonical-number validation (derived numbering must be recomputed, not read);
 - remaining context-assembly leakage review for the runtime host.
+
+Done: validated EIR loading with hash/version verification and strict derived-number
+validation are implemented in `cdl.LoadEIR` (fail closed on unknown format/protocol,
+unknown fields, trailing content, hash mismatch, duplicate identities, missing prose,
+and numbering gaps).
 
 ## Harness track
 
@@ -341,13 +343,16 @@ discovery, and routing validation. Remaining protocol-model depth is folded into
 S2/S3; no new protocol logic is added to Go. Skill projections stay hand-maintained
 until S3 decides generation.
 
-### M2 - Deterministic IDs/path normalization - Spec-track capability contract (S2/S3)
+### M2 - Deterministic IDs/path normalization - implemented (adapter rebased)
 
 Normalized relative paths, traversal rejection, exact Unicode/case preservation,
-canonical ID keys, SHA-256 prefix and deterministic collision extension,
-aliases/tombstones, and PRF/HBK coordinate foundations become declared
-capabilities+spec sections in S2/S3. The harness consumes them; `internal/identity`
-remains a frozen transitional primitive until then.
+canonical ID keys, SHA-256 prefix and deterministic collision extension, and
+PRF/HBK coordinate foundations are declared in S2/S3. The deterministic
+implementation now lives in `internal/capabilities` (`TypedID`,
+`ExtendCollision`, `NormalizeRelativePath`); `internal/identity` is a thin
+adapter that preserves the frozen fixture outcomes. Aliases/tombstones remain
+registry concerns (M7/M13) and idempotent identity remains a transitional
+boundary.
 
 ### M3 - Workspace initialization and structural validators - harness
 

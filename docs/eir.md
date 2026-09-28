@@ -11,6 +11,14 @@
 regions; format 2 predates part declarations and derived numbering. Consumers MUST
 reject an unknown `eir-format` rather than guess compatibility.
 
+## Loading and verification
+
+`cdl.LoadEIR` parses a canonical EIR document and fails closed on: an unknown
+`eir-format` or protocol version, unknown JSON fields, trailing content, a missing or
+mismatched `eir-sha256` (the hash is recomputed over the document with the carrier
+cleared), duplicate identities, a section without normative prose, and inconsistent
+derived part/section/subsection numbering. It never trusts stored hashes or numbers.
+
 ## 1. Purpose
 
 EIR is the stable contract between the language and every backend:
