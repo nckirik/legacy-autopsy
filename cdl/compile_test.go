@@ -22,9 +22,11 @@ const (
 	ticketFSMPath         = "examples/spec/ticket-fsm.cdl"
 	invocationContextPath = "examples/spec/invocation-context.cdl"
 	coverageExitsPath     = "examples/spec/coverage-and-exits.cdl"
+	globalsPath           = "examples/spec/globals.cdl"
+	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
-	goldenEIRPath         = "examples/spec/golden/export-reconciliation.eir.json"
-	goldenPromptPath      = "examples/spec/golden/export-reconciliation.light.prompt.md"
+	goldenEIRPath         = "examples/spec/golden/protocol.eir.json"
+	goldenPromptPath      = "examples/spec/golden/protocol.light.prompt.md"
 	generatedAt           = "2026-09-25T00:00:00Z"
 )
 
@@ -44,35 +46,93 @@ func exampleSource(t *testing.T) Source {
 	return Source{Path: examplePath, Bytes: readRepoFile(t, examplePath)}
 }
 
-func compileExample(t *testing.T) *Result {
+func globalsSource(t *testing.T) Source {
 	t.Helper()
+	return Source{Path: globalsPath, Bytes: readRepoFile(t, globalsPath)}
+}
+
+// compileSources compiles the shared globals plus the named section sources.
+func compileSources(t *testing.T, rels ...string) *Result {
+	t.Helper()
+	sources := []Source{globalsSource(t)}
+	for _, rel := range rels {
+		sources = append(sources, Source{Path: rel, Bytes: readRepoFile(t, rel)})
+	}
 	ledger, err := LoadLedger(repoPath(ledgerPath))
 	if err != nil {
 		t.Fatalf("load ledger (run: go test ./cdl -run TestUpdateAssets -update): %v", err)
 	}
-	res, err := Compile(CompileInput{Sources: []Source{exampleSource(t)}, Ledger: ledger})
+	res, err := Compile(CompileInput{Sources: sources, Ledger: ledger})
 	if err != nil {
 		t.Fatalf("compile: %v", err)
 	}
 	return res
 }
 
+// compileAssembly compiles the full ordered document assembly.
+func compileAssembly(t *testing.T) *Result {
+	t.Helper()
+	sources, err := LoadAssembly(repoPath("."), assemblyPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ledger, err := LoadLedger(repoPath(ledgerPath))
+	if err != nil {
+		t.Fatalf("load ledger (run: go test ./cdl -run TestUpdateAssets -update): %v", err)
+	}
+	res, err := Compile(CompileInput{Sources: sources, Ledger: ledger})
+	if err != nil {
+		t.Fatalf("compile assembly: %v", err)
+	}
+	return res
+}
+
+func compileExample(t *testing.T) *Result {
+	t.Helper()
+	return compileSources(t, examplePath)
+}
+
+// mergeInto merges one parsed program into another for test-side assembly.
+func mergeInto(dst, src *Program) {
+	dst.Globals.Capabilities = append(dst.Globals.Capabilities, src.Globals.Capabilities...)
+	dst.Globals.Registries = append(dst.Globals.Registries, src.Globals.Registries...)
+	dst.Globals.Artifacts = append(dst.Globals.Artifacts, src.Globals.Artifacts...)
+	dst.Globals.Rules = append(dst.Globals.Rules, src.Globals.Rules...)
+	dst.Globals.Gates = append(dst.Globals.Gates, src.Globals.Gates...)
+	dst.Globals.WorkflowTargets = append(dst.Globals.WorkflowTargets, src.Globals.WorkflowTargets...)
+	dst.Globals.BaseReads = append(dst.Globals.BaseReads, src.Globals.BaseReads...)
+	dst.Globals.Modes = append(dst.Globals.Modes, src.Globals.Modes...)
+	dst.Sections = append(dst.Sections, src.Sections...)
+	dst.Projections = append(dst.Projections, src.Projections...)
+}
+
 func TestUpdateAssets(t *testing.T) {
 	if !*update {
 		t.Skip("run with -update to rewrite golden assets and identity ledger")
 	}
+	sources, err := LoadAssembly(repoPath("."), assemblyPath)
+	if err != nil {
+		t.Fatal(err)
+	}
 	var ledgerSources []LedgerSource
-	for _, rel := range []string{examplePath, typedIDPath, semanticPayloadPath, canonicalProfilePath, acquisitionPath, normalizedMapsPath, invocationModesPath, coldResumePath, ticketFSMPath, invocationContextPath, coverageExitsPath} {
-		src := Source{Path: rel, Bytes: readRepoFile(t, rel)}
-		prog, diags := Parse(src.Path, src.Bytes)
+	for _, src := range sources {
+		globals := globalsSource(t)
+		prog, diags := Parse(globals.Path, globals.Bytes)
 		if len(diags) > 0 {
-			t.Fatalf("%s parse: %v", rel, diags)
+			t.Fatalf("globals parse: %v", diags)
+		}
+		if src.Path != globalsPath {
+			parsed, diags := Parse(src.Path, src.Bytes)
+			if len(diags) > 0 {
+				t.Fatalf("%s parse: %v", src.Path, diags)
+			}
+			mergeInto(prog, parsed)
 		}
 		if semDiags, _ := resolve(prog); len(semDiags) > 0 {
-			t.Fatalf("%s resolve: %v", rel, semDiags)
+			t.Fatalf("%s resolve: %v", src.Path, semDiags)
 		}
 		ledgerSources = append(ledgerSources, LedgerSource{
-			Path:              rel,
+			Path:              src.Path,
 			SourceFingerprint: sourceFingerprint([]Source{src}),
 			IDs:               collectIDs(prog),
 		})
@@ -86,24 +146,16 @@ func TestUpdateAssets(t *testing.T) {
 	}); err != nil {
 		t.Fatal(err)
 	}
-	src := exampleSource(t)
-	prog, diags := Parse(src.Path, src.Bytes)
-	if len(diags) > 0 {
-		t.Fatalf("parse: %v", diags)
-	}
-	if semDiags, _ := resolve(prog); len(semDiags) > 0 {
-		t.Fatalf("resolve: %v", semDiags)
-	}
-	fingerprint := sourceFingerprint([]Source{src})
-	doc, eirBytes, _, err := BuildEIR(prog, Versions{}, fingerprint)
+	doc, eirBytes, _, err := BuildEIRFromAssembly(t, sources)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if err := os.WriteFile(repoPath(goldenEIRPath), append(eirBytes, '\n'), 0o644); err != nil {
 		t.Fatal(err)
 	}
+	fingerprint := sourceFingerprint(sources)
 	prompt, err := RenderPrompt(doc, "LIGHT", "prompt", Provenance{
-		SourcePath:        examplePath,
+		SourcePath:        assemblyPath,
 		SourceFingerprint: fingerprint,
 		EIRHash:           doc.Envelope.EIRHash,
 		GeneratedAt:       generatedAt,
@@ -116,8 +168,29 @@ func TestUpdateAssets(t *testing.T) {
 	}
 }
 
+// BuildEIRFromAssembly parses and resolves the ordered sources, then builds EIR.
+func BuildEIRFromAssembly(t *testing.T, sources []Source) (*EIRDoc, []byte, string, error) {
+	t.Helper()
+	var prog Program
+	var diags Diagnostics
+	for _, src := range sources {
+		parsed, d := Parse(src.Path, src.Bytes)
+		diags = append(diags, d...)
+		if parsed != nil {
+			mergeInto(&prog, parsed)
+		}
+	}
+	if len(diags) > 0 {
+		t.Fatalf("parse: %v", diags)
+	}
+	if semDiags, _ := resolve(&prog); len(semDiags) > 0 {
+		t.Fatalf("resolve: %v", semDiags)
+	}
+	return BuildEIR(&prog, Versions{}, sourceFingerprint(sources))
+}
+
 func TestGoldenEIR(t *testing.T) {
-	res := compileExample(t)
+	res := compileAssembly(t)
 	want, err := os.ReadFile(repoPath(goldenEIRPath))
 	if err != nil {
 		t.Fatal(err)
@@ -129,9 +202,9 @@ func TestGoldenEIR(t *testing.T) {
 }
 
 func TestGoldenPrompt(t *testing.T) {
-	res := compileExample(t)
+	res := compileAssembly(t)
 	prompt, err := RenderPrompt(res.EIR, "LIGHT", "prompt", Provenance{
-		SourcePath:        examplePath,
+		SourcePath:        assemblyPath,
 		SourceFingerprint: res.SourceFingerprint,
 		EIRHash:           res.EIRHash,
 		GeneratedAt:       generatedAt,
@@ -162,15 +235,7 @@ func TestCompileExample(t *testing.T) {
 }
 
 func TestTypedIDSectionCompiles(t *testing.T) {
-	src := Source{Path: typedIDPath, Bytes: readRepoFile(t, typedIDPath)}
-	ledger, err := LoadLedger(repoPath(ledgerPath))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
-	if err != nil {
-		t.Fatal(err)
-	}
+	res := compileSources(t, typedIDPath)
 	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "4.1" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
@@ -199,15 +264,7 @@ func TestTypedIDSectionCompiles(t *testing.T) {
 }
 
 func TestSemanticPayloadSectionCompiles(t *testing.T) {
-	src := Source{Path: semanticPayloadPath, Bytes: readRepoFile(t, semanticPayloadPath)}
-	ledger, err := LoadLedger(repoPath(ledgerPath))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
-	if err != nil {
-		t.Fatal(err)
-	}
+	res := compileSources(t, semanticPayloadPath)
 	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "4.1.1" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
@@ -226,15 +283,7 @@ func TestSemanticPayloadSectionCompiles(t *testing.T) {
 }
 
 func TestCanonicalProfileSectionCompiles(t *testing.T) {
-	src := Source{Path: canonicalProfilePath, Bytes: readRepoFile(t, canonicalProfilePath)}
-	ledger, err := LoadLedger(repoPath(ledgerPath))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
-	if err != nil {
-		t.Fatal(err)
-	}
+	res := compileSources(t, canonicalProfilePath)
 	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "4.1.2" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
@@ -250,15 +299,7 @@ func TestCanonicalProfileSectionCompiles(t *testing.T) {
 }
 
 func TestAcquisitionLoopSectionCompiles(t *testing.T) {
-	src := Source{Path: acquisitionPath, Bytes: readRepoFile(t, acquisitionPath)}
-	ledger, err := LoadLedger(repoPath(ledgerPath))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
-	if err != nil {
-		t.Fatal(err)
-	}
+	res := compileSources(t, acquisitionPath)
 	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "7.5" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
@@ -274,15 +315,7 @@ func TestAcquisitionLoopSectionCompiles(t *testing.T) {
 }
 
 func TestNormalizedMapsSectionCompiles(t *testing.T) {
-	src := Source{Path: normalizedMapsPath, Bytes: readRepoFile(t, normalizedMapsPath)}
-	ledger, err := LoadLedger(repoPath(ledgerPath))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
-	if err != nil {
-		t.Fatal(err)
-	}
+	res := compileSources(t, normalizedMapsPath)
 	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "7.6" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
@@ -296,15 +329,7 @@ func TestNormalizedMapsSectionCompiles(t *testing.T) {
 }
 
 func TestInvocationModesCompile(t *testing.T) {
-	src := Source{Path: invocationModesPath, Bytes: readRepoFile(t, invocationModesPath)}
-	ledger, err := LoadLedger(repoPath(ledgerPath))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
-	if err != nil {
-		t.Fatal(err)
-	}
+	res := compileSources(t, invocationModesPath)
 	base := res.EIR.Declarations.BaseReads
 	if len(base) != 9 {
 		t.Fatalf("base reads has %d entries, want 9", len(base))
@@ -372,15 +397,7 @@ func TestModeDeclarationChecks(t *testing.T) {
 }
 
 func TestColdResumeSectionCompiles(t *testing.T) {
-	src := Source{Path: coldResumePath, Bytes: readRepoFile(t, coldResumePath)}
-	ledger, err := LoadLedger(repoPath(ledgerPath))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
-	if err != nil {
-		t.Fatal(err)
-	}
+	res := compileSources(t, coldResumePath)
 	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "8.5" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
@@ -396,15 +413,7 @@ func TestColdResumeSectionCompiles(t *testing.T) {
 }
 
 func TestTicketFSMCompiles(t *testing.T) {
-	src := Source{Path: ticketFSMPath, Bytes: readRepoFile(t, ticketFSMPath)}
-	ledger, err := LoadLedger(repoPath(ledgerPath))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
-	if err != nil {
-		t.Fatal(err)
-	}
+	res := compileSources(t, ticketFSMPath)
 	if len(res.EIR.Sections) != 2 || res.EIR.Sections[0].Number != "9.1" || res.EIR.Sections[1].Number != "9.2" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
@@ -422,15 +431,7 @@ func TestTicketFSMCompiles(t *testing.T) {
 }
 
 func TestInvocationContextCompiles(t *testing.T) {
-	src := Source{Path: invocationContextPath, Bytes: readRepoFile(t, invocationContextPath)}
-	ledger, err := LoadLedger(repoPath(ledgerPath))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
-	if err != nil {
-		t.Fatal(err)
-	}
+	res := compileSources(t, invocationContextPath)
 	numbers := []string{}
 	for _, sec := range res.EIR.Sections {
 		numbers = append(numbers, sec.Number)
@@ -448,15 +449,7 @@ func TestInvocationContextCompiles(t *testing.T) {
 }
 
 func TestCoverageAndExitsCompile(t *testing.T) {
-	src := Source{Path: coverageExitsPath, Bytes: readRepoFile(t, coverageExitsPath)}
-	ledger, err := LoadLedger(repoPath(ledgerPath))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := Compile(CompileInput{Sources: []Source{src}, Ledger: ledger})
-	if err != nil {
-		t.Fatal(err)
-	}
+	res := compileSources(t, coverageExitsPath)
 	numbers := []string{}
 	for _, sec := range res.EIR.Sections {
 		numbers = append(numbers, sec.Number)
@@ -487,7 +480,7 @@ func TestLedgerRejectsUnknownIdentity(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	_, err = Compile(CompileInput{Sources: []Source{exampleSource(t)}, Ledger: ledger})
+	_, err = Compile(CompileInput{Sources: []Source{globalsSource(t), exampleSource(t)}, Ledger: ledger})
 	if err != nil {
 		t.Fatalf("unexpected: %v", err)
 	}
@@ -497,7 +490,7 @@ func TestLedgerRejectsUnknownIdentity(t *testing.T) {
 			trimmed[k] = v
 		}
 	}
-	_, err = Compile(CompileInput{Sources: []Source{exampleSource(t)}, Ledger: trimmed})
+	_, err = Compile(CompileInput{Sources: []Source{globalsSource(t), exampleSource(t)}, Ledger: trimmed})
 	diags, ok := err.(Diagnostics)
 	if !ok || !diags.Has("CDL_ID_LEDGER_UNKNOWN_ID") {
 		t.Fatalf("expected CDL_ID_LEDGER_UNKNOWN_ID, got %v", err)
@@ -576,7 +569,7 @@ func TestNegativeFixtures(t *testing.T) {
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			_, err := Compile(CompileInput{
-				Sources: []Source{{Path: examplePath, Bytes: []byte(tc.mutate(base))}},
+				Sources: []Source{globalsSource(t), {Path: examplePath, Bytes: []byte(tc.mutate(base))}},
 				Ledger:  map[string]IDRecord{},
 			})
 			diags, ok := err.(Diagnostics)

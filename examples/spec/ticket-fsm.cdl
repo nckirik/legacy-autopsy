@@ -1,7 +1,3 @@
-GLOBAL DECLARATIONS
-  CAPABILITY hash.sha256
-END
-
 SECTION ticket-schema
 NUMBER 9.1
 TITLE "Ticket schema and canonical IDs"

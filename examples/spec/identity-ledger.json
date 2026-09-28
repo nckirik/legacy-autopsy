@@ -5,7 +5,7 @@
   "sources": [
     {
       "path": "examples/spec/canonical-hash-profile.cdl",
-      "source-fingerprint": "sha256:de766a39804b925c7ecb6b3098655d0bdd66929538baa893fc449967e352895d",
+      "source-fingerprint": "sha256:801d3ff15b2773a3037a421dab08ce37586f2b25db2b176a133333caba9be056",
       "ids": [
         {
           "id": "ARTIFACT-TYPE",
@@ -76,7 +76,7 @@
     },
     {
       "path": "examples/spec/cold-resume.cdl",
-      "source-fingerprint": "sha256:167d392cc63fbd740833288aeb53f5f0be639aa432e15906f33948c402100158",
+      "source-fingerprint": "sha256:13f61dfe63c9b7c43566a630523dffeafcd3682ae7bbb287f350fbd2e338dee3",
       "ids": [
         {
           "id": "COLD-RESUME-FIELD",
@@ -102,7 +102,7 @@
     },
     {
       "path": "examples/spec/coverage-and-exits.cdl",
-      "source-fingerprint": "sha256:6c83e946d02d42886d6bd1ca9ebfd33413f387e6bb1dce23da6c4a87cac3c28b",
+      "source-fingerprint": "sha256:f62e3388146936cbdce6958aaa29854fc7e687782682d37fff5a32f07f84a363",
       "ids": [
         {
           "id": "COVERAGE-STATUS",
@@ -203,7 +203,7 @@
     },
     {
       "path": "examples/spec/export-acquisition-loop.cdl",
-      "source-fingerprint": "sha256:8afae3416b59face8d7d226c28f7ca2143b5ee991e6608b9578914dadb98146e",
+      "source-fingerprint": "sha256:fc306848d9a26f1c0561e4ec388655092c0bbb3018e0076b719539f8555e9800",
       "ids": [
         {
           "id": "ACQUISITION-STATE",
@@ -259,7 +259,7 @@
     },
     {
       "path": "examples/spec/export-reconciliation.cdl",
-      "source-fingerprint": "sha256:0a81326160f45919874739189f3256021c8dbab60ecaf99f8b47dbb670f0bfa6",
+      "source-fingerprint": "sha256:3d1c5a0d444c19983a9cbf36caec078301dde50b5862a4b77a5587725017ea18",
       "ids": [
         {
           "id": "13-EXPORT-RECONCILIATION",
@@ -374,8 +374,13 @@
       ]
     },
     {
+      "path": "examples/spec/globals.cdl",
+      "source-fingerprint": "sha256:b3d8abf123bc97cb91360ae7e35744b6e50ff95b49532ac2a3eeec043f8fdc1c",
+      "ids": []
+    },
+    {
       "path": "examples/spec/invocation-context.cdl",
-      "source-fingerprint": "sha256:b04321b9b40017ffce533dc9ac26679e1e5b85f1b69469a30324aec6be7c0b78",
+      "source-fingerprint": "sha256:5d20c22d710275e32556f6815fd31b45a73d61da938f44e1a96efc0ef3b2513b",
       "ids": [
         {
           "id": "INVOCATION-HEADER",
@@ -456,12 +461,12 @@
     },
     {
       "path": "examples/spec/invocation-modes.cdl",
-      "source-fingerprint": "sha256:fa81914d889ac2b2573ffc7b7955c40d6b3915f21023ec65d3dbf6cb8864f851",
+      "source-fingerprint": "sha256:5aa6c7b5a1ee503c9a626ea75309fc6483e52533960d49a6021ccdf40ed9d01b",
       "ids": []
     },
     {
       "path": "examples/spec/normalized-maps.cdl",
-      "source-fingerprint": "sha256:9f18c5bef000d4ea3e1805fadaf9b25b55b75ca2a32fb45f16e061c6eeba25b4",
+      "source-fingerprint": "sha256:93dec821dfca8789048003bc021b85a81e8da5ba7ecb8a88182ecc5113ee7c17",
       "ids": [
         {
           "id": "NORMALIZED-MAP-ROW",
@@ -487,7 +492,7 @@
     },
     {
       "path": "examples/spec/semantic-payload-identity.cdl",
-      "source-fingerprint": "sha256:f3d509c41f1f90b6df256c1095b0976b915a0c2ab8bfbd2c2128125b8f834b4e",
+      "source-fingerprint": "sha256:cbd50cdd49ea7e130ced2ea4db97c4c9b8643a024416a09c9b2014437e0c943c",
       "ids": [
         {
           "id": "certification-envelope",
@@ -528,7 +533,7 @@
     },
     {
       "path": "examples/spec/ticket-fsm.cdl",
-      "source-fingerprint": "sha256:baefbd537214845c821bd861f76959e09b7f2824c1ca98bd875671a119625dc3",
+      "source-fingerprint": "sha256:4f8195541d35f9d7eb838c51a2d91422e1632202b74a076341dada5fc23d2ca9",
       "ids": [
         {
           "id": "TICKET",
@@ -574,7 +579,7 @@
     },
     {
       "path": "examples/spec/typed-id.cdl",
-      "source-fingerprint": "sha256:2ec250ba8364b6e8b3539812a826e9856a25ac5da7ed7b2a250298fdf15b1b1a",
+      "source-fingerprint": "sha256:8016fe1b8328c054eb732fd734084e61a3809ac1ecdd9e49d01a3ba24fe06a99",
       "ids": [
         {
           "id": "ID-ITERATION",

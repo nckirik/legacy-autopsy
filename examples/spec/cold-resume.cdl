@@ -1,9 +1,3 @@
-GLOBAL DECLARATIONS
-  CAPABILITY hash.sha256
-  CAPABILITY canonical.markdown
-  ARTIFACT 0G-DECONSTRUCTION-STATE.md
-END
-
 SECTION cold-resume-check
 NUMBER 8.5
 TITLE "Cold resume check"

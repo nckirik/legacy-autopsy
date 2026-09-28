@@ -20,16 +20,16 @@ func runSpecCLI(t *testing.T, args ...string) (string, string, int) {
 func TestSpecCompileCommand(t *testing.T) {
 	out, errOut, code := runSpecCLI(t, "spec", "compile",
 		"--repo", specRepoRoot,
-		"--golden", "examples/spec/golden/export-reconciliation.eir.json")
+		"--golden", "examples/spec/golden/protocol.eir.json")
 	if code != 0 {
 		t.Fatalf("exit %d: %s", code, errOut)
 	}
 	for _, want := range []string{
-		"compiled examples/spec/export-reconciliation.cdl",
+		"compiled examples/spec/assembly.json",
 		"source:     sha256:",
 		"eir:        sha256:",
 		"identities:",
-		"golden:     examples/spec/golden/export-reconciliation.eir.json ok",
+		"golden:     examples/spec/golden/protocol.eir.json ok",
 	} {
 		if !strings.Contains(out, want) {
 			t.Fatalf("missing %q in output:\n%s", want, out)
@@ -44,7 +44,7 @@ func TestSpecRenderCommand(t *testing.T) {
 	if code != 0 {
 		t.Fatalf("exit %d: %s", code, errOut)
 	}
-	golden, err := os.ReadFile(filepath.Join(specRepoRoot, "examples/spec/golden/export-reconciliation.light.prompt.md"))
+	golden, err := os.ReadFile(filepath.Join(specRepoRoot, "examples/spec/golden/protocol.light.prompt.md"))
 	if err != nil {
 		t.Fatal(err)
 	}

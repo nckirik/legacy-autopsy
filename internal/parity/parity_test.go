@@ -25,28 +25,13 @@ func root(t *testing.T) string {
 
 func compileExample(t *testing.T) *cdl.Result {
 	t.Helper()
-	root := root(t)
-	src, err := os.ReadFile(filepath.Join(root, "examples/spec/export-reconciliation.cdl"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	ledger, err := cdl.LoadLedger(filepath.Join(root, "examples/spec/identity-ledger.json"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	res, err := cdl.Compile(cdl.CompileInput{
-		Sources: []cdl.Source{{Path: "examples/spec/export-reconciliation.cdl", Bytes: src}},
-		Ledger:  ledger,
-	})
-	if err != nil {
-		t.Fatalf("compile: %v", err)
-	}
-	return res
+	return compileSection(t, "examples/spec/export-reconciliation.cdl")
 }
 
 func protocolPathIn(root string) string { return filepath.Join(root, "protocol.md") }
 
-// compileSection compiles one CDL section source against the committed ledger.
+// compileSection compiles the shared globals plus one CDL section source against
+// the committed ledger.
 func compileSection(t *testing.T, rel string) *cdl.Result {
 	t.Helper()
 	root := root(t)
@@ -54,13 +39,20 @@ func compileSection(t *testing.T, rel string) *cdl.Result {
 	if err != nil {
 		t.Fatal(err)
 	}
+	globals, err := os.ReadFile(filepath.Join(root, "examples/spec/globals.cdl"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	ledger, err := cdl.LoadLedger(filepath.Join(root, "examples/spec/identity-ledger.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	res, err := cdl.Compile(cdl.CompileInput{
-		Sources: []cdl.Source{{Path: rel, Bytes: src}},
-		Ledger:  ledger,
+		Sources: []cdl.Source{
+			{Path: "examples/spec/globals.cdl", Bytes: globals},
+			{Path: rel, Bytes: src},
+		},
+		Ledger: ledger,
 	})
 	if err != nil {
 		t.Fatal(err)

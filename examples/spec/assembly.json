@@ -1,0 +1,16 @@
+{
+  "sources": [
+    "examples/spec/globals.cdl",
+    "examples/spec/typed-id.cdl",
+    "examples/spec/semantic-payload-identity.cdl",
+    "examples/spec/canonical-hash-profile.cdl",
+    "examples/spec/export-acquisition-loop.cdl",
+    "examples/spec/normalized-maps.cdl",
+    "examples/spec/export-reconciliation.cdl",
+    "examples/spec/invocation-modes.cdl",
+    "examples/spec/cold-resume.cdl",
+    "examples/spec/invocation-context.cdl",
+    "examples/spec/ticket-fsm.cdl",
+    "examples/spec/coverage-and-exits.cdl"
+  ]
+}

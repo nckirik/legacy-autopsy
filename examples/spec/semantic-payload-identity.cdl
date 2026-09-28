@@ -1,8 +1,3 @@
-GLOBAL DECLARATIONS
-  CAPABILITY canonical.markdown
-  CAPABILITY hash.sha256
-END
-
 SECTION semantic-payload-identity
 NUMBER 4.1.1
 TITLE "Semantic payload identity and certification envelopes"

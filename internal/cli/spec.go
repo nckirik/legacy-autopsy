@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	defaultSpecSource = "examples/spec/export-reconciliation.cdl"
-	defaultSpecLedger = "examples/spec/identity-ledger.json"
+	defaultSpecAssembly = "examples/spec/assembly.json"
+	defaultSpecLedger   = "examples/spec/identity-ledger.json"
 )
 
 func specCommand(args []string, stdout, stderr io.Writer) error {
@@ -34,16 +34,38 @@ func specCommand(args []string, stdout, stderr io.Writer) error {
 
 // compileSpec compiles one CDL source with its committed identity ledger. The
 // source path is logical for fingerprinting, so results do not depend on cwd.
-func compileSpec(repo, sourcePath, ledgerPath string) (*cdl.Result, string, error) {
-	sourceAbs := sourcePath
-	if !filepath.IsAbs(sourceAbs) {
-		sourceAbs = filepath.Join(repo, filepath.FromSlash(sourcePath))
+// compileSpec compiles the ordered document assembly, or the shared globals plus
+// one named section when sourcePath is set. The returned label is the logical
+// compilation input for provenance.
+func compileSpec(repo, assemblyPath, sourcePath, ledgerPath string) (*cdl.Result, string, error) {
+	var sources []cdl.Source
+	logical := assemblyPath
+	if sourcePath != "" {
+		globalsPath := "examples/spec/globals.cdl"
+		globalsBytes, err := os.ReadFile(filepath.Join(repo, filepath.FromSlash(globalsPath)))
+		if err != nil {
+			return nil, "", err
+		}
+		sourceAbs := sourcePath
+		if !filepath.IsAbs(sourceAbs) {
+			sourceAbs = filepath.Join(repo, filepath.FromSlash(sourcePath))
+		}
+		sourceBytes, err := os.ReadFile(sourceAbs)
+		if err != nil {
+			return nil, "", err
+		}
+		logical = filepath.ToSlash(sourcePath)
+		sources = []cdl.Source{
+			{Path: globalsPath, Bytes: globalsBytes},
+			{Path: logical, Bytes: sourceBytes},
+		}
+	} else {
+		loaded, err := cdl.LoadAssembly(repo, assemblyPath)
+		if err != nil {
+			return nil, "", err
+		}
+		sources = loaded
 	}
-	sourceBytes, err := os.ReadFile(sourceAbs)
-	if err != nil {
-		return nil, "", err
-	}
-	logical := filepath.ToSlash(sourcePath)
 	ledgerAbs := ledgerPath
 	if !filepath.IsAbs(ledgerAbs) {
 		ledgerAbs = filepath.Join(repo, filepath.FromSlash(ledgerPath))
@@ -52,10 +74,7 @@ func compileSpec(repo, sourcePath, ledgerPath string) (*cdl.Result, string, erro
 	if err != nil {
 		return nil, "", fmt.Errorf("identity ledger: %w", err)
 	}
-	res, err := cdl.Compile(cdl.CompileInput{
-		Sources: []cdl.Source{{Path: logical, Bytes: sourceBytes}},
-		Ledger:  ledger,
-	})
+	res, err := cdl.Compile(cdl.CompileInput{Sources: sources, Ledger: ledger})
 	if err != nil {
 		return nil, "", err
 	}
@@ -65,7 +84,8 @@ func compileSpec(repo, sourcePath, ledgerPath string) (*cdl.Result, string, erro
 func specCompile(args []string, stdout, stderr io.Writer) error {
 	set := flags("spec compile", stderr)
 	repo := set.String("repo", ".", "repository root")
-	source := set.String("source", defaultSpecSource, "CDL source path")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
 	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
 	golden := set.String("golden", "", "expected EIR golden path")
 	if err := set.Parse(args); err != nil {
@@ -74,7 +94,7 @@ func specCompile(args []string, stdout, stderr io.Writer) error {
 	if len(set.Args()) != 0 {
 		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
 	}
-	res, logical, err := compileSpec(*repo, *source, *ledger)
+	res, logical, err := compileSpec(*repo, *assembly, *source, *ledger)
 	if err != nil {
 		return err
 	}
@@ -102,7 +122,8 @@ func specCompile(args []string, stdout, stderr io.Writer) error {
 func specRender(args []string, stdout, stderr io.Writer) error {
 	set := flags("spec render", stderr)
 	repo := set.String("repo", ".", "repository root")
-	source := set.String("source", defaultSpecSource, "CDL source path")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
 	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
 	projection := set.String("projection", "LIGHT", "projection id")
 	channel := set.String("channel", "prompt", "channel: prompt or native")
@@ -114,7 +135,7 @@ func specRender(args []string, stdout, stderr io.Writer) error {
 	if len(set.Args()) != 0 {
 		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
 	}
-	res, logical, err := compileSpec(*repo, *source, *ledger)
+	res, logical, err := compileSpec(*repo, *assembly, *source, *ledger)
 	if err != nil {
 		return err
 	}
@@ -137,7 +158,8 @@ func specRender(args []string, stdout, stderr io.Writer) error {
 func specRun(args []string, stdout, stderr io.Writer) error {
 	set := flags("spec run", stderr)
 	repo := set.String("repo", ".", "repository root")
-	source := set.String("source", defaultSpecSource, "CDL source path")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
 	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
 	fixture := set.String("fixture", "", "execution fixture path (required)")
 	jsonOut := set.Bool("json", false, "emit the canonical trace as JSON")
@@ -150,7 +172,7 @@ func specRun(args []string, stdout, stderr io.Writer) error {
 	if *fixture == "" {
 		return fmt.Errorf("spec run requires --fixture")
 	}
-	res, _, err := compileSpec(*repo, *source, *ledger)
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
 	if err != nil {
 		return err
 	}

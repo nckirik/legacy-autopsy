@@ -1,8 +1,3 @@
-GLOBAL DECLARATIONS
-  CAPABILITY hash.sha256
-  REGISTRY normalized-map-units
-END
-
 SECTION normalized-maps
 NUMBER 7.6
 TITLE "Normalized maps"

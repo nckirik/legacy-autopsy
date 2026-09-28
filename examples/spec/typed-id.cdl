@@ -1,8 +1,3 @@
-GLOBAL DECLARATIONS
-  CAPABILITY identity.typed-id
-  CAPABILITY path.normalize
-END
-
 SECTION typed-id
 NUMBER 4.1
 TITLE "ID generation"
