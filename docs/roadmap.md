@@ -172,10 +172,14 @@ S3 progress:
   the block-confidence-rank enum, the shared-reference schema, and the dual-entry,
   promotion-lock/execution, dead-code, depromotion, and surgical-patching rules;
   schemas and enum drift-check against protocol.md.
-- **Remaining S3 inventory (46 sections):** §2.1–2.6, §4.2–4.6, §6.1–6.5,
-  §8.3–8.4, §9.3–9.6, §11.1–11.13, §13.1–13.4, §14.1–14.6, §17.1–17.3, §19.1–19.3,
-  plus the Part-level intros. §2–§7, §8.1–8.2, §8.5–8.8, §9.1–9.2, §10, §12, and §15
-  are migrated (22 sources).
+- **§8.3–8.4, §9.3–9.6 implemented (authored schema + drift):** the invocation-mode
+  enum drift-checks against the generated registry, the multi-file mode targets and
+  mandatory read sets are declared as rules, and `examples/spec/ticket-fsm.cdl` gains
+  the Human Hatch prerequisites, probe specification with safety enum, no-mock
+  integrity rule, and no-mock fallback payload.
+- **Remaining S3 inventory (40 sections):** §2.1–2.6, §4.2–4.6, §6.1–6.5,
+  §11.1–11.13, §13.1–13.4, §14.1–14.6, §17.1–17.3, §19.1–19.3, plus the Part-level
+  intros. §2–§10, §12, and §15 are migrated (22 sources).
 - **Skill projections decision:** the 13 projections stay hand-maintained with the
   routing validator through S3; generation from EIR reference views is deferred to S4.
 - **Collision extension implemented:** `internal/capabilities.ExtendCollision` extends
