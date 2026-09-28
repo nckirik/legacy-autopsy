@@ -241,7 +241,7 @@ END
 
 ### Document assembly
 
-The document compiles from an ordered manifest (`examples/spec/assembly.json`):
+The document compiles from an ordered manifest (`protocol/assembly.json`):
 
 - `globals.cdl` owns document-global declarations exactly once: capabilities,
   registries, artifacts, document-level rules, gates, and workflow targets.

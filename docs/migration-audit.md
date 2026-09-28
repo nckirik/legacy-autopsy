@@ -63,7 +63,8 @@
 ### Docs authority map (target)
 
 ```
-normative           protocol.md (until crown) -> protocol.cdl (after)
+normative           protocol/ CDL sources (after crown); protocol.md generated render;
+                    protocol/legacy/protocol-4.1.2.md frozen bootstrap oracle
 frozen language     cdl.md
 design contracts    eir.md, execution-semantics.md, runtime-architecture.md
 implementation      conformance.md, development.md, workspace.md, runtime.md
@@ -98,7 +99,7 @@ Phase 2  pilot review: leakage audit (context assembly), capability extraction
 Phase 3  migration: section-by-section protocol.cdl growth, dual-source drift
          checks, roadmap/README/CI rewrite
 Phase 4  crown: parity report accepted by human; DSL becomes normative source;
-         Markdown becomes generated
+         Markdown becomes generated                                         [done]
 ```
 
 Gates:

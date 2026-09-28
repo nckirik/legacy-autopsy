@@ -41,8 +41,8 @@ No runtime code exists yet. No semantic, gate, or conformance claim is implied.
 
 Additive pilot for one section, proving the contracts are implementable:
 
-- `examples/spec/export-reconciliation.cdl` as frozen-grammar source (`.cdl` sources stay
-  under `examples/spec/` until crown so they imply no authority; promoted to `protocol/`
+- `protocol/export-reconciliation.cdl` as frozen-grammar source (`.cdl` sources stay
+  under `protocol/` until crown so they imply no authority; promoted to `protocol/`
   at S4);
 - `cdl/` compiler subset: parser, resolver/typechecker, capability closure,
   omission checks, ledger verification, deterministic EIR with canonical hash, and a
@@ -101,96 +101,96 @@ become generated reference/routing views.
 
 S3 progress:
 
-- **Document assembly implemented:** `examples/spec/globals.cdl` owns document-global
-  declarations once; `examples/spec/assembly.json` orders the sources; the compiler
+- **Document assembly implemented:** `protocol/globals.cdl` owns document-global
+  declarations once; `protocol/assembly.json` orders the sources; the compiler
   emits one EIR with cross-section resolution; `internal/spec` compiles it in-process
   for the runtime; assembly EIR and prompt goldens replace the per-section goldens.
 - **§7.1–7.4 implemented (authored schema + drift):**
-  `examples/spec/acquisition-trust.cdl` declares the helper trust-boundary rules, the
+  `protocol/acquisition-trust.cdl` declares the helper trust-boundary rules, the
   export acquisition register schema, the virtual-coordinate rule, and the n8n/Appsmith
   inventory-kind enums; field and enum lists drift-check against protocol.md.
-- **§3.1 implemented (authored schema + drift):** `examples/spec/preflight-registry.cdl`
+- **§3.1 implemented (authored schema + drift):** `protocol/preflight-registry.cdl`
   declares the preflight header, entry-cluster, unmapped-discovery, and persona-local
   discovery-buffer schemas plus the boundary and DB-autonomous-cluster rules; field
   lists drift-check against protocol.md.
-- **§3.2 implemented (authored schema + drift):** `examples/spec/workspace-registries.cdl`
+- **§3.2 implemented (authored schema + drift):** `protocol/workspace-registries.cdl`
   declares the shared-entry, auth, privacy, capability, routine cross-reference,
   invariant, and shared-state record schemas plus the append-only 0G and derived 0H
   rule; `internal/parity` drift-checks every block field label against protocol.md.
 - **§5.2–5.7 implemented (authored schemas + drift):**
-  `examples/spec/evidence-and-decisions.cdl` declares the claim and block-summary,
+  `protocol/evidence-and-decisions.cdl` declares the claim and block-summary,
   contradiction, decision, and confirmation record schemas plus the sanitized-projection
   and candidate-reconciliation rules; `internal/parity` drift-checks every record field
   label against protocol.md and requires §5.3/§5.6 token coverage.
 - **§5.1 implemented (generated closed lists):** `internal/migration` deterministically
   extracts the seven prefix groups and the exhaustive finite-enum registry from
-  protocol.md and renders `examples/spec/status-taxonomy.cdl` (109 enums) with a
+  protocol.md and renders `protocol/status-taxonomy.cdl` (109 enums) with a
   byte-parity regeneration test; the assembly compiles it and the ledger covers it.
-- **§4.1 implemented (capability-backed):** `examples/spec/typed-id.cdl` declares the
+- **§4.1 implemented (capability-backed):** `protocol/typed-id.cdl` declares the
   ID-prefix and iteration registries plus the normative key, path, PRF/HBK, collision,
   and registry rules; `internal/capabilities.TypedID` implements base generation and is
   tested against an independent recomputation of the §4.1 formula; `internal/parity`
   drift-checks both registries against `protocol.md`. The identity ledger is now
   multi-source (format 2) with global uniqueness across sources.
 - **§4.1.1 implemented (capability-backed):**
-  `examples/spec/semantic-payload-identity.cdl` declares the payload mandatory fields,
+  `protocol/semantic-payload-identity.cdl` declares the payload mandatory fields,
   semantic record version, semantic-content fingerprint, certification envelope,
   envelope mutation invariance, and confirmation binding rules; `internal/parity`
   token-drift-checks every hyphenated normative token in protocol.md §4.1.1 against the
   CDL text. The `canonical.markdown` engine remains unimplemented (see §4.1.2).
 - **§4.1.2 implemented (capability-backed, bounded v1):**
-  `examples/spec/canonical-hash-profile.cdl` declares the canonical profile steps, the
+  `protocol/canonical-hash-profile.cdl` declares the canonical profile steps, the
   envelope/package-member/evidence-set/transport rules, and the closed registries
   (binding kinds, envelope kinds, artifact types, row kinds, domain prefixes);
   `internal/capabilities/canonical.go` implements canonical Markdown normalization and
   the envelope, package-member, transport, and evidence-set fingerprints;
   `internal/parity` drift-checks the registries and every normative token against
   `protocol.md`.
-- **§15 implemented (authored schema + drift):** `examples/spec/packaging.cdl`
+- **§15 implemented (authored schema + drift):** `protocol/packaging.cdl`
   declares the Exit E strict conditions, universal packaging rules, all five artifact
   payload/envelope schemas, the candidate/readiness/final check registries, the
   scope-certificate tables, the acyclic sequence and hash-domain rules, and the final
   verification receipt; every schema, table shape, and check ID drift-checks against
-  protocol.md. §12 implemented (authored schema + drift): `examples/spec/traceability.cdl`
+  protocol.md. §12 implemented (authored schema + drift): `protocol/traceability.cdl`
   declares the traceability row, lifecycle-eligibility row, classification enum, the
   reciprocal-reference/ID-timing/provenance rules, and the §12.5 evidence-binding
   table; row shapes drift-check against protocol.md.
-- **§2 implemented (authored schema + drift):** `examples/spec/personas-povs.cdl`
+- **§2 implemented (authored schema + drift):** `protocol/personas-povs.cdl`
   declares the persona definition/purity/grammar rules, entry ownership including
   DB-autonomous, the five POVs, traversal tracks, the capability-state block and
   runtime-state matrix, and the target-decision enum; labels, matrix columns, and enum
   drift-check against protocol.md. The §3.1 persona-registry and traversal-matrix table
   shapes were added to `preflight-registry.cdl` and drift-checked.
 - **§4.2–4.6 implemented (authored schema + drift):**
-  `examples/spec/inventory-and-frontier.cdl` declares the atomic-unit and
+  `protocol/inventory-and-frontier.cdl` declares the atomic-unit and
   container-semantics rules, the source-inventory record with discovery-method and
   coverage-summary enums plus the 23 required inventory kinds, the frontier record with
   state/method enums, the coverage row with scope/disposition enums, and the
   supersession/tombstone block; schemas and enums drift-check against protocol.md.
 - **§6.1–6.5 implemented (authored schema + drift):**
-  `examples/spec/extraction-evolution.cdl` declares the atomic-component record with
+  `protocol/extraction-evolution.cdl` declares the atomic-component record with
   the block-confidence-rank enum, the shared-reference schema, and the dual-entry,
   promotion-lock/execution, dead-code, depromotion, and surgical-patching rules;
   schemas and enum drift-check against protocol.md.
 - **§8.3–8.4, §9.3–9.6 implemented (authored schema + drift):** the invocation-mode
   enum drift-checks against the generated registry, the multi-file mode targets and
-  mandatory read sets are declared as rules, and `examples/spec/ticket-fsm.cdl` gains
+  mandatory read sets are declared as rules, and `protocol/ticket-fsm.cdl` gains
   the Human Hatch prerequisites, probe specification with safety enum, no-mock
   integrity rule, and no-mock fallback payload.
 - **§13.1–13.4, §14.1–14.6 implemented (authored schema + drift):**
-  `examples/spec/handbook-and-decisions.cdl` declares the audience roles,
+  `protocol/handbook-and-decisions.cdl` declares the audience roles,
   chapter/disabled-chapter/quality-gate rules, readability-review binding, decision-log
   projection, modernization prompts, rule ownership, interface baseline, equivalence
   test kinds, and the sole-input invariant; audience and test-kind enums drift-check
   against protocol.md.
 - **§11.1–11.13 implemented (authored schema + drift):**
-  `examples/spec/synthesis-catalogs.cdl` declares the synthesis gap buffer, common
+  `protocol/synthesis-catalogs.cdl` declares the synthesis gap buffer, common
   block header and certification envelope, and all ten synthesis catalogs (MOD, ER,
   REL, SM, DR, BR, UC, IF, DEP/CFG/SCHED, NFR/SEC/FLT) plus the persona profile;
   every record field list, nested table shape, and closed enum drift-checks against
   protocol.md.
 - **§0.1–0.4, §1.1–1.5 implemented (authored schema + drift):**
-  `examples/spec/foundations.cdl` declares the normative keywords, authority classes,
+  `protocol/foundations.cdl` declares the normative keywords, authority classes,
   predicate kinds, guarantees/non-guarantees, conceptual flow stages, the four-plane
   model with its sources/writers rules, and the non-authoritative sidecar rule; enums
   drift-check against protocol.md.
@@ -205,12 +205,12 @@ S3 progress:
 - **Collision extension implemented:** `internal/capabilities.ExtendCollision` extends
   colliding hashes to the declared 16/20/.../64 lengths and fails closed on identical
   or non-colliding input; aliases and supersession remain registry concerns (§12.1).
-- **§8.5 implemented (capability-backed):** `examples/spec/cold-resume.cdl` declares the
+- **§8.5 implemented (capability-backed):** `protocol/cold-resume.cdl` declares the
   12-field assessment block and the fingerprint/validation rules;
   `internal/capabilities.ColdResumeFingerprint` implements the `COLD-RESUME|` preimage
   with carrier exclusion and fail-closed field validation; `internal/parity`
   drift-checks the field list against protocol.md §8.5.
-- **§8 declarations complete:** `examples/spec/invocation-modes.cdl` declares the
+- **§8 declarations complete:** `protocol/invocation-modes.cdl` declares the
   13-mode enum, the three strict modes, the document baseline read set, and every
   mode's specific read set (language 0.2 `BASE-READS`/`MODE`, EIR format 2);
   `cold-resume.cdl` declares and implements the §8.5 check fingerprint;
@@ -223,20 +223,20 @@ S3 progress:
   read sets, strict-mode switch, and iteration list are retired, closing the
   context-assembly leakage.
 - **§10.1–10.6 implemented (capability-backed):**
-  `examples/spec/coverage-and-exits.cdl` declares sweep records and traversal-cell
+  `protocol/coverage-and-exits.cdl` declares sweep records and traversal-cell
   states, coverage scope/status domains and arithmetic rules, the 12 Exit A
   conditions, Exit B/C rules, and the iteration-accounting rules;
   `internal/capabilities.NextIteration` advances the declared token budget
   fail-closed; `internal/parity` drift-checks the condition list, sweep fields, and
   the 26 iteration tokens against protocol.md.
-- **§9.1–9.2 implemented (capability-backed):** `examples/spec/ticket-fsm.cdl`
+- **§9.1–9.2 implemented (capability-backed):** `protocol/ticket-fsm.cdl`
   declares the nine ticket states, the ten allowed transitions, the eleven-field
   ticket schema, and the ten escalation reasons; `internal/parity` drift-checks the
   transition table, state domain, and reason enum against protocol.md.
 - **§7.5–7.6 implemented (capability-backed):**
-  `examples/spec/export-acquisition-loop.cdl` declares the five-state acquisition
+  `protocol/export-acquisition-loop.cdl` declares the five-state acquisition
   domain and the eight loop rules, with the state domain drift-checked against the
-  bracket tokens in §7.5; `examples/spec/normalized-maps.cdl` declares the
+  bracket tokens in §7.5; `protocol/normalized-maps.cdl` declares the
   normalized-map record and table schema plus the navigation-only rule. §7.7 was the
   S1 pilot.
 
@@ -249,10 +249,16 @@ S3 progress:
   regenerated (`go test ./internal/parityreport -update`). Report shows 104/104
   substantive protocol sections implemented (the §0 wrapper is a `wrapper`), all six
   checks pass, 24/24 fixtures pass, and four declared deferrals.
-- **Awaiting human acceptance of the parity report before promotion/crown.**
+- **Crown executed (S4):** the parity report was accepted by the human gate; the CDL
+  sources moved to `protocol/`, the legacy text is frozen at
+  `protocol/legacy/protocol-4.1.2.md` as the bootstrap parity oracle, and `protocol.md`
+  plus `protocol/golden/protocol.generated.md` are generated by `cdl.RenderProtocol`
+  with a freshness test. Generated section titles match the legacy headings so routing,
+  context-packet, and fixture consumers keep working; Part 19.2 conformance is
+  re-expressed as EIR/VM conformance plus protocol parity in `docs/conformance.md`.
 - machine-generated parity report over source, compiler, stdlib, renderer, fixtures,
   and outputs, accepted by a human;
-- `examples/spec/*.cdl` is promoted to `protocol/` and becomes the normative source;
+- `protocol/*.cdl` is promoted to `protocol/` and becomes the normative source;
   `protocol.md` and prompt editions become generated artifacts;
 - Part 19.2 conformance is re-expressed as EIR/VM conformance plus protocol parity;
 - Prompt editions are released as backend renders with fingerprints.

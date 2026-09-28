@@ -144,7 +144,7 @@ generated validator with the compiler that generated it.
 ```
 cdl/                        language: lexer, parser, ast, resolver, types, eir,
                             render, templates; no runtime imports
-examples/spec/              bootstrap .cdl sources (no authority implied)
+protocol/              bootstrap .cdl sources (no authority implied)
 protocol/                   canonical source after crown (S4):
                             protocol.cdl, sections/*.cdl
 internal/runtime/           MACHINE VM, step executor, state store, checkpoint
@@ -154,7 +154,7 @@ internal/reference/         (or tests/reference-vm) tiny second runtime
 tests/parity/               test A and test B harnesses
 ```
 
-During bootstrap, `.cdl` sources live under `examples/spec/` so they imply no
+During bootstrap, `.cdl` sources live under `protocol/` so they imply no
 authority; S4 promotes them to `protocol/`. Multi-file assembly is a compiler input
 contract (ordered files contributing declarations/sections), not a language include
 directive; no surface is added.

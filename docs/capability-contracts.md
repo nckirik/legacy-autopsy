@@ -76,7 +76,7 @@ independent work untouched, and never licenses an executor-authored substitute.
   `SHA-256(canonical-key UTF-8)`.
 - **Rules:** §4.1 ID generation and §5.1 prefix groups; alias/tombstone handling per
   §4.6. The prefix and iteration registries are authored CDL declarations
-  (`examples/spec/typed-id.cdl`), drift-checked against `protocol.md@4.1.2`; PRF/HBK
+  (`protocol/typed-id.cdl`), drift-checked against `protocol.md@4.1.2`; PRF/HBK
   fixed-discriminator rules are declared as normative rules.
 - **Failures:** unknown prefix, malformed namespace/owner/discriminator → fail-closed
   diagnostics.
@@ -97,8 +97,8 @@ independent work untouched, and never licenses an executor-authored substitute.
   code; fenced content is preserved verbatim. This bounded v1 does not implement a full
   Markdown AST boundary parser and does not normalize indented literal blocks.
 - **Declared semantics:** §4.1.1 and §4.1.2 rules are declared in
-  `examples/spec/semantic-payload-identity.cdl` and
-  `examples/spec/canonical-hash-profile.cdl`, drift-checked against `protocol.md`
+  `protocol/semantic-payload-identity.cdl` and
+  `protocol/canonical-hash-profile.cdl`, drift-checked against `protocol.md`
   (normative tokens, binding-kind table, envelope kinds, artifact types, row kinds,
   domain prefixes).
 - **Failures:** unknown envelope kind, non-positive envelope version, unknown evidence

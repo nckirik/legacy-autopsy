@@ -72,12 +72,12 @@ the pilot is not a conformance or Exit A/E claim.
 
 ```sh
 go run ./cmd/legacy-autopsy spec compile
-go run ./cmd/legacy-autopsy spec compile --golden examples/spec/golden/export-reconciliation.eir.json
+go run ./cmd/legacy-autopsy spec compile --golden protocol/golden/export-reconciliation.eir.json
 go run ./cmd/legacy-autopsy spec render
 go run ./cmd/legacy-autopsy spec render --out /tmp/export-reconciliation.light.prompt.md \
   --generated-at 2026-09-25T00:00:00Z
-go run ./cmd/legacy-autopsy spec run --fixture examples/spec/fixtures/incomplete.json
-go run ./cmd/legacy-autopsy spec run --fixture examples/spec/fixtures/reconciled.json --json
+go run ./cmd/legacy-autopsy spec run --fixture protocol/fixtures/incomplete.json
+go run ./cmd/legacy-autopsy spec run --fixture protocol/fixtures/reconciled.json --json
 ```
 
 `spec compile` validates the identity ledger and prints the source fingerprint and EIR
@@ -122,7 +122,7 @@ scripts/format.sh --check   # verify only
 ```
 
 `protocol.md` is excluded because its bytes are fingerprint-bound. `docs/cdl.md` uses
-intentional ASCII section rules, and `fixtures/`, `examples/spec/` (`.cdl` sources and
+intentional ASCII section rules, and `fixtures/`, `protocol/` (`.cdl` sources and
 generated goldens), and `analysis/` are source or generated data — they are regenerated,
 never reformatted. Go formatting stays with the Go toolchain.
 

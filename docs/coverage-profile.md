@@ -91,7 +91,7 @@ Verdict: §8.4 read sets are protocol content currently living in Go, so `EVIDEN
 and path templates, not algorithms — and roughly 60 lines retire when §8 migrates.
 
 Status (S3): resolved. Read sets are declared in CDL
-(`examples/spec/invocation-modes.cdl`, language 0.2 `BASE-READS`/`MODE`), compiled into
+(`protocol/invocation-modes.cdl`, language 0.2 `BASE-READS`/`MODE`), compiled into
 EIR, and consumed by `contextpacket` through `internal/spec`; the hardcoded Go read
 sets, strict-mode switch, and iteration list are deleted. Drift against protocol.md is
 enforced by `internal/parity`.

@@ -154,7 +154,7 @@ fixtures.
 
 ## 9. Source assembly
 
-The compiler accepts an ordered source manifest (`examples/spec/assembly.json`).
+The compiler accepts an ordered source manifest (`protocol/assembly.json`).
 Each file contributes declarations and sections; document-global declarations live in
 `globals.cdl` exactly once; duplicate stable IDs are errors; declaration references
 resolve across the union. This is an input contract, not source syntax: there is no

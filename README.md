@@ -2,7 +2,7 @@
 
 Legacy Autopsy is a **local-first reference/tooling implementation** for evidence-backed deconstruction and reconstruction of legacy systems. It helps humans and coding agents build a persistent, reviewable model of a system instead of relying on one-shot summaries or conversation memory.
 
-The project is built around [`protocol.md`](protocol.md), a standalone specification that can be used directly with any capable coding agent. Legacy Autopsy adds orchestration, deterministic validation, persistent workspace management, and—over time—an interactive workbench.
+The project is built around the CDL protocol sources under [`protocol/`](protocol/) and their generated standalone edition [`protocol.md`](protocol.md), which can be used directly with any capable coding agent. Legacy Autopsy adds orchestration, deterministic validation, persistent workspace management, and—over time—an interactive workbench.
 
 > **Project status — M0 foundation + S1 spec pilot**
 >
@@ -10,7 +10,7 @@ The project is built around [`protocol.md`](protocol.md), a standalone specifica
 
 > **Normative authority**
 >
-> `protocol.md` is implementation-independent and the sole normative authority. Legacy Autopsy is one non-authoritative implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, fixtures, or validators. If any implementation or projection conflicts with `protocol.md`, the protocol wins.
+> The CDL sources under `protocol/` are the sole normative authority; `protocol.md` is their generated, implementation-independent standalone edition. Legacy Autopsy is one non-authoritative implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, fixtures, or validators. If any implementation or projection conflicts with `protocol.md`, the protocol wins.
 
 ## How to use Legacy Autopsy
 
@@ -151,7 +151,9 @@ Legacy Autopsy is not a generic code summarizer, automatic rewrite tool, moderni
 
 **Start here**
 
-- [`protocol.md`](protocol.md): standalone normative specification.
+- [`protocol/`](protocol/): normative CDL sources and assembly.
+- [`protocol.md`](protocol.md): generated standalone specification edition.
+- [`protocol/legacy/protocol-4.1.2.md`](protocol/legacy/protocol-4.1.2.md): frozen bootstrap parity oracle.
 - [Minimal example](examples/minimal/README.md): shortest implemented tooling flow.
 - [Workspace guide](docs/workspace.md): the four planes and initialization boundary.
 - [Roadmap](docs/roadmap.md): Spec track S0–S4 and harness track M0–M16.

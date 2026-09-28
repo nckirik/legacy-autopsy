@@ -1,10 +1,10 @@
 # Agent contribution rules
 
-This is operational guidance, not a protocol specification. [`protocol.md`](protocol.md) is normative and wins every conflict.
+This is operational guidance, not a protocol specification. The CDL sources under [`protocol/`](protocol/) are normative and win every conflict; [`protocol.md`](protocol.md) is a generated render, and [`protocol/legacy/protocol-4.1.2.md`](protocol/legacy/protocol-4.1.2.md) is the frozen bootstrap parity oracle.
 
 ## Protocol integrity and scope
 
-- Treat `protocol.md` as read-only by default. Change it only for a demonstrated protocol defect, never to simplify implementation; record proposed issues separately first.
+- Treat the CDL sources under `protocol/` as normative and the frozen legacy oracle as read-only. Never hand-edit generated `protocol.md` or `protocol/golden/protocol.generated.md`; regenerate them with `go test ./cdl -run TestUpdateAssets -update`. Change normative behavior only for a demonstrated protocol defect, never to simplify implementation; record proposed issues separately first.
 - Before changing normative behavior, read the affected sections and identify them in the change description.
 - Never weaken `MUST`/`MUST NOT`, duplicate normative rules into secondary sources, or present a projection as authority.
 - Keep work inside the requested milestone and feature boundary. Record adjacent protocol work in the roadmap rather than expanding scope opportunistically.
