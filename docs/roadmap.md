@@ -105,6 +105,10 @@ S3 progress:
   declarations once; `examples/spec/assembly.json` orders the sources; the compiler
   emits one EIR with cross-section resolution; `internal/spec` compiles it in-process
   for the runtime; assembly EIR and prompt goldens replace the per-section goldens.
+- **§3.2 implemented (authored schema + drift):** `examples/spec/workspace-registries.cdl`
+  declares the shared-entry, auth, privacy, capability, routine cross-reference,
+  invariant, and shared-state record schemas plus the append-only 0G and derived 0H
+  rule; `internal/parity` drift-checks every block field label against protocol.md.
 - **§5.2–5.7 implemented (authored schemas + drift):**
   `examples/spec/evidence-and-decisions.cdl` declares the claim and block-summary,
   contradiction, decision, and confirmation record schemas plus the sanitized-projection
