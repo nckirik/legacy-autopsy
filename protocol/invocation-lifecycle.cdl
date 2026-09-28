@@ -1,0 +1,111 @@
+PART invocation "Invocation Isolation, Concurrency, and Reconciliation"
+
+SECTION concurrent-persona-traversal
+TITLE "Concurrent persona traversal"
+
+GOAL
+Personas MAY run concurrently in one named iteration. They MUST NOT write canonical shared POV or shared question files directly.
+
+- shared component discoveries go to `personas/{persona-directory}/SHARED-STAGING-BUFFER.md`;
+- outbound shared questions go to `personas/{persona-directory}/SHARED-QUESTIONS-BUFFER.md`;
+- unmapped coordinates go to `personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md` with a same-transaction `FRT`;
+- persona-owned invocation pointers may be written immediately;
+- depromotion is annotated `[R-DEPROMOTION-PENDING]` and deferred.
+
+Sequential Reconciliation collects, deterministically sorts and deduplicates all buffer classes, promotion requests, and synthesis gaps; merges compatible claims without improperly raising `BLOCK-CONFIDENCE-RANK` or losing profile detail; records contradictions; merges persona sets; commits shared records/tickets; merges unmapped discoveries into `0A`; creates required ticket/frontier work from `GAP` records; executes promotion and depromotion atomically under §§6.3–6.4; updates assurance links; and purges consumed buffers atomically. No later Discovery invocation may begin while an unmapped-discovery buffer contains `Pending-Merge`.
+END
+
+RULE concurrency-buffers
+  GOAL
+    Shared component discoveries go to
+    personas/{persona-directory}/SHARED-STAGING-BUFFER.md; outbound shared questions go
+    to personas/{persona-directory}/SHARED-QUESTIONS-BUFFER.md; unmapped coordinates go
+    to personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md with a same-transaction
+    FRT; persona-owned invocation pointers may be written immediately; depromotion is
+    annotated R-DEPROMOTION-PENDING and deferred.
+  END
+END
+
+RULE sequential-reconciliation-merge
+  GOAL
+    Sequential Reconciliation collects, deterministically sorts, and deduplicates all
+    buffer classes, promotion requests, and synthesis gaps; merges compatible claims
+    without improperly raising BLOCK-CONFIDENCE-RANK or losing profile detail; records
+    contradictions; merges persona sets; commits shared records and tickets; merges
+    unmapped discoveries into 0A; creates required ticket and frontier work from GAP
+    records; executes promotion and depromotion atomically; updates assurance links;
+    and purges consumed buffers atomically. No later Discovery invocation may begin
+    while an unmapped-discovery buffer contains a Pending-Merge entry.
+  END
+END
+
+SECTION stale-checkpoint-guard
+TITLE "Stale checkpoint guard"
+
+GOAL
+Before writing, compare loaded checkpoint and source fingerprints with target record versions. If any target changed after the checkpoint, stop and request a refreshed read set. Changed serialized fingerprints invalidate affected normalized maps, source records, claims, coverage, and downstream blocks before further mutation.
+END
+
+RULE stale-guard
+  GOAL
+    If any target changed after the checkpoint, stop and request a refreshed read set.
+    Changed serialized fingerprints invalidate affected normalized maps, source
+    records, claims, coverage, and downstream blocks before further mutation.
+  END
+END
+
+SECTION invocation-log
+TITLE "`0G` invocation log"
+
+GOAL
+Append after every invocation:
+
+```markdown
+### [ITERATION] - [INVOCATION-ID] - [Scope] - [Mode]
+
+- **Identity Header Summary:** [...]
+- **Cold-Resume Result / Check Fingerprint:** [...]
+- **Declared Semantic Actions / Runtime Authorization Result:** [...]
+- **Loaded Files / Fingerprints:** [...]
+- **Mutation Summary:** [...]
+- **Tickets Created / Updated:** [...]
+- **Frontiers Created / Closed:** [...]
+- **Unmapped Discoveries / GAP Records Buffered, Merged, or Disposed:** [...]
+- **Exports Acquired / Requested:** [...]
+- **SRC / CMP / CLM IDs Updated:** [...]
+- **Evidence Changes:** [...]
+- **Promotion / Depromotion:** [...]
+- **Coverage / Reconciliation Changes:** [...]
+- **Stale Propagation:** [...]
+- **Next Required Loads:** [...]
+```
+
+`0H` MAY compress current active states but MUST include its source `0G` range and fingerprint. When used to authorize a later Discovery invocation, it MUST also include a fingerprinted global count/list of every persona-local `Pending-Merge` unmapped discovery; otherwise the full-buffer fallback read in §8.4 is required.
+END
+
+FIELD INVOCATION-LOG
+  identity-header-summary                          -> string required
+  cold-resume-result-check-fingerprint             -> string required
+  declared-semantic-actions-runtime-authorization-result -> string required
+  loaded-files-fingerprints                        -> string required
+  mutation-summary                                 -> string required
+  tickets-created-updated                          -> string required
+  frontiers-created-closed                         -> string required
+  unmapped-discoveries-gap-records-buffered-merged-or-disposed -> string required
+  exports-acquired-requested                       -> string required
+  src-cmp-clm-ids-updated                          -> string required
+  evidence-changes                                 -> string required
+  promotion-depromotion                            -> string required
+  coverage-reconciliation-changes                  -> string required
+  stale-propagation                                -> string required
+  next-required-loads                              -> string required
+END
+
+RULE invocation-log-append
+  GOAL
+    The appended record heading is [ITERATION] - [INVOCATION-ID] - [Scope] - [Mode].
+    When 0H is used to authorize a later Discovery invocation, it MUST also include a
+    fingerprinted global count and list of every persona-local Pending-Merge unmapped
+    discovery; otherwise the full-buffer fallback read in §8.4 is required.
+  END
+END

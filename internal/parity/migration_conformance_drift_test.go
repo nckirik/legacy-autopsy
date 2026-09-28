@@ -8,8 +8,8 @@ import (
 	"github.com/nckirik/legacy-autopsy/internal/protocol"
 )
 
-// TestMigrationAndConformanceDrift checks the §19.2 conformance-case enum and the
-// Part 20 artifact-ownership matrix shape against protocol.md.
+// TestMigrationAndConformanceDrift checks the §17.2 conformance-case enum and the
+// Part 18 artifact-ownership matrix shape against protocol.md.
 func TestMigrationAndConformanceDrift(t *testing.T) {
 	res := compileWithRegistry(t, "protocol/conformance.cdl")
 	fields := map[string][]string{}
@@ -29,7 +29,7 @@ func TestMigrationAndConformanceDrift(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	text192, err := model.SectionText("19.2. Normative conformance cases")
+	text192, err := model.SectionText("17.2. Normative conformance cases")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,7 +57,7 @@ func TestMigrationAndConformanceDrift(t *testing.T) {
 	var matrix []string
 	for _, line := range strings.Split(string(raw), "\n") {
 		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "# Part 20.") {
+		if strings.HasPrefix(trimmed, "# Part 18.") {
 			inPart = true
 			continue
 		}
@@ -70,7 +70,7 @@ func TestMigrationAndConformanceDrift(t *testing.T) {
 		}
 	}
 	if len(matrix) == 0 {
-		t.Fatal("Part 20 ownership matrix not found")
+		t.Fatal("Part 18 ownership matrix not found")
 	}
 	for i, col := range matrix {
 		matrix[i] = strings.ReplaceAll(col, "authorized-writer-s", "authorized-writers")

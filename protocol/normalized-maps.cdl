@@ -1,5 +1,6 @@
+PART acquisition "Serialized Export Acquisition and Local Helper Trust Model"
+
 SECTION normalized-maps
-NUMBER 7.6
 TITLE "Normalized maps"
 
 GOAL

@@ -1,5 +1,6 @@
+PART identity "Deterministic Identity and Universal Atomicity"
+
 SECTION typed-id
-NUMBER 4.1
 TITLE "ID generation"
 
 GOAL

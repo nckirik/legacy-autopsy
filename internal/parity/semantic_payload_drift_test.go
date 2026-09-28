@@ -14,7 +14,7 @@ var hyphenatedToken = regexp.MustCompile(`\b[A-Z][A-Z0-9]+(?:-[A-Z0-9]+)+\b`)
 // protocol.md §4.1.1 to appear in the CDL section text. Adding or renaming a field
 // in protocol.md therefore fails until the CDL section is updated.
 func TestSemanticPayloadTokenDrift(t *testing.T) {
-	res := compileSection(t, "protocol/semantic-payload-identity.cdl")
+	res := compileSection(t, "protocol/typed-id.cdl", "protocol/semantic-payload-identity.cdl")
 	cdlText := res.EIR.Sections[0].Goal
 	for _, r := range res.EIR.Declarations.Rules {
 		cdlText += "\n" + r.Goal

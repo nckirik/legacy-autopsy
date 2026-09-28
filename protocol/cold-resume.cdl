@@ -1,5 +1,6 @@
+PART invocation "Invocation Isolation, Concurrency, and Reconciliation"
+
 SECTION cold-resume-check
-NUMBER 8.5
 TITLE "Cold resume check"
 
 GOAL

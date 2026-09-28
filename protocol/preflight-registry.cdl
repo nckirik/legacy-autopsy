@@ -1,5 +1,6 @@
+PART workspaces "Workspace Registries and Schemas"
+
 SECTION preflight-registry
-NUMBER 3.1
 TITLE "`0A-PREFLIGHT.md`"
 
 GOAL

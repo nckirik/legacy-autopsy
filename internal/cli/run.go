@@ -86,7 +86,7 @@ func doctor(args []string, stdout, stderr io.Writer) error {
 	}
 	fmt.Fprintf(stdout, "usable: protocol v%s, %d invocation modes, %s\n", model.Version, len(model.Modes), runtime.Version())
 	fmt.Fprintln(stdout, "supported: protocol routing, IDs, path normalization, workspace skeleton/check, bounded context packets, bootstrap fixtures, spec pilot (compile/render/run for §7.7)")
-	fmt.Fprintln(stdout, "unsupported: full Protocol Part 19 conformance, Exit A, Exit E, acquisition, synthesis, confirmation, and packaging")
+	fmt.Fprintln(stdout, "unsupported: full Protocol Part 17 conformance, Exit A, Exit E, acquisition, synthesis, confirmation, and packaging")
 	return nil
 }
 

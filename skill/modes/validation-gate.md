@@ -16,7 +16,7 @@ Bind one gate/check/stage, authoritative input fingerprint set, pinned snapshot,
 - §8.1. `Resume identity header`; §8.3. `Invocation-mode enum and explicit multi-file modes`; §8.4. `Mandatory read sets`; §8.5. `Cold resume check`; §8.7. `Stale checkpoint guard`; §8.8. `` `0G` invocation log ``
 - §10.1. `Evidence-backed `[R-SWEPT]``; §10.2. `Per-kind coverage arithmetic`; §10.3. `Composite Exit A — Deconstruction Closure`
 - §12.1. `Traceability — `20-TRACEABILITY.md``; §12.2. `Required reciprocal references`; §12.5. `Deterministic validation summary`; §13.4. `Handbook quality gate`
-- §15.1. `Strict conditions`; §15.2. `Scope certificate`; §15.3. `Package contents`; §15.4. `Acyclic certification sequence and hash domains`; §15.5. `Reproducible final-bundle verification`; §19.2. `Normative conformance cases`
+- §15.1. `Strict conditions`; §15.2. `Scope certificate`; §15.3. `Package contents`; §15.4. `Acyclic certification sequence and hash domains`; §15.5. `Reproducible final-bundle verification`; §17.2. `Normative conformance cases`
 
 ## Mandatory read set
 

@@ -137,9 +137,16 @@ func (r *resolver) buildSymbols() {
 			r.sym.workflows[id] = true
 		}
 	}
+	parts := map[string]bool{}
+	for _, part := range r.prog.Globals.Parts {
+		parts[part.ID] = true
+	}
 	for _, sec := range r.prog.Sections {
 		if add(sec.ID, "section", r.sym.sections[sec.ID]) {
 			r.sym.sections[sec.ID] = true
+		}
+		if sec.Part != "" && !parts[sec.Part] {
+			r.fail("CDL_UNRESOLVED_REFERENCE", "section %s declares unknown part %q", sec.ID, sec.Part)
 		}
 		for _, t := range sec.Types {
 			if add(t.ID, "type", r.sym.types[t.ID] != "") {

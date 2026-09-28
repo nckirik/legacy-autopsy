@@ -1,5 +1,6 @@
+PART synthesis "Structured Synthesis"
+
 SECTION synthesis-scope
-NUMBER 11.1
 TITLE "Partial versus Final Synthesis"
 
 GOAL
@@ -97,7 +98,6 @@ RULE gap-buffer-merge
 END
 
 SECTION synthesis-block-header
-NUMBER 11.2
 TITLE "Common synthesis block header"
 
 GOAL
@@ -154,7 +154,6 @@ RULE common-header-requirements
 END
 
 SECTION architecture-blueprint
-NUMBER 11.3
 TITLE "Architecture blueprint — `90-ARCH-BLUEPRINT.md`"
 
 GOAL
@@ -203,7 +202,6 @@ RULE module-requirements
 END
 
 SECTION entity-catalog
-NUMBER 11.4
 TITLE "Entity — `91-DATA-MODEL.md`"
 
 GOAL
@@ -269,7 +267,6 @@ FIELD ENTITY-RECORD
 END
 
 SECTION relationship-catalog
-NUMBER 11.5
 TITLE "Relationship — `91-DATA-MODEL.md`"
 
 GOAL
@@ -317,7 +314,6 @@ FIELD RELATIONSHIP-RECORD
 END
 
 SECTION state-machine-catalog
-NUMBER 11.6
 TITLE "State machine — `91-DATA-MODEL.md`"
 
 GOAL
@@ -370,7 +366,6 @@ RULE state-machine-eligibility
 END
 
 SECTION database-routine-catalog
-NUMBER 11.7
 TITLE "Database routine — `91-DATA-MODEL.md`"
 
 GOAL
@@ -437,7 +432,6 @@ RULE database-routine-drift
 END
 
 SECTION business-rule-catalog
-NUMBER 11.8
 TITLE "Business rule — `92-BUSINESS-RULES.md`"
 
 GOAL
@@ -500,7 +494,6 @@ RULE single-rule-owner
 END
 
 SECTION use-case-catalog
-NUMBER 11.9
 TITLE "Use case — `93-USE-CASES.md`"
 
 GOAL
@@ -587,7 +580,6 @@ RULE use-case-visibility
 END
 
 SECTION interface-catalog
-NUMBER 11.10
 TITLE "Interface — `94-INTERFACES.md`"
 
 GOAL
@@ -659,7 +651,6 @@ RULE interface-compatibility-baseline
 END
 
 SECTION deployment-catalog
-NUMBER 11.11
 TITLE "Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`"
 
 GOAL
@@ -742,7 +733,6 @@ RULE configuration-effect
 END
 
 SECTION nfr-security-catalog
-NUMBER 11.12
 TITLE "NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`"
 
 GOAL
@@ -855,7 +845,6 @@ RULE security-reciprocal
 END
 
 SECTION persona-profile
-NUMBER 11.13
 TITLE "Persona profile"
 
 GOAL

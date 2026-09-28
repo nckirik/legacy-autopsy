@@ -2,7 +2,6 @@ package cdl
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,38 +11,39 @@ import (
 var update = flag.Bool("update", false, "rewrite golden assets and identity ledger")
 
 const (
-	examplePath           = "protocol/export-reconciliation.cdl"
-	typedIDPath           = "protocol/typed-id.cdl"
-	semanticPayloadPath   = "protocol/semantic-payload-identity.cdl"
-	canonicalProfilePath  = "protocol/canonical-hash-profile.cdl"
-	acquisitionPath       = "protocol/export-acquisition-loop.cdl"
-	normalizedMapsPath    = "protocol/normalized-maps.cdl"
-	invocationModesPath   = "protocol/invocation-modes.cdl"
-	coldResumePath        = "protocol/cold-resume.cdl"
-	ticketFSMPath         = "protocol/ticket-fsm.cdl"
-	invocationContextPath = "protocol/invocation-context.cdl"
-	coverageExitsPath     = "protocol/coverage-and-exits.cdl"
-	statusTaxonomyPath    = "protocol/status-taxonomy.cdl"
-	evidenceDecisionsPath = "protocol/evidence-and-decisions.cdl"
-	workspaceRegistryPath = "protocol/workspace-registries.cdl"
-	preflightRegistryPath = "protocol/preflight-registry.cdl"
-	acquisitionTrustPath  = "protocol/acquisition-trust.cdl"
-	traceabilityPath      = "protocol/traceability.cdl"
-	packagingPath         = "protocol/packaging.cdl"
-	foundationsPath       = "protocol/foundations.cdl"
-	personasPovsPath      = "protocol/personas-povs.cdl"
-	inventoryFrontierPath = "protocol/inventory-and-frontier.cdl"
-	extractionEvoPath     = "protocol/extraction-evolution.cdl"
-	handbookDecisionsPath = "protocol/handbook-and-decisions.cdl"
-	goldenProtocolPath    = "protocol/golden/protocol.generated.md"
-	synthesisCatalogsPath = "protocol/synthesis-catalogs.cdl"
-	migrationConfPath     = "protocol/conformance.cdl"
-	globalsPath           = "protocol/globals.cdl"
-	assemblyPath          = "protocol/assembly.json"
-	ledgerPath            = "protocol/identity-ledger.json"
-	goldenEIRPath         = "protocol/golden/protocol.eir.json"
-	goldenPromptPath      = "protocol/golden/protocol.pilot.prompt.md"
-	generatedAt           = "2026-09-25T00:00:00Z"
+	examplePath             = "protocol/export-reconciliation.cdl"
+	typedIDPath             = "protocol/typed-id.cdl"
+	semanticPayloadPath     = "protocol/semantic-payload-identity.cdl"
+	canonicalProfilePath    = "protocol/canonical-hash-profile.cdl"
+	acquisitionPath         = "protocol/export-acquisition-loop.cdl"
+	normalizedMapsPath      = "protocol/normalized-maps.cdl"
+	invocationModesPath     = "protocol/invocation-modes.cdl"
+	coldResumePath          = "protocol/cold-resume.cdl"
+	ticketFSMPath           = "protocol/ticket-fsm.cdl"
+	invocationContextPath   = "protocol/invocation-context.cdl"
+	invocationLifecyclePath = "protocol/invocation-lifecycle.cdl"
+	coverageExitsPath       = "protocol/coverage-and-exits.cdl"
+	statusTaxonomyPath      = "protocol/status-taxonomy.cdl"
+	evidenceDecisionsPath   = "protocol/evidence-and-decisions.cdl"
+	workspaceRegistryPath   = "protocol/workspace-registries.cdl"
+	preflightRegistryPath   = "protocol/preflight-registry.cdl"
+	acquisitionTrustPath    = "protocol/acquisition-trust.cdl"
+	traceabilityPath        = "protocol/traceability.cdl"
+	packagingPath           = "protocol/packaging.cdl"
+	foundationsPath         = "protocol/foundations.cdl"
+	personasPovsPath        = "protocol/personas-povs.cdl"
+	inventoryFrontierPath   = "protocol/inventory-and-frontier.cdl"
+	extractionEvoPath       = "protocol/extraction-evolution.cdl"
+	handbookDecisionsPath   = "protocol/handbook-and-decisions.cdl"
+	goldenProtocolPath      = "protocol/golden/protocol.generated.md"
+	synthesisCatalogsPath   = "protocol/synthesis-catalogs.cdl"
+	migrationConfPath       = "protocol/conformance.cdl"
+	globalsPath             = "protocol/globals.cdl"
+	assemblyPath            = "protocol/assembly.json"
+	ledgerPath              = "protocol/identity-ledger.json"
+	goldenEIRPath           = "protocol/golden/protocol.eir.json"
+	goldenPromptPath        = "protocol/golden/protocol.pilot.prompt.md"
+	generatedAt             = "2026-09-25T00:00:00Z"
 )
 
 func repoPath(rel string) string { return filepath.Join("..", rel) }
@@ -327,7 +327,7 @@ func TestCompileExample(t *testing.T) {
 
 func TestTypedIDSectionCompiles(t *testing.T) {
 	res := compileSources(t, typedIDPath)
-	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "4.1" {
+	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].ID != "typed-id" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
 	counts := map[string]int{}
@@ -355,9 +355,9 @@ func TestTypedIDSectionCompiles(t *testing.T) {
 }
 
 func TestSemanticPayloadSectionCompiles(t *testing.T) {
-	res := compileSources(t, semanticPayloadPath)
-	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "4.1.1" {
-		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
+	res := compileSources(t, typedIDPath, semanticPayloadPath)
+	if !hasSectionID(res, "semantic-payload-identity") {
+		t.Fatalf("semantic-payload-identity section missing")
 	}
 	rules := map[string]bool{}
 	for _, r := range res.EIR.Declarations.Rules {
@@ -374,9 +374,9 @@ func TestSemanticPayloadSectionCompiles(t *testing.T) {
 }
 
 func TestCanonicalProfileSectionCompiles(t *testing.T) {
-	res := compileSources(t, canonicalProfilePath)
-	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "4.1.2" {
-		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
+	res := compileSources(t, typedIDPath, canonicalProfilePath)
+	if !hasSectionID(res, "canonical-hash-profile") {
+		t.Fatalf("canonical-hash-profile section missing")
 	}
 	counts := map[string]int{}
 	for _, e := range res.EIR.Declarations.Enums {
@@ -391,7 +391,7 @@ func TestCanonicalProfileSectionCompiles(t *testing.T) {
 
 func TestAcquisitionLoopSectionCompiles(t *testing.T) {
 	res := compileSources(t, acquisitionPath)
-	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "7.5" {
+	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].ID != "export-acquisition-loop" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
 	states := 0
@@ -407,7 +407,7 @@ func TestAcquisitionLoopSectionCompiles(t *testing.T) {
 
 func TestNormalizedMapsSectionCompiles(t *testing.T) {
 	res := compileSources(t, normalizedMapsPath)
-	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "7.6" {
+	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].ID != "normalized-maps" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
 	var tableID string
@@ -489,7 +489,7 @@ func TestModeDeclarationChecks(t *testing.T) {
 
 func TestColdResumeSectionCompiles(t *testing.T) {
 	res := compileSources(t, coldResumePath)
-	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "8.5" {
+	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].ID != "cold-resume-check" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
 	fields := 0
@@ -507,9 +507,9 @@ func TestTicketFSMCompiles(t *testing.T) {
 	res := compileSources(t, ticketFSMPath)
 	numbers := []string{}
 	for _, sec := range res.EIR.Sections {
-		numbers = append(numbers, sec.Number)
+		numbers = append(numbers, sec.ID)
 	}
-	if strings.Join(numbers, ",") != "9.1,9.2,9.3,9.4,9.5,9.6" {
+	if strings.Join(numbers, ",") != "ticket-schema,ticket-fsm,human-hatch-prerequisites,probe-specification,no-mock-integrity,no-mock-fallback" {
 		t.Fatalf("unexpected sections: %v", numbers)
 	}
 	transitions := 0
@@ -526,12 +526,12 @@ func TestTicketFSMCompiles(t *testing.T) {
 }
 
 func TestInvocationContextCompiles(t *testing.T) {
-	res := compileSources(t, invocationContextPath)
+	res := compileSources(t, invocationContextPath, invocationLifecyclePath)
 	numbers := []string{}
 	for _, sec := range res.EIR.Sections {
-		numbers = append(numbers, sec.Number)
+		numbers = append(numbers, sec.ID)
 	}
-	if strings.Join(numbers, ",") != "8.1,8.2,8.3,8.4,8.6,8.7,8.8" {
+	if strings.Join(numbers, ",") != "invocation-identity-header,strict-single-scope,invocation-mode-enum,mandatory-read-sets,concurrent-persona-traversal,stale-checkpoint-guard,invocation-log" {
 		t.Fatalf("unexpected sections: %v", numbers)
 	}
 	counts := map[string]int{}
@@ -547,9 +547,9 @@ func TestCoverageAndExitsCompile(t *testing.T) {
 	res := compileSources(t, coverageExitsPath)
 	numbers := []string{}
 	for _, sec := range res.EIR.Sections {
-		numbers = append(numbers, sec.Number)
+		numbers = append(numbers, sec.ID)
 	}
-	if strings.Join(numbers, ",") != "10.1,10.2,10.3,10.4,10.5,10.6" {
+	if strings.Join(numbers, ",") != "sweep-records,coverage-arithmetic,exit-a,exit-b,exit-c,exit-d" {
 		t.Fatalf("unexpected sections: %v", numbers)
 	}
 	counts := map[string]int{}
@@ -572,7 +572,7 @@ func TestCoverageAndExitsCompile(t *testing.T) {
 
 func TestStatusTaxonomyCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath)
-	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].Number != "5.1" {
+	if len(res.EIR.Sections) != 1 || res.EIR.Sections[0].ID != "status-taxonomy" {
 		t.Fatalf("unexpected sections: %+v", res.EIR.Sections)
 	}
 	enums := map[string][]string{}
@@ -597,9 +597,9 @@ func TestEvidenceAndDecisionsCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, evidenceDecisionsPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"5.2", "5.3", "5.4", "5.5", "5.6", "5.7"} {
+	for _, want := range []string{"claim-evidence", "sanitized-projections", "contradictions", "authoritative-decisions", "acquisition-candidates", "human-confirmations"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing from %v", want, numbers)
 		}
@@ -618,7 +618,7 @@ func TestWorkspaceRegistriesCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, workspaceRegistryPath)
 	found := false
 	for _, sec := range res.EIR.Sections {
-		if sec.Number == "3.2" {
+		if sec.ID == "workspace-registries" {
 			found = true
 		}
 	}
@@ -644,7 +644,7 @@ func TestPreflightRegistryCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, preflightRegistryPath)
 	found := false
 	for _, sec := range res.EIR.Sections {
-		if sec.Number == "3.1" {
+		if sec.ID == "preflight-registry" {
 			found = true
 		}
 	}
@@ -667,9 +667,9 @@ func TestAcquisitionTrustCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, acquisitionTrustPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"7.1", "7.2", "7.3", "7.4"} {
+	for _, want := range []string{"trust-boundary", "acquisition-register", "logical-explosion", "required-explosion-coverage"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -694,9 +694,9 @@ func TestTraceabilityCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, traceabilityPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"12.1", "12.2", "12.3", "12.4", "12.5"} {
+	for _, want := range []string{"traceability", "reciprocal-references", "synthesis-id-timing", "dependency-provenance", "validation-summary"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -722,9 +722,9 @@ func TestPackagingCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, packagingPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"15.1", "15.1.1", "15.1.2", "15.1.3", "15.1.4", "15.2", "15.3", "15.4", "15.5"} {
+	for _, want := range []string{"exit-e-strict-conditions", "universal-packaging-rules", "exit-e-candidate-report", "candidate-payload-manifest", "exit-e-content-readiness", "scope-certificate", "package-contents", "certification-sequence", "final-bundle-verification"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -761,9 +761,9 @@ func TestPersonasPovsCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, personasPovsPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"2.1", "2.2", "2.3", "2.4", "2.5", "2.6"} {
+	for _, want := range []string{"persona-definition", "canonical-entry-ownership", "five-isolated-povs", "traversal-tracks", "capability-runtime-state", "capability-grouping"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -786,9 +786,9 @@ func TestInventoryAndFrontierCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, inventoryFrontierPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"4.2", "4.3", "4.4", "4.5", "4.6"} {
+	for _, want := range []string{"atomic-unit-rule", "source-inventory", "traversal-frontier", "source-coverage", "supersession-tombstones"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -832,9 +832,9 @@ func TestExtractionEvolutionCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, extractionEvoPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"6.1", "6.2", "6.3", "6.4", "6.5"} {
+	for _, want := range []string{"atomic-component-schema", "dual-entry-discovery", "staging-and-promotion", "depromotion", "surgical-evolution"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -857,9 +857,9 @@ func TestModeReadSetsCompiles(t *testing.T) {
 	res := compileSources(t, invocationContextPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"8.3", "8.4"} {
+	for _, want := range []string{"invocation-mode-enum", "mandatory-read-sets"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -870,9 +870,9 @@ func TestHumanHatchProbeCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, ticketFSMPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"9.3", "9.4", "9.5", "9.6"} {
+	for _, want := range []string{"human-hatch-prerequisites", "probe-specification", "no-mock-integrity", "no-mock-fallback"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -895,9 +895,9 @@ func TestHandbookAndDecisionsCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, handbookDecisionsPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"13.1", "13.2", "13.3", "13.4", "14.1", "14.2", "14.3", "14.4", "14.5", "14.6"} {
+	for _, want := range []string{"audience-paths", "chapter-behavior", "disabled-chapter", "handbook-quality-gate", "decision-log", "modernization-templates", "rule-ownership", "interface-compatibility", "equivalence-suite", "sole-input-invariant"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -915,10 +915,14 @@ func TestSynthesisCatalogsCompile(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, extractionEvoPath, synthesisCatalogsPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for i := 1; i <= 13; i++ {
-		want := fmt.Sprintf("11.%d", i)
+	for _, want := range []string{
+		"synthesis-scope", "synthesis-block-header", "architecture-blueprint", "entity-catalog",
+		"relationship-catalog", "state-machine-catalog", "database-routine-catalog",
+		"business-rule-catalog", "use-case-catalog", "interface-catalog", "deployment-catalog",
+		"nfr-security-catalog", "persona-profile",
+	} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -965,9 +969,9 @@ func TestMigrationAndConformanceCompiles(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, migrationConfPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"16", "19.1", "19.2", "19.3", "20"} {
+	for _, want := range []string{"security-guardrails", "conforming-capabilities", "conformance-cases", "corpus-acceptance", "artifact-ownership"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -990,9 +994,9 @@ func TestFoundationsCompile(t *testing.T) {
 	res := compileSources(t, statusTaxonomyPath, foundationsPath)
 	numbers := map[string]bool{}
 	for _, sec := range res.EIR.Sections {
-		numbers[sec.Number] = true
+		numbers[sec.ID] = true
 	}
-	for _, want := range []string{"0.1", "0.2", "0.3", "0.4", "1.1", "1.2", "1.3", "1.4", "1.5"} {
+	for _, want := range []string{"normative-language", "guarantees", "non-guarantees", "conceptual-flow", "forensic-plane", "assurance-plane", "synthesis-plane", "handbook-plane", "non-authoritative-sidecars"} {
 		if !numbers[want] {
 			t.Fatalf("section %s missing", want)
 		}
@@ -1013,6 +1017,15 @@ func TestFoundationsCompile(t *testing.T) {
 			t.Fatalf("%s has %d values, want %d", id, enumCounts[id], size)
 		}
 	}
+}
+
+func hasSectionID(res *Result, id string) bool {
+	for _, sec := range res.EIR.Sections {
+		if sec.ID == id {
+			return true
+		}
+	}
+	return false
 }
 
 func TestLedgerRejectsUnknownIdentity(t *testing.T) {

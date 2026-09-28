@@ -45,6 +45,7 @@ type parser struct {
 	file  string
 	lines []string
 	pos   int
+	part  string
 	diags Diagnostics
 }
 
@@ -63,6 +64,16 @@ func Parse(file string, src []byte) (*Program, Diagnostics) {
 			continue
 		}
 		switch {
+		case strings.HasPrefix(line, "PART "):
+			p.pos++
+			rest := strings.TrimSpace(strings.TrimPrefix(line, "PART "))
+			fields := strings.SplitN(rest, " ", 2)
+			if len(fields) != 2 {
+				p.failHere("CDL_PARSE", "PART expects <id> \"<title>\"")
+				return prog, p.diags
+			}
+			p.part = fields[0]
+			prog.Globals.Parts = append(prog.Globals.Parts, PartDecl{ID: fields[0], Title: unquote(strings.TrimSpace(fields[1]))})
 		case line == "GLOBAL DECLARATIONS":
 			p.pos++
 			if !p.parseGlobals(&prog.Globals) {
@@ -132,7 +143,8 @@ func (p *parser) peek() (string, bool) {
 }
 
 func (p *parser) isTopLevel(line string) bool {
-	return line == "GLOBAL DECLARATIONS" || strings.HasPrefix(line, "SECTION ") || strings.HasPrefix(line, "PROJECTION ")
+	return line == "GLOBAL DECLARATIONS" || strings.HasPrefix(line, "SECTION ") ||
+		strings.HasPrefix(line, "PART ") || strings.HasPrefix(line, "PROJECTION ")
 }
 
 func csv(s string) []string {
@@ -252,14 +264,6 @@ func (p *parser) parseGlobals(g *Globals) bool {
 			g.Rules = append(g.Rules, strings.TrimSpace(strings.TrimPrefix(line, "RULE ")))
 		case strings.HasPrefix(line, "GATES "):
 			g.Gates = append(g.Gates, csv(strings.TrimPrefix(line, "GATES "))...)
-		case strings.HasPrefix(line, "PART "):
-			rest := strings.TrimSpace(strings.TrimPrefix(line, "PART "))
-			fields := strings.SplitN(rest, " ", 2)
-			if len(fields) != 2 {
-				p.failHere("CDL_PARSE", "PART expects <number> \"<title>\"")
-				return false
-			}
-			g.Parts = append(g.Parts, PartDecl{Number: fields[0], Title: unquote(strings.TrimSpace(fields[1]))})
 		case strings.HasPrefix(line, "WORKFLOW-TARGET "):
 			g.WorkflowTargets = append(g.WorkflowTargets, csv(strings.TrimPrefix(line, "WORKFLOW-TARGET "))...)
 		default:
@@ -313,7 +317,7 @@ func (p *parser) parseMode(id string) (ModeDecl, bool) {
 }
 
 func (p *parser) parseSection(id string) (Section, bool) {
-	sec := Section{ID: id}
+	sec := Section{ID: id, Part: p.part}
 	for {
 		line, ok := p.peek()
 		if !ok {
@@ -328,8 +332,8 @@ func (p *parser) parseSection(id string) (Section, bool) {
 		}
 		p.pos++
 		switch {
-		case strings.HasPrefix(line, "NUMBER "):
-			sec.Number = strings.TrimSpace(strings.TrimPrefix(line, "NUMBER "))
+		case strings.HasPrefix(line, "SUBSECTION OF "):
+			sec.Parent = strings.TrimSpace(strings.TrimPrefix(line, "SUBSECTION OF "))
 		case strings.HasPrefix(line, "TITLE "):
 			sec.Title = unquote(strings.TrimPrefix(line, "TITLE "))
 		case strings.HasPrefix(line, "ARTIFACT "):

@@ -1,5 +1,6 @@
+PART tickets "Ticket FSM, Static Investigation, Probes, and Human Hatch"
+
 SECTION ticket-schema
-NUMBER 9.1
 TITLE "Ticket schema and canonical IDs"
 
 GOAL
@@ -81,7 +82,6 @@ RULE ticket-identity
 END
 
 SECTION ticket-fsm
-NUMBER 9.2
 TITLE "FSM and write rights"
 
 GOAL
@@ -119,7 +119,6 @@ RULE ticket-terminal-transitions
 END
 
 SECTION human-hatch-prerequisites
-NUMBER 9.3
 TITLE "Human Hatch action prerequisites"
 
 GOAL
@@ -196,7 +195,6 @@ RULE confirmation-prerequisites
 END
 
 SECTION probe-specification
-NUMBER 9.4
 TITLE "Probe specification and asynchronous handoff"
 
 GOAL
@@ -246,7 +244,6 @@ RULE probe-handoff
 END
 
 SECTION no-mock-integrity
-NUMBER 9.5
 TITLE "No-mock integrity"
 
 GOAL
@@ -272,7 +269,6 @@ RULE no-mock-rules
 END
 
 SECTION no-mock-fallback
-NUMBER 9.6
 TITLE "No-mock fallback payload"
 
 GOAL

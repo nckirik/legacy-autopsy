@@ -1,5 +1,7 @@
+PART identity "Deterministic Identity and Universal Atomicity"
+
 SECTION canonical-hash-profile
-NUMBER 4.1.2
+SUBSECTION OF typed-id
 TITLE "Normative canonical hash profile and packaging artifacts"
 
 GOAL

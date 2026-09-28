@@ -1,5 +1,6 @@
+PART guardrails "Security, Privacy, and Operational Guardrails"
+
 SECTION security-guardrails
-NUMBER 16
 TITLE "Security, Privacy, and Operational Guardrails"
 
 GOAL
@@ -14,8 +15,9 @@ GOAL
 9. Snapshot mixing is forbidden. A source changed during acquisition/traversal requires a consistent re-snapshot and stale propagation.
 END
 
+PART conformance "Conformance and Acceptance Checklist"
+
 SECTION conforming-capabilities
-NUMBER 19.1
 TITLE "Conforming implementation capabilities"
 
 GOAL
@@ -131,7 +133,6 @@ RULE conforming-implementation-capabilities
 END
 
 SECTION conformance-cases
-NUMBER 19.2
 TITLE "Normative conformance cases"
 
 GOAL
@@ -183,7 +184,6 @@ RULE normative-conformance-cases
 END
 
 SECTION corpus-acceptance
-NUMBER 19.3
 TITLE "Corpus acceptance"
 
 GOAL
@@ -229,8 +229,9 @@ RULE corpus-acceptance-requirements
   END
 END
 
+PART ownership "Compact Artifact Ownership Matrix"
+
 SECTION artifact-ownership
-NUMBER 20
 TITLE "Compact Artifact Ownership Matrix"
 
 GOAL

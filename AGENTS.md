@@ -26,6 +26,6 @@ This is operational guidance, not a protocol specification. The CDL sources unde
 ## Fixtures and claims
 
 - Every newly implemented normative rule requires traceability to exact protocol sections plus positive and negative fixtures with stable expected results or diagnostics.
-- Do not claim an implemented Part 19 family, Exit A, Exit E, or Protocol v4 conformance until the complete applicable deterministic validators and normative fixtures pass.
+- Do not claim an implemented Part 17 family, Exit A, Exit E, or Protocol v4 conformance until the complete applicable deterministic validators and normative fixtures pass.
 
 Before finishing, run the narrowest relevant commands from [docs/development.md](docs/development.md). Report checks run, protocol sections affected, implemented support, and deferred behavior.

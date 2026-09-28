@@ -1,5 +1,6 @@
+PART acquisition "Serialized Export Acquisition and Local Helper Trust Model"
+
 SECTION export-acquisition-loop
-NUMBER 7.5
 TITLE "n8n human acquisition loop"
 
 GOAL

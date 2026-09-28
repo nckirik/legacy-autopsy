@@ -32,8 +32,8 @@ type Globals struct {
 
 // PartDecl is a document part heading: number and title.
 type PartDecl struct {
-	Number string
-	Title  string
+	ID    string
+	Title string
 }
 
 // ModeDecl is one invocation-mode declaration: identity, strictness, and the
@@ -54,6 +54,8 @@ type Use struct{ Kind, ID string }
 // Section is one normative section.
 type Section struct {
 	ID       string
+	Part     string
+	Parent   string
 	Number   string
 	Title    string
 	Artifact string

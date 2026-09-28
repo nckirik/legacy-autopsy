@@ -1,5 +1,6 @@
+PART acquisition "Serialized Export Acquisition and Local Helper Trust Model"
+
 SECTION export-reconciliation
-NUMBER 7.7
 TITLE "Export reconciliation — `13-EXPORT-RECONCILIATION.md`"
 ARTIFACT 13-EXPORT-RECONCILIATION.md
 

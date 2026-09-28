@@ -1,5 +1,6 @@
+PART extraction "Atomic Forensic Extraction and Evolution"
+
 SECTION atomic-component-schema
-NUMBER 6.1
 TITLE "Atomic component schema"
 
 GOAL
@@ -79,7 +80,6 @@ RULE atomic-unit-specificity
 END
 
 SECTION dual-entry-discovery
-NUMBER 6.2
 TITLE "Dual-entry discovery"
 
 GOAL
@@ -131,7 +131,6 @@ RULE persona-driven-discovery
 END
 
 SECTION staging-and-promotion
-NUMBER 6.3
 TITLE "Staging and promotion"
 
 GOAL
@@ -201,7 +200,6 @@ RULE dead-code-proof
 END
 
 SECTION depromotion
-NUMBER 6.4
 TITLE "Depromotion"
 
 GOAL
@@ -224,7 +222,6 @@ RULE depromotion-steps
 END
 
 SECTION surgical-evolution
-NUMBER 6.5
 TITLE "Surgical evolution"
 
 GOAL

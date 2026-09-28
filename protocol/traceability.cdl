@@ -1,5 +1,6 @@
+PART traceability "Traceability, Referential Integrity, and Staleness"
+
 SECTION traceability
-NUMBER 12.1
 TITLE "Traceability — `20-TRACEABILITY.md`"
 
 GOAL
@@ -96,7 +97,6 @@ RULE traceability-invariants
 END
 
 SECTION reciprocal-references
-NUMBER 12.2
 TITLE "Required reciprocal references"
 
 GOAL
@@ -151,7 +151,6 @@ RULE required-reciprocal-references
 END
 
 SECTION synthesis-id-timing
-NUMBER 12.3
 TITLE "Synthesis-ID timing"
 
 GOAL
@@ -171,7 +170,6 @@ RULE synthesis-id-allocation-timing
 END
 
 SECTION dependency-provenance
-NUMBER 12.4
 TITLE "Dependency and impact provenance"
 
 GOAL
@@ -199,7 +197,6 @@ RULE dependency-impact-provenance
 END
 
 SECTION validation-summary
-NUMBER 12.5
 TITLE "Deterministic validation summary"
 
 GOAL

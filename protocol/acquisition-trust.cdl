@@ -1,5 +1,6 @@
+PART acquisition "Serialized Export Acquisition and Local Helper Trust Model"
+
 SECTION trust-boundary
-NUMBER 7.1
 TITLE "Trust boundary"
 
 GOAL
@@ -41,7 +42,6 @@ RULE helper-trust-boundary
 END
 
 SECTION acquisition-register
-NUMBER 7.2
 TITLE "Acquisition register"
 
 GOAL
@@ -81,7 +81,6 @@ FIELD EXPORT
 END
 
 SECTION logical-explosion
-NUMBER 7.3
 TITLE "Logical explosion and virtual coordinates"
 
 GOAL
@@ -119,7 +118,6 @@ RULE virtual-coordinates
 END
 
 SECTION required-explosion-coverage
-NUMBER 7.4
 TITLE "Required explosion coverage"
 
 GOAL

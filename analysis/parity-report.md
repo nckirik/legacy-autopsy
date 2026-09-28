@@ -3,126 +3,126 @@
 - Schema version: 1
 - Generator: parityreport parityreport/0.1
 - Generated at: 2026-09-25T00:00:00Z
-- Protocol: 4.1.2 (sha256:c5c310f6e2047398d177ee5eb691ada726887ad0aa6bac676b83d76d3129c825)
-- Language: cdl/0.2 (EIR format 2)
+- Protocol: 4.1.2 (sha256:3c232db801edd19757a92ef3393a296b6153eb432c509ad8247313753dc1c0f4)
+- Language: cdl/0.3 (EIR format 2)
 
 ## Section coverage
 
 | Section | Heading | CDL source | Status |
 | :-- | :-- | :-- | :-- |
-| 0 | Purpose, Guarantees, and Conceptual Flow |  | wrapper |
-| 1.1 | Plane 1 — Forensic Plane | protocol/foundations.cdl | implemented |
-| 1.2 | Plane 2 — Assurance Plane | protocol/foundations.cdl | implemented |
-| 1.3 | Plane 3 — Synthesis Plane | protocol/foundations.cdl | implemented |
-| 1.4 | Plane 4 — Human Reconstruction Handbook | protocol/foundations.cdl | implemented |
-| 1.5 | Non-authoritative sidecars | protocol/foundations.cdl | implemented |
-| 2.1 | Persona definition and purity | protocol/personas-povs.cdl | implemented |
-| 2.2 | Canonical entry ownership | protocol/personas-povs.cdl | implemented |
-| 2.3 | Five isolated POVs | protocol/personas-povs.cdl | implemented |
-| 2.4 | Traversal tracks | protocol/personas-povs.cdl | implemented |
-| 2.5 | Capability and runtime state | protocol/personas-povs.cdl | implemented |
-| 2.6 | Capability grouping and target decision | protocol/personas-povs.cdl | implemented |
-| 3.1 | `0A-PREFLIGHT.md` | protocol/preflight-registry.cdl | implemented |
-| 3.2 | Foundational registries | protocol/workspace-registries.cdl | implemented |
-| 4.1 | ID generation | protocol/typed-id.cdl | implemented |
-| 4.1.1 | Semantic payload identity and certification envelopes | protocol/semantic-payload-identity.cdl | implemented |
-| 4.1.2 | Normative canonical hash profile and packaging artifacts | protocol/canonical-hash-profile.cdl | implemented |
-| 4.2 | Atomic unit rule | protocol/inventory-and-frontier.cdl | implemented |
-| 4.3 | Source inventory denominator — `10-SOURCE-INVENTORY.md` | protocol/inventory-and-frontier.cdl | implemented |
-| 4.4 | Traversal frontier — `11-TRAVERSAL-FRONTIER.md` | protocol/inventory-and-frontier.cdl | implemented |
-| 4.5 | Scope-specific source coverage — `16-SOURCE-COVERAGE.md` | protocol/inventory-and-frontier.cdl | implemented |
-| 4.6 | Stable supersession and tombstones | protocol/inventory-and-frontier.cdl | implemented |
-| 5.1 | Dedicated prefix groups | protocol/status-taxonomy.cdl | implemented |
-| 5.2 | Claim-level evidence — `12-CLAIM-EVIDENCE.md` | protocol/evidence-and-decisions.cdl | implemented |
-| 5.3 | Sanitized projections and helper limitations | protocol/evidence-and-decisions.cdl | implemented |
-| 5.4 | Contradictions — `14-CONTRADICTIONS.md` | protocol/evidence-and-decisions.cdl | implemented |
-| 5.5 | Authoritative decisions — `15-DECISIONS.md` | protocol/evidence-and-decisions.cdl | implemented |
-| 5.6 | Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md` | protocol/evidence-and-decisions.cdl | implemented |
-| 5.7 | Human confirmations — `18-CONFIRMATIONS.md` | protocol/evidence-and-decisions.cdl | implemented |
-| 6.1 | Atomic component schema | protocol/extraction-evolution.cdl | implemented |
-| 6.2 | Dual-entry discovery | protocol/extraction-evolution.cdl | implemented |
-| 6.3 | Staging and promotion | protocol/extraction-evolution.cdl | implemented |
-| 6.4 | Depromotion | protocol/extraction-evolution.cdl | implemented |
-| 6.5 | Surgical evolution | protocol/extraction-evolution.cdl | implemented |
-| 7.1 | Trust boundary | protocol/acquisition-trust.cdl | implemented |
-| 7.2 | Acquisition register | protocol/acquisition-trust.cdl | implemented |
-| 7.3 | Logical explosion and virtual coordinates | protocol/acquisition-trust.cdl | implemented |
-| 7.4 | Required explosion coverage | protocol/acquisition-trust.cdl | implemented |
-| 7.5 | n8n human acquisition loop | protocol/export-acquisition-loop.cdl | implemented |
-| 7.6 | Normalized maps | protocol/normalized-maps.cdl | implemented |
-| 7.7 | Export reconciliation — `13-EXPORT-RECONCILIATION.md` | protocol/export-reconciliation.cdl | implemented |
-| 8.1 | Resume identity header | protocol/invocation-context.cdl | implemented |
-| 8.2 | Strict single-scope modes | protocol/invocation-context.cdl | implemented |
-| 8.3 | Invocation-mode enum and explicit multi-file modes | protocol/invocation-context.cdl | implemented |
-| 8.4 | Mandatory read sets | protocol/invocation-context.cdl | implemented |
-| 8.5 | Cold resume check | protocol/cold-resume.cdl | implemented |
-| 8.6 | Concurrent persona traversal | protocol/invocation-context.cdl | implemented |
-| 8.7 | Stale checkpoint guard | protocol/invocation-context.cdl | implemented |
-| 8.8 | `0G` invocation log | protocol/invocation-context.cdl | implemented |
-| 9.1 | Ticket schema and canonical IDs | protocol/ticket-fsm.cdl | implemented |
-| 9.2 | FSM and write rights | protocol/ticket-fsm.cdl | implemented |
-| 9.3 | Human Hatch action prerequisites | protocol/ticket-fsm.cdl | implemented |
-| 9.4 | Probe specification and asynchronous handoff | protocol/ticket-fsm.cdl | implemented |
-| 9.5 | No-mock integrity | protocol/ticket-fsm.cdl | implemented |
-| 9.6 | No-mock fallback payload | protocol/ticket-fsm.cdl | implemented |
-| 10.1 | Evidence-backed `[R-SWEPT]` | protocol/coverage-and-exits.cdl | implemented |
-| 10.2 | Per-kind coverage arithmetic | protocol/coverage-and-exits.cdl | implemented |
-| 10.3 | Composite Exit A — Deconstruction Closure | protocol/coverage-and-exits.cdl | implemented |
-| 10.4 | Exit B — Stagnation | protocol/coverage-and-exits.cdl | implemented |
-| 10.5 | Exit C — Oscillation | protocol/coverage-and-exits.cdl | implemented |
-| 10.6 | Exit D — Limit exhaustion and deterministic iteration accounting | protocol/coverage-and-exits.cdl | implemented |
-| 11.1 | Partial versus Final Synthesis | protocol/synthesis-catalogs.cdl | implemented |
-| 11.2 | Common synthesis block header | protocol/synthesis-catalogs.cdl | implemented |
-| 11.3 | Architecture blueprint — `90-ARCH-BLUEPRINT.md` | protocol/synthesis-catalogs.cdl | implemented |
-| 11.4 | Entity — `91-DATA-MODEL.md` | protocol/synthesis-catalogs.cdl | implemented |
-| 11.5 | Relationship — `91-DATA-MODEL.md` | protocol/synthesis-catalogs.cdl | implemented |
-| 11.6 | State machine — `91-DATA-MODEL.md` | protocol/synthesis-catalogs.cdl | implemented |
-| 11.7 | Database routine — `91-DATA-MODEL.md` | protocol/synthesis-catalogs.cdl | implemented |
-| 11.8 | Business rule — `92-BUSINESS-RULES.md` | protocol/synthesis-catalogs.cdl | implemented |
-| 11.9 | Use case — `93-USE-CASES.md` | protocol/synthesis-catalogs.cdl | implemented |
-| 11.10 | Interface — `94-INTERFACES.md` | protocol/synthesis-catalogs.cdl | implemented |
-| 11.11 | Deployment, configuration, and scheduling — `95-DEPLOYMENT.md` | protocol/synthesis-catalogs.cdl | implemented |
-| 11.12 | NFR and security — `96-NON-FUNCTIONAL-SECURITY.md` | protocol/synthesis-catalogs.cdl | implemented |
-| 11.13 | Persona profile | protocol/synthesis-catalogs.cdl | implemented |
-| 12.1 | Traceability — `20-TRACEABILITY.md` | protocol/traceability.cdl | implemented |
-| 12.2 | Required reciprocal references | protocol/traceability.cdl | implemented |
-| 12.3 | Synthesis-ID timing | protocol/traceability.cdl | implemented |
-| 12.4 | Dependency and impact provenance | protocol/traceability.cdl | implemented |
-| 12.5 | Deterministic validation summary | protocol/traceability.cdl | implemented |
-| 13.1 | Audience paths and progressive disclosure | protocol/handbook-and-decisions.cdl | implemented |
-| 13.2 | Required chapter behavior | protocol/handbook-and-decisions.cdl | implemented |
-| 13.3 | Disabled and Dormant Features chapter | protocol/handbook-and-decisions.cdl | implemented |
-| 13.4 | Handbook quality gate | protocol/handbook-and-decisions.cdl | implemented |
-| 14.1 | Decision log | protocol/handbook-and-decisions.cdl | implemented |
-| 14.2 | Modernization mapping templates | protocol/handbook-and-decisions.cdl | implemented |
-| 14.3 | Business-rule ownership | protocol/handbook-and-decisions.cdl | implemented |
-| 14.4 | Interface compatibility | protocol/handbook-and-decisions.cdl | implemented |
-| 14.5 | Equivalence and acceptance suite | protocol/handbook-and-decisions.cdl | implemented |
-| 14.6 | Sole-input invariant | protocol/handbook-and-decisions.cdl | implemented |
-| 15.1 | Strict conditions | protocol/packaging.cdl | implemented |
-| 15.1.1 | Universal deterministic packaging rules | protocol/packaging.cdl | implemented |
-| 15.1.2 | Exit E Candidate Report ordered payload schema | protocol/packaging.cdl | implemented |
-| 15.1.3 | Candidate Payload Manifest ordered payload schema | protocol/packaging.cdl | implemented |
-| 15.1.4 | Exit E Content-Readiness Report ordered payload schema | protocol/packaging.cdl | implemented |
-| 15.2 | Scope certificate | protocol/packaging.cdl | implemented |
-| 15.3 | Package contents | protocol/packaging.cdl | implemented |
-| 15.4 | Acyclic certification sequence and hash domains | protocol/packaging.cdl | implemented |
-| 15.5 | Reproducible final-bundle verification | protocol/packaging.cdl | implemented |
-| 19.1 | Conforming implementation capabilities | protocol/conformance.cdl | implemented |
-| 19.2 | Normative conformance cases | protocol/conformance.cdl | implemented |
-| 19.3 | Corpus acceptance | protocol/conformance.cdl | implemented |
+| 0 | Purpose, Guarantees, and Conceptual Flow |  | missing |
+| 1.1 | Plane 1 — Forensic Plane |  | missing |
+| 1.2 | Plane 2 — Assurance Plane |  | missing |
+| 1.3 | Plane 3 — Synthesis Plane |  | missing |
+| 1.4 | Plane 4 — Human Reconstruction Handbook |  | missing |
+| 1.5 | Non-authoritative sidecars |  | missing |
+| 2.1 | Persona definition and purity |  | missing |
+| 2.2 | Canonical entry ownership |  | missing |
+| 2.3 | Five isolated POVs |  | missing |
+| 2.4 | Traversal tracks |  | missing |
+| 2.5 | Capability and runtime state |  | missing |
+| 2.6 | Capability grouping and target decision |  | missing |
+| 3.1 | `0A-PREFLIGHT.md` |  | missing |
+| 3.2 | Foundational registries |  | missing |
+| 4.1 | ID generation |  | missing |
+| 4.1.1 | Semantic payload identity and certification envelopes |  | missing |
+| 4.1.2 | Normative canonical hash profile and packaging artifacts |  | missing |
+| 4.2 | Atomic unit rule |  | missing |
+| 4.3 | Source inventory denominator — `10-SOURCE-INVENTORY.md` |  | missing |
+| 4.4 | Traversal frontier — `11-TRAVERSAL-FRONTIER.md` |  | missing |
+| 4.5 | Scope-specific source coverage — `16-SOURCE-COVERAGE.md` |  | missing |
+| 4.6 | Stable supersession and tombstones |  | missing |
+| 5.1 | Dedicated prefix groups |  | missing |
+| 5.2 | Claim-level evidence — `12-CLAIM-EVIDENCE.md` |  | missing |
+| 5.3 | Sanitized projections and helper limitations |  | missing |
+| 5.4 | Contradictions — `14-CONTRADICTIONS.md` |  | missing |
+| 5.5 | Authoritative decisions — `15-DECISIONS.md` |  | missing |
+| 5.6 | Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md` |  | missing |
+| 5.7 | Human confirmations — `18-CONFIRMATIONS.md` |  | missing |
+| 6.1 | Atomic component schema |  | missing |
+| 6.2 | Dual-entry discovery |  | missing |
+| 6.3 | Staging and promotion |  | missing |
+| 6.4 | Depromotion |  | missing |
+| 6.5 | Surgical evolution |  | missing |
+| 7.1 | Trust boundary |  | missing |
+| 7.2 | Acquisition register |  | missing |
+| 7.3 | Logical explosion and virtual coordinates |  | missing |
+| 7.4 | Required explosion coverage |  | missing |
+| 7.5 | n8n human acquisition loop |  | missing |
+| 7.6 | Normalized maps |  | missing |
+| 7.7 | Export reconciliation — `13-EXPORT-RECONCILIATION.md` |  | missing |
+| 8.1 | Resume identity header |  | missing |
+| 8.2 | Strict single-scope modes |  | missing |
+| 8.3 | Invocation-mode enum and explicit multi-file modes |  | missing |
+| 8.4 | Mandatory read sets |  | missing |
+| 8.5 | Cold resume check |  | missing |
+| 8.6 | Concurrent persona traversal |  | missing |
+| 8.7 | Stale checkpoint guard |  | missing |
+| 8.8 | `0G` invocation log |  | missing |
+| 9.1 | Ticket schema and canonical IDs |  | missing |
+| 9.2 | FSM and write rights |  | missing |
+| 9.3 | Human Hatch action prerequisites |  | missing |
+| 9.4 | Probe specification and asynchronous handoff |  | missing |
+| 9.5 | No-mock integrity |  | missing |
+| 9.6 | No-mock fallback payload |  | missing |
+| 10.1 | Evidence-backed `[R-SWEPT]` |  | missing |
+| 10.2 | Per-kind coverage arithmetic |  | missing |
+| 10.3 | Composite Exit A — Deconstruction Closure |  | missing |
+| 10.4 | Exit B — Stagnation |  | missing |
+| 10.5 | Exit C — Oscillation |  | missing |
+| 10.6 | Exit D — Limit exhaustion and deterministic iteration accounting |  | missing |
+| 11.1 | Partial versus Final Synthesis |  | missing |
+| 11.2 | Common synthesis block header |  | missing |
+| 11.3 | Architecture blueprint — `90-ARCH-BLUEPRINT.md` |  | missing |
+| 11.4 | Entity — `91-DATA-MODEL.md` |  | missing |
+| 11.5 | Relationship — `91-DATA-MODEL.md` |  | missing |
+| 11.6 | State machine — `91-DATA-MODEL.md` |  | missing |
+| 11.7 | Database routine — `91-DATA-MODEL.md` |  | missing |
+| 11.8 | Business rule — `92-BUSINESS-RULES.md` |  | missing |
+| 11.9 | Use case — `93-USE-CASES.md` |  | missing |
+| 11.10 | Interface — `94-INTERFACES.md` |  | missing |
+| 11.11 | Deployment, configuration, and scheduling — `95-DEPLOYMENT.md` |  | missing |
+| 11.12 | NFR and security — `96-NON-FUNCTIONAL-SECURITY.md` |  | missing |
+| 11.13 | Persona profile |  | missing |
+| 12.1 | Traceability — `20-TRACEABILITY.md` |  | missing |
+| 12.2 | Required reciprocal references |  | missing |
+| 12.3 | Synthesis-ID timing |  | missing |
+| 12.4 | Dependency and impact provenance |  | missing |
+| 12.5 | Deterministic validation summary |  | missing |
+| 13.1 | Audience paths and progressive disclosure |  | missing |
+| 13.2 | Required chapter behavior |  | missing |
+| 13.3 | Disabled and Dormant Features chapter |  | missing |
+| 13.4 | Handbook quality gate |  | missing |
+| 14.1 | Decision log |  | missing |
+| 14.2 | Modernization mapping templates |  | missing |
+| 14.3 | Business-rule ownership |  | missing |
+| 14.4 | Interface compatibility |  | missing |
+| 14.5 | Equivalence and acceptance suite |  | missing |
+| 14.6 | Sole-input invariant |  | missing |
+| 15.1 | Strict conditions |  | missing |
+| 15.1.1 | Universal deterministic packaging rules |  | missing |
+| 15.1.2 | Exit E Candidate Report ordered payload schema |  | missing |
+| 15.1.3 | Candidate Payload Manifest ordered payload schema |  | missing |
+| 15.1.4 | Exit E Content-Readiness Report ordered payload schema |  | missing |
+| 15.2 | Scope certificate |  | missing |
+| 15.3 | Package contents |  | missing |
+| 15.4 | Acyclic certification sequence and hash domains |  | missing |
+| 15.5 | Reproducible final-bundle verification |  | missing |
+| 17.1 | Conforming implementation capabilities |  | missing |
+| 17.2 | Normative conformance cases |  | missing |
+| 17.3 | Corpus acceptance |  | missing |
 
 ## Checks
 
 | Check | Status | Detail |
 | :-- | :-- | :-- |
-| assembly-compiles | pass | 26 sources |
+| assembly-compiles | pass | 27 sources |
 | drift-tests | pass | 23 tests in 23 files |
-| generated-protocol | pass | sha256:2478eecfab1b884bf69c1519482841d6edf2793c6f0c63ab4d26669d49351086 |
-| golden-eir | pass | sha256:e89f43e346edadf332e4959c6ffaa361f5c88237294ada6a4a4c4cbba2e761c6 |
-| golden-prompt | pass | sha256:b9577733729a5695a131d68ebfc9e75e567ade58eb0836b5afebfdfdc25bc42f |
+| generated-protocol | pass | sha256:f2b7c5004c4a9c44589bf6f1421c6ea464dede57ef02518b8d08b1e64e3c28ce |
+| golden-eir | pass | sha256:5b10729d3a7ec93bdc4b729be6e2afd72f6ba7847cd8631804a6f39901b0d4e6 |
+| golden-prompt | pass | sha256:c8fca255a6002b1226af8282e13a96dd278e585bc4d7ec0534d0051ab287f701 |
 | fixture-oracle | pass | 24/24 passed |
-| identity-ledger | pass | 536 identities across 26 sources |
+| identity-ledger | pass | 536 identities across 27 sources |
 
 ## Fixtures
 
@@ -132,32 +132,33 @@
 
 | Source | Sections | Identities | Fingerprint |
 | :-- | :-- | --: | :-- |
-| protocol/globals.cdl | 0 | 0 | sha256:40b869843eb972f22ce7b37502efa2ffbcf0c9ba284fc9a81d04221d8734fcf0 |
-| protocol/foundations.cdl | 9 | 30 | sha256:f50326f1874e7dcb46c7b22ec18ec4713a9081f11b65e8c426979aa7011d561d |
-| protocol/personas-povs.cdl | 6 | 18 | sha256:8472228d5485d5f8de4b24b7ece20fa97a47f43fecb1dc570265ca2e732ce4d5 |
-| protocol/preflight-registry.cdl | 1 | 9 | sha256:6418c22b018c485945e55804664176f02cae1fc0d607610dc6ed57bc0e2994eb |
-| protocol/typed-id.cdl | 1 | 9 | sha256:49efe885b452536afa13e32562f8bcd64abd109ae2bf35f9ff09847637c32018 |
-| protocol/semantic-payload-identity.cdl | 1 | 7 | sha256:047c65826b9b1aa98afd9413ec51402ea592bfdcf9b655787faab06b38e04631 |
-| protocol/canonical-hash-profile.cdl | 1 | 13 | sha256:af4fd0181fcefe46b6689e2ca48c897779d03263a682840b5b3c73ec8bfdbfb7 |
-| protocol/inventory-and-frontier.cdl | 5 | 23 | sha256:eacfbd4cad5cde149c270d3b67809a9b39f917c208443d197394ede1e9d375b9 |
-| protocol/status-taxonomy.cdl | 1 | 112 | sha256:c4a695e8d8d76ce9e782a909d49c8e9ad62a72d31f57b28b71e9c19078b47d2e |
-| protocol/evidence-and-decisions.cdl | 6 | 13 | sha256:822b003067814ded8302e989ca78e17cf15959e6e887a1e9230fd9dbc992c27c |
-| protocol/extraction-evolution.cdl | 5 | 15 | sha256:32938e7b7f862fbc81ef144b99efe3edfaa622386e5e1e01451517aa1312b309 |
-| protocol/workspace-registries.cdl | 1 | 9 | sha256:248cc6fce1b2df54fc8cf52823259d15ecdf6b3b3b217633c9e544efde8331f7 |
-| protocol/acquisition-trust.cdl | 4 | 10 | sha256:a43b2fd0489321e5108c58b8a2e78a5713e7146c93808b821fede517e8caa809 |
-| protocol/export-acquisition-loop.cdl | 1 | 10 | sha256:165ca179fe3a9a7bfd1a97d67491cafad44bdde76a2f7112a12376f25801d2a8 |
-| protocol/normalized-maps.cdl | 1 | 4 | sha256:4afabe97b491546b5d1dc78ffeb9e35f43ff4b2378873a0202ddc8debc8bcff9 |
-| protocol/export-reconciliation.cdl | 1 | 22 | sha256:12bed9f7c30f871446665180b1a35e647b3ec88e2c98500a8a28c45f97caea4e |
+| protocol/globals.cdl | 0 | 0 | sha256:f7f351b217c8c2ae284ebb06ea7a5f49b5451c0643c0aaf453680cc24fb7d53b |
 | protocol/invocation-modes.cdl | 0 | 0 | sha256:c599bd58c22d06daf961ddd6952a1d5e78598178f762efc7c2242f792ed75b57 |
-| protocol/cold-resume.cdl | 1 | 4 | sha256:63288693e96ac576e139a553576cd50c8bba68490b52afb656bc9f4a8b0cb9f1 |
-| protocol/invocation-context.cdl | 7 | 25 | sha256:931368ef1ed1706499823d809ec8ec6e493ec3bf76141c71e0ee137ffafd1381 |
-| protocol/ticket-fsm.cdl | 6 | 20 | sha256:c6505ccc1220da4d0c8e05aff07a16af8aa2f970358a1bba3d5e3c8c2e8bea05 |
-| protocol/coverage-and-exits.cdl | 6 | 19 | sha256:04d57842984f9af28b40ce8d77da11e9114be9589b1e4c1d100bc5c4d73c7661 |
-| protocol/synthesis-catalogs.cdl | 13 | 66 | sha256:2b3b17b37125578e959eeb7b84ba2566037575bffbda23591b7d566dc8db0d35 |
-| protocol/traceability.cdl | 5 | 15 | sha256:3d1795b04582dfd07dfbf02e6d0c9af30dda3387ebbcdfa6721a843df88ea38b |
-| protocol/handbook-and-decisions.cdl | 10 | 23 | sha256:812b1ccf5fd199e62fe48b46465c1563f7d29a06e349b192dee0aa2b9bb73c39 |
-| protocol/packaging.cdl | 9 | 50 | sha256:628e9034db97140c78ccf6b569b15689efd012762852e65eb1b769bc8a32062c |
-| protocol/conformance.cdl | 5 | 10 | sha256:6aaee306adc0d3c525c8e7b68b9484ae3611902f5a41b70d5bd8f6f97b389f98 |
+| protocol/foundations.cdl | 9 | 30 | sha256:c0f47838ac1040d0c357f3fc5789bdc29a556a30b472ba2d65bc06d417565610 |
+| protocol/personas-povs.cdl | 6 | 18 | sha256:4337b5ac7044015f99b57dfc7f4d911180e2ed0c00a0b9f12a2fe81a04ad7d9b |
+| protocol/preflight-registry.cdl | 1 | 9 | sha256:53bc2e4845b667aa6edcf2018765efdbca89e77a6dd49d4ee51afb0f75f25115 |
+| protocol/workspace-registries.cdl | 1 | 9 | sha256:e14fcf5bef07a0eb24bce78f6dc89057fbc29ecee4ba5eadf2b9beebfb5443cc |
+| protocol/typed-id.cdl | 1 | 9 | sha256:ea12122d8eee3e1bcc35d7b7f8198510215aef1ea6e3c276a6d26f9bc59c5730 |
+| protocol/semantic-payload-identity.cdl | 1 | 7 | sha256:07747c57e064fc03ec144bec16d87a8be378b613990e2711caa7e0742e2579d9 |
+| protocol/canonical-hash-profile.cdl | 1 | 13 | sha256:a5712ff3df7c69210cd914ddb769c75ce746d128a5aadbaa59da5becf487f200 |
+| protocol/inventory-and-frontier.cdl | 5 | 23 | sha256:c78e877ce0b1e919dc1eabe424f9c3df2ebac1df19a26af02ce1fbf541b05437 |
+| protocol/status-taxonomy.cdl | 1 | 112 | sha256:3be0f9272ba3edd9a73d9c1e0a5a70b913c73bbc4177569507e4d624b23fdb6b |
+| protocol/evidence-and-decisions.cdl | 6 | 13 | sha256:c5a90679f6dff72b9c5c906f13065ceb7faae8802c4f13cffbb29faa62b75b2e |
+| protocol/extraction-evolution.cdl | 5 | 15 | sha256:3ed11f0af3a85ac3e31d19b339376c3ad4ad4ce6d66cd5246a8449e15aeb239b |
+| protocol/acquisition-trust.cdl | 4 | 10 | sha256:3df535ce5dc7213a68c728f99750e82fd9a4ad4add1408057acc663c7fc004a4 |
+| protocol/export-acquisition-loop.cdl | 1 | 10 | sha256:67ef3cacc4057f22318775d9d3ecaffc62e760dcbd92eecc0c37112bd0083962 |
+| protocol/normalized-maps.cdl | 1 | 4 | sha256:909965bb69994fa0b11f24ec99f6b9081f7de558f16f82972849e09730b067ba |
+| protocol/export-reconciliation.cdl | 1 | 22 | sha256:448a3605fcb7470a17c98a77f6a00b7d7c78386323edbec7632df9ccda546d73 |
+| protocol/invocation-context.cdl | 4 | 17 | sha256:f21ce0ad11fcc1e846aeb6209c84e44db6aa48ddd95312149a53c784a95fa5bc |
+| protocol/cold-resume.cdl | 1 | 4 | sha256:97410ec60b1e39177da5b3732372354becb46a39ba144b9558b3334aa28fd350 |
+| protocol/invocation-lifecycle.cdl | 3 | 8 | sha256:111d8724fe190b872b60950ce1073ad150a6e6ae410a3d2296b6b7589ada3895 |
+| protocol/ticket-fsm.cdl | 6 | 20 | sha256:caec43e35f16d1fe2f820e6dc22e7c338d514eefd6148b4e0d688405cf793c2a |
+| protocol/coverage-and-exits.cdl | 6 | 19 | sha256:ae942630aea2aad82b4bce1afd7f84b3a0bc19b24d42fe7f7d13210aedeac7ef |
+| protocol/synthesis-catalogs.cdl | 13 | 66 | sha256:8484ade63bf6ba3ac89ae3cbc47b13f0abde5928b3295451367b25a9accf5028 |
+| protocol/traceability.cdl | 5 | 15 | sha256:a376905e75a5ab3066d0755a9ec727626a94db12cc9d06504b8169656a78caf6 |
+| protocol/handbook-and-decisions.cdl | 10 | 23 | sha256:46e416664481be6b52170df20268f2b1f060ab96e6ffa88ab2ab42be4755c321 |
+| protocol/packaging.cdl | 9 | 50 | sha256:874196e684060da59fc7df7a6cca3253347b520e04df014ab504c36f166fb7f6 |
+| protocol/conformance.cdl | 5 | 10 | sha256:dfa6f0d22702fc4e880a9c00d3140e83256c3d395144134aa4864a671ed800ef |
 
 ## Declared deferrals
 

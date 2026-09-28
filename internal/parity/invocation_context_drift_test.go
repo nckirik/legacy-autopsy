@@ -17,7 +17,7 @@ var (
 // §8.8 invocation-log field list against protocol.md, and requires every
 // hyphenated normative token in those sections to appear in the CDL text.
 func TestInvocationContextDrift(t *testing.T) {
-	res := compileSection(t, "protocol/invocation-context.cdl")
+	res := compileSection(t, "protocol/invocation-context.cdl", "protocol/invocation-lifecycle.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

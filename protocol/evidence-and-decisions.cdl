@@ -1,5 +1,6 @@
+PART status-evidence "Status Taxonomy and Evidence"
+
 SECTION claim-evidence
-NUMBER 5.2
 TITLE "Claim-level evidence — `12-CLAIM-EVIDENCE.md`"
 
 GOAL
@@ -58,7 +59,6 @@ FIELD BLOCK-EVIDENCE-SUMMARY
 END
 
 SECTION sanitized-projections
-NUMBER 5.3
 TITLE "Sanitized projections and helper limitations"
 
 GOAL
@@ -86,7 +86,6 @@ RULE sanitized-projections-rules
 END
 
 SECTION contradictions
-NUMBER 5.4
 TITLE "Contradictions — `14-CONTRADICTIONS.md`"
 
 GOAL
@@ -116,7 +115,6 @@ FIELD CONTRADICTION
 END
 
 SECTION authoritative-decisions
-NUMBER 5.5
 TITLE "Authoritative decisions — `15-DECISIONS.md`"
 
 GOAL
@@ -164,7 +162,6 @@ FIELD DECISION
 END
 
 SECTION acquisition-candidates
-NUMBER 5.6
 TITLE "Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md`"
 
 GOAL
@@ -197,7 +194,6 @@ RULE candidate-reconciliation
 END
 
 SECTION human-confirmations
-NUMBER 5.7
 TITLE "Human confirmations — `18-CONFIRMATIONS.md`"
 
 GOAL

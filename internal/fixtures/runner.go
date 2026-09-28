@@ -1,5 +1,5 @@
 // Package fixtures runs explicitly registered bootstrap fixture groups.
-// These cases do not constitute the complete Protocol §19.2 conformance suite.
+// These cases do not constitute the complete Protocol §17.2 conformance suite.
 package fixtures
 
 import (
@@ -55,20 +55,20 @@ var operationGroups = map[string]string{
 }
 
 var unsupported = []string{
-	"Part 19.2 persona workspace ownership and atomic moves",
-	"Part 19.2 complete context-qualified enum registry",
-	"Part 19.2 invocation ownership and cold resume",
-	"Part 19.2 ticket escalation and honest unresolved coverage",
-	"Part 19.2 dead-code and semantic-predicate closure",
-	"Part 19.2 deterministic iteration accounting",
-	"Part 19.2 complete PRF semantic hashing",
-	"Part 19.2 complete HBK identity and move rules",
-	"Part 19.2 Profile Synchronization transitive closure",
-	"Part 19.2 record-versus-artifact hashing",
-	"Part 19.2 normative canonicalization and exact exclusions",
-	"Part 19.2 final envelope and package-member integrity",
-	"Part 19.2 packaging schemas, gate completeness, and evidence bindings",
-	"Part 19.2 snapshot-consistent acyclic Exit E and final verification",
+	"Part 17.2 persona workspace ownership and atomic moves",
+	"Part 17.2 complete context-qualified enum registry",
+	"Part 17.2 invocation ownership and cold resume",
+	"Part 17.2 ticket escalation and honest unresolved coverage",
+	"Part 17.2 dead-code and semantic-predicate closure",
+	"Part 17.2 deterministic iteration accounting",
+	"Part 17.2 complete PRF semantic hashing",
+	"Part 17.2 complete HBK identity and move rules",
+	"Part 17.2 Profile Synchronization transitive closure",
+	"Part 17.2 record-versus-artifact hashing",
+	"Part 17.2 normative canonicalization and exact exclusions",
+	"Part 17.2 final envelope and package-member integrity",
+	"Part 17.2 packaging schemas, gate completeness, and evidence bindings",
+	"Part 17.2 snapshot-consistent acyclic Exit E and final verification",
 }
 
 func Run(repoRoot string) (Summary, error) {

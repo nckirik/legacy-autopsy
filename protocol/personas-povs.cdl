@@ -1,5 +1,6 @@
+PART personas "Personas, POVs, Entry Ownership, and Traversal Tracks"
+
 SECTION persona-definition
-NUMBER 2.1
 TITLE "Persona definition and purity"
 
 GOAL
@@ -55,7 +56,6 @@ RULE persona-identity-grammar
 END
 
 SECTION canonical-entry-ownership
-NUMBER 2.2
 TITLE "Canonical entry ownership"
 
 GOAL
@@ -99,7 +99,6 @@ RULE db-autonomous-ownership
 END
 
 SECTION five-isolated-povs
-NUMBER 2.3
 TITLE "Five isolated POVs"
 
 GOAL
@@ -130,7 +129,6 @@ RULE pov-isolation
 END
 
 SECTION traversal-tracks
-NUMBER 2.4
 TITLE "Traversal tracks"
 
 GOAL
@@ -157,7 +155,6 @@ RULE track-declarations
 END
 
 SECTION capability-runtime-state
-NUMBER 2.5
 TITLE "Capability and runtime state"
 
 GOAL
@@ -207,7 +204,6 @@ RULE capability-state-rules
 END
 
 SECTION capability-grouping
-NUMBER 2.6
 TITLE "Capability grouping and target decision"
 
 GOAL

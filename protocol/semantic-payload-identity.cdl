@@ -1,5 +1,7 @@
+PART identity "Deterministic Identity and Universal Atomicity"
+
 SECTION semantic-payload-identity
-NUMBER 4.1.1
+SUBSECTION OF typed-id
 TITLE "Semantic payload identity and certification envelopes"
 
 GOAL

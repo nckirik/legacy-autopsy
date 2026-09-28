@@ -1,5 +1,6 @@
+PART handbook "Human Reconstruction Handbook"
+
 SECTION audience-paths
-NUMBER 13.1
 TITLE "Audience paths and progressive disclosure"
 
 GOAL
@@ -60,7 +61,6 @@ RULE audience-path-requirements
 END
 
 SECTION chapter-behavior
-NUMBER 13.2
 TITLE "Required chapter behavior"
 
 GOAL
@@ -93,7 +93,6 @@ RULE chapter-requirements
 END
 
 SECTION disabled-chapter
-NUMBER 13.3
 TITLE "Disabled and Dormant Features chapter"
 
 GOAL
@@ -119,7 +118,6 @@ RULE disabled-chapter-requirements
 END
 
 SECTION handbook-quality-gate
-NUMBER 13.4
 TITLE "Handbook quality gate"
 
 GOAL
@@ -166,8 +164,9 @@ RULE handbook-readability-review
   END
 END
 
+PART decisions "Decisions, Reconstruction, Equivalence, and Compatibility"
+
 SECTION decision-log
-NUMBER 14.1
 TITLE "Decision log"
 
 GOAL
@@ -185,7 +184,6 @@ RULE decision-log-projection
 END
 
 SECTION modernization-templates
-NUMBER 14.2
 TITLE "Modernization mapping templates"
 
 GOAL
@@ -225,7 +223,6 @@ RULE mapping-prompts
 END
 
 SECTION rule-ownership
-NUMBER 14.3
 TITLE "Business-rule ownership"
 
 GOAL
@@ -241,7 +238,6 @@ RULE business-rule-ownership
 END
 
 SECTION interface-compatibility
-NUMBER 14.4
 TITLE "Interface compatibility"
 
 GOAL
@@ -260,7 +256,6 @@ RULE interface-baseline
 END
 
 SECTION equivalence-suite
-NUMBER 14.5
 TITLE "Equivalence and acceptance suite"
 
 GOAL
@@ -299,7 +294,6 @@ RULE equivalence-generation
 END
 
 SECTION sole-input-invariant
-NUMBER 14.6
 TITLE "Sole-input invariant"
 
 GOAL

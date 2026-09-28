@@ -1,5 +1,6 @@
+PART closure "Evidence-Backed Sweep and Composite Deconstruction Closure"
+
 SECTION sweep-records
-NUMBER 10.1
 TITLE "Evidence-backed `[R-SWEPT]`"
 
 GOAL
@@ -59,7 +60,6 @@ RULE r-swept-validity
 END
 
 SECTION coverage-arithmetic
-NUMBER 10.2
 TITLE "Per-kind coverage arithmetic"
 
 GOAL
@@ -123,7 +123,6 @@ RULE coverage-covered-requirements
 END
 
 SECTION exit-a
-NUMBER 10.3
 TITLE "Composite Exit A — Deconstruction Closure"
 
 GOAL
@@ -183,7 +182,6 @@ RULE exit-a-composite
 END
 
 SECTION exit-b
-NUMBER 10.4
 TITLE "Exit B — Stagnation"
 
 GOAL
@@ -199,7 +197,6 @@ RULE exit-b-stagnation
 END
 
 SECTION exit-c
-NUMBER 10.5
 TITLE "Exit C — Oscillation"
 
 GOAL
@@ -214,7 +211,6 @@ RULE exit-c-oscillation
 END
 
 SECTION exit-d
-NUMBER 10.6
 TITLE "Exit D — Limit exhaustion and deterministic iteration accounting"
 
 GOAL

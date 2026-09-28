@@ -1,8 +1,8 @@
 # Conformance
 
-> Non-authoritative Legacy Autopsy implementation policy. The normative conformance cases live in the CDL source `protocol/conformance.cdl` (§19.2) and win on conflict; this repository's JSON files, Go runner, CLI output, and CI workflow are one concrete test realization, not protocol prerequisites. After crown, the CDL sources under `protocol/` are the normative authority and `protocol.md` is a generated render; `protocol/legacy/protocol-4.1.2.md` is the frozen bootstrap parity oracle.
+> Non-authoritative Legacy Autopsy implementation policy. The normative conformance cases live in the CDL source `protocol/conformance.cdl` (§17.2) and win on conflict; this repository's JSON files, Go runner, CLI output, and CI workflow are one concrete test realization, not protocol prerequisites. After crown, the CDL sources under `protocol/` are the normative authority and `protocol.md` is a generated render; `protocol/legacy/protocol-4.1.2.md` is the frozen bootstrap parity oracle.
 
-Protocol v4.1.2 conformance requires satisfying every applicable positive and negative case in §19.2. A passing Legacy Autopsy unit test, file-presence check, bootstrap fixture, or unsupported/skipped family is not conformance and cannot establish a gate result.
+Protocol v4.1.2 conformance requires satisfying every applicable positive and negative case in §17.2. A passing Legacy Autopsy unit test, file-presence check, bootstrap fixture, or unsupported/skipped family is not conformance and cannot establish a gate result.
 
 ## Standalone protocol quality test
 
@@ -65,7 +65,7 @@ Each implemented normative rule needs:
 - provenance to the exact protocol heading and implementation capability;
 - deterministic, synthetic inputs containing no raw exports, credentials, secrets, production identifiers, private hints, or production data.
 
-The M0 runner validates registered operation/group pairs and unique protocol-heading provenance. Current operations compare stable string results or diagnostic classes. An unrelated error does not satisfy a negative case. CI runs every registered bootstrap case, and human-readable CLI/workflow output lists complete Part 19.2 families as unsupported rather than counting them as passing.
+The M0 runner validates registered operation/group pairs and unique protocol-heading provenance. Current operations compare stable string results or diagnostic classes. An unrelated error does not satisfy a negative case. CI runs every registered bootstrap case, and human-readable CLI/workflow output lists complete Part 17.2 families as unsupported rather than counting them as passing.
 
 ## Implemented bootstrap cases
 
@@ -78,7 +78,7 @@ Positive and negative cases currently cover:
 - the explicitly limited basic Markdown hash primitive;
 - generated workspace-skeleton structure.
 
-A case's protocol heading is provenance, not a claim that the case implements that complete section. No complete §19.2 family is implemented.
+A case's protocol heading is provenance, not a claim that the case implements that complete section. No complete §17.2 family is implemented.
 
 ## Unsupported complete families
 

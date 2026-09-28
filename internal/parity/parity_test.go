@@ -32,15 +32,11 @@ func compileExample(t *testing.T) *cdl.Result {
 
 func protocolPathIn(root string) string { return protocol.OraclePath(root) }
 
-// compileSection compiles the shared globals plus one CDL section source against
+// compileSection compiles the shared globals plus the given CDL sources against
 // the committed ledger.
-func compileSection(t *testing.T, rel string) *cdl.Result {
+func compileSection(t *testing.T, rels ...string) *cdl.Result {
 	t.Helper()
 	root := root(t)
-	src, err := os.ReadFile(filepath.Join(root, rel))
-	if err != nil {
-		t.Fatal(err)
-	}
 	globals, err := os.ReadFile(filepath.Join(root, "protocol/globals.cdl"))
 	if err != nil {
 		t.Fatal(err)
@@ -49,12 +45,17 @@ func compileSection(t *testing.T, rel string) *cdl.Result {
 	if err != nil {
 		t.Fatal(err)
 	}
+	sources := []cdl.Source{{Path: "protocol/globals.cdl", Bytes: globals}}
+	for _, rel := range rels {
+		src, err := os.ReadFile(filepath.Join(root, rel))
+		if err != nil {
+			t.Fatal(err)
+		}
+		sources = append(sources, cdl.Source{Path: rel, Bytes: src})
+	}
 	res, err := cdl.Compile(cdl.CompileInput{
-		Sources: []cdl.Source{
-			{Path: "protocol/globals.cdl", Bytes: globals},
-			{Path: rel, Bytes: src},
-		},
-		Ledger: ledger,
+		Sources: sources,
+		Ledger:  ledger,
 	})
 	if err != nil {
 		t.Fatal(err)

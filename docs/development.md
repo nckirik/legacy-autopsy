@@ -36,7 +36,7 @@ go run ./cmd/legacy-autopsy validate routing
 go run ./cmd/legacy-autopsy validate fixtures
 ```
 
-The M0 fixture command always runs every registered bootstrap case and lists all complete Part 19.2 families as unsupported. The accepted `--implemented` flag is currently a redundant compatibility selector; public examples omit it.
+The M0 fixture command always runs every registered bootstrap case and lists all complete Part 17.2 families as unsupported. The accepted `--implemented` flag is currently a redundant compatibility selector; public examples omit it.
 
 The additive Spec-track pilot verbs (`spec compile|render|run`) are documented under [Spec track](#spec-track). They cover only §7.7 and do not change the M0 boundary above.
 

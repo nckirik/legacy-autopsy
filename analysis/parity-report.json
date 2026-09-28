@@ -4,164 +4,15 @@
   "generator-version": "parityreport/0.1",
   "generated-at": "2026-09-25T00:00:00Z",
   "protocol-version": "4.1.2",
-  "protocol-fingerprint": "sha256:c5c310f6e2047398d177ee5eb691ada726887ad0aa6bac676b83d76d3129c825",
-  "language-version": "cdl/0.2",
+  "protocol-fingerprint": "sha256:3c232db801edd19757a92ef3393a296b6153eb432c509ad8247313753dc1c0f4",
+  "language-version": "cdl/0.3",
   "eir-format": 2,
   "sources": [
     {
       "path": "protocol/globals.cdl",
-      "fingerprint": "sha256:40b869843eb972f22ce7b37502efa2ffbcf0c9ba284fc9a81d04221d8734fcf0",
+      "fingerprint": "sha256:f7f351b217c8c2ae284ebb06ea7a5f49b5451c0643c0aaf453680cc24fb7d53b",
       "sections": null,
       "identities": 0
-    },
-    {
-      "path": "protocol/foundations.cdl",
-      "fingerprint": "sha256:f50326f1874e7dcb46c7b22ec18ec4713a9081f11b65e8c426979aa7011d561d",
-      "sections": [
-        "0.1",
-        "0.2",
-        "0.3",
-        "0.4",
-        "1.1",
-        "1.2",
-        "1.3",
-        "1.4",
-        "1.5"
-      ],
-      "identities": 30
-    },
-    {
-      "path": "protocol/personas-povs.cdl",
-      "fingerprint": "sha256:8472228d5485d5f8de4b24b7ece20fa97a47f43fecb1dc570265ca2e732ce4d5",
-      "sections": [
-        "2.1",
-        "2.2",
-        "2.3",
-        "2.4",
-        "2.5",
-        "2.6"
-      ],
-      "identities": 18
-    },
-    {
-      "path": "protocol/preflight-registry.cdl",
-      "fingerprint": "sha256:6418c22b018c485945e55804664176f02cae1fc0d607610dc6ed57bc0e2994eb",
-      "sections": [
-        "3.1"
-      ],
-      "identities": 9
-    },
-    {
-      "path": "protocol/typed-id.cdl",
-      "fingerprint": "sha256:49efe885b452536afa13e32562f8bcd64abd109ae2bf35f9ff09847637c32018",
-      "sections": [
-        "4.1"
-      ],
-      "identities": 9
-    },
-    {
-      "path": "protocol/semantic-payload-identity.cdl",
-      "fingerprint": "sha256:047c65826b9b1aa98afd9413ec51402ea592bfdcf9b655787faab06b38e04631",
-      "sections": [
-        "4.1.1"
-      ],
-      "identities": 7
-    },
-    {
-      "path": "protocol/canonical-hash-profile.cdl",
-      "fingerprint": "sha256:af4fd0181fcefe46b6689e2ca48c897779d03263a682840b5b3c73ec8bfdbfb7",
-      "sections": [
-        "4.1.2"
-      ],
-      "identities": 13
-    },
-    {
-      "path": "protocol/inventory-and-frontier.cdl",
-      "fingerprint": "sha256:eacfbd4cad5cde149c270d3b67809a9b39f917c208443d197394ede1e9d375b9",
-      "sections": [
-        "4.2",
-        "4.3",
-        "4.4",
-        "4.5",
-        "4.6"
-      ],
-      "identities": 23
-    },
-    {
-      "path": "protocol/status-taxonomy.cdl",
-      "fingerprint": "sha256:c4a695e8d8d76ce9e782a909d49c8e9ad62a72d31f57b28b71e9c19078b47d2e",
-      "sections": [
-        "5.1"
-      ],
-      "identities": 112
-    },
-    {
-      "path": "protocol/evidence-and-decisions.cdl",
-      "fingerprint": "sha256:822b003067814ded8302e989ca78e17cf15959e6e887a1e9230fd9dbc992c27c",
-      "sections": [
-        "5.2",
-        "5.3",
-        "5.4",
-        "5.5",
-        "5.6",
-        "5.7"
-      ],
-      "identities": 13
-    },
-    {
-      "path": "protocol/extraction-evolution.cdl",
-      "fingerprint": "sha256:32938e7b7f862fbc81ef144b99efe3edfaa622386e5e1e01451517aa1312b309",
-      "sections": [
-        "6.1",
-        "6.2",
-        "6.3",
-        "6.4",
-        "6.5"
-      ],
-      "identities": 15
-    },
-    {
-      "path": "protocol/workspace-registries.cdl",
-      "fingerprint": "sha256:248cc6fce1b2df54fc8cf52823259d15ecdf6b3b3b217633c9e544efde8331f7",
-      "sections": [
-        "3.2"
-      ],
-      "identities": 9
-    },
-    {
-      "path": "protocol/acquisition-trust.cdl",
-      "fingerprint": "sha256:a43b2fd0489321e5108c58b8a2e78a5713e7146c93808b821fede517e8caa809",
-      "sections": [
-        "7.1",
-        "7.2",
-        "7.3",
-        "7.4"
-      ],
-      "identities": 10
-    },
-    {
-      "path": "protocol/export-acquisition-loop.cdl",
-      "fingerprint": "sha256:165ca179fe3a9a7bfd1a97d67491cafad44bdde76a2f7112a12376f25801d2a8",
-      "sections": [
-        "7.5"
-      ],
-      "identities": 10
-    },
-    {
-      "path": "protocol/normalized-maps.cdl",
-      "fingerprint": "sha256:4afabe97b491546b5d1dc78ffeb9e35f43ff4b2378873a0202ddc8debc8bcff9",
-      "sections": [
-        "7.6"
-      ],
-      "identities": 4
-    },
-    {
-      "path": "protocol/export-reconciliation.cdl",
-      "fingerprint": "sha256:12bed9f7c30f871446665180b1a35e647b3ec88e2c98500a8a28c45f97caea4e",
-      "sections": [
-        "7.7"
-      ],
-      "identities": 22
     },
     {
       "path": "protocol/invocation-modes.cdl",
@@ -170,127 +21,283 @@
       "identities": 0
     },
     {
-      "path": "protocol/cold-resume.cdl",
-      "fingerprint": "sha256:63288693e96ac576e139a553576cd50c8bba68490b52afb656bc9f4a8b0cb9f1",
+      "path": "protocol/foundations.cdl",
+      "fingerprint": "sha256:c0f47838ac1040d0c357f3fc5789bdc29a556a30b472ba2d65bc06d417565610",
       "sections": [
-        "8.5"
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "identities": 30
+    },
+    {
+      "path": "protocol/personas-povs.cdl",
+      "fingerprint": "sha256:4337b5ac7044015f99b57dfc7f4d911180e2ed0c00a0b9f12a2fe81a04ad7d9b",
+      "sections": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "identities": 18
+    },
+    {
+      "path": "protocol/preflight-registry.cdl",
+      "fingerprint": "sha256:53bc2e4845b667aa6edcf2018765efdbca89e77a6dd49d4ee51afb0f75f25115",
+      "sections": [
+        ""
+      ],
+      "identities": 9
+    },
+    {
+      "path": "protocol/workspace-registries.cdl",
+      "fingerprint": "sha256:e14fcf5bef07a0eb24bce78f6dc89057fbc29ecee4ba5eadf2b9beebfb5443cc",
+      "sections": [
+        ""
+      ],
+      "identities": 9
+    },
+    {
+      "path": "protocol/typed-id.cdl",
+      "fingerprint": "sha256:ea12122d8eee3e1bcc35d7b7f8198510215aef1ea6e3c276a6d26f9bc59c5730",
+      "sections": [
+        ""
+      ],
+      "identities": 9
+    },
+    {
+      "path": "protocol/semantic-payload-identity.cdl",
+      "fingerprint": "sha256:07747c57e064fc03ec144bec16d87a8be378b613990e2711caa7e0742e2579d9",
+      "sections": [
+        ""
+      ],
+      "identities": 7
+    },
+    {
+      "path": "protocol/canonical-hash-profile.cdl",
+      "fingerprint": "sha256:a5712ff3df7c69210cd914ddb769c75ce746d128a5aadbaa59da5becf487f200",
+      "sections": [
+        ""
+      ],
+      "identities": 13
+    },
+    {
+      "path": "protocol/inventory-and-frontier.cdl",
+      "fingerprint": "sha256:c78e877ce0b1e919dc1eabe424f9c3df2ebac1df19a26af02ce1fbf541b05437",
+      "sections": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "identities": 23
+    },
+    {
+      "path": "protocol/status-taxonomy.cdl",
+      "fingerprint": "sha256:3be0f9272ba3edd9a73d9c1e0a5a70b913c73bbc4177569507e4d624b23fdb6b",
+      "sections": [
+        ""
+      ],
+      "identities": 112
+    },
+    {
+      "path": "protocol/evidence-and-decisions.cdl",
+      "fingerprint": "sha256:c5a90679f6dff72b9c5c906f13065ceb7faae8802c4f13cffbb29faa62b75b2e",
+      "sections": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "identities": 13
+    },
+    {
+      "path": "protocol/extraction-evolution.cdl",
+      "fingerprint": "sha256:3ed11f0af3a85ac3e31d19b339376c3ad4ad4ce6d66cd5246a8449e15aeb239b",
+      "sections": [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "identities": 15
+    },
+    {
+      "path": "protocol/acquisition-trust.cdl",
+      "fingerprint": "sha256:3df535ce5dc7213a68c728f99750e82fd9a4ad4add1408057acc663c7fc004a4",
+      "sections": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "identities": 10
+    },
+    {
+      "path": "protocol/export-acquisition-loop.cdl",
+      "fingerprint": "sha256:67ef3cacc4057f22318775d9d3ecaffc62e760dcbd92eecc0c37112bd0083962",
+      "sections": [
+        ""
+      ],
+      "identities": 10
+    },
+    {
+      "path": "protocol/normalized-maps.cdl",
+      "fingerprint": "sha256:909965bb69994fa0b11f24ec99f6b9081f7de558f16f82972849e09730b067ba",
+      "sections": [
+        ""
       ],
       "identities": 4
     },
     {
-      "path": "protocol/invocation-context.cdl",
-      "fingerprint": "sha256:931368ef1ed1706499823d809ec8ec6e493ec3bf76141c71e0ee137ffafd1381",
+      "path": "protocol/export-reconciliation.cdl",
+      "fingerprint": "sha256:448a3605fcb7470a17c98a77f6a00b7d7c78386323edbec7632df9ccda546d73",
       "sections": [
-        "8.1",
-        "8.2",
-        "8.3",
-        "8.4",
-        "8.6",
-        "8.7",
-        "8.8"
+        ""
       ],
-      "identities": 25
+      "identities": 22
+    },
+    {
+      "path": "protocol/invocation-context.cdl",
+      "fingerprint": "sha256:f21ce0ad11fcc1e846aeb6209c84e44db6aa48ddd95312149a53c784a95fa5bc",
+      "sections": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "identities": 17
+    },
+    {
+      "path": "protocol/cold-resume.cdl",
+      "fingerprint": "sha256:97410ec60b1e39177da5b3732372354becb46a39ba144b9558b3334aa28fd350",
+      "sections": [
+        ""
+      ],
+      "identities": 4
+    },
+    {
+      "path": "protocol/invocation-lifecycle.cdl",
+      "fingerprint": "sha256:111d8724fe190b872b60950ce1073ad150a6e6ae410a3d2296b6b7589ada3895",
+      "sections": [
+        "",
+        "",
+        ""
+      ],
+      "identities": 8
     },
     {
       "path": "protocol/ticket-fsm.cdl",
-      "fingerprint": "sha256:c6505ccc1220da4d0c8e05aff07a16af8aa2f970358a1bba3d5e3c8c2e8bea05",
+      "fingerprint": "sha256:caec43e35f16d1fe2f820e6dc22e7c338d514eefd6148b4e0d688405cf793c2a",
       "sections": [
-        "9.1",
-        "9.2",
-        "9.3",
-        "9.4",
-        "9.5",
-        "9.6"
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
       ],
       "identities": 20
     },
     {
       "path": "protocol/coverage-and-exits.cdl",
-      "fingerprint": "sha256:04d57842984f9af28b40ce8d77da11e9114be9589b1e4c1d100bc5c4d73c7661",
+      "fingerprint": "sha256:ae942630aea2aad82b4bce1afd7f84b3a0bc19b24d42fe7f7d13210aedeac7ef",
       "sections": [
-        "10.1",
-        "10.2",
-        "10.3",
-        "10.4",
-        "10.5",
-        "10.6"
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
       ],
       "identities": 19
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "fingerprint": "sha256:2b3b17b37125578e959eeb7b84ba2566037575bffbda23591b7d566dc8db0d35",
+      "fingerprint": "sha256:8484ade63bf6ba3ac89ae3cbc47b13f0abde5928b3295451367b25a9accf5028",
       "sections": [
-        "11.1",
-        "11.2",
-        "11.3",
-        "11.4",
-        "11.5",
-        "11.6",
-        "11.7",
-        "11.8",
-        "11.9",
-        "11.10",
-        "11.11",
-        "11.12",
-        "11.13"
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
       ],
       "identities": 66
     },
     {
       "path": "protocol/traceability.cdl",
-      "fingerprint": "sha256:3d1795b04582dfd07dfbf02e6d0c9af30dda3387ebbcdfa6721a843df88ea38b",
+      "fingerprint": "sha256:a376905e75a5ab3066d0755a9ec727626a94db12cc9d06504b8169656a78caf6",
       "sections": [
-        "12.1",
-        "12.2",
-        "12.3",
-        "12.4",
-        "12.5"
+        "",
+        "",
+        "",
+        "",
+        ""
       ],
       "identities": 15
     },
     {
       "path": "protocol/handbook-and-decisions.cdl",
-      "fingerprint": "sha256:812b1ccf5fd199e62fe48b46465c1563f7d29a06e349b192dee0aa2b9bb73c39",
+      "fingerprint": "sha256:46e416664481be6b52170df20268f2b1f060ab96e6ffa88ab2ab42be4755c321",
       "sections": [
-        "13.1",
-        "13.2",
-        "13.3",
-        "13.4",
-        "14.1",
-        "14.2",
-        "14.3",
-        "14.4",
-        "14.5",
-        "14.6"
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
       ],
       "identities": 23
     },
     {
       "path": "protocol/packaging.cdl",
-      "fingerprint": "sha256:628e9034db97140c78ccf6b569b15689efd012762852e65eb1b769bc8a32062c",
+      "fingerprint": "sha256:874196e684060da59fc7df7a6cca3253347b520e04df014ab504c36f166fb7f6",
       "sections": [
-        "15.1",
-        "15.1.1",
-        "15.1.2",
-        "15.1.3",
-        "15.1.4",
-        "15.2",
-        "15.3",
-        "15.4",
-        "15.5"
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
       ],
       "identities": 50
     },
     {
       "path": "protocol/conformance.cdl",
-      "fingerprint": "sha256:6aaee306adc0d3c525c8e7b68b9484ae3611902f5a41b70d5bd8f6f97b389f98",
+      "fingerprint": "sha256:dfa6f0d22702fc4e880a9c00d3140e83256c3d395144134aa4864a671ed800ef",
       "sections": [
-        "16",
-        "19.1",
-        "19.2",
-        "19.3",
-        "20"
+        "",
+        "",
+        "",
+        "",
+        ""
       ],
       "identities": 10
     }
@@ -300,614 +307,614 @@
       "number": "0",
       "heading": "Purpose, Guarantees, and Conceptual Flow",
       "cdl-source": "",
-      "status": "wrapper"
+      "status": "missing"
     },
     {
       "number": "1.1",
       "heading": "Plane 1 — Forensic Plane",
-      "cdl-source": "protocol/foundations.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "1.2",
       "heading": "Plane 2 — Assurance Plane",
-      "cdl-source": "protocol/foundations.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "1.3",
       "heading": "Plane 3 — Synthesis Plane",
-      "cdl-source": "protocol/foundations.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "1.4",
       "heading": "Plane 4 — Human Reconstruction Handbook",
-      "cdl-source": "protocol/foundations.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "1.5",
       "heading": "Non-authoritative sidecars",
-      "cdl-source": "protocol/foundations.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "2.1",
       "heading": "Persona definition and purity",
-      "cdl-source": "protocol/personas-povs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "2.2",
       "heading": "Canonical entry ownership",
-      "cdl-source": "protocol/personas-povs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "2.3",
       "heading": "Five isolated POVs",
-      "cdl-source": "protocol/personas-povs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "2.4",
       "heading": "Traversal tracks",
-      "cdl-source": "protocol/personas-povs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "2.5",
       "heading": "Capability and runtime state",
-      "cdl-source": "protocol/personas-povs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "2.6",
       "heading": "Capability grouping and target decision",
-      "cdl-source": "protocol/personas-povs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "3.1",
       "heading": "`0A-PREFLIGHT.md`",
-      "cdl-source": "protocol/preflight-registry.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "3.2",
       "heading": "Foundational registries",
-      "cdl-source": "protocol/workspace-registries.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "4.1",
       "heading": "ID generation",
-      "cdl-source": "protocol/typed-id.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "4.1.1",
       "heading": "Semantic payload identity and certification envelopes",
-      "cdl-source": "protocol/semantic-payload-identity.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "4.1.2",
       "heading": "Normative canonical hash profile and packaging artifacts",
-      "cdl-source": "protocol/canonical-hash-profile.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "4.2",
       "heading": "Atomic unit rule",
-      "cdl-source": "protocol/inventory-and-frontier.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "4.3",
       "heading": "Source inventory denominator — `10-SOURCE-INVENTORY.md`",
-      "cdl-source": "protocol/inventory-and-frontier.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "4.4",
       "heading": "Traversal frontier — `11-TRAVERSAL-FRONTIER.md`",
-      "cdl-source": "protocol/inventory-and-frontier.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "4.5",
       "heading": "Scope-specific source coverage — `16-SOURCE-COVERAGE.md`",
-      "cdl-source": "protocol/inventory-and-frontier.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "4.6",
       "heading": "Stable supersession and tombstones",
-      "cdl-source": "protocol/inventory-and-frontier.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "5.1",
       "heading": "Dedicated prefix groups",
-      "cdl-source": "protocol/status-taxonomy.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "5.2",
       "heading": "Claim-level evidence — `12-CLAIM-EVIDENCE.md`",
-      "cdl-source": "protocol/evidence-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "5.3",
       "heading": "Sanitized projections and helper limitations",
-      "cdl-source": "protocol/evidence-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "5.4",
       "heading": "Contradictions — `14-CONTRADICTIONS.md`",
-      "cdl-source": "protocol/evidence-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "5.5",
       "heading": "Authoritative decisions — `15-DECISIONS.md`",
-      "cdl-source": "protocol/evidence-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "5.6",
       "heading": "Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md`",
-      "cdl-source": "protocol/evidence-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "5.7",
       "heading": "Human confirmations — `18-CONFIRMATIONS.md`",
-      "cdl-source": "protocol/evidence-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "6.1",
       "heading": "Atomic component schema",
-      "cdl-source": "protocol/extraction-evolution.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "6.2",
       "heading": "Dual-entry discovery",
-      "cdl-source": "protocol/extraction-evolution.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "6.3",
       "heading": "Staging and promotion",
-      "cdl-source": "protocol/extraction-evolution.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "6.4",
       "heading": "Depromotion",
-      "cdl-source": "protocol/extraction-evolution.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "6.5",
       "heading": "Surgical evolution",
-      "cdl-source": "protocol/extraction-evolution.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "7.1",
       "heading": "Trust boundary",
-      "cdl-source": "protocol/acquisition-trust.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "7.2",
       "heading": "Acquisition register",
-      "cdl-source": "protocol/acquisition-trust.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "7.3",
       "heading": "Logical explosion and virtual coordinates",
-      "cdl-source": "protocol/acquisition-trust.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "7.4",
       "heading": "Required explosion coverage",
-      "cdl-source": "protocol/acquisition-trust.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "7.5",
       "heading": "n8n human acquisition loop",
-      "cdl-source": "protocol/export-acquisition-loop.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "7.6",
       "heading": "Normalized maps",
-      "cdl-source": "protocol/normalized-maps.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "7.7",
       "heading": "Export reconciliation — `13-EXPORT-RECONCILIATION.md`",
-      "cdl-source": "protocol/export-reconciliation.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "8.1",
       "heading": "Resume identity header",
-      "cdl-source": "protocol/invocation-context.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "8.2",
       "heading": "Strict single-scope modes",
-      "cdl-source": "protocol/invocation-context.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "8.3",
       "heading": "Invocation-mode enum and explicit multi-file modes",
-      "cdl-source": "protocol/invocation-context.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "8.4",
       "heading": "Mandatory read sets",
-      "cdl-source": "protocol/invocation-context.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "8.5",
       "heading": "Cold resume check",
-      "cdl-source": "protocol/cold-resume.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "8.6",
       "heading": "Concurrent persona traversal",
-      "cdl-source": "protocol/invocation-context.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "8.7",
       "heading": "Stale checkpoint guard",
-      "cdl-source": "protocol/invocation-context.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "8.8",
       "heading": "`0G` invocation log",
-      "cdl-source": "protocol/invocation-context.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "9.1",
       "heading": "Ticket schema and canonical IDs",
-      "cdl-source": "protocol/ticket-fsm.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "9.2",
       "heading": "FSM and write rights",
-      "cdl-source": "protocol/ticket-fsm.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "9.3",
       "heading": "Human Hatch action prerequisites",
-      "cdl-source": "protocol/ticket-fsm.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "9.4",
       "heading": "Probe specification and asynchronous handoff",
-      "cdl-source": "protocol/ticket-fsm.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "9.5",
       "heading": "No-mock integrity",
-      "cdl-source": "protocol/ticket-fsm.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "9.6",
       "heading": "No-mock fallback payload",
-      "cdl-source": "protocol/ticket-fsm.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "10.1",
       "heading": "Evidence-backed `[R-SWEPT]`",
-      "cdl-source": "protocol/coverage-and-exits.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "10.2",
       "heading": "Per-kind coverage arithmetic",
-      "cdl-source": "protocol/coverage-and-exits.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "10.3",
       "heading": "Composite Exit A — Deconstruction Closure",
-      "cdl-source": "protocol/coverage-and-exits.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "10.4",
       "heading": "Exit B — Stagnation",
-      "cdl-source": "protocol/coverage-and-exits.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "10.5",
       "heading": "Exit C — Oscillation",
-      "cdl-source": "protocol/coverage-and-exits.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "10.6",
       "heading": "Exit D — Limit exhaustion and deterministic iteration accounting",
-      "cdl-source": "protocol/coverage-and-exits.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.1",
       "heading": "Partial versus Final Synthesis",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.2",
       "heading": "Common synthesis block header",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.3",
       "heading": "Architecture blueprint — `90-ARCH-BLUEPRINT.md`",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.4",
       "heading": "Entity — `91-DATA-MODEL.md`",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.5",
       "heading": "Relationship — `91-DATA-MODEL.md`",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.6",
       "heading": "State machine — `91-DATA-MODEL.md`",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.7",
       "heading": "Database routine — `91-DATA-MODEL.md`",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.8",
       "heading": "Business rule — `92-BUSINESS-RULES.md`",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.9",
       "heading": "Use case — `93-USE-CASES.md`",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.10",
       "heading": "Interface — `94-INTERFACES.md`",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.11",
       "heading": "Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.12",
       "heading": "NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "11.13",
       "heading": "Persona profile",
-      "cdl-source": "protocol/synthesis-catalogs.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "12.1",
       "heading": "Traceability — `20-TRACEABILITY.md`",
-      "cdl-source": "protocol/traceability.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "12.2",
       "heading": "Required reciprocal references",
-      "cdl-source": "protocol/traceability.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "12.3",
       "heading": "Synthesis-ID timing",
-      "cdl-source": "protocol/traceability.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "12.4",
       "heading": "Dependency and impact provenance",
-      "cdl-source": "protocol/traceability.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "12.5",
       "heading": "Deterministic validation summary",
-      "cdl-source": "protocol/traceability.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "13.1",
       "heading": "Audience paths and progressive disclosure",
-      "cdl-source": "protocol/handbook-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "13.2",
       "heading": "Required chapter behavior",
-      "cdl-source": "protocol/handbook-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "13.3",
       "heading": "Disabled and Dormant Features chapter",
-      "cdl-source": "protocol/handbook-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "13.4",
       "heading": "Handbook quality gate",
-      "cdl-source": "protocol/handbook-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "14.1",
       "heading": "Decision log",
-      "cdl-source": "protocol/handbook-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "14.2",
       "heading": "Modernization mapping templates",
-      "cdl-source": "protocol/handbook-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "14.3",
       "heading": "Business-rule ownership",
-      "cdl-source": "protocol/handbook-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "14.4",
       "heading": "Interface compatibility",
-      "cdl-source": "protocol/handbook-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "14.5",
       "heading": "Equivalence and acceptance suite",
-      "cdl-source": "protocol/handbook-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "14.6",
       "heading": "Sole-input invariant",
-      "cdl-source": "protocol/handbook-and-decisions.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "15.1",
       "heading": "Strict conditions",
-      "cdl-source": "protocol/packaging.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "15.1.1",
       "heading": "Universal deterministic packaging rules",
-      "cdl-source": "protocol/packaging.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "15.1.2",
       "heading": "Exit E Candidate Report ordered payload schema",
-      "cdl-source": "protocol/packaging.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "15.1.3",
       "heading": "Candidate Payload Manifest ordered payload schema",
-      "cdl-source": "protocol/packaging.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "15.1.4",
       "heading": "Exit E Content-Readiness Report ordered payload schema",
-      "cdl-source": "protocol/packaging.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "15.2",
       "heading": "Scope certificate",
-      "cdl-source": "protocol/packaging.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "15.3",
       "heading": "Package contents",
-      "cdl-source": "protocol/packaging.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "15.4",
       "heading": "Acyclic certification sequence and hash domains",
-      "cdl-source": "protocol/packaging.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
       "number": "15.5",
       "heading": "Reproducible final-bundle verification",
-      "cdl-source": "protocol/packaging.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
-      "number": "19.1",
+      "number": "17.1",
       "heading": "Conforming implementation capabilities",
-      "cdl-source": "protocol/conformance.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
-      "number": "19.2",
+      "number": "17.2",
       "heading": "Normative conformance cases",
-      "cdl-source": "protocol/conformance.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     },
     {
-      "number": "19.3",
+      "number": "17.3",
       "heading": "Corpus acceptance",
-      "cdl-source": "protocol/conformance.cdl",
-      "status": "implemented"
+      "cdl-source": "",
+      "status": "missing"
     }
   ],
   "checks": [
     {
       "name": "assembly-compiles",
       "status": "pass",
-      "detail": "26 sources"
+      "detail": "27 sources"
     },
     {
       "name": "drift-tests",
@@ -917,17 +924,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:2478eecfab1b884bf69c1519482841d6edf2793c6f0c63ab4d26669d49351086"
+      "detail": "sha256:f2b7c5004c4a9c44589bf6f1421c6ea464dede57ef02518b8d08b1e64e3c28ce"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:e89f43e346edadf332e4959c6ffaa361f5c88237294ada6a4a4c4cbba2e761c6"
+      "detail": "sha256:5b10729d3a7ec93bdc4b729be6e2afd72f6ba7847cd8631804a6f39901b0d4e6"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:b9577733729a5695a131d68ebfc9e75e567ade58eb0836b5afebfdfdc25bc42f"
+      "detail": "sha256:c8fca255a6002b1226af8282e13a96dd278e585bc4d7ec0534d0051ab287f701"
     },
     {
       "name": "fixture-oracle",
@@ -937,7 +944,7 @@
     {
       "name": "identity-ledger",
       "status": "pass",
-      "detail": "536 identities across 26 sources"
+      "detail": "536 identities across 27 sources"
     }
   ],
   "fixtures": {

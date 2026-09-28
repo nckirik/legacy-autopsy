@@ -3,8 +3,8 @@
 **Version:** 4.1.2 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
-**Generated-From:** cdl/0.2.1 (sha256:82abab7137dbdd2d1b9f69ad68d3186e5671ba300f6d043d89d041bcc0589427)
-**Language:** cdl/0.2 (eir-format 2)
+**Generated-From:** cdl/0.3.0 (sha256:6c7f0060fb202847d729fd29340a8dc9a1206352fbbeb5d50cf830eff42d85ea)
+**Language:** cdl/0.3 (eir-format 2)
 **Authority:** generated render of the canonical CDL sources; do not edit.
 
 ---
@@ -2494,7 +2494,7 @@ The result fingerprint covers every preceding field except `Validator Implementa
 
 # Part 16. Security, Privacy, and Operational Guardrails
 
-## 16. Security, Privacy, and Operational Guardrails
+## 16.1. Security, Privacy, and Operational Guardrails
 
 1. Production data MUST NOT be copied into probes. Operators verify masking and organizational handling approval; agents record evidence but do not declare compliance.
 2. Raw credentials, tokens, cookies, keys, signed URLs, connection strings, and secret values MUST NOT be written to `.extracted/`.
@@ -2506,9 +2506,9 @@ The result fingerprint covers every preceding field except `Validator Implementa
 8. Secret scanning failures block publication. Unknown field categories fail closed.
 9. Snapshot mixing is forbidden. A source changed during acquisition/traversal requires a consistent re-snapshot and stale propagation.
 
-# Part 19. Conformance and Acceptance Checklist
+# Part 17. Conformance and Acceptance Checklist
 
-## 19.1. Conforming implementation capabilities
+## 17.1. Conforming implementation capabilities
 
 - [ ] Identity headers enforce exact persona/cluster/track/POV/file/ledger isolation.
 - [ ] Executors propose semantic content only; the conforming runtime independently computes or reproduces every protocol-defined ID, canonical form, fingerprint, scope/stale check, FSM transition, count, completeness result, gate result, and package verification before commit.
@@ -2547,7 +2547,7 @@ The result fingerprint covers every preceding field except `Validator Implementa
 - [ ] Handbook links, diagrams, and evidence-rank/profile display pass the deterministic §13.4 checks before candidacy; candidate-bound human readability review is recorded only through complete passing CNFs after candidacy.
 - [ ] Validation summaries are deterministic and fingerprinted.
 
-## 19.2. Normative conformance cases
+## 17.2. Normative conformance cases
 
 A conforming implementation MUST satisfy every applicable positive and negative case below and deterministically produce the specified acceptance or rejection. These are protocol-level behavioral cases, not required files or test-runner inputs; their storage, serialization, and execution mechanism are implementation-specific. Failure of an applicable case defeats a claim of protocol conformance. Workspace gate execution is governed independently by the authoritative inputs and gate checks defined elsewhere in this protocol:
 
@@ -2566,7 +2566,7 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 - **Packaging schemas, gate completeness, and deterministic ordering:** positive cases instantiate all five exact §15 schemas, require exact candidate/content-readiness registry sets, reproduce each evidence-set fingerprint from complete authoritative row bindings independent of source order, canonicalize semantically identical rows supplied in different source orders to one hash, serialize empty scalars as `None`, retain header/separator-only empty non-check tables, and verify declared counts/arithmetic; negative cases reject an empty required check table, one missing required check, unknown/duplicate/wrong-stage check, failed check without blocker, fabricated omission/`Not-Applicable`, wrong evidence domain, omitted/duplicate/stale/self/later evidence binding, executor-authored digest mismatch, unknown/duplicate/reordered/missing/extra fields, duplicate sort keys, noncanonical row order after normalization, omitted empty values, malformed empty tables, report-to-manifest back-reference, and any forbidden later-artifact reference.
 - **Acyclic, snapshot-consistent Exit E and final verification:** positive cases execute candidate report -> candidate manifest -> DEC/CNF and confirmation envelopes -> Exit E Content-Readiness Report with Exit E `Pending` -> scope certificate -> outer manifest validation/signature -> exact step-6 transition to `EXIT-E-STATUS: Passed`, bind one direct snapshot identity across the chain, execute every `EXIT-E-FINAL-CHECKS-v1` check, and reproduce a non-authoritative receipt without changing the bundle; negative cases reject `Passed` at steps 1–5, a content-readiness report presented as the pass artifact, a certificate emitted before its content-readiness input, an outer manifest missing the report/certificate/direct identity/registry/input-set field, candidate-readiness-certificate-outer snapshot mismatch, a mixed-snapshot member despite valid individual hashes, payload self-reference, missing/invalid signature, missing/unknown/failed final check, a `Passed` field outside the hashed outer payload, a receipt treated as a package member or authority, and any authoritative post-step-6 completion artifact.
 
-## 19.3. Corpus acceptance
+## 17.3. Corpus acceptance
 
 - [ ] Composite Exit A is green with no hidden partial/gap denominator.
 - [ ] Every in-scope source unit is atomic, covered, and terminally disposed.
@@ -2585,9 +2585,9 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 - [ ] Human readers can navigate core behavior without reading raw ID catalogs.
 - [ ] Exit E transitioned at step 6 only; the scope certificate is included, and the validated signed outer manifest hash payload authoritatively contains `EXIT-E-STATUS: Passed`.
 
-# Part 20. Compact Artifact Ownership Matrix
+# Part 18. Compact Artifact Ownership Matrix
 
-## 20. Compact Artifact Ownership Matrix
+## 18.1. Compact Artifact Ownership Matrix
 
 | Artifact / Record                                       | Semantic Purpose                                                | Authoritative Plane       | Authorized Writer(s)                                                                                                         | Key Non-Writers                                              |
 | :------------------------------------------------------ | :-------------------------------------------------------------- | :------------------------ | :--------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------- |

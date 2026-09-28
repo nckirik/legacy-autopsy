@@ -110,7 +110,7 @@ Not yet automated:
 - complete canonicalization, schema/enum validation, specialized identities, and record/envelope/package hashing;
 - claims, source/frontier semantics, tickets, probes, reconciliation, and coverage arithmetic;
 - acquisition execution, synthesis, confirmations, handbook generation, and packaging;
-- Exit A, Exit E, the complete Part 19.2 conformance cases, or a real-system dry run.
+- Exit A, Exit E, the complete Part 17.2 conformance cases, or a real-system dry run.
 
 Routing support is not mode-execution support. Bootstrap fixtures exercise only registered M0 primitives and do not establish protocol conformance.
 

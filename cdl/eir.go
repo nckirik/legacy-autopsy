@@ -1,13 +1,17 @@
 package cdl
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"strconv"
+)
 
 // Frozen pilot identities. They are recorded in every EIR envelope and every
 // generated projection provenance header.
 const (
-	LanguageVersion  = "cdl/0.2"
+	LanguageVersion  = "cdl/0.3"
 	StdlibVersion    = "cdl-stdlib/0.1"
-	GeneratorVersion = "cdl/0.2.1"
+	GeneratorVersion = "cdl/0.3.0"
 	EIRFormat        = 2
 	ProtocolVersion  = "canonical-deconstruction/4.1.2"
 )
@@ -209,8 +213,11 @@ func BuildEIR(prog *Program, versions Versions, sourceFingerprint string) (*EIRD
 	doc.Declarations.Gates = append(doc.Declarations.Gates, prog.Globals.Gates...)
 	doc.Declarations.WorkflowTargets = append(doc.Declarations.WorkflowTargets, prog.Globals.WorkflowTargets...)
 	doc.Declarations.BaseReads = append(doc.Declarations.BaseReads, prog.Globals.BaseReads...)
-	for _, part := range prog.Globals.Parts {
-		doc.Declarations.Parts = append(doc.Declarations.Parts, EIRPart{Number: part.Number, Title: part.Title})
+	parts := uniqueParts(prog.Globals.Parts)
+	partNumber := map[string]int{}
+	for _, part := range parts {
+		partNumber[part.ID] = len(partNumber) + 1
+		doc.Declarations.Parts = append(doc.Declarations.Parts, EIRPart{Number: strconv.Itoa(partNumber[part.ID]), Title: part.Title})
 	}
 	for _, mode := range prog.Globals.Modes {
 		doc.Declarations.Modes = append(doc.Declarations.Modes, EIRMode{
@@ -223,7 +230,37 @@ func BuildEIR(prog *Program, versions Versions, sourceFingerprint string) (*EIRD
 	for _, id := range prog.Globals.Rules {
 		doc.Declarations.Rules = append(doc.Declarations.Rules, EIRRule{ID: id})
 	}
+	counters := map[int]int{}
+	preamble := 0
+	numbers := map[string]string{}
 	for _, sec := range prog.Sections {
+		number := ""
+		switch {
+		case sec.Parent != "":
+			parent := numbers[sec.Parent]
+			if parent == "" {
+				return nil, nil, "", fmt.Errorf("section %s declares unknown or later parent section %q", sec.ID, sec.Parent)
+			}
+			child := 0
+			for _, prior := range prog.Sections {
+				if prior.Parent == sec.Parent {
+					child++
+				}
+				if prior.ID == sec.ID {
+					break
+				}
+			}
+			number = fmt.Sprintf("%s.%d", parent, child)
+		case sec.Part == "":
+			preamble++
+			number = fmt.Sprintf("0.%d", preamble)
+		default:
+			if n := partNumber[sec.Part]; n > 0 {
+				counters[n]++
+				number = fmt.Sprintf("%d.%d", n, counters[n])
+			}
+		}
+		numbers[sec.ID] = number
 		doc.Declarations.Types = append(doc.Declarations.Types, sectionTypes(sec)...)
 		doc.Declarations.States = append(doc.Declarations.States, sectionStates(sec)...)
 		doc.Declarations.Values = append(doc.Declarations.Values, sectionValues(sec)...)
@@ -235,7 +272,7 @@ func BuildEIR(prog *Program, versions Versions, sourceFingerprint string) (*EIRD
 				ID: r.ID, Goal: r.Goal, Predicate: r.Predicate, Expr: exprToEIR(r.Expr), Section: sec.ID,
 			})
 		}
-		doc.Sections = append(doc.Sections, sectionEIR(sec))
+		doc.Sections = append(doc.Sections, sectionEIR(sec, number))
 	}
 	for _, p := range prog.Projections {
 		doc.Projections = append(doc.Projections, EIRProjection{
@@ -337,9 +374,22 @@ func sectionTables(sec Section) []EIRTable {
 	return out
 }
 
-func sectionEIR(sec Section) EIRSection {
+func uniqueParts(parts []PartDecl) []PartDecl {
+	seen := map[string]bool{}
+	var out []PartDecl
+	for _, part := range parts {
+		if seen[part.ID] {
+			continue
+		}
+		seen[part.ID] = true
+		out = append(out, part)
+	}
+	return out
+}
+
+func sectionEIR(sec Section, number string) EIRSection {
 	out := EIRSection{
-		ID: sec.ID, Number: sec.Number, Title: sec.Title, Artifact: sec.Artifact,
+		ID: sec.ID, Number: number, Title: sec.Title, Artifact: sec.Artifact,
 		Goal: sec.Goal, Requires: sec.Requires,
 	}
 	for _, u := range sec.Uses {

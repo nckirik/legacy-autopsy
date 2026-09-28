@@ -1,5 +1,4 @@
 SECTION normative-language
-NUMBER 0.1
 TITLE "Normative language"
 
 GOAL
@@ -97,7 +96,6 @@ RULE predicate-classification
 END
 
 SECTION guarantees
-NUMBER 0.2
 TITLE "Guarantees"
 
 GOAL
@@ -137,7 +135,6 @@ RULE protocol-guarantees
 END
 
 SECTION non-guarantees
-NUMBER 0.3
 TITLE "Non-guarantees"
 
 GOAL
@@ -169,7 +166,6 @@ RULE protocol-non-guarantees
 END
 
 SECTION conceptual-flow
-NUMBER 0.4
 TITLE "Conceptual flow"
 
 GOAL
@@ -225,8 +221,9 @@ RULE conceptual-flow-stages
   END
 END
 
+PART four-plane "Four-Plane Information Model"
+
 SECTION forensic-plane
-NUMBER 1.1
 TITLE "Plane 1 — Forensic Plane"
 
 GOAL
@@ -304,7 +301,6 @@ RULE forensic-plane-writers
 END
 
 SECTION assurance-plane
-NUMBER 1.2
 TITLE "Plane 2 — Assurance Plane"
 
 GOAL
@@ -351,7 +347,6 @@ RULE assurance-plane-writers
 END
 
 SECTION synthesis-plane
-NUMBER 1.3
 TITLE "Plane 3 — Synthesis Plane"
 
 GOAL
@@ -398,7 +393,6 @@ RULE synthesis-plane-writers
 END
 
 SECTION handbook-plane
-NUMBER 1.4
 TITLE "Plane 4 — Human Reconstruction Handbook"
 
 GOAL
@@ -459,7 +453,6 @@ RULE handbook-plane-writers
 END
 
 SECTION non-authoritative-sidecars
-NUMBER 1.5
 TITLE "Non-authoritative sidecars"
 
 GOAL

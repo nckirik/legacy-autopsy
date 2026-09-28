@@ -1,5 +1,6 @@
+PART workspaces "Workspace Registries and Schemas"
+
 SECTION workspace-registries
-NUMBER 3.2
 TITLE "Foundational registries"
 
 GOAL

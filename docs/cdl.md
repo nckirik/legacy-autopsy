@@ -173,7 +173,9 @@ Declarations (global or section-local):
     ENUM <id>          closed value domain
     CAPABILITY <id>    supplied validated capability (hash, table serialization, ...)
     RULE <id>          normative rule identity
-    SECTION <id>       normative section identity (NUMBER remains a locator)
+    SECTION <id>       normative section identity; optional PART/SUBSECTION OF
+    PART <id> "<title>" ordered document part (numbers are derived at render time)
+    SUBSECTION OF <id>  nest this section under an earlier section for numbering
     STEP <id>          executable step identity
     GATES <id>, ...    named gate/completion identifiers that BLOCK may reference
     WORKFLOW-TARGET <id>, ...  workflow destinations that RETURN/LOOP may reference
@@ -440,8 +442,9 @@ GLOBAL DECLARATIONS
   WORKFLOW-TARGET handoff, section-pass
 END
 
+PART acquisition "Serialized Export Acquisition and Local Helper Trust Model"
+
 SECTION export-reconciliation
-NUMBER 7.7
 TITLE "Export reconciliation"
 ARTIFACT 13-EXPORT-RECONCILIATION.md
 
@@ -667,8 +670,9 @@ Renderer:
 8. EXAMPLE 2 — cold resume (§8.5), channel-annotated
 ================================================================================
 
+PART invocation "Invocation Isolation, Concurrency, and Reconciliation"
+
 SECTION cold-resume
-NUMBER 8.5
 TITLE "Cold resume and staleness"
 
 GOAL
@@ -755,8 +759,9 @@ Notes:
 9. EXAMPLE 3 — workflow control (§10.6)
 ================================================================================
 
+PART closure "Evidence-Backed Sweep and Composite Deconstruction Closure"
+
 SECTION iteration
-NUMBER 10.6
 TITLE "Iteration and pass control"
 
 GOAL
@@ -887,7 +892,8 @@ harness IR, native channel (excerpt):
    evidence/completion behavior is never silently dropped.
 9. Stable IDs are unique and never reused; the check runs against the committed
    identity ledger, and a compile without ledger/history fails the invariant rather
-   than passing silently. `NUMBER` is a locator, not an identity.
+   than passing silently. Section/part numbers are render-time artifacts, not
+   identity.
 10. Harness execution and generated validators are two implementations of the same
     stdlib and language semantics; neither redefines them.
 11. Every AST operation has a reviewed template and golden fixture before rendering.

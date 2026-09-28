@@ -1,5 +1,6 @@
+PART identity "Deterministic Identity and Universal Atomicity"
+
 SECTION atomic-unit-rule
-NUMBER 4.2
 TITLE "Atomic unit rule"
 
 GOAL
@@ -48,7 +49,6 @@ RULE module-and-container-semantics
 END
 
 SECTION source-inventory
-NUMBER 4.3
 TITLE "Source inventory denominator — `10-SOURCE-INVENTORY.md`"
 
 GOAL
@@ -170,7 +170,6 @@ RULE inventory-absence-proof
 END
 
 SECTION traversal-frontier
-NUMBER 4.4
 TITLE "Traversal frontier — `11-TRAVERSAL-FRONTIER.md`"
 
 GOAL
@@ -240,7 +239,6 @@ RULE frontier-terminality
 END
 
 SECTION source-coverage
-NUMBER 4.5
 TITLE "Scope-specific source coverage — `16-SOURCE-COVERAGE.md`"
 
 GOAL
@@ -294,7 +292,6 @@ RULE coverage-row-identity
 END
 
 SECTION supersession-tombstones
-NUMBER 4.6
 TITLE "Stable supersession and tombstones"
 
 GOAL
