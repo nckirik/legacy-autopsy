@@ -189,9 +189,17 @@ S3 progress:
   REL, SM, DR, BR, UC, IF, DEP/CFG/SCHED, NFR/SEC/FLT) plus the persona profile;
   every record field list, nested table shape, and closed enum drift-checks against
   protocol.md.
-- **Remaining S3 inventory (17 sections):** §2.1–2.6, §4.2–4.6, §6.1–6.5,
-  §17.1–17.3, §19.1–19.3, plus the Part-level intros. §2–§15 are migrated (24
-  sources).
+- **§0.1–0.4, §1.1–1.5 implemented (authored schema + drift):**
+  `examples/spec/foundations.cdl` declares the normative keywords, authority classes,
+  predicate kinds, guarantees/non-guarantees, conceptual flow stages, the four-plane
+  model with its sources/writers rules, and the non-authoritative sidecar rule; enums
+  drift-check against protocol.md.
+- **S3 section migration complete:** every substantive protocol section now has a CDL
+  source (26 sources, 542 identities). The only remaining `## N.` matches without a CDL
+  section are the §0 wrapper heading and the internal `0A-PREFLIGHT.md` template
+  headings (`## 1.`–`## 5.`), whose content is covered by §3.1/§3.2 and §7.2.
+- **Historical remaining inventory (superseded by completion above):** §2.1–2.6, §4.2–4.6, §6.1–6.5,
+  none beyond the internal template headings.
 - **Skill projections decision:** the 13 projections stay hand-maintained with the
   routing validator through S3; generation from EIR reference views is deferred to S4.
 - **Collision extension implemented:** `internal/capabilities.ExtendCollision` extends
