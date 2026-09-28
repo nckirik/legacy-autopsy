@@ -1312,6 +1312,87 @@
       ]
     },
     {
+      "path": "examples/spec/traceability.cdl",
+      "source-fingerprint": "sha256:8cdd762df0321d342362a32fb3b1adce0643ec8a53b7f7b0ac630ecb61d06ff4",
+      "ids": [
+        {
+          "id": "CLASSIFICATION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "EVIDENCE-BINDING",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "LIFECYCLE-ELIGIBILITY",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "TRACEABILITY-ROW",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "dependency-impact-provenance",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "dependency-provenance",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "evidence-bindings",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "lifecycle-eligibility",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "reciprocal-references",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "required-reciprocal-references",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "synthesis-id-allocation-timing",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "synthesis-id-timing",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "traceability",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "traceability-invariants",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "validation-summary",
+          "kind": "SECTION",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/typed-id.cdl",
       "source-fingerprint": "sha256:8016fe1b8328c054eb732fd734084e61a3809ac1ecdd9e49d01a3ba24fe06a99",
       "ids": [

@@ -16,6 +16,7 @@
     "examples/spec/cold-resume.cdl",
     "examples/spec/invocation-context.cdl",
     "examples/spec/ticket-fsm.cdl",
-    "examples/spec/coverage-and-exits.cdl"
+    "examples/spec/coverage-and-exits.cdl",
+    "examples/spec/traceability.cdl"
   ]
 }

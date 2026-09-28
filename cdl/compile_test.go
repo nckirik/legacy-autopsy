@@ -27,6 +27,7 @@ const (
 	workspaceRegistryPath = "examples/spec/workspace-registries.cdl"
 	preflightRegistryPath = "examples/spec/preflight-registry.cdl"
 	acquisitionTrustPath  = "examples/spec/acquisition-trust.cdl"
+	traceabilityPath      = "examples/spec/traceability.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -627,6 +628,34 @@ func TestAcquisitionTrustCompiles(t *testing.T) {
 	}
 	if enums["N8N-INVENTORY-KIND"] != 17 || enums["APPSMITH-INVENTORY-KIND"] != 17 {
 		t.Fatalf("unexpected inventory enum counts: %v", enums)
+	}
+}
+
+func TestTraceabilityCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, traceabilityPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"12.1", "12.2", "12.3", "12.4", "12.5"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	want := map[string]int{"TRACEABILITY-ROW": 14, "LIFECYCLE-ELIGIBILITY": 6, "EVIDENCE-BINDING": 7}
+	for id, size := range want {
+		if counts[id] != size {
+			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)
+		}
+	}
+	for _, e := range res.EIR.Declarations.Enums {
+		if e.ID == "CLASSIFICATION" && len(e.Values) != 3 {
+			t.Fatalf("CLASSIFICATION has %d values, want 3", len(e.Values))
+		}
 	}
 }
 
