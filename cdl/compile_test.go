@@ -32,6 +32,7 @@ const (
 	personasPovsPath      = "examples/spec/personas-povs.cdl"
 	inventoryFrontierPath = "examples/spec/inventory-and-frontier.cdl"
 	extractionEvoPath     = "examples/spec/extraction-evolution.cdl"
+	handbookDecisionsPath = "examples/spec/handbook-and-decisions.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -837,6 +838,26 @@ func TestHumanHatchProbeCompiles(t *testing.T) {
 		if e.ID == "SAFETY-CLASSIFICATION" && len(e.Values) != 2 {
 			t.Fatalf("SAFETY-CLASSIFICATION has %d values, want 2", len(e.Values))
 		}
+	}
+}
+
+func TestHandbookAndDecisionsCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, handbookDecisionsPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"13.1", "13.2", "13.3", "13.4", "14.1", "14.2", "14.3", "14.4", "14.5", "14.6"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+	enumCounts := map[string]int{}
+	for _, e := range res.EIR.Declarations.Enums {
+		enumCounts[e.ID] = len(e.Values)
+	}
+	if enumCounts["AUDIENCE-ROLE"] != 6 || enumCounts["EQUIVALENCE-TEST-KIND"] != 6 {
+		t.Fatalf("unexpected handbook enum counts: %v", enumCounts)
 	}
 }
 

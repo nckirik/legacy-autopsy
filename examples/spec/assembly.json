@@ -21,6 +21,7 @@
     "examples/spec/ticket-fsm.cdl",
     "examples/spec/coverage-and-exits.cdl",
     "examples/spec/traceability.cdl",
+    "examples/spec/handbook-and-decisions.cdl",
     "examples/spec/packaging.cdl"
   ]
 }

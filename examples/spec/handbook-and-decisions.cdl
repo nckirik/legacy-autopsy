@@ -1,0 +1,206 @@
+SECTION audience-paths
+NUMBER 13.1
+TITLE "Audience paths and progressive disclosure"
+
+GOAL
+  START-HERE.md MUST provide short audience paths through the handbook.
+END
+
+ENUM AUDIENCE-ROLE
+  product/domain owner
+  architect/developer
+  security/privacy reviewer
+  data engineer
+  QA
+  operator/SRE
+END
+
+RULE audience-path-requirements
+  GOAL
+    Each chapter begins with prose, diagrams, and representative examples before dense
+    references. IDs appear as hyperlinks/reference anchors, not the primary user
+    interface. Evidence rank/profile is visible but unobtrusive: for example a short
+    badge or note linking to evidence, not repeated raw claim tables in the main
+    narrative.
+  END
+END
+
+SECTION chapter-behavior
+NUMBER 13.2
+TITLE "Required chapter behavior"
+
+RULE chapter-requirements
+  GOAL
+    Every chapter MUST distinguish Observed Legacy from Target Decision; separate Normal
+    behavior from Shadow/Conditional and Disabled behavior; link to upstream synthesis
+    records and relevant source/evidence on demand; include navigation to
+    previous/next, START-HERE, glossary, decisions, and gaps; avoid unexplained acronyms
+    and identifier-only prose; show examples that are evidence-backed or explicitly
+    labeled illustrative; and pass link and diagram validation.
+    08-BACKGROUND-PROCESSING.md MUST include the consolidated fault/resilience view:
+    failure taxonomy, propagation, retries/backoff, transaction rollback, compensation,
+    dead-letter/quarantine paths, observability, and operator/user outcomes, cross-linked
+    to FLT records.
+  END
+END
+
+SECTION disabled-chapter
+NUMBER 13.3
+TITLE "Disabled and Dormant Features chapter"
+
+RULE disabled-chapter-requirements
+  GOAL
+    12-DISABLED-AND-DORMANT-CAPABILITIES.md is mandatory and prominent. It provides an
+    index and one human-oriented section per canonical CAP containing exact disabled
+    member IDs, status/environment matrix, mechanism, evidence rank/profile,
+    dependencies, historical/intended personas and behavior, safety/risk, related
+    architecture/data/rules/use-cases/interfaces, and target decision Restore, Preserve
+    Dormant, Redesign, or Retire. It MUST demonstrate that every effective-denominator
+    Disabled SRC, CMP, and UC appears under exactly one canonical CAP or an exact
+    approved exclusion, and disclose any approved overlap relationship/decision without
+    duplicating decision ownership. Disabled features MUST also be cross-linked from
+    every affected chapter. They MUST NOT be blended into current active behavior or
+    omitted because they are not executable in production.
+  END
+END
+
+SECTION handbook-quality-gate
+NUMBER 13.4
+TITLE "Handbook quality gate"
+
+RULE handbook-quality-checks
+  GOAL
+    Before candidacy, the conforming runtime validates: all required chapters exist and
+    each contains at least one claim-backed semantic handbook assertion or an
+    evidence-backed zero-domain statement, while headings, navigation links,
+    placeholders, or grouping prose alone are vacuous; all internal links and anchor
+    targets resolve; every Mermaid/diagram block parses with a conforming deterministic
+    parser, and unavailable parsing capability is unsupported and blocks candidacy
+    rather than silently falling back to invisible self-assessment; each candidate
+    synthesis block is discoverable from at least one handbook path; active versus
+    disabled presentation is unambiguous; target decisions are not presented as observed
+    facts; and no B-STALE, provisional, or pending-reference section remains.
+  END
+END
+
+RULE handbook-readability-review
+  GOAL
+    After candidacy, authorized human readability review is recorded through one or more
+    §5.7 CNF records whose combined exact HBK bindings cover every candidate handbook
+    section and whose Handbook Readability Review is Pass; their hashed review
+    scope/limitations state how core user goals were followed without reading raw
+    catalogs. A CNF that does not review HBK content uses Not-Applicable; Fail or
+    incomplete HBK coverage blocks content readiness. The Exit E Content-Readiness Report
+    MUST validate reviewer authority, candidate manifest/report bindings, complete HBK
+    coverage, timestamps, results, and unchanged handbook fingerprints. Human review
+    cannot substitute for deterministic link, diagram, or non-vacuity checks, and an
+    unrecorded review has no gate effect.
+  END
+END
+
+SECTION decision-log
+NUMBER 14.1
+TITLE "Decision log"
+
+RULE decision-log-projection
+  GOAL
+    15-DECISIONS.md is the authoritative decision register from Preflight onward.
+    Reconstruction-Handoff produces a human-readable decision-log projection containing
+    every applicable approved record and its source link; it MUST NOT fork or
+    reinterpret the decision. The canonical schema is §5.5. Target decisions never alter
+    observed facts. Superseded decisions remain tombstoned and linked.
+  END
+END
+
+SECTION modernization-templates
+NUMBER 14.2
+TITLE "Modernization mapping templates"
+
+RULE mapping-prompts
+  GOAL
+    The following are decision prompts, not mandates: global/out-of-band state maps to
+    request scope, explicit service state, or managed store; mixed server/client
+    presentation ownership maps to deliberate SSR/SPA/hybrid ownership with
+    synchronization rules; scattered auth checks map to a centralized policy boundary
+    with documented defense-in-depth checks; DB-autonomous rules map to intentionally
+    retain, lift, redesign, or retire per DR and invariant; synchronous
+    cross-availability side effects map to evaluating durable commands/events;
+    string-composed persistence maps to evaluating a controlled data-access boundary;
+    filesystem side effects map to evaluating durable storage retaining lifecycle
+    semantics; application-only relationships map to enforcing physically or documenting
+    compensating consistency; derived fields map to retain, materialize, recompute, or
+    remove with a decision; and soft-delete/audit mechanics map to preserving the
+    requirement, not necessarily legacy columns. The target architecture owner chooses
+    the result and records it.
+  END
+END
+
+SECTION rule-ownership
+NUMBER 14.3
+TITLE "Business-rule ownership"
+
+RULE business-rule-ownership
+  GOAL
+    Every BR maps to exactly one authoritative target owner. Optional validation,
+    gateway, UI, or DB mirrors are permitted only if they remain semantically consistent
+    and cite the authoritative rule. Conflicting mirrors are prohibited.
+  END
+END
+
+SECTION interface-compatibility
+NUMBER 14.4
+TITLE "Interface compatibility"
+
+RULE interface-baseline
+  GOAL
+    External interface schemas, errors, ordering, idempotency, delivery, and timing
+    guarantees form a compatibility baseline. They MAY change only through an approved
+    versioned migration decision identifying consumers, compatibility period, data
+    migration, rollout, observability, and rollback. Internal transport MAY change
+    freely if externally observable and use-case contracts remain satisfied or have
+    approved changes.
+  END
+END
+
+SECTION equivalence-suite
+NUMBER 14.5
+TITLE "Equivalence and acceptance suite"
+
+ENUM EQUIVALENCE-TEST-KIND
+  example acceptance tests
+  property assertions
+  state-transition tests
+  contract tests
+  disabled-capability tests
+  migration tests
+END
+
+RULE equivalence-generation
+  GOAL
+    Generate example acceptance tests from every UC Given/When/Then contract; property
+    assertions from invariants and BR conditions; state-transition tests from every
+    eligible SM; contract tests for external IF compatibility baselines;
+    disabled-capability tests that verify intended dormant state and prevent accidental
+    enablement, plus restoration tests only when target decision is Restore; and
+    migration tests for approved behavior changes. Generated tests are reviewable
+    derivatives. Their expected semantics come from B-confirmed synthesis and approved
+    decisions.
+  END
+END
+
+SECTION sole-input-invariant
+NUMBER 14.6
+TITLE "Sole-input invariant"
+
+RULE sole-input-conditions
+  GOAL
+    Legacy source may be treated as unavailable during reconstruction only when the
+    bundle has a validated signed outer bundle manifest whose hashed payload contains
+    EXIT-E-STATUS: Passed; contains only applicable B-CONFIRMED semantic blocks; is
+    covered by the required human signatures on that outer manifest; pins all
+    authoritative fingerprints; and includes assurance, scope certificate, decisions,
+    equivalence suite, and known residual risks. Anything absent from that certified
+    scope is out of reconstruction scope and requires a new decision or a reopened
+    deconstruction cycle.
+  END
+END

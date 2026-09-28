@@ -587,6 +587,127 @@
       "ids": []
     },
     {
+      "path": "examples/spec/handbook-and-decisions.cdl",
+      "source-fingerprint": "sha256:374e1afd7d9f9ce69382e3648bf835367f8545ec08dc86d25e98297da6218788",
+      "ids": [
+        {
+          "id": "AUDIENCE-ROLE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "EQUIVALENCE-TEST-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "audience-path-requirements",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "audience-paths",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "business-rule-ownership",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "chapter-behavior",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "chapter-requirements",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "decision-log",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "decision-log-projection",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "disabled-chapter",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "disabled-chapter-requirements",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "equivalence-generation",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "equivalence-suite",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "handbook-quality-checks",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "handbook-quality-gate",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "handbook-readability-review",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "interface-baseline",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "interface-compatibility",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "mapping-prompts",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "modernization-templates",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "rule-ownership",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "sole-input-conditions",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "sole-input-invariant",
+          "kind": "SECTION",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/inventory-and-frontier.cdl",
       "source-fingerprint": "sha256:a21dded3a0089bdbd1f5aa524b2022a95136aaaf59152afd27abc6960afb254f",
       "ids": [
