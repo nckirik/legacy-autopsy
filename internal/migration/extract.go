@@ -12,7 +12,7 @@ import (
 )
 
 // GeneratorVersion identifies the extraction rules.
-const GeneratorVersion = "internal/migration/1"
+const GeneratorVersion = "internal/migration/2"
 
 // EnumDomain is one closed finite-choice domain.
 type EnumDomain struct {
@@ -23,6 +23,7 @@ type EnumDomain struct {
 
 // StatusTaxonomy is the §5.1 extraction result.
 type StatusTaxonomy struct {
+	Body         string
 	PrefixGroups []EnumDomain
 	Registry     []EnumDomain
 }
@@ -41,6 +42,19 @@ func ExtractStatusTaxonomy(doc *markdown.Document) (StatusTaxonomy, error) {
 		return StatusTaxonomy{}, err
 	}
 	var taxonomy StatusTaxonomy
+	if text, err := doc.SectionText(statusSection); err == nil {
+		lines := strings.Split(strings.TrimRight(text, "\n"), "\n")
+		if len(lines) > 1 {
+			lines = lines[1:]
+		}
+		for len(lines) > 0 && strings.TrimSpace(lines[0]) == "" {
+			lines = lines[1:]
+		}
+		for len(lines) > 0 && strings.TrimSpace(lines[len(lines)-1]) == "" {
+			lines = lines[:len(lines)-1]
+		}
+		taxonomy.Body = strings.Join(lines, "\n")
+	}
 	for i, node := range nodes {
 		if node.Kind != markdown.Heading || node.Level != 3 {
 			continue
@@ -122,11 +136,12 @@ func RenderStatusTaxonomy(t StatusTaxonomy, sourceFingerprint string) string {
 	b.WriteString("NUMBER 5.1\n")
 	b.WriteString("TITLE \"Dedicated prefix groups\"\n\n")
 	b.WriteString("GOAL\n")
-	b.WriteString("  Finite protocol enums MUST be validated from the normative Markdown AST using\n")
-	b.WriteString("  the complete schema/context-qualified field path, never an unanchored text\n")
-	b.WriteString("  match, a label-only lookup, or a token-prefix guess. Prefix-family tokens\n")
-	b.WriteString("  must be bracketed where declared, and every finite-enum path is declared\n")
-	b.WriteString("  here.\n")
+	if t.Body != "" {
+		b.WriteString(t.Body)
+		b.WriteString("\n")
+	} else {
+		b.WriteString("  Finite protocol enums MUST be validated from the normative Markdown AST.\n")
+	}
 	b.WriteString("END\n\n")
 	b.WriteString("RULE finite-enum-registry\n")
 	b.WriteString("  GOAL\n")

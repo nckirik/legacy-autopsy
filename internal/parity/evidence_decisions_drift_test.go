@@ -52,7 +52,7 @@ func TestEvidenceAndDecisionsDrift(t *testing.T) {
 	}
 	cdlText := ""
 	for _, sec := range res.EIR.Sections {
-		cdlText += sec.Goal + "\n"
+		cdlText += sec.Title + "\n" + sec.Goal + "\n"
 	}
 	for _, r := range res.EIR.Declarations.Rules {
 		cdlText += r.Goal + "\n"

@@ -227,7 +227,7 @@ func Build(repoRoot string) (Report, error) {
 	})
 
 	report.Deferrals = []string{
-		"generated protocol.md is a structural render with condensed rule text; the frozen oracle remains the usable standalone prompt until verbatim enrichment and the standalone protocol-quality test pass",
+		"standalone protocol-quality test on the generated protocol.md edition is pending (content completeness is enforced by TestGeneratedProtocolCoversOracle)",
 		"canonical.markdown engine remains a bounded v1 implementation (internal/capabilities/canonical.go)",
 		"skill projections stay hand-maintained through S4; EIR reference-view generation is deferred",
 		"CDL editor tooling (highlighting, canonical printer) is planned after crown as S5",
