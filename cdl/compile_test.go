@@ -31,6 +31,7 @@ const (
 	packagingPath         = "examples/spec/packaging.cdl"
 	personasPovsPath      = "examples/spec/personas-povs.cdl"
 	inventoryFrontierPath = "examples/spec/inventory-and-frontier.cdl"
+	extractionEvoPath     = "examples/spec/extraction-evolution.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -768,6 +769,31 @@ func TestInventoryAndFrontierCompiles(t *testing.T) {
 	for id, size := range wantEnums {
 		if enumCounts[id] != size {
 			t.Fatalf("%s has %d values, want %d", id, enumCounts[id], size)
+		}
+	}
+}
+
+func TestExtractionEvolutionCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, extractionEvoPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"6.1", "6.2", "6.3", "6.4", "6.5"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	if counts["ATOMIC-COMPONENT"] != 25 || counts["SHARED-REFERENCE"] != 6 {
+		t.Fatalf("unexpected extraction field counts: %v", counts)
+	}
+	for _, e := range res.EIR.Declarations.Enums {
+		if e.ID == "BLOCK-CONFIDENCE-RANK" && len(e.Values) != 4 {
+			t.Fatalf("BLOCK-CONFIDENCE-RANK has %d values, want 4", len(e.Values))
 		}
 	}
 }

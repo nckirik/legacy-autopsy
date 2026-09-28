@@ -501,6 +501,87 @@
       ]
     },
     {
+      "path": "examples/spec/extraction-evolution.cdl",
+      "source-fingerprint": "sha256:158358e0d29e92b0cf1f57d1600cc955ce12e21ca935ec1a41b0ea5d7697c05d",
+      "ids": [
+        {
+          "id": "ATOMIC-COMPONENT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "BLOCK-CONFIDENCE-RANK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "SHARED-REFERENCE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "atomic-component-schema",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "atomic-unit-specificity",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "dead-code-proof",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "depromotion",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "depromotion-steps",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "dual-entry-discovery",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "persona-driven-discovery",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "promotion-execution",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "promotion-locks",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "staging-and-promotion",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "surgical-evolution",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "surgical-patching",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/globals.cdl",
       "source-fingerprint": "sha256:b3d8abf123bc97cb91360ae7e35744b6e50ff95b49532ac2a3eeec043f8fdc1c",
       "ids": []
