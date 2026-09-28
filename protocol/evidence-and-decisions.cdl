@@ -38,24 +38,24 @@ Every atomic forensic or synthesis block lists its material claims and carries b
 END
 
 FIELD CLAIM
-  subject-id-record-version    -> string                                  required
-  field-step                   -> string                                  required
-  claim                        -> string                                  required
-  materiality                  -> REGISTRY-CLAIM-MATERIALITY              required
-  evidence-level               -> REGISTRY-CLAIM-EVIDENCE-LEVEL           required
-  anchor                       -> string                                  required
-  source-fingerprint-snapshot  -> string                                  required
-  evidence-route-lineage-id    -> string                                  required
-  projection-classification    -> REGISTRY-CLAIM-PROJECTION-CLASSIFICATION required
-  independent-supporting-claims -> set<string>                            optional
-  independence-basis           -> string                                  required
-  contradiction-ids            -> set<string>                             optional
-  created-last-revalidated-by  -> string                                  required
+  subject-id-record-version     -> string                                   required
+  field-step                    -> string                                   required
+  claim                         -> string                                   required
+  materiality                   -> REGISTRY-CLAIM-MATERIALITY               required
+  evidence-level                -> REGISTRY-CLAIM-EVIDENCE-LEVEL            required
+  anchor                        -> string                                   required
+  source-fingerprint-snapshot   -> string                                   required
+  evidence-route-lineage-id     -> string                                   required
+  projection-classification     -> REGISTRY-CLAIM-PROJECTION-CLASSIFICATION required
+  independent-supporting-claims -> set<string>                              optional
+  independence-basis            -> string                                   required
+  contradiction-ids             -> set<string>                              optional
+  created-last-revalidated-by   -> string                                   required
 END
 
 FIELD BLOCK-EVIDENCE-SUMMARY
   block-confidence-rank  -> REGISTRY-ATOMICCOMPONENT-BLOCK-CONFIDENCE-RANK required
-  block-evidence-profile -> string                                          required
+  block-evidence-profile -> string                                         required
 END
 
 SECTION sanitized-projections
@@ -106,12 +106,12 @@ An open material contradiction blocks applicable coverage, Exit A, and confirmat
 END
 
 FIELD CONTRADICTION
-  claims-in-conflict             -> set<string> required
-  scope-environments-snapshots   -> string       required
-  conflict-description           -> string       required
-  resolution-state               -> REGISTRY-CONTRADICTION-RESOLUTION-STATE required
-  resolution-decision-id         -> string       optional
-  affected-records-and-stale-impact -> string    required
+  claims-in-conflict                -> set<string>                             required
+  scope-environments-snapshots      -> string                                  required
+  conflict-description              -> string                                  required
+  resolution-state                  -> REGISTRY-CONTRADICTION-RESOLUTION-STATE required
+  resolution-decision-id            -> string                                  optional
+  affected-records-and-stale-impact -> string                                  required
 END
 
 SECTION authoritative-decisions
@@ -146,19 +146,19 @@ The candidate payload manifest binds immutable decision-content versions/fingerp
 END
 
 FIELD DECISION
-  decision-content-version                          -> int required
-  decision-content-fingerprint                      -> hash required
-  type                                              -> REGISTRY-DECISION-TYPE required
-  observed-inputs                                   -> string required
-  options-decision-rationale-risks                  -> string required
-  exact-scope-and-denominator-effect                -> string required
-  affected-records-rollout-rollback                 -> string required
-  content-supersession                              -> string required
+  decision-content-version                          -> int                               required
+  decision-content-fingerprint                      -> hash                              required
+  type                                              -> REGISTRY-DECISION-TYPE            required
+  observed-inputs                                   -> string                            required
+  options-decision-rationale-risks                  -> string                            required
+  exact-scope-and-denominator-effect                -> string                            required
+  affected-records-rollout-rollback                 -> string                            required
+  content-supersession                              -> string                            required
   approval-status                                   -> REGISTRY-DECISION-APPROVAL-STATUS required
-  approval-envelope-version                         -> int required
-  owner-approver-authority-basis-approval-timestamp -> string required
-  approved-content-binding                          -> string required
-  approval-signature-audit                          -> string required
+  approval-envelope-version                         -> int                               required
+  owner-approver-authority-basis-approval-timestamp -> string                            required
+  approved-content-binding                          -> string                            required
+  approval-signature-audit                          -> string                            required
 END
 
 SECTION acquisition-candidates
@@ -222,15 +222,16 @@ A B-confirmed synthesis block, `PRF` profile, or `HBK` handbook section MUST ref
 END
 
 FIELD CONFIRMATION
-  human-hatch-action                                -> REGISTRY-CONFIRMATION-HUMAN-HATCH-ACTION required
-  approver-role-authority-basis                     -> string required
-  review-timestamp-review-scope-limitations         -> string required
-  handbook-readability-review                       -> REGISTRY-CONFIRMATION-HANDBOOK-READABILITY-REVIEW required
-  confirmed-record-bindings                         -> set<string> required
-  pinned-exit-a-exit-e-candidate-report-candidate-payload-manifest-fingerprints -> string required
-  required-dec-content-versions-fingerprints-and-approval-envelopes-reviewed -> string required
-  invalidated-by                                    -> REGISTRY-CONFIRMATION-INVALIDATED-BY required
-  cnf-signature-envelope-version                    -> int required
-  cnf-payload-fingerprint                           -> hash required
-  signature-or-approval-reference-signature-timestamp -> string required
+  human-hatch-action                                                            -> REGISTRY-CONFIRMATION-HUMAN-HATCH-ACTION          required
+  approver-role-authority-basis                                                 -> string                                            required
+  review-timestamp-review-scope-limitations                                     -> string                                            required
+  handbook-readability-review                                                   -> REGISTRY-CONFIRMATION-HANDBOOK-READABILITY-REVIEW required
+  confirmed-record-bindings                                                     -> set<string>                                       required
+  pinned-exit-a-exit-e-candidate-report-candidate-payload-manifest-fingerprints -> string                                            required
+  required-dec-content-versions-fingerprints-and-approval-envelopes-reviewed    -> string                                            required
+  invalidated-by                                                                -> REGISTRY-CONFIRMATION-INVALIDATED-BY              required
+  cnf-signature-envelope-version                                                -> int                                               required
+  cnf-payload-fingerprint                                                       -> hash                                              required
+  signature-or-approval-reference-signature-timestamp                           -> string                                            required
 END
+

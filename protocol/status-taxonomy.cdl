@@ -175,27 +175,6 @@ FinalVerificationReceipt.Overall Result                 -> Pass | Fail
 Fields that merely contain descriptive prose or domain-defined values are not finite protocol enums. In particular, `PersonaProfile.UI Surfaces and State`, state names inside an eligible `SM`, free-form environment names, and narrative state summaries MUST NOT be dispatched through this registry. Conversely, any field intended to carry a finite protocol enum must have a declared path above; encountering a finite-enum-like value at an undeclared path is an error rather than permission to infer an enum from its label or token.
 END
 
-RULE finite-enum-registry
-  GOAL
-    The exhaustive registry of all normative finite-choice scalar and table-cell
-    paths is declared as ENUM domains in this section. Aliases, invented labels,
-    inherited enums, and applying one schema's label map to another schema are
-    forbidden unless explicitly introduced by a protocol/schema version. An
-    undeclared finite-enum path is a validation error rather than permission to
-    infer an enum from its label or token.
-  END
-END
-
-RULE traversal-matrix-status
-  GOAL
-    EntryCluster.Required Traversal Matrix[].Status accepts N/A if and only if the
-    same row's Applicability is exactly Not-Applicable; such a row MUST carry the
-    claim-backed reason required by §3.1. A Required row MUST use one bracketed
-    allowed R- token and MUST NOT use N/A. A Not-Applicable row MUST use exactly
-    N/A and MUST NOT use an R- token.
-  END
-END
-
 ENUM PREFIX-STAGING
   [S-DISCOVERED]
   [S-STAGING-VERIFIED]
@@ -1067,3 +1046,25 @@ ENUM REGISTRY-FINALVERIFICATIONRECEIPT-OVERALL-RESULT
   Pass
   Fail
 END
+
+RULE finite-enum-registry
+  GOAL
+    The exhaustive registry of all normative finite-choice scalar and table-cell
+    paths is declared as ENUM domains in this section. Aliases, invented labels,
+    inherited enums, and applying one schema's label map to another schema are
+    forbidden unless explicitly introduced by a protocol/schema version. An
+    undeclared finite-enum path is a validation error rather than permission to
+    infer an enum from its label or token.
+  END
+END
+
+RULE traversal-matrix-status
+  GOAL
+    EntryCluster.Required Traversal Matrix[].Status accepts N/A if and only if the
+    same row's Applicability is exactly Not-Applicable; such a row MUST carry the
+    claim-backed reason required by §3.1. A Required row MUST use one bracketed
+    allowed R- token and MUST NOT use N/A. A Not-Applicable row MUST use exactly
+    N/A and MUST NOT use an R- token.
+  END
+END
+

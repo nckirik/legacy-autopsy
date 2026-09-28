@@ -5,6 +5,7 @@ package migration
 
 import (
 	"fmt"
+	"github.com/nckirik/legacy-autopsy/cdl"
 	"regexp"
 	"strings"
 
@@ -164,7 +165,11 @@ func RenderStatusTaxonomy(t StatusTaxonomy, sourceFingerprint string) string {
 	b.WriteString("END\n")
 	renderDomains(&b, t.PrefixGroups)
 	renderDomains(&b, t.Registry)
-	return b.String()
+	text := b.String()
+	if formatted, diags := cdl.FormatSource("protocol/status-taxonomy.cdl", []byte(text)); len(diags) == 0 {
+		return string(formatted)
+	}
+	return text
 }
 
 func renderDomains(b *strings.Builder, domains []EnumDomain) {

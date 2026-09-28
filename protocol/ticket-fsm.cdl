@@ -54,17 +54,17 @@ ENUM TICKET-ESCALATION-REASON
 END
 
 FIELD TICKET
-  source-pov-file-invocation -> string                    required
-  target-pov-ledger          -> string                    required
-  status                     -> TICKET-STATE              required
-  trace-history              -> string                    required
-  affected-ids               -> set<string>               optional
-  memory-anchor              -> string                    required
-  description                -> string                    required
-  static-investigation       -> string                    required
-  escalation-reason          -> TICKET-ESCALATION-REASON  required
-  probe-feasibility          -> string                    required
-  coverage-promotion-effect  -> string                    required
+  source-pov-file-invocation -> string                   required
+  target-pov-ledger          -> string                   required
+  status                     -> TICKET-STATE             required
+  trace-history              -> string                   required
+  affected-ids               -> set<string>              optional
+  memory-anchor              -> string                   required
+  description                -> string                   required
+  static-investigation       -> string                   required
+  escalation-reason          -> TICKET-ESCALATION-REASON required
+  probe-feasibility          -> string                   required
+  coverage-promotion-effect  -> string                   required
 END
 
 RULE ticket-identity
@@ -220,16 +220,16 @@ ENUM SAFETY-CLASSIFICATION
 END
 
 FIELD PROBE-SPECIFICATION
-  probe-id                              -> string required
-  target-src-cmp                        -> string required
-  question-expected-observable          -> string required
-  exact-inputs-preconditions            -> string required
-  required-environment-headers-config   -> string required
-  safety-classification                 -> SAFETY-CLASSIFICATION required
-  data-masking-isolation-approval       -> string required
-  disabled-capability-authorization     -> string required
-  logs-db-diffs-payloads-to-capture     -> string required
-  success-failure-interpretation        -> string required
+  probe-id                            -> string                required
+  target-src-cmp                      -> string                required
+  question-expected-observable        -> string                required
+  exact-inputs-preconditions          -> string                required
+  required-environment-headers-config -> string                required
+  safety-classification               -> SAFETY-CLASSIFICATION required
+  data-masking-isolation-approval     -> string                required
+  disabled-capability-authorization   -> string                required
+  logs-db-diffs-payloads-to-capture   -> string                required
+  success-failure-interpretation      -> string                required
 END
 
 RULE probe-handoff
@@ -284,11 +284,12 @@ GOAL
 END
 
 FIELD NO-MOCK-FALLBACK
-  suspected-behavior                    -> string required
-  evidence-claims-anchors               -> string required
-  missing-runtime-observation           -> string required
-  static-methods-attempted              -> string required
-  probe-feasibility-attempt-result      -> string required
-  proposed-human-verification           -> string required
+  suspected-behavior                     -> string required
+  evidence-claims-anchors                -> string required
+  missing-runtime-observation            -> string required
+  static-methods-attempted               -> string required
+  probe-feasibility-attempt-result       -> string required
+  proposed-human-verification            -> string required
   affected-promotion-coverage-exit-scope -> string required
 END
+

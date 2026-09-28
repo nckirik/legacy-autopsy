@@ -79,3 +79,4 @@ RULE confirmation-binding
     semantic payload or semantic fields inside the envelope.
   END
 END
+

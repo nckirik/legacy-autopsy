@@ -42,11 +42,34 @@ func (d Diagnostics) Has(code string) bool {
 }
 
 type parser struct {
-	file  string
-	lines []string
-	pos   int
-	part  string
-	diags Diagnostics
+	file        string
+	lines       []string
+	pos         int
+	part        string
+	inNested    bool
+	pending     []Comment
+	unpreserved bool
+	diags       Diagnostics
+}
+
+// topComment reports a standalone top-level comment line and consumes it.
+func (p *parser) topComment() bool {
+	raw := strings.TrimSpace(p.lines[p.pos])
+	if !strings.HasPrefix(raw, "#") {
+		return false
+	}
+	p.pending = append(p.pending, Comment{Text: raw})
+	p.pos++
+	return true
+}
+
+// attach records pending comments as belonging to the given construct key.
+func (p *parser) attach(before string, prog *Program) {
+	for _, c := range p.pending {
+		c.Before = before
+		prog.Comments = append(prog.Comments, c)
+	}
+	p.pending = nil
 }
 
 // Parse parses one CDL source file.
@@ -55,8 +78,15 @@ func Parse(file string, src []byte) (*Program, Diagnostics) {
 	p := &parser{file: file, lines: strings.Split(text, "\n")}
 	prog := &Program{}
 	for {
+		if p.pos < len(p.lines) && p.topComment() {
+			continue
+		}
 		line, ok := p.peek()
 		if !ok {
+			for _, c := range p.pending {
+				prog.Comments = append(prog.Comments, c)
+			}
+			prog.UnpreservedComments = p.unpreserved
 			return prog, p.diags
 		}
 		if line == "" {
@@ -66,6 +96,11 @@ func Parse(file string, src []byte) (*Program, Diagnostics) {
 		switch {
 		case strings.HasPrefix(line, "PART "):
 			p.pos++
+			partKey := "part:"
+			if fields := strings.Fields(strings.TrimPrefix(line, "PART ")); len(fields) > 0 {
+				partKey += fields[0]
+			}
+			p.attach(partKey, prog)
 			rest := strings.TrimSpace(strings.TrimPrefix(line, "PART "))
 			fields := strings.SplitN(rest, " ", 2)
 			if len(fields) != 2 {
@@ -76,31 +111,51 @@ func Parse(file string, src []byte) (*Program, Diagnostics) {
 			prog.Globals.Parts = append(prog.Globals.Parts, PartDecl{ID: fields[0], Title: unquote(strings.TrimSpace(fields[1]))})
 		case line == "GLOBAL DECLARATIONS":
 			p.pos++
-			if !p.parseGlobals(&prog.Globals) {
+			p.attach("globals", prog)
+			p.inNested = true
+			ok := p.parseGlobals(&prog.Globals)
+			p.inNested = false
+			if !ok {
 				return prog, p.diags
 			}
 		case strings.HasPrefix(line, "SECTION "):
 			p.pos++
-			sec, ok := p.parseSection(strings.TrimSpace(strings.TrimPrefix(line, "SECTION ")))
+			secID := strings.TrimSpace(strings.TrimPrefix(line, "SECTION "))
+			p.attach("section:"+secID, prog)
+			p.inNested = true
+			sec, ok := p.parseSection(secID)
+			p.inNested = false
 			if !ok {
 				return prog, p.diags
 			}
 			prog.Sections = append(prog.Sections, sec)
 		case strings.HasPrefix(line, "PROJECTION "):
 			p.pos++
-			proj, ok := p.parseProjection(strings.TrimSpace(strings.TrimPrefix(line, "PROJECTION ")))
+			projID := strings.TrimSpace(strings.TrimPrefix(line, "PROJECTION "))
+			p.attach("projection:"+projID, prog)
+			p.inNested = true
+			proj, ok := p.parseProjection(projID)
+			p.inNested = false
 			if !ok {
 				return prog, p.diags
 			}
 			prog.Projections = append(prog.Projections, proj)
 		case line == "BASE-READS":
 			p.pos++
-			if !p.parseBaseReads(&prog.Globals) {
+			p.attach("base-reads", prog)
+			p.inNested = true
+			ok := p.parseBaseReads(&prog.Globals)
+			p.inNested = false
+			if !ok {
 				return prog, p.diags
 			}
 		case strings.HasPrefix(line, "MODE "):
 			p.pos++
-			mode, ok := p.parseMode(strings.TrimSpace(strings.TrimPrefix(line, "MODE ")))
+			modeID := strings.TrimSpace(strings.TrimPrefix(line, "MODE "))
+			p.attach("mode:"+modeID, prog)
+			p.inNested = true
+			mode, ok := p.parseMode(modeID)
+			p.inNested = false
 			if !ok {
 				return prog, p.diags
 			}
@@ -139,12 +194,21 @@ func (p *parser) peek() (string, bool) {
 	if p.pos >= len(p.lines) {
 		return "", false
 	}
-	return strings.TrimSpace(stripComment(p.lines[p.pos])), true
+	raw := p.lines[p.pos]
+	stripped := stripComment(raw)
+	if p.inNested && stripped != strings.TrimRight(raw, " \t") {
+		p.unpreserved = true
+	}
+	if p.inNested && strings.HasPrefix(strings.TrimSpace(raw), "#") {
+		p.unpreserved = true
+	}
+	return strings.TrimSpace(stripped), true
 }
 
 func (p *parser) isTopLevel(line string) bool {
 	return line == "GLOBAL DECLARATIONS" || strings.HasPrefix(line, "SECTION ") ||
-		strings.HasPrefix(line, "PART ") || strings.HasPrefix(line, "PROJECTION ")
+		strings.HasPrefix(line, "PART ") || strings.HasPrefix(line, "PROJECTION ") ||
+		strings.HasPrefix(line, "#")
 }
 
 func csv(s string) []string {
@@ -319,6 +383,9 @@ func (p *parser) parseMode(id string) (ModeDecl, bool) {
 func (p *parser) parseSection(id string) (Section, bool) {
 	sec := Section{ID: id, Part: p.part}
 	for {
+		if p.pos < len(p.lines) && strings.HasPrefix(strings.TrimSpace(p.lines[p.pos]), "#") {
+			return sec, true
+		}
 		line, ok := p.peek()
 		if !ok {
 			return sec, true
@@ -822,6 +889,9 @@ func (p *parser) parseAgentBody(step *Step) bool {
 func (p *parser) parseProjection(id string) (Projection, bool) {
 	proj := Projection{ID: id, StepTexts: map[string]string{}, RuleTexts: map[string]string{}}
 	for {
+		if p.pos < len(p.lines) && strings.HasPrefix(strings.TrimSpace(p.lines[p.pos]), "#") {
+			return proj, true
+		}
 		line, ok := p.peek()
 		if !ok {
 			return proj, true

@@ -1,6 +1,6 @@
 # Development
 
-> Non-authoritative developer guide. `protocol.md` defines behavior; this file records the current build and command workflow.
+> Non-authoritative developer guide. The CDL sources under [`protocol/`](../protocol/) define behavior; this file records the current build and command workflow.
 
 ## Prerequisites
 
@@ -62,13 +62,16 @@ Reads are normalized and confined to the workspace, including symlink resolution
 
 ## Spec track
 
-The S1 §7.7 pilot is implemented for exactly one section. The frozen source language is
-[`cdl.md`](cdl.md); execution contracts are [`eir.md`](eir.md),
+The Spec track completed the section-by-section migration and crown: the CDL sources
+under [`protocol/`](../protocol/) are normative, `protocol.md` is their generated
+edition, and [`protocol/legacy/protocol-4.1.3.md`](../protocol/legacy/protocol-4.1.3.md)
+is the frozen parity oracle. The frozen source language is [`cdl.md`](cdl.md);
+execution contracts are [`eir.md`](eir.md),
 [`execution-semantics.md`](execution-semantics.md), and
 [`runtime-architecture.md`](runtime-architecture.md); sequencing is in the
 [roadmap](roadmap.md); migration and freeze rules are in the
-[migration audit](migration-audit.md). Everything outside §7.7 remains unimplemented, and
-the pilot is not a conformance or Exit A/E claim.
+[migration audit](migration-audit.md). The runtime still implements only the pilot
+executable slice; that is not a conformance or Exit A/E claim.
 
 ```sh
 go run ./cmd/legacy-autopsy spec compile
@@ -106,8 +109,28 @@ never hand-edited:
 go test ./cdl/ -run TestUpdateAssets -update
 ```
 
-The M0 code, fixtures, and skill projections remain frozen: bug fixes that preserve all
-fixture outcomes, additive pilot wiring, and no new protocol behavior or refactors.
+The M0 code and the 24-case fixture oracle remain the frozen parity baseline: bug fixes
+that preserve all fixture outcomes, additive wiring, and no new protocol behavior in the
+runtime. Protocol sources change through the CDL toolchain and drift tests, not through
+Go edits.
+
+## CDL formatting
+
+`cdl fmt` is the deterministic canonical printer for `.cdl` sources. It normalizes
+declaration order, indentation, alignment, and spacing, preserves opaque normative text
+(`GOAL`, `TEXT`, `REASON`, and `REQUIRE """..."""`) exactly, and refuses sources with
+inline or nested comments it cannot place. `protocol/*.cdl` are kept canonical;
+`TestProtocolSourcesCanonical` enforces it in CI.
+
+```sh
+go run ./cmd/cdl fmt protocol/*.cdl              # print canonical form
+go run ./cmd/cdl fmt -w protocol/*.cdl           # rewrite in place
+go run ./cmd/cdl fmt --check protocol/*.cdl      # fail if not canonical
+```
+
+The printer is non-authoritative: it never changes semantics, and generated artifacts
+are regenerated, not reformatted. dprint remains the Markdown runner; hosting `cdl fmt`
+through dprint's Exec plugin is possible but not wired into CI.
 
 ## Markdown formatting
 
@@ -121,10 +144,11 @@ scripts/format.sh           # format Go and Markdown
 scripts/format.sh --check   # verify only
 ```
 
-`protocol.md` is excluded because its bytes are fingerprint-bound. `docs/cdl.md` uses
-intentional ASCII section rules, and `fixtures/`, `protocol/` (`.cdl` sources and
-generated goldens), and `analysis/` are source or generated data — they are regenerated,
-never reformatted. Go formatting stays with the Go toolchain.
+`protocol.md`, `protocol/golden/`, and generated analysis artifacts are excluded because
+their bytes are fingerprint-bound. `docs/cdl.md` uses intentional ASCII section rules,
+and `fixtures/` and `analysis/` are source or generated data — they are regenerated,
+never reformatted. `protocol/*.cdl` are formatted with `cdl fmt`, not dprint. Go
+formatting stays with the Go toolchain.
 
 VS Code support is committed in `.vscode/`: the dprint extension is recommended and
 Markdown format-on-save is configured.

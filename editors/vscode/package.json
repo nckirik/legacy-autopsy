@@ -1,0 +1,27 @@
+{
+  "name": "cdl-language",
+  "displayName": "Canonical Deconstruction Language",
+  "description": "Syntax highlighting and language configuration for CDL (.cdl) sources.",
+  "version": "0.1.0",
+  "publisher": "legacy-autopsy",
+  "license": "MIT",
+  "engines": { "vscode": "^1.80.0" },
+  "categories": ["Programming Languages"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "cdl",
+        "aliases": ["CDL", "Canonical Deconstruction Language"],
+        "extensions": [".cdl"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "cdl",
+        "scopeName": "source.cdl",
+        "path": "./syntaxes/cdl.tmLanguage.json"
+      }
+    ]
+  }
+}

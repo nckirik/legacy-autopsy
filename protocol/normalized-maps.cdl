@@ -8,16 +8,16 @@ Normalized maps list metadata, each virtual unit, stable ID, type, primary POV, 
 END
 
 FIELD NORMALIZED-MAP-ROW
-  metadata               -> string        required
-  virtual-unit           -> id            required
-  stable-id              -> id            required
-  type                   -> string        required
-  primary-pov            -> string        required
-  source-fingerprint     -> hash          required
-  edges                  -> set<string>   optional
-  external-systems       -> set<string>   optional
-  credential-aliases     -> set<string>   optional
-  ambiguities            -> set<string>   optional
+  metadata           -> string      required
+  virtual-unit       -> id          required
+  stable-id          -> id          required
+  type               -> string      required
+  primary-pov        -> string      required
+  source-fingerprint -> hash        required
+  edges              -> set<string> optional
+  external-systems   -> set<string> optional
+  credential-aliases -> set<string> optional
+  ambiguities        -> set<string> optional
 END
 
 TABLE normalized-map
@@ -34,3 +34,4 @@ RULE normalized-maps-navigation
     or bypass persona-driven discovery.
   END
 END
+

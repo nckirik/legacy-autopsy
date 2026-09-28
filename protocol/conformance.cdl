@@ -15,6 +15,7 @@ GOAL
 9. Snapshot mixing is forbidden. A source changed during acquisition/traversal requires a consistent re-snapshot and stale propagation.
 END
 
+
 PART conformance "Conformance and Acceptance Checklist"
 
 SECTION conforming-capabilities
@@ -229,6 +230,7 @@ RULE corpus-acceptance-requirements
   END
 END
 
+
 PART ownership "Compact Artifact Ownership Matrix"
 
 SECTION artifact-ownership
@@ -272,9 +274,10 @@ GOAL
 END
 
 FIELD ARTIFACT-OWNERSHIP-ROW
-  artifact-record    -> string required
-  semantic-purpose   -> string required
+  artifact-record     -> string required
+  semantic-purpose    -> string required
   authoritative-plane -> string required
-  authorized-writers -> string required
-  key-non-writers    -> string required
+  authorized-writers  -> string required
+  key-non-writers     -> string required
 END
+

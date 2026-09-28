@@ -37,39 +37,39 @@ GOAL
 All fields are atomic-unit-specific. A routine block MUST NOT aggregate unrelated methods, branches, graph nodes, or queries merely because they share a module.
 END
 
-FIELD ATOMIC-COMPONENT
-  record-kind                       -> string required
-  source-ids                        -> string required
-  file-path-line-range              -> string required
-  virtual-coordinate                -> string required
-  pov-owner                         -> REGISTRY-ENTRYCLUSTER-PRIMARY-POV required
-  general-intent                    -> string required
-  inputs-outputs                    -> string required
-  auth-binding                      -> string required
-  staging-status                    -> string required
-  coverage-status                   -> string required
-  personas                          -> string required
-  traversal-tracks                  -> string required
-  capability-state                  -> REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE required
-  runtime-state-matrix              -> string required
-  depends-on-depended-on-by         -> string required
-  synthesis-references              -> string required
-  side-effects                      -> string required
-  exceptional-behaviors             -> string required
-  edge-and-odd-cases                -> string required
-  behavioral-notes-for-reconstruction -> string required
-  material-claims                   -> string required
-  block-confidence-rank             -> BLOCK-CONFIDENCE-RANK required
-  block-evidence-profile            -> string required
-  evidence-anchors                  -> string required
-  record-version-supersession       -> string required
-END
-
 ENUM BLOCK-CONFIDENCE-RANK
   None
   Low
   Medium
   High
+END
+
+FIELD ATOMIC-COMPONENT
+  record-kind                         -> string                                 required
+  source-ids                          -> string                                 required
+  file-path-line-range                -> string                                 required
+  virtual-coordinate                  -> string                                 required
+  pov-owner                           -> REGISTRY-ENTRYCLUSTER-PRIMARY-POV      required
+  general-intent                      -> string                                 required
+  inputs-outputs                      -> string                                 required
+  auth-binding                        -> string                                 required
+  staging-status                      -> string                                 required
+  coverage-status                     -> string                                 required
+  personas                            -> string                                 required
+  traversal-tracks                    -> string                                 required
+  capability-state                    -> REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE required
+  runtime-state-matrix                -> string                                 required
+  depends-on-depended-on-by           -> string                                 required
+  synthesis-references                -> string                                 required
+  side-effects                        -> string                                 required
+  exceptional-behaviors               -> string                                 required
+  edge-and-odd-cases                  -> string                                 required
+  behavioral-notes-for-reconstruction -> string                                 required
+  material-claims                     -> string                                 required
+  block-confidence-rank               -> BLOCK-CONFIDENCE-RANK                  required
+  block-evidence-profile              -> string                                 required
+  evidence-anchors                    -> string                                 required
+  record-version-supersession         -> string                                 required
 END
 
 RULE atomic-unit-specificity
@@ -105,12 +105,12 @@ This ensures a persona manifest represents its full operational footprint withou
 END
 
 FIELD SHARED-REFERENCE
-  canonical-location            -> string required
-  local-trigger-src-coordinate  -> string required
-  local-invocation-signature    -> string required
-  track                         -> string required
-  capability-state              -> REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE required
-  canonical-staging-status      -> string required
+  canonical-location           -> string                                 required
+  local-trigger-src-coordinate -> string                                 required
+  local-invocation-signature   -> string                                 required
+  track                        -> string                                 required
+  capability-state             -> REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE required
+  canonical-staging-status     -> string                                 required
 END
 
 RULE persona-driven-discovery
@@ -237,3 +237,4 @@ RULE surgical-patching
     that preserves all IDs and history.
   END
 END
+

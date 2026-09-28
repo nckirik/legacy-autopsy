@@ -176,10 +176,10 @@ END
 
 FIELD CAPABILITY-STATE-BLOCK
   capability-state             -> REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE required
-  runtime-state-matrix         -> string required
-  historical-intended-personas -> string required
-  dependencies                 -> string required
-  last-known-state             -> string required
+  runtime-state-matrix         -> string                                 required
+  historical-intended-personas -> string                                 required
+  dependencies                 -> string                                 required
+  last-known-state             -> string                                 required
 END
 
 FIELD RUNTIME-STATE-MATRIX
@@ -252,3 +252,4 @@ RULE capability-target-decision
     appear in separate fields and handbook sections.
   END
 END
+

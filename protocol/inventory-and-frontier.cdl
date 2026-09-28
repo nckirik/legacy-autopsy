@@ -131,21 +131,21 @@ ENUM INVENTORY-KIND
 END
 
 FIELD SOURCE-INVENTORY-RECORD
-  kind                                    -> string required
-  concrete-coordinate                     -> string required
-  parent-container-src                    -> string required
-  source-fingerprint-snapshot-src-version -> string required
+  kind                                    -> string           required
+  concrete-coordinate                     -> string           required
+  parent-container-src                    -> string           required
+  source-fingerprint-snapshot-src-version -> string           required
   discovery-method                        -> DISCOVERY-METHOD required
-  scope-summary                           -> string required
-  environment-runtime-state               -> string required
-  traversal-tracks                        -> string required
-  canonical-owner                         -> string required
-  disposition-summary                     -> string required
-  mappings                                -> string required
-  frontier-references                     -> string required
-  coverage-rows                           -> string required
+  scope-summary                           -> string           required
+  environment-runtime-state               -> string           required
+  traversal-tracks                        -> string           required
+  canonical-owner                         -> string           required
+  disposition-summary                     -> string           required
+  mappings                                -> string           required
+  frontier-references                     -> string           required
+  coverage-rows                           -> string           required
   coverage-summary                        -> COVERAGE-SUMMARY required
-  claims                                  -> string required
+  claims                                  -> string           required
 END
 
 RULE source-versioning
@@ -217,17 +217,17 @@ ENUM FRONTIER-STATE
 END
 
 FIELD FRONTIER-RECORD
-  origin-invocation-cluster-pov-track        -> string required
-  from-src-cmp                               -> string required
-  target-concrete-coordinate-or-resolution-rule -> string required
-  target-src                                 -> string required
-  discovery-method                           -> FRONTIER-DISCOVERY-METHOD required
-  depth                                      -> int required
-  snapshot-fingerprint                       -> string required
-  state                                      -> FRONTIER-STATE required
-  disposition-evidence                       -> string required
-  child-frontier-ids                         -> string required
-  closing-invocation                         -> string required
+  origin-invocation-cluster-pov-track           -> string                    required
+  from-src-cmp                                  -> string                    required
+  target-concrete-coordinate-or-resolution-rule -> string                    required
+  target-src                                    -> string                    required
+  discovery-method                              -> FRONTIER-DISCOVERY-METHOD required
+  depth                                         -> int                       required
+  snapshot-fingerprint                          -> string                    required
+  state                                         -> FRONTIER-STATE            required
+  disposition-evidence                          -> string                    required
+  child-frontier-ids                            -> string                    required
+  closing-invocation                            -> string                    required
 END
 
 RULE frontier-terminality
@@ -269,18 +269,18 @@ ENUM COVERAGE-DISPOSITION
 END
 
 FIELD SOURCE-COVERAGE-ROW
-  cov-id                          -> string required
-  src-version                     -> string required
-  persona-owner                   -> string required
-  track                           -> string required
-  environment                     -> string required
-  snapshot                        -> string required
-  scope                           -> COVERAGE-SCOPE required
-  disposition                     -> COVERAGE-DISPOSITION required
-  c-status                        -> string required
-  exclusion-dec                   -> string required
-  mappings                        -> string required
-  frontier-ticket-claim-evidence  -> string required
+  cov-id                         -> string               required
+  src-version                    -> string               required
+  persona-owner                  -> string               required
+  track                          -> string               required
+  environment                    -> string               required
+  snapshot                       -> string               required
+  scope                          -> COVERAGE-SCOPE       required
+  disposition                    -> COVERAGE-DISPOSITION required
+  c-status                       -> string               required
+  exclusion-dec                  -> string               required
+  mappings                       -> string               required
+  frontier-ticket-claim-evidence -> string               required
 END
 
 RULE coverage-row-identity
@@ -309,10 +309,10 @@ Tombstones preserve old IDs, incoming references, and snapshot lineage. Validato
 END
 
 FIELD SUPERSESSION-TOMBSTONE
-  record-version           -> int required
-  supersedes               -> string required
-  superseded-by            -> string required
-  tombstone                -> string required
+  record-version            -> int    required
+  supersedes                -> string required
+  superseded-by             -> string required
+  tombstone                 -> string required
   tombstone-reason-decision -> string required
 END
 
@@ -324,3 +324,4 @@ RULE tombstone-rules
     historical use.
   END
 END
+

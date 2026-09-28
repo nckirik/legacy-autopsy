@@ -38,3 +38,4 @@ GLOBAL DECLARATIONS
   GATES A-STRUCTURALLY-COMPLETE, R-SWEPT, Exit-A, artifact-fingerprint, artifact-completeness
   WORKFLOW-TARGET handoff, section-pass
 END
+

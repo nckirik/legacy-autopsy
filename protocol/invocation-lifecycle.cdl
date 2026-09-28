@@ -84,21 +84,21 @@ Append after every invocation:
 END
 
 FIELD INVOCATION-LOG
-  identity-header-summary                          -> string required
-  cold-resume-result-check-fingerprint             -> string required
-  declared-semantic-actions-runtime-authorization-result -> string required
-  loaded-files-fingerprints                        -> string required
-  mutation-summary                                 -> string required
-  tickets-created-updated                          -> string required
-  frontiers-created-closed                         -> string required
+  identity-header-summary                                      -> string required
+  cold-resume-result-check-fingerprint                         -> string required
+  declared-semantic-actions-runtime-authorization-result       -> string required
+  loaded-files-fingerprints                                    -> string required
+  mutation-summary                                             -> string required
+  tickets-created-updated                                      -> string required
+  frontiers-created-closed                                     -> string required
   unmapped-discoveries-gap-records-buffered-merged-or-disposed -> string required
-  exports-acquired-requested                       -> string required
-  src-cmp-clm-ids-updated                          -> string required
-  evidence-changes                                 -> string required
-  promotion-depromotion                            -> string required
-  coverage-reconciliation-changes                  -> string required
-  stale-propagation                                -> string required
-  next-required-loads                              -> string required
+  exports-acquired-requested                                   -> string required
+  src-cmp-clm-ids-updated                                      -> string required
+  evidence-changes                                             -> string required
+  promotion-depromotion                                        -> string required
+  coverage-reconciliation-changes                              -> string required
+  stale-propagation                                            -> string required
+  next-required-loads                                          -> string required
 END
 
 RULE invocation-log-append
@@ -109,3 +109,4 @@ RULE invocation-log-append
     discovery; otherwise the full-buffer fallback read in §8.4 is required.
   END
 END
+

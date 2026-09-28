@@ -164,6 +164,7 @@ RULE handbook-readability-review
   END
 END
 
+
 PART decisions "Decisions, Reconstruction, Equivalence, and Compatibility"
 
 SECTION decision-log
@@ -320,3 +321,4 @@ RULE sole-input-conditions
     deconstruction cycle.
   END
 END
+

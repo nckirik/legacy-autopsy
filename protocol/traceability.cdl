@@ -41,29 +41,29 @@ ENUM CLASSIFICATION
 END
 
 FIELD TRACEABILITY-ROW
-  src                  -> string required
-  persona-owner-prf    -> string required
-  track-cap            -> string required
-  pov-cmp              -> string required
-  mod                  -> string required
-  uc                   -> string required
-  br                   -> string required
-  er-rel-sm-dr         -> string required
-  if                   -> string required
-  dep-cfg-sched        -> string required
-  prv-sec-nfr-flt      -> string required
-  hbk                  -> string required
-  clm-dec-cnf          -> string required
-  c-status             -> string required
+  src               -> string required
+  persona-owner-prf -> string required
+  track-cap         -> string required
+  pov-cmp           -> string required
+  mod               -> string required
+  uc                -> string required
+  br                -> string required
+  er-rel-sm-dr      -> string required
+  if                -> string required
+  dep-cfg-sched     -> string required
+  prv-sec-nfr-flt   -> string required
+  hbk               -> string required
+  clm-dec-cnf       -> string required
+  c-status          -> string required
 END
 
 FIELD LIFECYCLE-ELIGIBILITY
-  scope-id                  -> string required
-  classification            -> CLASSIFICATION required
-  reason                    -> string required
-  clm-evidence-bindings     -> string required
-  classified-by-invocation  -> string required
-  snapshot                  -> string required
+  scope-id                 -> string         required
+  classification           -> CLASSIFICATION required
+  reason                   -> string         required
+  clm-evidence-bindings    -> string         required
+  classified-by-invocation -> string         required
+  snapshot                 -> string         required
 END
 
 RULE lifecycle-eligibility
@@ -224,13 +224,13 @@ Rows sort by `(Row Kind, Check / Blocker ID, Normalized Authoritative Input Path
 END
 
 FIELD EVIDENCE-BINDING
-  row-kind                              -> string required
-  check-blocker-id                      -> string required
-  normalized-authoritative-input-path   -> string required
-  binding-kind                          -> string required
-  typed-record-artifact-id-or-none      -> string required
-  version-or-none                       -> string required
-  authoritative-fingerprint             -> string required
+  row-kind                            -> string required
+  check-blocker-id                    -> string required
+  normalized-authoritative-input-path -> string required
+  binding-kind                        -> string required
+  typed-record-artifact-id-or-none    -> string required
+  version-or-none                     -> string required
+  authoritative-fingerprint           -> string required
 END
 
 RULE evidence-bindings
@@ -246,3 +246,4 @@ RULE evidence-bindings
     dependent gate result invalid.
   END
 END
+

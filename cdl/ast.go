@@ -15,6 +15,17 @@ type Program struct {
 	Globals     Globals
 	Sections    []Section
 	Projections []Projection
+	Comments    []Comment
+	// UnpreservedComments is true when a comment appeared inline or inside a
+	// nested block; the canonical printer refuses such sources.
+	UnpreservedComments bool
+}
+
+// Comment is a standalone top-level comment attached to the construct that
+// followed it; an empty Before marks a trailing comment.
+type Comment struct {
+	Before string
+	Text   string
 }
 
 // Globals holds document-level declarations.

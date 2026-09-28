@@ -1,0 +1,131 @@
+# leading comment
+GLOBAL DECLARATIONS
+  CAPABILITY hash.sha256
+  REGISTRY units
+  ARTIFACT out.md
+  RULE global-rule
+  GATES gate-a, gate-b
+  WORKFLOW-TARGET handoff
+END
+
+BASE-READS
+  out.md
+END
+
+MODE Discovery
+  TITLE "Discovery"
+  STRICT
+  READS out.md
+END
+PART one "First Part"
+
+SECTION sec
+SUBSECTION OF parent
+TITLE "Section"
+ARTIFACT out.md
+USES REGISTRY units
+REQUIRES CAPABILITY hash.sha256
+
+GOAL
+A goal line.
+END
+
+TYPE alias := string
+
+VALUE progress
+  TYPE int
+  LIFETIME run
+END
+
+STATE lifecycle
+  VALUES a, b
+  INITIAL a
+  ALLOWS
+    a -> b
+  END
+END
+
+ENUM kind
+  alpha
+  beta
+END
+
+FIELD record
+  name  -> string required
+  count -> int    optional
+END
+
+TABLE rows
+  ROWS units
+  ROW-TYPE record
+  KEY name
+END
+
+RULE rule
+  GOAL
+    Rule goal.
+  END
+END
+
+RULE predicate-rule
+  PREDICATE complete :=
+    COUNT(rows WHERE name == "x") > 0
+END
+STEP machine-step
+MACHINE:
+  USES RULE rule
+  REQUIRES CAPABILITY table.serialize
+  LET x := 1
+  SET progress := x
+  APPEND record FOR x
+  FOR EACH x IN units
+    BLOCK gate-a
+  END
+  GUARD x == 1
+  OTHERWISE BLOCK gate-b
+  IF x > 1
+    SET progress := 2
+  ELSE
+    SET progress := 3
+  END
+END
+
+STEP agent-step
+AGENT:
+  EVIDENCE
+    out.md
+  END
+  PRODUCES
+    out.md.value
+  END
+  RESULT
+    VALUE
+  END
+  REQUIRE """
+    Must be preserved.
+  """
+END
+
+PROJECTION view
+  CHANNELS prompt, native
+  COVERS SECTION sec
+
+  STEP agent-step
+    TEXT
+      "Step text."
+    END
+  END
+
+  RULE rule
+    TEXT
+      "Rule text."
+    END
+  END
+
+  OMIT STEP machine-step
+    CHANNELS native
+    REASON "native recomputes"
+    SUPPLIED-BY native-harness
+  END
+END
+

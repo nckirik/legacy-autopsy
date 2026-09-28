@@ -177,6 +177,7 @@ Legacy Autopsy is not a generic code summarizer, automatic rewrite tool, moderni
 - [Architecture](docs/architecture.md): current packages, Spec-track layers, and target service boundaries.
 - [Runtime and workbench](docs/runtime.md): multi-autopsy orchestration, executors, Atlas, questions, and UI design.
 - [Conformance](docs/conformance.md) and [fixture corpus](fixtures/README.md): implementation cases versus normative completeness.
+- [Editor tooling](editors/README.md): CDL syntax highlighting and the canonical `cdl fmt` printer.
 - [Schema projections](schemas/README.md): current schema status and future boundary.
 - [Export-helper boundary](tools/export-helper/README.md): operator-only acquisition trust model.
 

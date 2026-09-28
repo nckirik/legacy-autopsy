@@ -1,0 +1,123 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "CDL",
+  "scopeName": "source.cdl",
+  "patterns": [
+    {
+      "include": "#comment"
+    },
+    {
+      "include": "#goal-block"
+    },
+    {
+      "include": "#text-block"
+    },
+    {
+      "include": "#require-block"
+    },
+    {
+      "include": "#string"
+    },
+    {
+      "include": "#number"
+    },
+    {
+      "include": "#keyword"
+    },
+    {
+      "include": "#operator"
+    },
+    {
+      "include": "#identifier"
+    }
+  ],
+  "repository": {
+    "comment": {
+      "match": "^\\s*#.*$",
+      "name": "comment.line.number-sign.cdl"
+    },
+    "goal-block": {
+      "begin": "^\\s*(GOAL)\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.cdl"
+        }
+      },
+      "end": "^\\s*(END)\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "keyword.control.cdl"
+        }
+      },
+      "contentName": "meta.embedded.block.markdown.cdl",
+      "patterns": [
+        {
+          "include": "text.html.markdown"
+        }
+      ]
+    },
+    "text-block": {
+      "begin": "^\\s*(TEXT)\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.cdl"
+        }
+      },
+      "end": "^\\s*(END)\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "keyword.control.cdl"
+        }
+      },
+      "contentName": "string.unquoted.block.cdl"
+    },
+    "require-block": {
+      "begin": "^\\s*(REQUIRE)\\s+\"\"\"\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.control.cdl"
+        }
+      },
+      "end": "^\\s*(\"\"\")\\s*$",
+      "endCaptures": {
+        "1": {
+          "name": "punctuation.definition.string.end.cdl"
+        }
+      },
+      "contentName": "string.unquoted.block.cdl"
+    },
+    "string": {
+      "begin": "\"",
+      "end": "\"",
+      "name": "string.quoted.double.cdl"
+    },
+    "number": {
+      "match": "\\b\\d+\\b",
+      "name": "constant.numeric.cdl"
+    },
+    "keyword": {
+      "patterns": [
+        {
+          "match": "\\b(?:GLOBAL DECLARATIONS|MACHINE:|AGENT:|SUBSECTION OF|REQUIRES CAPABILITY|FOR EACH|OTHERWISE BLOCK|COVERS SECTION|OMIT STEP|WORKFLOW-TARGET|BASE-READS|ROW-TYPE|SUPPLIED-BY)\\b",
+          "name": "keyword.control.cdl"
+        },
+        {
+          "match": "\\b(?:SECTION|PART|PROJECTION|MODE|SUBSECTION|TITLE|ARTIFACT|USES|REQUIRES|CAPABILITY|REGISTRY|GATES|TYPE|STATE|VALUE|ENUM|FIELD|TABLE|RULE|STEP|GOAL|PREDICATE|TEXT|CHANNELS|CHANNEL|COVERS|OMIT|REASON|STRICT|READS|VALUES|INITIAL|ALLOWS|LIFETIME|ROWS|ROW|KEY|MACHINE|AGENT|EVIDENCE|PRODUCES|RESULT|REQUIRE|LET|SET|APPEND|GUARD|IF|ELSE|BLOCK|FOR|IN|END)\\b",
+          "name": "keyword.control.cdl"
+        },
+        {
+          "match": "\\b(?:AND|OR|NOT|COUNT|WHERE|true|false)\\b",
+          "name": "keyword.operator.word.cdl"
+        }
+      ]
+    },
+    "operator": {
+      "match": ":=|->|==|!=|<=|>=|[<>+\\-]",
+      "name": "keyword.operator.cdl"
+    },
+    "identifier": {
+      "match": "[A-Za-z_][A-Za-z0-9_.-]*",
+      "name": "variable.other.cdl"
+    }
+  }
+}

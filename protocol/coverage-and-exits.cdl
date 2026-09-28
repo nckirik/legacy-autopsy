@@ -36,17 +36,17 @@ ENUM TRAVERSAL-CELL-STATE
 END
 
 FIELD SWEEP-RECORD
-  snapshot-environment                  -> string      required
-  persona-cluster-pov-track             -> string      required
-  expanded-concrete-entry-coordinates   -> set<string> required
-  source-denominator                    -> string      required
-  expected-mapped-excluded-counts-by-kind -> string    required
-  open-terminal-frontier-counts         -> string      required
-  active-terminal-ticket-counts         -> string      required
-  export-reconciliation                 -> string      required
-  coverage-result                       -> string      required
-  closing-invocation                    -> string      required
-  evidence-claims                       -> set<string> required
+  snapshot-environment                    -> string      required
+  persona-cluster-pov-track               -> string      required
+  expanded-concrete-entry-coordinates     -> set<string> required
+  source-denominator                      -> string      required
+  expected-mapped-excluded-counts-by-kind -> string      required
+  open-terminal-frontier-counts           -> string      required
+  active-terminal-ticket-counts           -> string      required
+  export-reconciliation                   -> string      required
+  coverage-result                         -> string      required
+  closing-invocation                      -> string      required
+  evidence-claims                         -> set<string> required
 END
 
 RULE r-swept-validity
@@ -244,3 +244,4 @@ RULE iteration-reopening
     intervention.
   END
 END
+

@@ -65,19 +65,19 @@ GOAL
 END
 
 FIELD EXPORT
-  platform                                    -> REGISTRY-EXPORT-PLATFORM required
-  stable-artifact-id-display-name             -> string required
-  raw-source-alias                            -> string required
-  agent-visible-export-path                   -> string required
-  raw-source-fingerprint-projection-fingerprint -> string required
-  snapshot                                    -> string required
-  acquisition-status                          -> REGISTRY-EXPORT-ACQUISITION-STATUS required
-  referenced-by                               -> set<string> optional
-  outstanding-referenced-artifacts            -> set<string> optional
-  normalized-map                              -> string optional
-  reconciliation-summary                      -> string required
-  sanitization-lineage-reports                -> string required
-  operator-action-required                    -> string required
+  platform                                      -> REGISTRY-EXPORT-PLATFORM           required
+  stable-artifact-id-display-name               -> string                             required
+  raw-source-alias                              -> string                             required
+  agent-visible-export-path                     -> string                             required
+  raw-source-fingerprint-projection-fingerprint -> string                             required
+  snapshot                                      -> string                             required
+  acquisition-status                            -> REGISTRY-EXPORT-ACQUISITION-STATUS required
+  referenced-by                                 -> set<string>                        optional
+  outstanding-referenced-artifacts              -> set<string>                        optional
+  normalized-map                                -> string                             optional
+  reconciliation-summary                        -> string                             required
+  sanitization-lineage-reports                  -> string                             required
+  operator-action-required                      -> string                             required
 END
 
 SECTION logical-explosion
@@ -178,3 +178,4 @@ RULE explosion-coverage
     meaning creates tickets for another POV.
   END
 END
+

@@ -84,3 +84,4 @@ RULE dynamic-references
     static investigation creates a ticket; they are never guessed.
   END
 END
+

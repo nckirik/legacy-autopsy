@@ -80,6 +80,71 @@ Each `personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md` entry has this 
 A bound Discovery invocation MUST append this record in the same transaction that records the discovery and its `FRT`; delayed or conversational-only discovery is forbidden. Sequential Reconciliation sorts pending entries by `DEDUP-KEY`, then `DSC-ID`, merges equal keys into one canonical `0A` queue item while preserving all origin invocations and evidence, records contradictions for incompatible proposals, marks source entries consumed, and completes before any later Discovery invocation begins. A later Discovery invocation MUST reject a checkpoint showing unmerged pending entries. Acquisition MAY continue to create its allowed direct placeholders and global discoveries because Acquisition owns the applicable register sections.
 END
 
+FIELD PERSONA-REGISTRY
+  persona             -> string required
+  prefix              -> string required
+  persona-slug        -> string required
+  persona-directory   -> string required
+  actor-class         -> string required
+  canonical-entry-ids -> string required
+  scope-paths         -> string required
+  registry-state      -> string required
+END
+
+FIELD REQUIRED-TRAVERSAL-MATRIX
+  persona-owner  -> string required
+  concrete-entry -> string required
+  track          -> string required
+  environment    -> string required
+  snapshot       -> string required
+  pov            -> string required
+  applicability  -> string required
+  status         -> string required
+  swp-id         -> string required
+  claims         -> string required
+END
+
+FIELD PREFLIGHT-HEADER
+  system-namespace                 -> string                               required
+  target-repository-evidence-roots -> string                               required
+  primary-technology-stack         -> string                               required
+  protocol-version                 -> string                               required
+  current-iteration                -> REGISTRY-PREFLIGHT-CURRENT-ITERATION required
+  default-max-traversal-depth      -> int                                  required
+  included-environments-snapshots  -> string                               required
+  explicit-scope-policy            -> string                               required
+END
+
+FIELD ENTRY-CLUSTER
+  concrete-entry-coordinates -> set<string>                            required
+  canonical-owner-persona    -> string                                 required
+  primary-pov                -> REGISTRY-ENTRYCLUSTER-PRIMARY-POV      required
+  traversal-track            -> REGISTRY-ENTRYCLUSTER-TRAVERSAL-TRACK  required
+  capability-state           -> REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE required
+  environment-snapshot       -> string                                 required
+  source-ids                 -> set<string>                            required
+  max-depth                  -> int                                    required
+  traversal-status           -> REGISTRY-ENTRYCLUSTER-TRAVERSAL-STATUS required
+  required-traversal-matrix  -> string                                 required
+END
+
+FIELD UNMAPPED-DISCOVERY
+  coordinate-src           -> string                                      required
+  discovered-by-invocation -> string                                      required
+  suggested-pov-persona    -> string                                      required
+  traversal-status         -> REGISTRY-UNMAPPEDDISCOVERY-TRAVERSAL-STATUS required
+END
+
+FIELD DISCOVERY-BUFFER
+  concrete-coordinate-proposed-src-fingerprint     -> string                                 required
+  discovering-invocation-persona-cluster-track-pov -> string                                 required
+  discovery-method-boundary-frt                    -> string                                 required
+  suggested-persona-cluster-track-pov              -> string                                 required
+  reason-unmapped-materiality                      -> string                                 required
+  dedup-key                                        -> hash                                   required
+  state                                            -> REGISTRY-UNMAPPEDDISCOVERYBUFFER-STATE required
+END
+
 RULE preflight-boundaries
   GOAL
     Agents MAY append acquisition reference placeholders directly where Acquisition
@@ -98,67 +163,3 @@ RULE database-autonomous-clusters
   END
 END
 
-FIELD PERSONA-REGISTRY
-  persona              -> string required
-  prefix               -> string required
-  persona-slug         -> string required
-  persona-directory    -> string required
-  actor-class          -> string required
-  canonical-entry-ids  -> string required
-  scope-paths          -> string required
-  registry-state       -> string required
-END
-
-FIELD REQUIRED-TRAVERSAL-MATRIX
-  persona-owner    -> string required
-  concrete-entry   -> string required
-  track            -> string required
-  environment      -> string required
-  snapshot         -> string required
-  pov              -> string required
-  applicability    -> string required
-  status           -> string required
-  swp-id           -> string required
-  claims           -> string required
-END
-
-FIELD PREFLIGHT-HEADER
-  system-namespace                    -> string required
-  target-repository-evidence-roots    -> string required
-  primary-technology-stack            -> string required
-  protocol-version                    -> string required
-  current-iteration                   -> REGISTRY-PREFLIGHT-CURRENT-ITERATION required
-  default-max-traversal-depth         -> int required
-  included-environments-snapshots     -> string required
-  explicit-scope-policy               -> string required
-END
-
-FIELD ENTRY-CLUSTER
-  concrete-entry-coordinates -> set<string> required
-  canonical-owner-persona    -> string required
-  primary-pov                -> REGISTRY-ENTRYCLUSTER-PRIMARY-POV required
-  traversal-track            -> REGISTRY-ENTRYCLUSTER-TRAVERSAL-TRACK required
-  capability-state           -> REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE required
-  environment-snapshot       -> string required
-  source-ids                 -> set<string> required
-  max-depth                  -> int required
-  traversal-status           -> REGISTRY-ENTRYCLUSTER-TRAVERSAL-STATUS required
-  required-traversal-matrix  -> string required
-END
-
-FIELD UNMAPPED-DISCOVERY
-  coordinate-src          -> string required
-  discovered-by-invocation -> string required
-  suggested-pov-persona   -> string required
-  traversal-status        -> REGISTRY-UNMAPPEDDISCOVERY-TRAVERSAL-STATUS required
-END
-
-FIELD DISCOVERY-BUFFER
-  concrete-coordinate-proposed-src-fingerprint -> string required
-  discovering-invocation-persona-cluster-track-pov -> string required
-  discovery-method-boundary-frt                -> string required
-  suggested-persona-cluster-track-pov          -> string required
-  reason-unmapped-materiality                  -> string required
-  dedup-key                                    -> hash required
-  state                                        -> REGISTRY-UNMAPPEDDISCOVERYBUFFER-STATE required
-END

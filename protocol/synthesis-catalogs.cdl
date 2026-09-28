@@ -47,15 +47,15 @@ ENUM GAP-DISPOSITION
 END
 
 FIELD SYNTHESIS-GAP
-  source-synthesis-invocation-block-id            -> string required
-  observed-missing-requirement                    -> string required
-  affected-ids                                    -> string required
-  source-fingerprints-snapshot                    -> string required
-  proposed-target-persona-cluster-track-pov-ledger -> string required
-  dedup-key                                       -> hash required
-  materiality                                     -> GAP-MATERIALITY required
-  disposition                                     -> GAP-DISPOSITION required
-  resulting-ticket-frt-dec-ids                    -> string required
+  source-synthesis-invocation-block-id             -> string          required
+  observed-missing-requirement                     -> string          required
+  affected-ids                                     -> string          required
+  source-fingerprints-snapshot                     -> string          required
+  proposed-target-persona-cluster-track-pov-ledger -> string          required
+  dedup-key                                        -> hash            required
+  materiality                                      -> GAP-MATERIALITY required
+  disposition                                      -> GAP-DISPOSITION required
+  resulting-ticket-frt-dec-ids                     -> string          required
 END
 
 RULE partial-vs-final-synthesis
@@ -126,21 +126,21 @@ Coverage is semantic payload; blueprint status is envelope metadata. `[B-CONFIRM
 END
 
 FIELD SYNTHESIS-BLOCK-HEADER
-  semantic-record-version      -> int required
+  semantic-record-version      -> int    required
   semantic-content-fingerprint -> string required
   coverage-status              -> string required
   derived-from                 -> string required
   material-claims              -> string required
-  block-confidence-rank         -> string required
+  block-confidence-rank        -> string required
   block-evidence-profile       -> string required
   supersession                 -> string required
 END
 
 FIELD CERTIFICATION-ENVELOPE
-  blueprint-status               -> string required
-  confirmation                   -> string required
-  confirmation-envelope-version  -> int required
-  confirmation-envelope-audit    -> string required
+  blueprint-status              -> string required
+  confirmation                  -> string required
+  confirmation-envelope-version -> int    required
+  confirmation-envelope-audit   -> string required
 END
 
 RULE common-header-requirements
@@ -180,16 +180,16 @@ Every semantic architecture statement about responsibility, public interface, en
 END
 
 FIELD ARCHITECTURE-MODULE
-  responsibility-domain-boundary      -> string required
-  public-interfaces                   -> string required
-  encapsulated-state-entities         -> string required
-  dependencies-dependents             -> string required
-  data-and-events-passed              -> string required
-  invariants-rules-owned              -> string required
-  personas-use-cases-capabilities     -> string required
-  failure-propagation                 -> string required
-  observed-legacy-placement           -> string required
-  target-decision                     -> string required
+  responsibility-domain-boundary  -> string required
+  public-interfaces               -> string required
+  encapsulated-state-entities     -> string required
+  dependencies-dependents         -> string required
+  data-and-events-passed          -> string required
+  invariants-rules-owned          -> string required
+  personas-use-cases-capabilities -> string required
+  failure-propagation             -> string required
+  observed-legacy-placement       -> string required
+  target-decision                 -> string required
 END
 
 RULE module-requirements
@@ -249,21 +249,21 @@ FIELD ENTITY-COLUMN
 END
 
 FIELD ENTITY-RECORD
-  domain-context-purpose               -> string required
-  storage                              -> STORAGE-KIND required
-  physical-src-ids                     -> string required
-  primary-key-secondary-keys-indexes   -> string required
-  columns-fields                       -> string required
-  relationships                        -> string required
-  enums-lookup-domains                 -> string required
-  lifecycle-state-fields               -> string required
-  derived-computed-fields              -> string required
-  invariants                           -> string required
-  audit-soft-delete                    -> string required
-  retention-lifecycle                  -> string required
-  permissions                          -> string required
-  capability-state-impact              -> string required
-  schema-drift-matrix                  -> string required
+  domain-context-purpose             -> string       required
+  storage                            -> STORAGE-KIND required
+  physical-src-ids                   -> string       required
+  primary-key-secondary-keys-indexes -> string       required
+  columns-fields                     -> string       required
+  relationships                      -> string       required
+  enums-lookup-domains               -> string       required
+  lifecycle-state-fields             -> string       required
+  derived-computed-fields            -> string       required
+  invariants                         -> string       required
+  audit-soft-delete                  -> string       required
+  retention-lifecycle                -> string       required
+  permissions                        -> string       required
+  capability-state-impact            -> string       required
+  schema-drift-matrix                -> string       required
 END
 
 SECTION relationship-catalog
@@ -307,10 +307,10 @@ END
 FIELD RELATIONSHIP-RECORD
   cardinality                  -> RELATIONSHIP-CARDINALITY required
   enforcement                  -> RELATIONSHIP-ENFORCEMENT required
-  delete-update-semantics      -> DELETE-UPDATE-SEMANTICS required
-  inverse-access               -> string required
-  business-constraint          -> string required
-  reciprocal-entity-references -> string required
+  delete-update-semantics      -> DELETE-UPDATE-SEMANTICS  required
+  inverse-access               -> string                   required
+  business-constraint          -> string                   required
+  reciprocal-entity-references -> string                   required
 END
 
 SECTION state-machine-catalog
@@ -338,12 +338,12 @@ Eligibility decisions use the §12.1 lifecycle table so absence cannot be assume
 END
 
 FIELD STATE-TRANSITION
-  from       -> string required
-  to         -> string required
-  event-uc   -> string required
-  guard-br   -> string required
-  effects    -> string required
-  claims     -> string required
+  from     -> string required
+  to       -> string required
+  event-uc -> string required
+  guard-br -> string required
+  effects  -> string required
+  claims   -> string required
 END
 
 FIELD STATE-MACHINE
@@ -410,18 +410,18 @@ ENUM DB-TARGET-DECISION
 END
 
 FIELD DATABASE-ROUTINE
-  kind                              -> DB-ROUTINE-KIND required
-  owner-table-entity                -> string required
-  firing-event-timing-granularity   -> string required
-  atomic-body-intent                -> string required
-  inputs-outputs                    -> string required
-  entities-read-written             -> string required
-  invariants-rules-enforced         -> string required
-  callers-firers                    -> string required
-  failure-transaction-semantics     -> string required
-  canonical-db-source-drift         -> string required
-  target-decision                   -> DB-TARGET-DECISION required
-  target-decision-dec               -> string required
+  kind                            -> DB-ROUTINE-KIND    required
+  owner-table-entity              -> string             required
+  firing-event-timing-granularity -> string             required
+  atomic-body-intent              -> string             required
+  inputs-outputs                  -> string             required
+  entities-read-written           -> string             required
+  invariants-rules-enforced       -> string             required
+  callers-firers                  -> string             required
+  failure-transaction-semantics   -> string             required
+  canonical-db-source-drift       -> string             required
+  target-decision                 -> DB-TARGET-DECISION required
+  target-decision-dec             -> string             required
 END
 
 RULE database-routine-drift
@@ -472,18 +472,18 @@ ENUM BUSINESS-RULE-CAPABILITY-STATE
 END
 
 FIELD BUSINESS-RULE-RECORD
-  authoritative-rule-owner           -> string required
-  defense-in-depth-mirrors           -> string required
-  applies-when                       -> string required
-  condition                          -> string required
-  action-effect                      -> string required
-  precedence-conflict                -> string required
-  inputs-read-writable-effects       -> string required
-  violation-policy                   -> VIOLATION-POLICY required
-  boundary-cases-null-locale-overflow -> string required
-  idempotency                        -> string required
-  capability-state                   -> BUSINESS-RULE-CAPABILITY-STATE required
-  target-mapping-decision            -> string required
+  authoritative-rule-owner            -> string                         required
+  defense-in-depth-mirrors            -> string                         required
+  applies-when                        -> string                         required
+  condition                           -> string                         required
+  action-effect                       -> string                         required
+  precedence-conflict                 -> string                         required
+  inputs-read-writable-effects        -> string                         required
+  violation-policy                    -> VIOLATION-POLICY               required
+  boundary-cases-null-locale-overflow -> string                         required
+  idempotency                         -> string                         required
+  capability-state                    -> BUSINESS-RULE-CAPABILITY-STATE required
+  target-mapping-decision             -> string                         required
 END
 
 RULE single-rule-owner
@@ -559,17 +559,17 @@ FIELD USE-CASE-STEP
 END
 
 FIELD USE-CASE
-  primary-persona-secondary-actors      -> string required
-  goal                                  -> string required
-  trigger-entry                         -> string required
-  preconditions-postconditions          -> string required
-  invariants-relied-upon                -> string required
-  capability-classification             -> USE-CASE-CAPABILITY-CLASSIFICATION required
-  observed-legacy-behavior              -> string required
-  rules-entities-interfaces-side-effects -> string required
-  behavioral-contract                   -> string required
-  target-decision                       -> USE-CASE-TARGET-DECISION required
-  target-decision-dec                   -> string required
+  primary-persona-secondary-actors       -> string                             required
+  goal                                   -> string                             required
+  trigger-entry                          -> string                             required
+  preconditions-postconditions           -> string                             required
+  invariants-relied-upon                 -> string                             required
+  capability-classification              -> USE-CASE-CAPABILITY-CLASSIFICATION required
+  observed-legacy-behavior               -> string                             required
+  rules-entities-interfaces-side-effects -> string                             required
+  behavioral-contract                    -> string                             required
+  target-decision                        -> USE-CASE-TARGET-DECISION           required
+  target-decision-dec                    -> string                             required
 END
 
 RULE use-case-visibility
@@ -619,27 +619,27 @@ FIELD INTERFACE-REQUEST-FIELD
 END
 
 FIELD INTERFACE-RESPONSE-FIELD
-  field  -> string required
-  type   -> string required
-  notes  -> string required
-  claim  -> string required
+  field -> string required
+  type  -> string required
+  notes -> string required
+  claim -> string required
 END
 
 FIELD INTERFACE-RECORD
-  channel-transport-direction           -> string required
-  actor-persona-auth                    -> string required
-  protocol-content-type                 -> string required
-  request-schema                        -> string required
-  response-schema                       -> string required
-  error-semantics-retryability          -> string required
-  guarantees                            -> string required
-  authn-authz                           -> string required
-  versioning-compatibility              -> string required
-  rate-limits-backpressure              -> string required
-  bound-uc-er-ids                       -> string required
-  capability-state-environment-matrix   -> string required
-  compatibility-baseline                -> string required
-  target-migration-decision             -> string required
+  channel-transport-direction         -> string required
+  actor-persona-auth                  -> string required
+  protocol-content-type               -> string required
+  request-schema                      -> string required
+  response-schema                     -> string required
+  error-semantics-retryability        -> string required
+  guarantees                          -> string required
+  authn-authz                         -> string required
+  versioning-compatibility            -> string required
+  rate-limits-backpressure            -> string required
+  bound-uc-er-ids                     -> string required
+  capability-state-environment-matrix -> string required
+  compatibility-baseline              -> string required
+  target-migration-decision           -> string required
 END
 
 RULE interface-compatibility-baseline
@@ -707,22 +707,22 @@ FIELD DEPLOYMENT-ELEMENT
 END
 
 FIELD CONFIGURATION-RECORD
-  medium                                    -> CONFIG-MEDIUM required
-  exact-key                                 -> string required
-  type-default-allowed-values               -> string required
-  source-precedence-setter                  -> string required
-  behavioral-effect                         -> string required
-  enable-disable-semantics-and-environment-matrix -> string required
-  app-side-db-side-materialization          -> string required
+  medium                                          -> CONFIG-MEDIUM required
+  exact-key                                       -> string        required
+  type-default-allowed-values                     -> string        required
+  source-precedence-setter                        -> string        required
+  behavioral-effect                               -> string        required
+  enable-disable-semantics-and-environment-matrix -> string        required
+  app-side-db-side-materialization                -> string        required
 END
 
 FIELD SCHEDULE-RECORD
-  type-trigger-frequency-window     -> string required
-  owner-persona                     -> string required
-  actions                           -> string required
-  failure-retry-dead-letter-idempotency -> string required
-  dependencies-locks                -> string required
-  capability-state                  -> REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE required
+  type-trigger-frequency-window         -> string                                 required
+  owner-persona                         -> string                                 required
+  actions                               -> string                                 required
+  failure-retry-dead-letter-idempotency -> string                                 required
+  dependencies-locks                    -> string                                 required
+  capability-state                      -> REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE required
 END
 
 RULE configuration-effect
@@ -807,31 +807,31 @@ ENUM RISK-LEVEL
 END
 
 FIELD NFR-RECORD
-  attribute                 -> NFR-ATTRIBUTE required
-  observed-inferred-value   -> string required
-  scope-environment         -> string required
-  driver-constraint         -> string required
-  target-decision-slo       -> string required
+  attribute               -> NFR-ATTRIBUTE required
+  observed-inferred-value -> string        required
+  scope-environment       -> string        required
+  driver-constraint       -> string        required
+  target-decision-slo     -> string        required
 END
 
 FIELD SECURITY-FINDING
-  category                          -> SECURITY-CATEGORY required
-  finding-data-classification       -> string required
-  risk-level                        -> RISK-LEVEL required
-  affected-ids-environments         -> string required
-  observed-safeguard-gap            -> string required
-  human-review-target-mitigation    -> string required
+  category                       -> SECURITY-CATEGORY required
+  finding-data-classification    -> string            required
+  risk-level                     -> RISK-LEVEL        required
+  affected-ids-environments      -> string            required
+  observed-safeguard-gap         -> string            required
+  human-review-target-mitigation -> string            required
 END
 
 FIELD FAULT-RECORD
-  failure-class-trigger-detection-point     -> string required
-  propagation-path                          -> string required
-  retry-backoff-timeout-circuit-behavior    -> string required
+  failure-class-trigger-detection-point      -> string required
+  propagation-path                           -> string required
+  retry-backoff-timeout-circuit-behavior     -> string required
   rollback-compensation-transaction-boundary -> string required
-  dead-letter-quarantine-operator-action    -> string required
-  user-system-outcome-observability         -> string required
-  environment-capability-variants           -> string required
-  related-rules-claims                      -> string required
+  dead-letter-quarantine-operator-action     -> string required
+  user-system-outcome-observability          -> string required
+  environment-capability-variants            -> string required
+  related-rules-claims                       -> string required
 END
 
 RULE security-reciprocal
@@ -909,7 +909,7 @@ FIELD PERSONA-PROFILE
   dependencies-couplings        -> string required
   observed-legacy-facts         -> string required
   target-decisions              -> string required
-  semantic-record-version       -> int required
+  semantic-record-version       -> int    required
   semantic-content-fingerprint  -> string required
   derived-from                  -> string required
   material-claims               -> string required
@@ -931,3 +931,4 @@ RULE profile-synchronization
     Synchronization begins.
   END
 END
+

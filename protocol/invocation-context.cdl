@@ -38,27 +38,27 @@ The executor MUST declare its intended semantic actions against this header befo
 END
 
 FIELD INVOCATION-HEADER
-  protocol-version                      -> string  required
-  system-namespace                      -> string  required
-  current-iteration                     -> string  required
-  invocation-id                         -> id      required
-  invocation-mode                       -> string  required
-  human-hatch-action                    -> string  optional
-  invocation-scope                      -> string  required
-  persona                               -> string  optional
-  persona-prefix                        -> string  optional
-  persona-directory                     -> string  optional
-  entry-cluster                         -> string  optional
-  traversal-track                       -> string  optional
-  active-pov                            -> string  optional
-  active-pov-file                       -> string  optional
-  active-question-ledger                -> string  optional
-  environment-snapshot                  -> string  required
-  max-traversal-depth                   -> int     required
-  allowed-read-targets                  -> set<string> required
-  allowed-write-targets                 -> set<string> required
-  forbidden-write-targets               -> set<string> required
-  loaded-checkpoint-fingerprint         -> hash    optional
+  protocol-version              -> string      required
+  system-namespace              -> string      required
+  current-iteration             -> string      required
+  invocation-id                 -> id          required
+  invocation-mode               -> string      required
+  human-hatch-action            -> string      optional
+  invocation-scope              -> string      required
+  persona                       -> string      optional
+  persona-prefix                -> string      optional
+  persona-directory             -> string      optional
+  entry-cluster                 -> string      optional
+  traversal-track               -> string      optional
+  active-pov                    -> string      optional
+  active-pov-file               -> string      optional
+  active-question-ledger        -> string      optional
+  environment-snapshot          -> string      required
+  max-traversal-depth           -> int         required
+  allowed-read-targets          -> set<string> required
+  allowed-write-targets         -> set<string> required
+  forbidden-write-targets       -> set<string> required
+  loaded-checkpoint-fingerprint -> hash        optional
 END
 
 RULE header-authorization
@@ -273,3 +273,4 @@ RULE synthesis-read-sets
     and gate inputs.
   END
 END
+

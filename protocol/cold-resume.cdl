@@ -63,3 +63,4 @@ RULE cold-resume-validation
     externally observable. Filesystem state is authoritative over conversation.
   END
 END
+

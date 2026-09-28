@@ -238,3 +238,4 @@ RULE artifact-payload-boundaries
     generic schema supersedes certificate- or report-specific digest markers.
   END
 END
+

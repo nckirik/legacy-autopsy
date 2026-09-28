@@ -10,19 +10,19 @@
   "sources": [
     {
       "path": "protocol/globals.cdl",
-      "fingerprint": "sha256:f7f351b217c8c2ae284ebb06ea7a5f49b5451c0643c0aaf453680cc24fb7d53b",
+      "fingerprint": "sha256:29a4522f11e1da6eff75430b1b507b4486e4764ff2969f28df3c7a03e70be8e2",
       "sections": null,
       "identities": 0
     },
     {
       "path": "protocol/invocation-modes.cdl",
-      "fingerprint": "sha256:c599bd58c22d06daf961ddd6952a1d5e78598178f762efc7c2242f792ed75b57",
+      "fingerprint": "sha256:4a8970adcf98246d33bc61684d6ca954b3a9e1f2d1c5e4df62788095f5cd7f5b",
       "sections": null,
       "identities": 0
     },
     {
       "path": "protocol/foundations.cdl",
-      "fingerprint": "sha256:c0f47838ac1040d0c357f3fc5789bdc29a556a30b472ba2d65bc06d417565610",
+      "fingerprint": "sha256:fc51a345ac286b8c43197a2955974796105bb4709ddab30f768372984c8b1ef2",
       "sections": [
         "0.1",
         "0.2",
@@ -38,7 +38,7 @@
     },
     {
       "path": "protocol/personas-povs.cdl",
-      "fingerprint": "sha256:4337b5ac7044015f99b57dfc7f4d911180e2ed0c00a0b9f12a2fe81a04ad7d9b",
+      "fingerprint": "sha256:72eb43e746a0f44a4157e75efdbe3d79248c9b8f1ae1015bf42344a11297d11f",
       "sections": [
         "2.1",
         "2.2",
@@ -51,7 +51,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "fingerprint": "sha256:53bc2e4845b667aa6edcf2018765efdbca89e77a6dd49d4ee51afb0f75f25115",
+      "fingerprint": "sha256:71c0ace2c0f23e2240d3ebd98f1544ece4240f2d6739b5106c2d6c05039769b6",
       "sections": [
         "3.1"
       ],
@@ -59,7 +59,7 @@
     },
     {
       "path": "protocol/workspace-registries.cdl",
-      "fingerprint": "sha256:e14fcf5bef07a0eb24bce78f6dc89057fbc29ecee4ba5eadf2b9beebfb5443cc",
+      "fingerprint": "sha256:a63a48f23ddb869889298620bb1ae892311f3bece06dea9062fe8d9583557a97",
       "sections": [
         "3.2"
       ],
@@ -67,7 +67,7 @@
     },
     {
       "path": "protocol/typed-id.cdl",
-      "fingerprint": "sha256:ea12122d8eee3e1bcc35d7b7f8198510215aef1ea6e3c276a6d26f9bc59c5730",
+      "fingerprint": "sha256:cc2efdcefb008626001bba599c2202b6606fa64db5e1c85ecb4b8706cd93fb65",
       "sections": [
         "4.1"
       ],
@@ -75,7 +75,7 @@
     },
     {
       "path": "protocol/semantic-payload-identity.cdl",
-      "fingerprint": "sha256:07747c57e064fc03ec144bec16d87a8be378b613990e2711caa7e0742e2579d9",
+      "fingerprint": "sha256:12ee58d2024ea6e253a73c53ee0626f2a4a04bf79c05527805df002d284c146c",
       "sections": [
         "4.1.1"
       ],
@@ -83,7 +83,7 @@
     },
     {
       "path": "protocol/canonical-hash-profile.cdl",
-      "fingerprint": "sha256:a5712ff3df7c69210cd914ddb769c75ce746d128a5aadbaa59da5becf487f200",
+      "fingerprint": "sha256:76eed28b2dbf0f337c50bf3035a06c8ab1438f15311e7860b92ab52063eb5726",
       "sections": [
         "4.1.2"
       ],
@@ -91,7 +91,7 @@
     },
     {
       "path": "protocol/inventory-and-frontier.cdl",
-      "fingerprint": "sha256:c78e877ce0b1e919dc1eabe424f9c3df2ebac1df19a26af02ce1fbf541b05437",
+      "fingerprint": "sha256:e35acbdad4cac1b11c9ef637c50dfc0241fb769959d7edb93303795e9541666e",
       "sections": [
         "4.2",
         "4.3",
@@ -103,7 +103,7 @@
     },
     {
       "path": "protocol/status-taxonomy.cdl",
-      "fingerprint": "sha256:74c45eb3fbc87f14fc049f8f3e662d2f309a93616a292e60f19968d9dc74aa71",
+      "fingerprint": "sha256:a702dccdd8e2f9b00cb4d9f15135e4871246832a7f7ab78232150780359be798",
       "sections": [
         "5.1"
       ],
@@ -111,7 +111,7 @@
     },
     {
       "path": "protocol/evidence-and-decisions.cdl",
-      "fingerprint": "sha256:c5a90679f6dff72b9c5c906f13065ceb7faae8802c4f13cffbb29faa62b75b2e",
+      "fingerprint": "sha256:fcd985fa5a0102f45247d20ef814e0fd20f93a45705bedcfb0cb40c33e8b87b4",
       "sections": [
         "5.2",
         "5.3",
@@ -124,7 +124,7 @@
     },
     {
       "path": "protocol/extraction-evolution.cdl",
-      "fingerprint": "sha256:3ed11f0af3a85ac3e31d19b339376c3ad4ad4ce6d66cd5246a8449e15aeb239b",
+      "fingerprint": "sha256:987e8622e5a3dc7970ffab45df942b97699f6ec27ec463a95c508296fbf0d585",
       "sections": [
         "6.1",
         "6.2",
@@ -136,7 +136,7 @@
     },
     {
       "path": "protocol/acquisition-trust.cdl",
-      "fingerprint": "sha256:3df535ce5dc7213a68c728f99750e82fd9a4ad4add1408057acc663c7fc004a4",
+      "fingerprint": "sha256:0f68499f4ba1a9ddee5884735bd5718c2b3fb9d7c878c514899e66943522c610",
       "sections": [
         "7.1",
         "7.2",
@@ -147,7 +147,7 @@
     },
     {
       "path": "protocol/export-acquisition-loop.cdl",
-      "fingerprint": "sha256:67ef3cacc4057f22318775d9d3ecaffc62e760dcbd92eecc0c37112bd0083962",
+      "fingerprint": "sha256:3b4657ae694ade4a3325651b6256443f5c3eb233a50af73b31308dc2fd51baf7",
       "sections": [
         "7.5"
       ],
@@ -155,7 +155,7 @@
     },
     {
       "path": "protocol/normalized-maps.cdl",
-      "fingerprint": "sha256:909965bb69994fa0b11f24ec99f6b9081f7de558f16f82972849e09730b067ba",
+      "fingerprint": "sha256:2ee0fd332ff549c8df63ecdf788942ac9ab1941f1b8b2721d46876a6c5532528",
       "sections": [
         "7.6"
       ],
@@ -163,7 +163,7 @@
     },
     {
       "path": "protocol/export-reconciliation.cdl",
-      "fingerprint": "sha256:448a3605fcb7470a17c98a77f6a00b7d7c78386323edbec7632df9ccda546d73",
+      "fingerprint": "sha256:c50bcee422a18db335241804ed5cfefae8ec37daa9a5199b18e172ed15995984",
       "sections": [
         "7.7"
       ],
@@ -171,7 +171,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "fingerprint": "sha256:f10345d91db0d68df07885dac803a6b6ee9a53ce339457b8739fcca0a1db9613",
+      "fingerprint": "sha256:77bc3951234d3145885bb06ae3039213627a4e6125f8e1dee3c4870d657f6865",
       "sections": [
         "8.1",
         "8.2",
@@ -182,7 +182,7 @@
     },
     {
       "path": "protocol/cold-resume.cdl",
-      "fingerprint": "sha256:97410ec60b1e39177da5b3732372354becb46a39ba144b9558b3334aa28fd350",
+      "fingerprint": "sha256:cbf8a049d18abe287b4163f2a47e856912463f132dfa9b1e899609fa666faa0c",
       "sections": [
         "8.5"
       ],
@@ -190,7 +190,7 @@
     },
     {
       "path": "protocol/invocation-lifecycle.cdl",
-      "fingerprint": "sha256:111d8724fe190b872b60950ce1073ad150a6e6ae410a3d2296b6b7589ada3895",
+      "fingerprint": "sha256:fc8a99eb5457ec6cd7e32d93aba15ee7570186a5f66f172f4de096b773c5bf22",
       "sections": [
         "8.6",
         "8.7",
@@ -200,7 +200,7 @@
     },
     {
       "path": "protocol/ticket-fsm.cdl",
-      "fingerprint": "sha256:caec43e35f16d1fe2f820e6dc22e7c338d514eefd6148b4e0d688405cf793c2a",
+      "fingerprint": "sha256:dec33eb1f5e7ac723ed786d71cdb2c7107063b85791c93eda18f1c5491c4e562",
       "sections": [
         "9.1",
         "9.2",
@@ -213,7 +213,7 @@
     },
     {
       "path": "protocol/coverage-and-exits.cdl",
-      "fingerprint": "sha256:ae942630aea2aad82b4bce1afd7f84b3a0bc19b24d42fe7f7d13210aedeac7ef",
+      "fingerprint": "sha256:4666536ebe910bd10404711f280c04c37170b1bcfa8cd80b62a102d714700d43",
       "sections": [
         "10.1",
         "10.2",
@@ -226,7 +226,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "fingerprint": "sha256:8484ade63bf6ba3ac89ae3cbc47b13f0abde5928b3295451367b25a9accf5028",
+      "fingerprint": "sha256:5aa40898fee82b286998fcad51edac3907e367743e714e6c9e2f30c390a852a7",
       "sections": [
         "11.1",
         "11.2",
@@ -246,7 +246,7 @@
     },
     {
       "path": "protocol/traceability.cdl",
-      "fingerprint": "sha256:a376905e75a5ab3066d0755a9ec727626a94db12cc9d06504b8169656a78caf6",
+      "fingerprint": "sha256:bd9f2f83d14ef02d90cb067e2c1e1829300d60440b0375983a6bda30e806d5a0",
       "sections": [
         "12.1",
         "12.2",
@@ -258,7 +258,7 @@
     },
     {
       "path": "protocol/handbook-and-decisions.cdl",
-      "fingerprint": "sha256:46e416664481be6b52170df20268f2b1f060ab96e6ffa88ab2ab42be4755c321",
+      "fingerprint": "sha256:17559ddc63714d3d9a550198b15a6fc4fc4508eeb80d8ff58739e29bd4536796",
       "sections": [
         "13.1",
         "13.2",
@@ -275,7 +275,7 @@
     },
     {
       "path": "protocol/packaging.cdl",
-      "fingerprint": "sha256:874196e684060da59fc7df7a6cca3253347b520e04df014ab504c36f166fb7f6",
+      "fingerprint": "sha256:bda7d59df49d908559c4ce222c4ba94ba46c38ac9b95e59d301896a9d3f13f6f",
       "sections": [
         "15.1",
         "15.1.1",
@@ -291,7 +291,7 @@
     },
     {
       "path": "protocol/conformance.cdl",
-      "fingerprint": "sha256:b45b409c398f209b7e72d894108b741ebd4da2272f2871f7c9e5bde5f8977a4c",
+      "fingerprint": "sha256:6d454230debcbe7b15135baf535e78ee15f78fda84408ad76864ab63b8ca8959",
       "sections": [
         "16.1",
         "17.1",
@@ -924,17 +924,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:2ac887e7f5e122e4572c592d5a2b8a0868bf7465639ed19251e0c26087a74cb2"
+      "detail": "sha256:4048c7de53f92bb397ea7f22693f7372e741e5e25dd08db522a095292ee38288"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:0c0654af94fc32250368b388925f1c0f9f18807adf246e517c3aab3335f667e9"
+      "detail": "sha256:d350f09398d6a77cc5309ab202b09244437715a51b6e20ef28f6a9ec0701c6e0"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:66c7ab5cf48197f7d071e38ce5d0fc853d00feffa4ea943fdbb445beae314bcf"
+      "detail": "sha256:9ad28c3a633144646211242131d2721f2045fdd1cf5b25519a6aea1c10b3de92"
     },
     {
       "name": "fixture-oracle",

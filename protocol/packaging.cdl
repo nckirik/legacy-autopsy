@@ -144,56 +144,6 @@ The required Exit E report check registry is `EXIT-E-CHECKS-v1`. Its canonical r
 A report's `Check Results.Check ID` set MUST equal exactly the rows for its stage: no missing, duplicate, unknown, or other-stage ID is permitted. Every required row is serialized and has `Result: Pass | Fail`; this registry defines no `Not-Applicable` result because each check validates its own applicability denominator and evidence-backed zero domains. A missing or malformed row is a structural report failure, not a pass or an omitted/unknown result. `Ready-For-Human-Review` or `Ready-For-Certificate` requires exact-set equality, every row `Pass`, every row's evidence-set fingerprint to recompute, and an empty blockers table. Therefore a header-only empty check table can never satisfy either report. Any failed check requires at least one corresponding blocker; a blocker cannot compensate for a missing check.
 END
 
-RULE packaging-payload-rules
-  GOAL
-    For every packaging payload: payload fields appear exactly once and in the declared
-    order, and an unknown, duplicate, reordered, or omitted required payload field is a
-    structural error; a declared optional or empty scalar is serialized as the exact
-    literal None, never omitted, blank, null-like, or represented by prose; an empty
-    table retains its declared header and separator rows and contains no data row; every
-    normalized path uses §4.1 with normalization before sorting, hashing, or binding;
-    every table is sorted by its schema-declared tuple after normalization using
-    ascending bytewise comparison of the exact preserved Unicode code points serialized
-    as UTF-8, and duplicate sort-key tuples are invalid unless the table schema
-    explicitly permits them; an ID list not represented as a table is sorted by
-    (record type, typed ID) and a path/member list by (normalized path, artifact type),
-    with no source discovery order semantically significant; semantically equal inputs
-    presented in different source orders MUST serialize to one canonical payload and one
-    payload fingerprint; the HASH-DOMAIN identity is exactly artifact-type + "|" +
-    normalized-relative-path, is included in the preimage, and cannot contain the
-    payload fingerprint, while the POST-HASH-ARTIFACT-INSTANCE-BINDING is computed only
-    after hashing and is never part of its own preimage. The declared table sort keys
-    are: candidate validation or readiness checks by (Check ID); blockers by (Blocker
-    ID); semantic counts by (Record Type); decision counts by (Decision Type); semantic
-    bindings by (Record Type, Typed Record ID); decision bindings by (DEC ID); confirmed
-    bindings by (Record Type, Typed Record ID); approved decision bindings by (DEC ID);
-    included scope dimensions by (Dimension, Value); source counts by (SRC Kind);
-    exclusions by (DEC ID, Excluded Unit ID); residual risks by (Risk ID); and every
-    package-member table, including the outer manifest, by (Normalized Path, Artifact
-    Type). Fields described as a deterministic set or tuple use the corresponding rule
-    above.
-  END
-END
-
-RULE exit-e-check-registry
-  GOAL
-    The required Exit E report check registry is EXIT-E-CHECKS-v1. Its canonical
-    registry fingerprint is sha256 over UTF-8 EXIT-E-CHECK-REGISTRY|EXIT-E-CHECKS-v1
-    plus one LF and the §4.1.2 canonical serialization of the exact ordered registry
-    table. A report's Check Results.Check ID set MUST equal exactly the rows for its
-    stage: no missing, duplicate, unknown, or other-stage ID is permitted. Every
-    required row is serialized and has Result: Pass | Fail; this registry defines no
-    Not-Applicable result because each check validates its own applicability denominator
-    and evidence-backed zero domains. A missing or malformed row is a structural report
-    failure, not a pass or an omitted/unknown result. Ready-For-Human-Review or
-    Ready-For-Certificate requires exact-set equality, every row Pass, every row's
-    evidence-set fingerprint to recompute, and an empty blockers table, so a
-    header-only empty check table can never satisfy either report. Any failed check
-    requires at least one corresponding blocker; a blocker cannot compensate for a
-    missing check.
-  END
-END
-
 ENUM EXIT-E-CANDIDATE-CHECKS
   CANDIDATE-01-EXIT-A
   CANDIDATE-02-SOURCE-CLOSURE
@@ -244,12 +194,12 @@ END
 
 FIELD SEMANTIC-RECORD-COUNT
   record-type -> string required
-  count       -> int required
+  count       -> int    required
 END
 
 FIELD DECISION-CONTENT-COUNT
   decision-type -> string required
-  count         -> int required
+  count         -> int    required
 END
 
 FIELD CHECK-RESULT
@@ -264,6 +214,56 @@ FIELD BLOCKER
   affected-ids         -> string required
   description          -> string required
   evidence-fingerprint -> string required
+END
+
+RULE packaging-payload-rules
+  GOAL
+    For every packaging payload: payload fields appear exactly once and in the declared
+    order, and an unknown, duplicate, reordered, or omitted required payload field is a
+    structural error; a declared optional or empty scalar is serialized as the exact
+    literal None, never omitted, blank, null-like, or represented by prose; an empty
+    table retains its declared header and separator rows and contains no data row; every
+    normalized path uses §4.1 with normalization before sorting, hashing, or binding;
+    every table is sorted by its schema-declared tuple after normalization using
+    ascending bytewise comparison of the exact preserved Unicode code points serialized
+    as UTF-8, and duplicate sort-key tuples are invalid unless the table schema
+    explicitly permits them; an ID list not represented as a table is sorted by
+    (record type, typed ID) and a path/member list by (normalized path, artifact type),
+    with no source discovery order semantically significant; semantically equal inputs
+    presented in different source orders MUST serialize to one canonical payload and one
+    payload fingerprint; the HASH-DOMAIN identity is exactly artifact-type + "|" +
+    normalized-relative-path, is included in the preimage, and cannot contain the
+    payload fingerprint, while the POST-HASH-ARTIFACT-INSTANCE-BINDING is computed only
+    after hashing and is never part of its own preimage. The declared table sort keys
+    are: candidate validation or readiness checks by (Check ID); blockers by (Blocker
+    ID); semantic counts by (Record Type); decision counts by (Decision Type); semantic
+    bindings by (Record Type, Typed Record ID); decision bindings by (DEC ID); confirmed
+    bindings by (Record Type, Typed Record ID); approved decision bindings by (DEC ID);
+    included scope dimensions by (Dimension, Value); source counts by (SRC Kind);
+    exclusions by (DEC ID, Excluded Unit ID); residual risks by (Risk ID); and every
+    package-member table, including the outer manifest, by (Normalized Path, Artifact
+    Type). Fields described as a deterministic set or tuple use the corresponding rule
+    above.
+  END
+END
+
+RULE exit-e-check-registry
+  GOAL
+    The required Exit E report check registry is EXIT-E-CHECKS-v1. Its canonical
+    registry fingerprint is sha256 over UTF-8 EXIT-E-CHECK-REGISTRY|EXIT-E-CHECKS-v1
+    plus one LF and the §4.1.2 canonical serialization of the exact ordered registry
+    table. A report's Check Results.Check ID set MUST equal exactly the rows for its
+    stage: no missing, duplicate, unknown, or other-stage ID is permitted. Every
+    required row is serialized and has Result: Pass | Fail; this registry defines no
+    Not-Applicable result because each check validates its own applicability denominator
+    and evidence-backed zero domains. A missing or malformed row is a structural report
+    failure, not a pass or an omitted/unknown result. Ready-For-Human-Review or
+    Ready-For-Certificate requires exact-set equality, every row Pass, every row's
+    evidence-set fingerprint to recompute, and an empty blockers table, so a
+    header-only empty check table can never satisfy either report. Any failed check
+    requires at least one corresponding blocker; a blocker cannot compensate for a
+    missing check.
+  END
 END
 
 SECTION exit-e-candidate-report
@@ -315,22 +315,22 @@ The Exit E Candidate Report is emitted before the candidate payload manifest. It
 END
 
 FIELD EXIT-E-CANDIDATE-REPORT
-  artifact-type                            -> string required
-  artifact-path                            -> string required
-  protocol-artifact-schema-version         -> string required
-  system-protocol-snapshot                 -> string required
-  required-check-registry-fingerprint      -> string required
-  exit-a-report-fingerprint                -> string required
+  artifact-type                                 -> string required
+  artifact-path                                 -> string required
+  protocol-artifact-schema-version              -> string required
+  system-protocol-snapshot                      -> string required
+  required-check-registry-fingerprint           -> string required
+  exit-a-report-fingerprint                     -> string required
   deterministic-candidate-input-set-fingerprint -> string required
-  coverage-validation-summary              -> string required
-  traceability-validation-summary          -> string required
-  handbook-validation-summary              -> string required
-  semantic-record-counts                   -> string required
-  decision-content-counts                  -> string required
-  check-results                            -> string required
-  blockers                                 -> string required
-  candidate-result                         -> string required
-  artifact-payload-fingerprint             -> string required
+  coverage-validation-summary                   -> string required
+  traceability-validation-summary               -> string required
+  handbook-validation-summary                   -> string required
+  semantic-record-counts                        -> string required
+  decision-content-counts                       -> string required
+  check-results                                 -> string required
+  blockers                                      -> string required
+  candidate-result                              -> string required
+  artifact-payload-fingerprint                  -> string required
 END
 
 RULE candidate-report-ordering
@@ -384,12 +384,12 @@ The candidate payload manifest is emitted only after the immutable candidate rep
 END
 
 FIELD SEMANTIC-BINDING
-  record-type                   -> string required
-  typed-record-id               -> string required
-  semantic-record-version       -> string required
-  semantic-content-fingerprint  -> string required
-  dependency-set-fingerprint    -> string required
-  normalized-path               -> string required
+  record-type                  -> string required
+  typed-record-id              -> string required
+  semantic-record-version      -> string required
+  semantic-content-fingerprint -> string required
+  dependency-set-fingerprint   -> string required
+  normalized-path              -> string required
 END
 
 FIELD DEC-CONTENT-BINDING
@@ -405,8 +405,8 @@ FIELD CANDIDATE-PAYLOAD-MANIFEST
   exit-e-candidate-report-fingerprint -> string required
   semantic-bindings                   -> string required
   dec-content-bindings                -> string required
-  semantic-binding-count              -> int required
-  dec-content-binding-count           -> int required
+  semantic-binding-count              -> int    required
+  dec-content-binding-count           -> int    required
   artifact-payload-fingerprint        -> string required
 END
 
@@ -472,52 +472,52 @@ Confirmed bindings sort by `(Record Type, Typed Record ID)`, approved decisions 
 END
 
 FIELD CONFIRMED-SEMANTIC-BINDING
-  record-type                                    -> string required
-  typed-record-id                                -> string required
-  semantic-record-version                        -> string required
-  semantic-content-fingerprint                   -> string required
-  certification-envelope-binding                 -> string required
-  semantic-containing-path                       -> string required
-  semantic-package-member-file-fingerprint       -> string required
-  cnf-id                                         -> string required
-  cnf-payload-fingerprint                        -> string required
-  cnf-signature-envelope-binding                 -> string required
-  cnf-containing-path                            -> string required
-  cnf-package-member-file-fingerprint            -> string required
+  record-type                              -> string required
+  typed-record-id                          -> string required
+  semantic-record-version                  -> string required
+  semantic-content-fingerprint             -> string required
+  certification-envelope-binding           -> string required
+  semantic-containing-path                 -> string required
+  semantic-package-member-file-fingerprint -> string required
+  cnf-id                                   -> string required
+  cnf-payload-fingerprint                  -> string required
+  cnf-signature-envelope-binding           -> string required
+  cnf-containing-path                      -> string required
+  cnf-package-member-file-fingerprint      -> string required
 END
 
 FIELD APPROVED-DEC-BINDING
-  dec-id                             -> string required
-  decision-content-version           -> string required
-  decision-content-fingerprint       -> string required
-  approval-envelope-binding          -> string required
-  dec-containing-path                -> string required
+  dec-id                              -> string required
+  decision-content-version            -> string required
+  decision-content-fingerprint        -> string required
+  approval-envelope-binding           -> string required
+  dec-containing-path                 -> string required
   dec-package-member-file-fingerprint -> string required
 END
 
 FIELD PACKAGE-MEMBER
-  artifact-type                     -> string required
-  normalized-path                   -> string required
-  package-member-file-fingerprint   -> string required
+  artifact-type                   -> string required
+  normalized-path                 -> string required
+  package-member-file-fingerprint -> string required
 END
 
 FIELD EXIT-E-CONTENT-READINESS-REPORT
-  artifact-type                              -> string required
-  artifact-path                              -> string required
-  protocol-artifact-schema-version           -> string required
-  system-protocol-snapshot                   -> string required
-  required-check-registry-fingerprint        -> string required
-  exit-a-report-fingerprint                  -> string required
-  exit-e-candidate-report-fingerprint        -> string required
-  candidate-payload-manifest-fingerprint     -> string required
-  confirmed-semantic-bindings                -> string required
-  approved-dec-bindings                      -> string required
-  pre-certificate-package-members            -> string required
-  check-results                              -> string required
-  exit-e-prepackage-state                    -> string required
-  content-readiness-result                   -> string required
-  blockers                                   -> string required
-  artifact-payload-fingerprint               -> string required
+  artifact-type                          -> string required
+  artifact-path                          -> string required
+  protocol-artifact-schema-version       -> string required
+  system-protocol-snapshot               -> string required
+  required-check-registry-fingerprint    -> string required
+  exit-a-report-fingerprint              -> string required
+  exit-e-candidate-report-fingerprint    -> string required
+  candidate-payload-manifest-fingerprint -> string required
+  confirmed-semantic-bindings            -> string required
+  approved-dec-bindings                  -> string required
+  pre-certificate-package-members        -> string required
+  check-results                          -> string required
+  exit-e-prepackage-state                -> string required
+  content-readiness-result               -> string required
+  blockers                               -> string required
+  artifact-payload-fingerprint           -> string required
 END
 
 RULE content-readiness-ordering
@@ -588,10 +588,10 @@ END
 
 FIELD SOURCE-COUNT
   src-kind              -> string required
-  gross-discovered      -> int required
-  approved-excluded     -> int required
-  effective-denominator -> int required
-  covered               -> int required
+  gross-discovered      -> int    required
+  approved-excluded     -> int    required
+  effective-denominator -> int    required
+  covered               -> int    required
 END
 
 FIELD APPROVED-EXCLUSION-RESIDUAL-RISK
@@ -605,38 +605,38 @@ FIELD APPROVED-EXCLUSION-RESIDUAL-RISK
 END
 
 FIELD CONFIRMED-SEMANTIC-PAYLOAD-BINDING
-  record-type                   -> string required
-  typed-record-id               -> string required
-  semantic-record-version       -> string required
-  semantic-content-fingerprint  -> string required
-  cnf-id                        -> string required
-  cnf-payload-fingerprint       -> string required
+  record-type                  -> string required
+  typed-record-id              -> string required
+  semantic-record-version      -> string required
+  semantic-content-fingerprint -> string required
+  cnf-id                       -> string required
+  cnf-payload-fingerprint      -> string required
 END
 
 FIELD KNOWN-RESIDUAL-RISK
-  risk-id            -> string required
-  affected-ids       -> string required
-  source-dec-id      -> string required
+  risk-id             -> string required
+  affected-ids        -> string required
+  source-dec-id       -> string required
   exact-residual-risk -> string required
-  disclosure-path    -> string required
+  disclosure-path     -> string required
 END
 
 FIELD SCOPE-CERTIFICATE
-  artifact-type                                  -> string required
-  artifact-path                                  -> string required
-  protocol-artifact-schema-version               -> string required
-  system-protocol-snapshot                       -> string required
-  included-scope-dimensions                      -> string required
-  source-counts-by-kind                          -> string required
-  approved-exclusions-and-residual-risks         -> string required
-  export-reconciliation                          -> string required
-  exit-a-report-fingerprint                      -> string required
-  exit-e-candidate-report-fingerprint            -> string required
-  candidate-payload-manifest-fingerprint         -> string required
-  exit-e-content-readiness-report-fingerprint    -> string required
-  confirmed-semantic-payload-bindings            -> string required
-  known-residual-risks                           -> string required
-  artifact-payload-fingerprint                   -> string required
+  artifact-type                               -> string required
+  artifact-path                               -> string required
+  protocol-artifact-schema-version            -> string required
+  system-protocol-snapshot                    -> string required
+  included-scope-dimensions                   -> string required
+  source-counts-by-kind                       -> string required
+  approved-exclusions-and-residual-risks      -> string required
+  export-reconciliation                       -> string required
+  exit-a-report-fingerprint                   -> string required
+  exit-e-candidate-report-fingerprint         -> string required
+  candidate-payload-manifest-fingerprint      -> string required
+  exit-e-content-readiness-report-fingerprint -> string required
+  confirmed-semantic-payload-bindings         -> string required
+  known-residual-risks                        -> string required
+  artifact-payload-fingerprint                -> string required
 END
 
 RULE scope-certificate-ordering
@@ -740,6 +740,25 @@ The authoritative step-6 outer manifest MUST instantiate the generic schema as f
 **Restart rule:** a semantic payload, dependency, candidate decision-content binding, or candidate-manifest change restarts at step 1 or 2 as applicable and invalidates downstream CNFs. A DEC review-input or decision-content change restarts at step 2; attaching a matching approval envelope occurs at step 3 and does not restart, while a mismatched envelope is rejected. A CNF or confirmation-envelope defect restarts at step 3. An Exit E Content-Readiness Report payload defect restarts at step 4. A certificate-only payload defect restarts at step 5. An outer-manifest membership, status, fingerprint, order, validation, or signature defect restarts at step 6 and leaves Exit E `Pending`. Replacing any finalized member envelope changes its envelope binding and package-member file fingerprint; it restarts from the stage that owns that envelope and always invalidates/requires regeneration and re-signing of the step-6 outer manifest. Replacing only the outer manifest's own signature envelope with an unchanged outer payload digest restarts step 6 only and requires revalidation/re-signing. Any change that reaches backward into an earlier artifact restarts from the earliest affected step. There is no post-step-6 authoritative artifact whose hash could create a cycle.
 END
 
+FIELD OUTER-SIGNATURE-ENVELOPE
+  required-human-signatories-signature-timestamps -> string required
+  envelope-audit                                  -> string required
+END
+
+FIELD OUTER-BUNDLE-MANIFEST
+  artifact-type                                  -> string required
+  artifact-path                                  -> string required
+  protocol-artifact-schema-version               -> string required
+  system-protocol-snapshot                       -> string required
+  final-verification-check-registry-fingerprint  -> string required
+  pre-signature-validation-input-set-fingerprint -> string required
+  exit-e-content-readiness-report-fingerprint    -> string required
+  scope-certificate-fingerprint                  -> string required
+  package-members                                -> string required
+  exit-e-status                                  -> string required
+  artifact-payload-fingerprint                   -> string required
+END
+
 RULE certification-steps
   GOAL
     Step 1: Final-Synthesis and Profile Synchronization produce complete B-POPULATED
@@ -820,25 +839,6 @@ RULE pre-signature-input-set
     excludes the outer payload, its fingerprint carrier, and its signature envelope, so
     it is acyclic.
   END
-END
-
-FIELD OUTER-SIGNATURE-ENVELOPE
-  required-human-signatories-signature-timestamps -> string required
-  envelope-audit                                  -> string required
-END
-
-FIELD OUTER-BUNDLE-MANIFEST
-  artifact-type                                       -> string required
-  artifact-path                                       -> string required
-  protocol-artifact-schema-version                    -> string required
-  system-protocol-snapshot                            -> string required
-  final-verification-check-registry-fingerprint       -> string required
-  pre-signature-validation-input-set-fingerprint      -> string required
-  exit-e-content-readiness-report-fingerprint         -> string required
-  scope-certificate-fingerprint                       -> string required
-  package-members                                     -> string required
-  exit-e-status                                       -> string required
-  artifact-payload-fingerprint                        -> string required
 END
 
 RULE outer-manifest-ordering
@@ -928,6 +928,24 @@ Every execution records a **final verification receipt** with this schema:
 The result fingerprint covers every preceding field except `Validator Implementation Version / Timestamp` and its own carrier under §4.1.2 with domain prefix `FINAL-VERIFY-RESULT|`. The receipt is a `NON-AUTHORITATIVE-DERIVATIVE`, MUST remain outside the certified package and authoritative `.extracted/` protocol state, MUST NOT be a package member or input to Exit E, and cannot change the outer payload digest, signature, or gate state. It records which checks the original runtime executed; any third party can discard it and reproduce the same deterministic result from the signed bundle. Creating, deleting, or regenerating a receipt is not a post-step-6 completion artifact or attestation.
 END
 
+FIELD FINAL-CHECK-RESULT
+  check-id           -> string required
+  result             -> string required
+  offending-bindings -> string required
+END
+
+FIELD FINAL-VERIFICATION-RECEIPT
+  protocol-artifact-check-registry-versions-and-fingerprints -> string required
+  normalized-bundle-identity                                 -> string required
+  outer-payload-canonical-outer-envelope-fingerprints        -> string required
+  system-protocol-environment-snapshot                       -> string required
+  package-member-input-bindings-and-input-set-fingerprint    -> string required
+  check-results                                              -> string required
+  overall-result                                             -> string required
+  validator-implementation-version-timestamp                 -> string required
+  deterministic-result-fingerprint                           -> string required
+END
+
 RULE final-bundle-verification-operation
   GOAL
     The canonical fingerprint of EXIT-E-FINAL-CHECKS-v1 is sha256 over UTF-8
@@ -944,24 +962,6 @@ RULE final-bundle-verification-operation
   END
 END
 
-FIELD FINAL-CHECK-RESULT
-  check-id            -> string required
-  result              -> string required
-  offending-bindings  -> string required
-END
-
-FIELD FINAL-VERIFICATION-RECEIPT
-  protocol-artifact-check-registry-versions-and-fingerprints -> string required
-  normalized-bundle-identity                                 -> string required
-  outer-payload-canonical-outer-envelope-fingerprints        -> string required
-  system-protocol-environment-snapshot                       -> string required
-  package-member-input-bindings-and-input-set-fingerprint    -> string required
-  check-results                                              -> string required
-  overall-result                                             -> string required
-  validator-implementation-version-timestamp                 -> string required
-  deterministic-result-fingerprint                           -> string required
-END
-
 RULE final-verification-receipt
   GOAL
     Every execution records a final verification receipt with the declared schema. The
@@ -976,3 +976,4 @@ RULE final-verification-receipt
     completion artifact or attestation.
   END
 END
+

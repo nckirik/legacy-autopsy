@@ -228,6 +228,9 @@ Rules:
   a `GOAL`, its documentation-only rules and structured declarations remain in EIR but
   are not re-rendered (the prose already carries them). Executable rules with
   `PREDICATE` still render.
+- canonical formatting is deterministic (`cdl fmt`): declaration order, indentation,
+  alignment, and spacing are normalized, opaque text blocks are preserved exactly, and
+  sources with comments the printer cannot place are rejected rather than altered.
 
 ### Modes and read sets
 

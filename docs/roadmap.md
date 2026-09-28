@@ -292,26 +292,23 @@ S3 progress:
 
 No crown before G1–G3 and G4 (S2/S3 review) pass.
 
-### S5 — CDL editor tooling — planned after crown
+### S5 — CDL editor tooling — implemented
 
-Planned as a separate package/repository that depends only on the language toolchain
-(`cdl`), never on Legacy Autopsy runtime code:
+Depends only on the language toolchain (`cdl`), never on Legacy Autopsy runtime code:
 
-- **Syntax highlighting first:** TextMate grammar plus VS Code language configuration
-  for `.cdl` (keywords, comments, `REQUIRE """..."""`, identifiers, string/scalar
-  literals). This can begin during S3/S4 because the keyword surface is frozen; it must
-  track grammar additions through S3.
-- **Canonical printer:** expose `cdl fmt` as a deterministic, template-total AST printer
-  that preserves normative text (`REQUIRE """..."""`, `TEXT`, `REASON`, `GOAL`) verbatim,
-  with golden fixtures per AST form. This requires the parser to cover every migrated
-  section, so it lands after S3.
-- **Formatter hosting:** once the printer is total, dprint may host it through a wasm
-  plugin or the Exec plugin calling `cdl fmt`. dprint is the runner, never the formatter.
-- **No source authority:** the extension and formatter are non-authoritative; they never
-  change semantics, and generated artifacts are still regenerated, not reformatted.
-
-No editor-tooling work starts before S3 unless it is highlighting-only and
-additive.
+- **Syntax highlighting implemented:** `editors/vscode/` ships the TextMate grammar and
+  language configuration (keywords, comments, opaque `GOAL`/`TEXT`/`REQUIRE` blocks with
+  embedded Markdown, identifiers, string/number literals);
+  `internal/editing` drift-checks the grammar against the parser keyword surface.
+- **Canonical printer implemented:** `cdl.Format`/`cdl.FormatSource` is a deterministic,
+  template-total AST printer that preserves opaque normative text and fails closed on
+  comments it cannot place; `cmd/cdl fmt [-w|--check]` exposes it. `protocol/*.cdl` are
+  canonically formatted and enforced by `TestProtocolSourcesCanonical`, with an all-forms
+  golden fixture in `cdl/testdata/`.
+- **Formatter hosting:** documented as optional (dprint Exec plugin); dprint remains the
+  Markdown runner and is never the CDL formatter.
+- **No source authority:** the extension and formatter never change semantics, and
+  generated artifacts are still regenerated, not reformatted.
 
 ## Harness track
 
