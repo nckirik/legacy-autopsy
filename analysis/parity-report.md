@@ -117,7 +117,7 @@
 | Check | Status | Detail |
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 27 sources |
-| drift-tests | pass | 23 tests in 23 files |
+| drift-tests | pass | 24 tests in 24 files |
 | generated-protocol | pass | sha256:9cb45eed43bdb848524b7b5f46e9973cfcf8a3c20df6b1918f2d2b01e1dd49e7 |
 | golden-eir | pass | sha256:92d1e4e469837285ac6503bef51ae777ff1cf1b524a487ae0d4629d014ad8be9 |
 | golden-prompt | pass | sha256:59d808dd186978ce848e2b5bbee9438a0e8df51b266da9bdd592e105b323db92 |

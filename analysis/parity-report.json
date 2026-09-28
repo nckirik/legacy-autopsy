@@ -919,7 +919,7 @@
     {
       "name": "drift-tests",
       "status": "pass",
-      "detail": "23 tests in 23 files"
+      "detail": "24 tests in 24 files"
     },
     {
       "name": "generated-protocol",
