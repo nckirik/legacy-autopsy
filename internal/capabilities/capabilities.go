@@ -7,9 +7,18 @@ import "crypto/sha256"
 // Set declares which capabilities are available in one execution.
 type Set map[string]bool
 
-// Deterministic returns the pilot's deterministic capabilities.
+// Deterministic returns the available deterministic capabilities from the
+// default registry.
 func Deterministic() Set {
-	return Set{"hash.sha256": true, "table.serialize": true}
+	out := Set{}
+	registry := DefaultRegistry()
+	for _, id := range registry.IDs() {
+		entry, _ := registry.Lookup(id)
+		if entry.Available && entry.Kind == KindDeterministic {
+			out[id] = true
+		}
+	}
+	return out
 }
 
 // Without returns a copy with the named capabilities removed.

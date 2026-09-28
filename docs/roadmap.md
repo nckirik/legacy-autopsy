@@ -316,7 +316,6 @@ Depends only on the language toolchain (`cdl`), never on Legacy Autopsy runtime 
 
 Identified after crown; scheduled with the runtime milestones that own them:
 
-- deterministic capability registry with explicit availability and version negotiation;
 - AGENT evidence/provenance contract validation before MACHINE state changes;
 - canonical registry iteration semantics and ordering guarantees;
 - remaining context-assembly leakage review for the runtime host.
@@ -324,7 +323,9 @@ Identified after crown; scheduled with the runtime milestones that own them:
 Done: validated EIR loading with hash/version verification and strict derived-number
 validation are implemented in `cdl.LoadEIR` (fail closed on unknown format/protocol,
 unknown fields, trailing content, hash mismatch, duplicate identities, missing prose,
-and numbering gaps).
+and numbering gaps); the deterministic capability registry with explicit availability
+and version negotiation is implemented in `internal/capabilities.Registry` and
+drift-checked against the CDL declarations by `internal/parity`.
 
 ## Harness track
 

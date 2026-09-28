@@ -29,6 +29,14 @@ Availability: `REQUIRES CAPABILITY` plus `NO-SUBSTITUTE-MACHINERY` - an unavaila
 capability marks dependent results `unsupported`, blocks dependent effects, leaves
 independent work untouched, and never licenses an executor-authored substitute.
 
+The availability and version source of truth in code is
+`internal/capabilities.Registry` (`DefaultRegistry`, `Require`, `SetAvailable`,
+`SetFromIDs`). It fails closed on unknown capabilities, unavailable entries, and
+version mismatches, and validates an availability set before applying any change.
+`internal/parity` drift-checks the registry against the capabilities declared in CDL,
+so a declared capability without an implementation, an implementation without a
+declaration, a kind mismatch, or an insufficient version fails the build.
+
 ## 2. Deterministic capability contracts
 
 ### 2.1 `hash.sha256` v1 - implemented (pilot)
