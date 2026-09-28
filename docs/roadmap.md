@@ -167,10 +167,15 @@ S3 progress:
   coverage-summary enums plus the 23 required inventory kinds, the frontier record with
   state/method enums, the coverage row with scope/disposition enums, and the
   supersession/tombstone block; schemas and enums drift-check against protocol.md.
-- **Remaining S3 inventory (51 sections):** §2.1–2.6, §4.2–4.6, §6.1–6.5,
+- **§6.1–6.5 implemented (authored schema + drift):**
+  `examples/spec/extraction-evolution.cdl` declares the atomic-component record with
+  the block-confidence-rank enum, the shared-reference schema, and the dual-entry,
+  promotion-lock/execution, dead-code, depromotion, and surgical-patching rules;
+  schemas and enum drift-check against protocol.md.
+- **Remaining S3 inventory (46 sections):** §2.1–2.6, §4.2–4.6, §6.1–6.5,
   §8.3–8.4, §9.3–9.6, §11.1–11.13, §13.1–13.4, §14.1–14.6, §17.1–17.3, §19.1–19.3,
-  plus the Part-level intros. §2–§5, §7, §8.1–8.2, §8.5–8.8, §9.1–9.2, §10, §12, and
-  §15 are migrated (21 sources).
+  plus the Part-level intros. §2–§7, §8.1–8.2, §8.5–8.8, §9.1–9.2, §10, §12, and §15
+  are migrated (22 sources).
 - **Skill projections decision:** the 13 projections stay hand-maintained with the
   routing validator through S3; generation from EIR reference views is deferred to S4.
 - **Collision extension implemented:** `internal/capabilities.ExtendCollision` extends
