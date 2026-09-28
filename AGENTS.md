@@ -4,6 +4,7 @@ This is operational guidance, not a protocol specification. The CDL sources unde
 
 ## Protocol integrity and scope
 
+- The generated `protocol.md` is a structural render, not yet a validated standalone prompt edition; the frozen legacy oracle remains the usable prompt until verbatim enrichment and the standalone protocol-quality test pass.
 - Treat the CDL sources under `protocol/` as normative and the frozen legacy oracle as read-only. Never hand-edit generated `protocol.md` or `protocol/golden/protocol.generated.md`; regenerate them with `go test ./cdl -run TestUpdateAssets -update`. Change normative behavior only for a demonstrated protocol defect, never to simplify implementation; record proposed issues separately first.
 - Before changing normative behavior, read the affected sections and identify them in the change description.
 - Never weaken `MUST`/`MUST NOT`, duplicate normative rules into secondary sources, or present a projection as authority.
