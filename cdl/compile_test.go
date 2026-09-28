@@ -30,6 +30,7 @@ const (
 	traceabilityPath      = "examples/spec/traceability.cdl"
 	packagingPath         = "examples/spec/packaging.cdl"
 	personasPovsPath      = "examples/spec/personas-povs.cdl"
+	inventoryFrontierPath = "examples/spec/inventory-and-frontier.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -721,6 +722,52 @@ func TestPersonasPovsCompiles(t *testing.T) {
 	for _, e := range res.EIR.Declarations.Enums {
 		if e.ID == "TARGET-DECISION" && len(e.Values) != 4 {
 			t.Fatalf("TARGET-DECISION has %d values, want 4", len(e.Values))
+		}
+	}
+}
+
+func TestInventoryAndFrontierCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, inventoryFrontierPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"4.2", "4.3", "4.4", "4.5", "4.6"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	want := map[string]int{
+		"SOURCE-INVENTORY-RECORD": 15,
+		"FRONTIER-RECORD":         11,
+		"SOURCE-COVERAGE-ROW":     12,
+		"SUPERSESSION-TOMBSTONE":  5,
+	}
+	for id, size := range want {
+		if counts[id] != size {
+			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)
+		}
+	}
+	enumCounts := map[string]int{}
+	for _, e := range res.EIR.Declarations.Enums {
+		enumCounts[e.ID] = len(e.Values)
+	}
+	wantEnums := map[string]int{
+		"DISCOVERY-METHOD":          8,
+		"COVERAGE-SUMMARY":          5,
+		"INVENTORY-KIND":            23,
+		"FRONTIER-DISCOVERY-METHOD": 9,
+		"FRONTIER-STATE":            7,
+		"COVERAGE-SCOPE":            3,
+		"COVERAGE-DISPOSITION":      6,
+	}
+	for id, size := range wantEnums {
+		if enumCounts[id] != size {
+			t.Fatalf("%s has %d values, want %d", id, enumCounts[id], size)
 		}
 	}
 }

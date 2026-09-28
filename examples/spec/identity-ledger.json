@@ -506,6 +506,127 @@
       "ids": []
     },
     {
+      "path": "examples/spec/inventory-and-frontier.cdl",
+      "source-fingerprint": "sha256:a21dded3a0089bdbd1f5aa524b2022a95136aaaf59152afd27abc6960afb254f",
+      "ids": [
+        {
+          "id": "COVERAGE-DISPOSITION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "COVERAGE-SCOPE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "COVERAGE-SUMMARY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "DISCOVERY-METHOD",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "FRONTIER-DISCOVERY-METHOD",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "FRONTIER-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "FRONTIER-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "INVENTORY-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "SOURCE-COVERAGE-ROW",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "SOURCE-INVENTORY-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "SUPERSESSION-TOMBSTONE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "atomic-unit-principle",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "atomic-unit-rule",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "coverage-row-identity",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "frontier-terminality",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "inventory-absence-proof",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "module-and-container-semantics",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "source-coverage",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "source-inventory",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "source-versioning",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "supersession-tombstones",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "tombstone-rules",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "traversal-frontier",
+          "kind": "SECTION",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/invocation-context.cdl",
       "source-fingerprint": "sha256:5d20c22d710275e32556f6815fd31b45a73d61da938f44e1a96efc0ef3b2513b",
       "ids": [
