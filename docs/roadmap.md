@@ -183,9 +183,15 @@ S3 progress:
   projection, modernization prompts, rule ownership, interface baseline, equivalence
   test kinds, and the sole-input invariant; audience and test-kind enums drift-check
   against protocol.md.
-- **Remaining S3 inventory (30 sections):** §2.1–2.6, §4.2–4.6, §6.1–6.5,
-  §11.1–11.13, §17.1–17.3, §19.1–19.3, plus the Part-level intros. §2–§10 and §12–§15
-  are migrated (23 sources).
+- **§11.1–11.13 implemented (authored schema + drift):**
+  `examples/spec/synthesis-catalogs.cdl` declares the synthesis gap buffer, common
+  block header and certification envelope, and all ten synthesis catalogs (MOD, ER,
+  REL, SM, DR, BR, UC, IF, DEP/CFG/SCHED, NFR/SEC/FLT) plus the persona profile;
+  every record field list, nested table shape, and closed enum drift-checks against
+  protocol.md.
+- **Remaining S3 inventory (17 sections):** §2.1–2.6, §4.2–4.6, §6.1–6.5,
+  §17.1–17.3, §19.1–19.3, plus the Part-level intros. §2–§15 are migrated (24
+  sources).
 - **Skill projections decision:** the 13 projections stay hand-maintained with the
   routing validator through S3; generation from EIR reference views is deferred to S4.
 - **Collision extension implemented:** `internal/capabilities.ExtendCollision` extends
