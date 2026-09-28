@@ -2,7 +2,7 @@
 
 > Non-authoritative implementation contract. Possibly provisional and reviewable; it defines execution **below** the frozen source language and adds no language surface.
 
-**Status:** draft for the §7.7 pilot.
+**Status:** frozen execution contract; the implemented runtime covers the §7.7 MACHINE slice.
 **Depends on:** [`cdl.md`](cdl.md) (frozen source-language contract), [`eir.md`](eir.md) (interchange), [`runtime-architecture.md`](runtime-architecture.md) (components).
 **Authority:** the CDL sources under [`protocol/`](../protocol/) are normative. This document defines what it means to execute the frozen language; it must not contradict CDL.
 

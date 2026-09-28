@@ -230,7 +230,14 @@ Rules:
   `PREDICATE` still render.
 - canonical formatting is deterministic (`cdl fmt`): declaration order, indentation,
   alignment, and spacing are normalized, opaque text blocks are preserved exactly, and
-  sources with comments the printer cannot place are rejected rather than altered.
+  sources with comments the printer cannot place are rejected rather than altered;
+- normative prose and structured semantics are jointly normative. When a section carries
+  both opaque normative text (`GOAL`, `TEXT`, `REASON`) and structured declarations
+  (`RULE`, `ENUM`, `FIELD`, `STATE`, `TABLE`, `STEP`), a contradiction between them is a
+  source defect: compilation, drift checks, or conformance validation MUST fail. Neither
+  representation silently overrides the other. The toolchain does not attempt general
+  semantic-equivalence checking; each migrated section instead binds its structured
+  declarations to the oracle prose through the `internal/parity` drift tests.
 
 ### Modes and read sets
 

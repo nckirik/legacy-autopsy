@@ -2,7 +2,7 @@
 
 > Non-authoritative implementation planning. Possibly provisional and reviewable. The CDL sources under [`protocol/`](../protocol/) are normative after the accepted crown parity report; [`cdl.md`](cdl.md) is the frozen language contract.
 
-**Status:** proposal for review before the §7.7 pilot.
+**Status:** completed migration record; phases 0–4 done (crown accepted).
 **Scope:** every committed code, fixture, skill, doc, and tool artifact, plus the untracked session archive.
 **Companion:** [`runtime-architecture.md`](runtime-architecture.md) §7 defines the target shape; this document decides what happens to what already exists.
 

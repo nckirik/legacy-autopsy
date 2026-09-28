@@ -310,6 +310,18 @@ Depends only on the language toolchain (`cdl`), never on Legacy Autopsy runtime 
 - **No source authority:** the extension and formatter never change semantics, and
   generated artifacts are still regenerated, not reformatted.
 
+## Deferred runtime hardening (recorded; not S5 blockers)
+
+Identified after crown; scheduled with the runtime milestones that own them:
+
+- validated EIR loading with hash/version verification (fail closed on unknown
+  `eir-format`, mismatched fingerprint, or missing declarations);
+- deterministic capability registry with explicit availability and version negotiation;
+- AGENT evidence/provenance contract validation before MACHINE state changes;
+- canonical registry iteration semantics and ordering guarantees;
+- strict canonical-number validation (derived numbering must be recomputed, not read);
+- remaining context-assembly leakage review for the runtime host.
+
 ## Harness track
 
 ### M0 — Repository and skill foundation — implemented
@@ -514,9 +526,12 @@ the negative fixture from that defect is retained permanently.
 
 ## Current next milestone
 
-S3 and S4 (crown) are complete. Proceed to **S5 — CDL editor tooling** (below), with
-these pre-S5 follow-ups recorded and unblocked: the standalone protocol-quality test on
-the generated `protocol.md` edition, generation of the skill projections from EIR
-reference/routing views, and a whole-document prompt render if one is desired. The
-harness track (M1–M16, including the Part 17.2 conformance families) proceeds
-independently of S5.
+S3, S4 (crown), and S5 (editor tooling) are complete. Remaining known work, in order:
+
+1. the standalone protocol-quality test on the generated `protocol.md` edition with a
+   fresh harness (source/content fidelity is established; independent prompt usability
+   is pending);
+2. generation of the 13 skill projections from EIR reference/routing views;
+3. a whole-document prompt render if a document-level prompt edition is desired;
+4. the harness track (M2–M16, including the Part 17.2 conformance families and the
+   deferred runtime hardening list above).

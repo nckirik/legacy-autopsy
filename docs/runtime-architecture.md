@@ -2,7 +2,7 @@
 
 > Non-authoritative architecture projection. Possibly provisional and reviewable; it defines component boundaries below the frozen source language and adds no language surface.
 
-**Status:** draft for the §7.7 pilot.
+**Status:** frozen architecture contract (crown complete); the implemented runtime covers the §7.7 MACHINE slice.
 **Depends on:** [`cdl.md`](cdl.md) (frozen language), [`eir.md`](eir.md) (interchange), [`execution-semantics.md`](execution-semantics.md) (execution model).
 **Authority:** the CDL sources under [`protocol/`](../protocol/) are normative. Nothing here may contradict CDL or the execution semantics.
 

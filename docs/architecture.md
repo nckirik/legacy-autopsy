@@ -55,18 +55,19 @@ language), [`eir.md`](eir.md), [`execution-semantics.md`](execution-semantics.md
 
 M0 provides a short-lived Go CLI, thin skill routing, structural Markdown foundations,
 initial identities/path handling, workspace scaffolding/checks, confined context
-assembly, bootstrap fixtures, and CI. The Spec track implements the S1 §7.7 pilot: the
-CDL compiler subset with canonical EIR, the native MACHINE VM, an independent reference
-VM, a prompt backend, backend/protocol parity tests, and additive CLI verbs
-(`spec compile|render|run`). Source-language and execution contracts plus the migration
-audit are checked in.
+assembly, bootstrap fixtures, and CI. The Spec track completed the section migration and
+crown: the CDL toolchain compiles the full `protocol/` assembly to canonical EIR, renders
+`protocol.md` and prompt projections, and is bound by per-section drift tests against
+the frozen oracle; the runtime still implements only the executable MACHINE slice (one
+pilot section with an independent reference VM). Source-language and execution
+contracts plus the migration audit are checked in.
 
 The repository does not provide a long-lived service, multi-autopsy registry, scheduler,
 executor abstraction, browser UI, Atlas projection, questions inbox, semantic invocation
 execution, complete cold resume, protocol schemas, canonical hashing, gates,
 acquisition, synthesis, confirmations, handbook generation, or packaging. Current
 commands operate on one declared repository/workspace at a time and exit; that is not
-multi-autopsy orchestration. The pilot is not a protocol-conformance or Exit A/E claim.
+multi-autopsy orchestration. Nothing here is a protocol-conformance or Exit A/E claim.
 
 ## Target boundaries and flow
 
@@ -140,7 +141,9 @@ The initial graph representation is JSON under `.legacy-autopsy/atlas/*`; the in
 - `internal/contextpacket`: identity validation, confined reads, exact routed text, and packet rendering. Consumes compiled EIR modes and declared iteration tokens through `internal/spec`; the former hardcoded read sets are retired.
 - `internal/fixtures`: registered bootstrap cases and stable diagnostic matching. Frozen as the independent parity oracle.
 - `internal/cli`: current short-lived command wiring. Rework additively for Spec-track commands.
-- `cdl/`: pilot parser, resolver/checks, identity ledger, canonical EIR, and template renderer; must not import runtime/capability packages (enforced by a test).
+- `cdl/`: CDL parser, resolver/checks, identity ledger, canonical EIR, canonical
+  printer, and template renderer; must not import runtime/capability packages (enforced
+  by a test).
 - `internal/runtime/`: pilot native MACHINE VM, staged-effect executor, in-memory state, canonical trace.
 - `internal/reference/`: independent second VM over the same EIR for backend-conformance testing.
 - `internal/capabilities/`: deterministic capability set for the pilot; proposing providers and effect services are not implemented.
