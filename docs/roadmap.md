@@ -105,6 +105,10 @@ S3 progress:
   declarations once; `examples/spec/assembly.json` orders the sources; the compiler
   emits one EIR with cross-section resolution; `internal/spec` compiles it in-process
   for the runtime; assembly EIR and prompt goldens replace the per-section goldens.
+- **§7.1–7.4 implemented (authored schema + drift):**
+  `examples/spec/acquisition-trust.cdl` declares the helper trust-boundary rules, the
+  export acquisition register schema, the virtual-coordinate rule, and the n8n/Appsmith
+  inventory-kind enums; field and enum lists drift-check against protocol.md.
 - **§3.1 implemented (authored schema + drift):** `examples/spec/preflight-registry.cdl`
   declares the preflight header, entry-cluster, unmapped-discovery, and persona-local
   discovery-buffer schemas plus the boundary and DB-autonomous-cluster rules; field
