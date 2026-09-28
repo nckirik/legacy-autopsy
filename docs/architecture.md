@@ -137,7 +137,7 @@ The initial graph representation is JSON under `.legacy-autopsy/atlas/*`; the in
 - `internal/identity`: foundational typed IDs and relative-path normalization; specialized identities remain unsupported. Transitional; becomes a declared capability.
 - `internal/canonical`: deliberately limited basic Markdown fingerprinting, not the §4.1.2 canonical profile. Transitional; never used for protocol-significant hashing.
 - `internal/workspace`: atomic skeleton initialization and early structural checks. Survives; rebased onto runtime effect services.
-- `internal/contextpacket`: identity validation, confined reads, exact routed text, and packet rendering. Keep with caution: context-assembly leakage risk; rework to resolve EIR `EVIDENCE`/`USES`.
+- `internal/contextpacket`: identity validation, confined reads, exact routed text, and packet rendering. Consumes compiled EIR modes and declared iteration tokens through `internal/spec`; the former hardcoded read sets are retired.
 - `internal/fixtures`: registered bootstrap cases and stable diagnostic matching. Frozen as the independent parity oracle.
 - `internal/cli`: current short-lived command wiring. Rework additively for Spec-track commands.
 - `cdl/`: pilot parser, resolver/checks, identity ledger, canonical EIR, and template renderer; must not import runtime/capability packages (enforced by a test).
@@ -146,6 +146,7 @@ The initial graph representation is JSON under `.legacy-autopsy/atlas/*`; the in
 - `internal/capabilities/`: deterministic capability set for the pilot; proposing providers and effect services are not implemented.
 - `internal/parity/`: test A (backend trace equality) and test B (protocol parity and oracle).
 - `internal/analysis/`: deterministic coverage metrics over the authored protocol classification; never validates classification judgement.
+- `internal/spec/`: in-process compiler entry for the checked-in CDL assembly; used by the runtime.
 
 No service, scheduler, executor, HTTP/event, graph, or UI package exists today. Planned runtime responsibilities remain conceptual until implemented under the [roadmap](roadmap.md). The service/application layer should orchestrate provider-neutral packages; the target CLI should remain a thin client rather than contain protocol logic.
 

@@ -139,8 +139,10 @@ S3 progress:
   and ALFA behavior, §8.6 concurrency buffers and reconciliation, §8.7 stale guard,
   and §8.8 invocation-log fields. `internal/parity` drift-checks modes, strictness,
   baseline, cold-resume fields, header/log labels, and normative tokens, and proves
-  read-set equivalence with the frozen Go implementation. Remaining §8: rewire
-  `contextpacket` to consume EIR `modes[]`; the equivalence test already pins the data.
+  read-set equivalence with the frozen Go implementation. `contextpacket` now consumes
+  EIR `modes[]` and the declared iteration tokens through `internal/spec`; the hardcoded
+  read sets, strict-mode switch, and iteration list are retired, closing the
+  context-assembly leakage.
 - **§10.1–10.6 implemented (capability-backed):**
   `examples/spec/coverage-and-exits.cdl` declares sweep records and traversal-cell
   states, coverage scope/status domains and arithmetic rules, the 12 Exit A
