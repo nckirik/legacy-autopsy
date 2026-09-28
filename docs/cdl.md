@@ -252,6 +252,10 @@ The document compiles from an ordered manifest (`examples/spec/assembly.json`):
   `legacy-autopsy spec compile` emits it with source and EIR fingerprints.
 - Assembly EIR and prompt goldens are the drift baseline; per-section goldens are not
   maintained once a section is part of the assembly.
+- Closed-list sections may be generated from `protocol.md` by `internal/migration` when
+  extraction is purely structural (no semantic choice). Generated CDL sources carry a
+  generator-version and source-fingerprint comment, are regenerated rather than
+  hand-edited, and are guarded by a byte-parity test.
 
 ================================================================================
 3. CAPABILITY CONDUCT (global source rule)

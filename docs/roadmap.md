@@ -105,6 +105,10 @@ S3 progress:
   declarations once; `examples/spec/assembly.json` orders the sources; the compiler
   emits one EIR with cross-section resolution; `internal/spec` compiles it in-process
   for the runtime; assembly EIR and prompt goldens replace the per-section goldens.
+- **§5.1 implemented (generated closed lists):** `internal/migration` deterministically
+  extracts the seven prefix groups and the exhaustive finite-enum registry from
+  protocol.md and renders `examples/spec/status-taxonomy.cdl` (109 enums) with a
+  byte-parity regeneration test; the assembly compiles it and the ledger covers it.
 - **§4.1 implemented (capability-backed):** `examples/spec/typed-id.cdl` declares the
   ID-prefix and iteration registries plus the normative key, path, PRF/HBK, collision,
   and registry rules; `internal/capabilities.TypedID` implements base generation and is
