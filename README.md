@@ -39,12 +39,15 @@ Open the legacy repository with your agent and give it this instruction:
 Read ./protocol.md completely and treat it as normative. Execute the Legacy System
 Deconstruction, Assurance, and Reconstruction Protocol strictly, beginning with
 Preflight. Before writing, establish the required Section 8.1 invocation identity,
-exact scope and snapshots, and allowed and forbidden read/write targets. Follow every
-MUST and MUST NOT requirement, evidence rule, ownership boundary, checkpoint, stop
-condition, and gate. Do not guess, fabricate evidence, access production, mutate the
-legacy source, or claim Exit A, Exit E, or Protocol v4 conformance unless the protocol's
-requirements are actually satisfied. Ask me for missing scope, access, snapshot, and
-human decisions, and stop whenever the protocol requires human action.
+exact scope and snapshots, and allowed and forbidden read/write targets. Keep every
+write inside this repository: the workspace at .extracted/ and a scratch directory at
+./.autopsy-tmp/ for temporary files and tool caches (point TMPDIR at it); do not write
+to system temp, your home directory, or other repositories. Follow every MUST and MUST
+NOT requirement, evidence rule, ownership boundary, checkpoint, stop condition, and
+gate. Do not guess, fabricate evidence, access production, mutate the legacy source, or
+claim Exit A, Exit E, or Protocol v4 conformance unless the protocol's requirements are
+actually satisfied. Ask me for missing scope, access, snapshot, and human decisions, and
+stop whenever the protocol requires human action.
 ```
 
 Continue in the agent session as it works through the protocol. Answer open questions or tickets, provide approved evidence or access when required, and make the human decisions the protocol does not permit an executor to infer. Progress belongs in `.extracted/`; conversation memory is not the execution record.
