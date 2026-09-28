@@ -146,7 +146,12 @@ S3 progress:
   the envelope, package-member, transport, and evidence-set fingerprints;
   `internal/parity` drift-checks the registries and every normative token against
   `protocol.md`.
-- **§12 implemented (authored schema + drift):** `examples/spec/traceability.cdl`
+- **§15 implemented (authored schema + drift):** `examples/spec/packaging.cdl`
+  declares the Exit E strict conditions, universal packaging rules, all five artifact
+  payload/envelope schemas, the candidate/readiness/final check registries, the
+  scope-certificate tables, the acyclic sequence and hash-domain rules, and the final
+  verification receipt; every schema, table shape, and check ID drift-checks against
+  protocol.md. §12 implemented (authored schema + drift): `examples/spec/traceability.cdl`
   declares the traceability row, lifecycle-eligibility row, classification enum, the
   reciprocal-reference/ID-timing/provenance rules, and the §12.5 evidence-binding
   table; row shapes drift-check against protocol.md.
