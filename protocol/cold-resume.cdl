@@ -3,9 +3,26 @@ NUMBER 8.5
 TITLE "Cold resume check"
 
 GOAL
-  Before mutation, the executor returns the semantic assessment fields and the
-  conforming runtime completes the deterministic validation fields before deciding
-  whether to commit.
+Before mutation, the executor MUST return the semantic assessment fields below as part of its invocation result, and the conforming runtime MUST complete the deterministic validation fields before deciding whether to commit:
+
+```markdown
+- **Iteration / Invocation / Mode:** [...]
+- **Persona / Cluster / Track / POV:** [...]
+- **Relevant Active Tickets and Frontiers:** [...]
+- **Last Mutation Affecting Targets:** [...]
+- **Semantic Blockers and Contradictions:** [...]
+- **Proposed Allowed Next Actions:** [...]
+- **Explicit Context Exclusions and Reasons:** [...]
+- **Runtime-Validated Loaded Files / Fingerprints:** [...]
+- **Runtime Scope / Mode / Write-Right Check:** Pass | Fail
+- **Runtime Stale Check:** Pass | Fail
+- **Cold-Resume Result:** Pass | Fail
+- **Cold-Resume Check Fingerprint:** [...]
+```
+
+The cold-resume check fingerprint is `sha256` over UTF-8 `COLD-RESUME|` plus system namespace, one `|`, invocation ID, one LF, and the §4.1.2 canonical serialization of every field above except its own carrier. The runtime MUST reproduce identity, scope, loaded-file fingerprints, stale state, and write rights from authoritative filesystem state; it validates but does not invent the executor's semantic blockers, actions, or exclusion reasons. A missing field, mismatched fingerprint, failed runtime check, or semantic exclusion that would omit required scope yields `Cold-Resume Result: Fail`, rejects semantic mutation, and still appends the required no-mutation `0G` entry with the check fingerprint and exact failure. The successful check fingerprint/result is bound into the same transaction's `0G` entry, making the pre-mutation authorization externally observable.
+
+Filesystem state is authoritative over conversation. Contradictions in files create tickets/contradiction records; conversational memory cannot resolve them.
 END
 
 ENUM COLD-RESUME-FIELD

@@ -3,8 +3,23 @@ NUMBER 9.1
 TITLE "Ticket schema and canonical IDs"
 
 GOAL
-  Ticket IDs use MONIKER-PERSONA-POV-SEQUENCE; allocation resets per
-  iteration/persona/target POV and is reserved atomically.
+Ticket IDs use `MONIKER-PERSONA-POV-SEQUENCE`. Sequence allocation resets per iteration/persona/target POV and is reserved atomically. For buffered concurrent tickets, Sequential Reconciliation sorts unassigned candidates by target POV, normalized source coordinate, source persona prefix, and SHA-256 of the normalized description, then assigns the next free sequence. A directly authorized single-ledger invocation reserves the next free sequence before writing. The tuple and a stored creation fingerprint MUST be unique; an allocated ID is never reused, even when invalidated or superseded.
+
+```markdown
+### [TICKET-ID] [Context]
+
+- **Source POV / File / Invocation:** [...]
+- **Target POV / Ledger:** [...]
+- **Status:** [T-*]
+- **Trace History:** [actor:iteration transitions]
+- **Affected SRC/CMP/CLM/Frontier IDs:** [...]
+- **Memory Anchor and Creation Context:** [complete stateless assumptions]
+- **Description:** [one technical ambiguity]
+- **Static Investigation:** [bounded paths/methods attempted, evidence, and result]
+- **Escalation Reason:** None | RUNTIME-REQUIRED | THIRD-PARTY-OPAQUE | UNAUTHORIZED-ACCESS | UNSAFE | DESTRUCTIVE | NO-SANDBOX | NO-AUTHORITY-TO-DECIDE | DOMAIN-MEANING-REQUIRED | EXTERNAL-FACT-UNAVAILABLE
+- **Probe Feasibility / Inapplicability:** [assessment, proposed safe probe for RUNTIME-REQUIRED, or why a probe cannot safely/legally/meaningfully resolve the ambiguity]
+- **Coverage / Promotion Effect:** [...]
+```
 END
 
 STATE TICKET-STATE
@@ -70,9 +85,20 @@ NUMBER 9.2
 TITLE "FSM and write rights"
 
 GOAL
-  The conforming runtime validates every transition, escalation reason, required
-  evidence field, actor right, and source state; an executor cannot assign a terminal
-  or probe state merely by writing its token.
+```text
+T-OPEN --target investigates--> T-PENDING
+T-OPEN/T-FOLLOW-UP --target requires runtime--> T-PROBE-REQUIRED
+T-PENDING --origin accepts--> T-COMPLETE
+T-PENDING --origin rejects--> T-FOLLOW-UP -> T-OPEN investigation
+Active state --valid proof--> T-INVALID or T-SUPERSEDED
+Active state --mutual scope decision--> T-OUT-OF-SCOPE
+T-PROBE-REQUIRED --target ingests successful probe--> T-PENDING
+T-OPEN/T-FOLLOW-UP/T-PROBE-REQUIRED --Human Hatch after §9.3 prerequisites--> T-HUMAN-REQUIRED
+```
+
+Any POV may originate `[T-OPEN]` through the correct direct ledger or buffer. Only the target POV updates to `[T-PENDING]` or `[T-PROBE-REQUIRED]`. Only the origin accepts/rejects pending answers. Origin or target may propose out-of-scope; terminalization requires recorded mutual agreement or Human Hatch approval. A conforming runtime validates every transition, escalation reason, required evidence field, actor right, and source state; an executor cannot assign a terminal or probe state merely by writing its token.
+
+**Direct creation of `[T-HUMAN-REQUIRED]` is forbidden.**
 END
 
 RULE ticket-transitions
@@ -97,8 +123,25 @@ NUMBER 9.3
 TITLE "Human Hatch action prerequisites"
 
 GOAL
-  Each Human Hatch subtype has distinct prerequisites; a fake probe or transition through
-  T-PROBE-REQUIRED is forbidden.
+### Human Hatch Action: Ticket Escalation
+
+Only this subtype may terminalize an unresolved ticket as human-required. Before `Human Hatch: Ticket Escalation`:
+
+1. perform and record bounded static investigation with exact methods, evidence, and remaining ambiguity;
+2. select exactly one closed `Escalation Reason` and record the probe feasibility/inapplicability assessment;
+3. for `RUNTIME-REQUIRED`, transition to `[T-PROBE-REQUIRED]`, propose a safe observable probe, and record the attempted probe or why it cannot be attempted safely, legally, or technically;
+4. for every non-runtime reason, remain `[T-OPEN]` or `[T-FOLLOW-UP]` and record why runtime observation is inapplicable, unauthorized, unsafe, destructive, unavailable, or incapable of resolving the required domain meaning/external fact; a fake probe or transition through `[T-PROBE-REQUIRED]` is forbidden;
+5. invoke the subtype with exact ticket, scope, denominator, risk, and coverage consequences plus reviewer authority.
+
+Direct creation of `[T-HUMAN-REQUIRED]`, an escalation with `Escalation Reason: None`, or a reason inconsistent with the recorded feasibility assessment is invalid. Ticket Escalation may terminalize the ticket as `[T-HUMAN-REQUIRED]`, but the affected source remains `[C-GAP]` or `[C-PARTIAL]` unless an authorized human separately or concurrently approves an exact `[C-EXCLUDED]` decision under `Decision/Scope Approval`. No terminal ticket silently implies coverage. Human-required is an honest unresolved orchestration outcome distinct from exclusion: it blocks Exit A for any scope claiming the affected unit's closure, remains visible in partial synthesis and final risk reporting, and permits independent unaffected work to continue.
+
+### Human Hatch Action: Decision/Scope Approval
+
+This subtype does not require a fake static investigation or probe. It requires: exact proposed `DEC` content; observed `SRC`/`CLM`/ticket/contradiction inputs and immutable fingerprints; exact affected `COV` tuples and denominator arithmetic; alternatives, rationale, residual risks, rollout/rollback where applicable; reviewer identity, authority basis, and timestamp. If used to resolve a ticket, the Ticket Escalation prerequisites still apply to that ticket.
+
+### Human Hatch Action: Confirmation
+
+This subtype does not require a static investigation or probe. It requires: a passing Exit E Candidate Report; candidate payload manifest; exact typed record IDs including `PRF`/`HBK` where applicable; exact `SEMANTIC-RECORD-VERSION` and `SEMANTIC-CONTENT-FINGERPRINT` bindings; required approved `DECISION-CONTENT-VERSION`/`DECISION-CONTENT-FINGERPRINT` bindings and matching approval envelopes; review scope and limitations; reviewer identity and authority basis. For a PRF it MUST validate the complete §8.4 dependency closure; for other semantic records it MUST validate the complete applicable `DERIVED-FROM` closure. It may create `CNF` records and attach certification envelopes only; semantic payload edits are forbidden.
 END
 
 RULE ticket-escalation-prerequisites
@@ -157,10 +200,20 @@ NUMBER 9.4
 TITLE "Probe specification and asynchronous handoff"
 
 GOAL
-  Probe specifications declare exact target, question, inputs, environment,
-  safety classification, masking and isolation approval, captures, and
-  interpretation; the operator executes in an isolated sandbox and probe output
-  is fingerprinted and sanitized before agent exposure.
+```markdown
+- **PROBE-ID:** [equal to TICKET-ID]
+- **Target SRC/CMP:** [...]
+- **Question / Expected Observable:** [...]
+- **Exact Inputs / Preconditions:** [...]
+- **Required Environment / Headers / Config:** [no secret values]
+- **Safety Classification:** non-destructive | controlled mutation
+- **Data Masking / Isolation Approval:** [...]
+- **Disabled-Capability Authorization:** [required when applicable]
+- **Logs / DB Diffs / Payloads to Capture:** [...]
+- **Success / Failure Interpretation:** [...]
+```
+
+The operator executes in an isolated sandbox and writes `.extracted/probes/[PROBE-ID].log`. In a bound `Ticket Resolution` invocation, the target POV ingests the log, creates runtime claims, updates affected records, and moves the ticket to `[T-PENDING]`. The originating POV then accepts it as `[T-COMPLETE]` or rejects it as `[T-FOLLOW-UP]`; probe ingestion never bypasses origin validation. Probe output MUST be fingerprinted and scrubbed of secrets/PII before agent exposure.
 END
 
 ENUM SAFETY-CLASSIFICATION
@@ -197,10 +250,14 @@ NUMBER 9.5
 TITLE "No-mock integrity"
 
 GOAL
-  When static analysis is insufficient and no sandbox is available, no
-  fabricated paths, values, payloads, mocks, or specifications may be used as
-  evidence; claims stay inferred or unknown and the Human Hatch path preserves
-  the coverage gap.
+When static analysis is insufficient and a sandbox is unavailable:
+
+- do not fabricate paths, values, payloads, mocks, or specifications as evidence;
+- keep claims `[E-INFERRED]` or `[E-UNKNOWN]`;
+- keep affected components `[S-DISCOVERED]` and ineligible for promotion;
+- use the Human Hatch path and preserve the coverage gap/partial state.
+
+A test double used to exercise already-proven local logic MAY be a testing mechanism but MUST NOT be treated as observation of an opaque dependency.
 END
 
 RULE no-mock-rules
@@ -219,7 +276,15 @@ NUMBER 9.6
 TITLE "No-mock fallback payload"
 
 GOAL
-  The no-mock fallback payload schema is declared below.
+```markdown
+- **Suspected Behavior:** [...]
+- **Evidence Claims / Anchors:** [...]
+- **Missing Runtime Observation:** [...]
+- **Static Methods Attempted:** [...]
+- **Probe Feasibility / Attempt Result:** [...]
+- **Proposed Human Verification:** [...]
+- **Affected Promotion / Coverage / Exit Scope:** [...]
+```
 END
 
 FIELD NO-MOCK-FALLBACK

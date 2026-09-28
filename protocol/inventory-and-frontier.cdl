@@ -3,10 +3,13 @@ NUMBER 4.2
 TITLE "Atomic unit rule"
 
 GOAL
-  Each promotable forensic record and each independently meaningful synthesis
-  record describes exactly one independently evidenced unit; purely navigational
-  grouping containers are marked GROUPING-CONTAINER, and serialized containers
-  never represent a whole export as one component.
+Each promotable forensic record and each independently meaningful synthesis record MUST describe exactly one independently evidenced unit: one function, method, route, query, job, workflow node, graph edge, action, binding, DB routine, constraint, widget behavior, interface operation, architecture module/bounded context, or equivalent.
+
+A **purely navigational grouping container**—for example a family index, class overview, workflow overview, capability index, module index, or use-case index—MUST be marked `RECORD-KIND: GROUPING-CONTAINER`. It has only a title, navigation metadata, and an explicit member-ID list; it MUST NOT carry independent semantic claims, `STAGING-STATUS`, `COVERAGE-STATUS`, blueprint/handbook status, `BLOCK-CONFIDENCE-RANK`, `BLOCK-EVIDENCE-PROFILE`, semantic record version/fingerprint, or confirmation, and MUST NOT inherit any such value from children.
+
+A module or bounded context that states responsibility, public interfaces, encapsulation boundary, dependencies, invariants, or data passed is not a grouping container. It is an atomic semantic `MOD` block governed by the common synthesis header, material CLMs, reciprocal references, coverage, semantic version/fingerprint, and confirmation. Module indexes MAY remain purely navigational grouping containers. A `CAP` is the governed capability container defined in §2.6 and §3.2: it may carry its own claim-backed governance metadata, but it remains non-promotable and never inherits member evidence or coverage.
+
+Serialized files are containers. A whole export MUST NOT be represented as one component. A container SRC is `[C-COVERED]` only when its child-enumeration claim is complete for the pinned snapshot and every child coverage row is terminally covered or exactly excluded; it never inherits a child evidence rank/profile and never requires an aggregate promotable CMP. A container with no children requires an evidence-backed zero-child enumeration claim.
 END
 
 RULE atomic-unit-principle
@@ -49,7 +52,37 @@ NUMBER 4.3
 TITLE "Source inventory denominator — `10-SOURCE-INVENTORY.md`"
 
 GOAL
-  One record exists per concrete source unit.
+One record exists per concrete source unit:
+
+```markdown
+### [SRC-ID] [Name]
+
+- **KIND:** [enumerated kind]
+- **Concrete Coordinate:** [exact path:line/symbol or virtual coordinate]
+- **Parent / Container SRC:** [SRC-ID or None]
+- **Source Fingerprint / Snapshot / SRC Version:** [sha256, snapshot ID, immutable version]
+- **Discovery Method:** filesystem | AST | route registry | DB catalog | export explosion | runtime | operator-approved manifest | other
+- **Scope Summary:** [derived from scope-specific coverage rows]
+- **Environment / Runtime State:** [matrix or reference]
+- **Traversal Track(s):** [Normal, Shadow/Conditional, Disabled]
+- **Canonical Owner:** [persona or SHARED-ENTRY ID]
+- **Disposition Summary:** [derived; never substitutes for scope rows]
+- **Mappings:** [CMP, ER, DR, IF, CFG, SCHED, SEC, or other IDs]
+- **Frontier References:** [FRONTIER IDs]
+- **Coverage Rows:** [references into 16-SOURCE-COVERAGE.md]
+- **Coverage Summary:** [C-COVERED] | [C-PARTIAL] | [C-GAP] | [C-EXCLUDED] | Mixed
+- **Claims:** [CLM IDs]
+```
+
+Each source fingerprint/snapshot is an immutable SRC version. A changed source creates a new version linked by supersession; it does not overwrite prior snapshot state. Scope, disposition, and coverage authority live in the scope-specific rows in `16-SOURCE-COVERAGE.md`; inventory summaries are derived.
+
+A `Candidate` scope row is temporary and included in closure until changed by an approved scope decision. `Approved-Excluded` requires exact units, rationale, risk, approver, date, and `DEC` ID. Wildcards alone cannot identify exclusions at closure.
+
+### Required inventory kinds
+
+Inventory MUST cover, where applicable: files; symbols; routes; RPC handlers; jobs; queries; tables; views; triggers; stored functions/procedures; generated columns; constraints; configuration keys and feature flags; workflow containers; nodes; edges; pages; widgets; actions; bindings; queues/events; files/storage contracts; and external interfaces.
+
+Absence of a kind MUST be proven by an inventory-backed enumerator record specifying inspected roots/catalogs, method, snapshot, result count zero, limitations, and CLM evidence. An empty section or zero rows without this proof is invalid.
 END
 
 ENUM DISCOVERY-METHOD
@@ -141,11 +174,25 @@ NUMBER 4.4
 TITLE "Traversal frontier — `11-TRAVERSAL-FRONTIER.md`"
 
 GOAL
-  Every discovered traversal boundary MUST create exactly one FRT record, including a
-  boundary recognized as terminal, duplicate, excluded, or already mapped at discovery
-  time. Immediate recognition MAY create the record directly in its terminal state, but
-  MUST NOT omit it. Every discovered but not yet terminal traversal boundary remains
-  open until terminally disposed.
+Every discovered traversal boundary MUST create exactly one `FRT` record, including a boundary recognized as terminal, duplicate, excluded, or already mapped at discovery time. Immediate recognition MAY create the record directly in its terminal state, but MUST NOT omit it. Every discovered but not yet terminal traversal boundary remains open until terminally disposed:
+
+```markdown
+### [FRONTIER-ID] [Boundary]
+
+- **Origin Invocation / Cluster / POV / Track:** [...]
+- **From SRC / CMP:** [...]
+- **Target Concrete Coordinate or Resolution Rule:** [...]
+- **Target SRC:** [SRC-ID or Pending Inventory]
+- **Discovery Method:** call | import | route | graph edge | query reference | DB firing | config gate | runtime | other
+- **Depth:** [integer]
+- **Snapshot / Fingerprint:** [...]
+- **State:** Open | Traversed | Terminal-Mapped | Terminal-Excluded | Terminal-Duplicate | Terminal-Human-Blocked | Superseded
+- **Disposition Evidence:** [CLM and mapping/decision IDs]
+- **Child Frontier IDs:** [...]
+- **Closing Invocation:** [...]
+```
+
+Depth bounds create open frontier records; they do not silently terminate traversal. Every frontier MUST be terminal for Exit A. `Terminal-Human-Blocked` remains a coverage gap or partial unless the underlying unit is separately approved as excluded.
 END
 
 ENUM FRONTIER-DISCOVERY-METHOD
@@ -197,10 +244,15 @@ NUMBER 4.5
 TITLE "Scope-specific source coverage — `16-SOURCE-COVERAGE.md`"
 
 GOAL
-  One row exists per immutable SRC version by persona/owner by track by environment by
-  snapshot scope. Rows are disjoint within a subgroup; a source participating in several
-  tracks has separate rows and is counted once in each declared track report, while the
-  aggregate unique-SRC report deduplicates by SRC version.
+One row exists per immutable SRC version × persona/owner × track × environment × snapshot scope. Rows are disjoint within a subgroup; a source participating in several tracks has separate rows and is counted once in each declared track report, while the aggregate unique-SRC report deduplicates by SRC version.
+
+```markdown
+| COV ID | SRC Version | Persona/Owner | Track | Environment | Snapshot | Scope | Disposition | C Status | Exclusion DEC | Mappings | Frontier/Ticket/Claim Evidence |
+```
+
+The `COV` ID is deterministically derived from the complete immutable scope tuple and MUST be unique for it; duplicate tuple rows are invalid.
+
+`Scope` is `In-Scope`, `Candidate`, or `Approved-Excluded`; disposition is `Unmapped`, `Mapped`, `Superseded`, `Retired`, `Approved-Excluded`, or `Human-Blocked`. The row, not the inventory summary, is the arithmetic input.
 END
 
 ENUM COVERAGE-SCOPE
@@ -246,8 +298,17 @@ NUMBER 4.6
 TITLE "Stable supersession and tombstones"
 
 GOAL
-  Records are never silently deleted. A renamed record retains its ID when identity is
-  proven.
+Records are never silently deleted. A renamed record retains its ID when identity is proven. A split, merge, or semantic replacement uses:
+
+```markdown
+- **RECORD-VERSION:** [integer]
+- **SUPERSEDES:** [IDs or None]
+- **SUPERSEDED-BY:** [IDs or None]
+- **TOMBSTONE:** yes | no
+- **Tombstone Reason / Decision:** [...]
+```
+
+Tombstones preserve old IDs, incoming references, and snapshot lineage. Validators reject references to tombstones unless the referencing block explicitly records historical use.
 END
 
 FIELD SUPERSESSION-TOMBSTONE

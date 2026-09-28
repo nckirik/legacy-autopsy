@@ -3,9 +3,31 @@ NUMBER 11.1
 TITLE "Partial versus Final Synthesis"
 
 GOAL
-  Partial-Synthesis runs before Exit A only for an explicitly bounded
-  persona/cluster/track/snapshot; Final-Synthesis runs only after Composite Exit A
-  passes.
+**Partial-Synthesis** runs before Exit A only for an explicitly bounded persona/cluster/track/snapshot. Blocks remain `[B-DRAFT]`, are labeled provisional, and state the incomplete denominator. They MUST NOT be reconstruction inputs.
+
+**Final-Synthesis** runs only after Composite Exit A passes. It writes complete structured catalogs from closed facts. Newly discovered gaps go to `SYNTHESIS-GAP-BUFFER.md`; Sequential Reconciliation opens tickets, creates or updates missing SRC/frontier/coverage records, immediately marks the pinned Exit A report invalid, and marks all dependent B blocks stale. Deconstruction is re-armed and confirmation/handoff is prohibited until Exit A passes again on a new gate-input fingerprint. Final synthesis cannot directly mutate ledgers.
+
+After IDs exist, **Cross-Reference-Reconciliation** may update only fields such as `Bound Use-Cases`, `Rules`, `Entities`, `Interfaces`, and reciprocal references. It MUST NOT change observed behavior, decisions, or evidence; because these references are semantic payload, a changed reference increments the semantic record version/fingerprint and invalidates any certification envelope.
+
+### Synthesis gap buffer
+
+Each `SYNTHESIS-GAP-BUFFER.md` record is normative:
+
+```markdown
+### [GAP-ID]
+
+- **Source Synthesis Invocation / Block ID:** [...]
+- **Observed Missing Requirement:** [one falsifiable missing semantic or evidence requirement]
+- **Affected IDs:** [SRC/CMP/CLM/synthesis IDs]
+- **Source Fingerprints / Snapshot:** [...]
+- **Proposed Target Persona / Cluster / Track / POV / Ledger:** [...]
+- **DEDUP-KEY:** [sha256(system namespace | normalized missing requirement | sorted affected IDs | snapshot)]
+- **Materiality:** Material | Supporting
+- **Disposition:** Pending | Ticket-Created | Frontier-Created | Both-Created | Merged | Invalid | Approved-Excluded
+- **Resulting Ticket / FRT / DEC IDs:** [...]
+```
+
+Partial/Final Synthesis writes only `Pending` GAP records and cannot create tickets or frontiers. Sequential Reconciliation sorts by `DEDUP-KEY`, then `GAP-ID`; merges equal keys while retaining every source invocation/block/fingerprint; records a contradiction rather than merging incompatible target proposals; and deterministically creates the minimum required work. A missing cross-POV answer creates one canonical ticket in the proposed ledger; a newly discovered traversal boundary creates one `FRT`; a gap requiring both creates both and cross-links them. Existing equivalent active work is linked rather than duplicated. Sequential Reconciliation updates disposition atomically, invalidates the pinned Exit A report for material gaps, applies targeted staleness, and logs iteration-budget effects under §10.6.
 END
 
 ENUM GAP-MATERIALITY
@@ -79,8 +101,28 @@ NUMBER 11.2
 TITLE "Common synthesis block header"
 
 GOAL
-  Every atomic synthesis block MUST contain a semantic payload followed by a separately
-  delimited certification envelope.
+Every atomic synthesis block MUST contain a semantic payload followed by a separately delimited certification envelope:
+
+```markdown
+- **SEMANTIC-RECORD-VERSION:** [positive integer]
+- **SEMANTIC-CONTENT-FINGERPRINT:** [sha256 per §4.1.1]
+- **COVERAGE-STATUS:** [C-COVERED] | [C-PARTIAL] | [C-GAP] | [C-EXCLUDED]
+- **DERIVED-FROM:** [SRC/CMP/CLM/INV/etc. IDs with versions and fingerprints]
+- **Material Claims:** [CLM IDs]
+- **BLOCK-CONFIDENCE-RANK:** None | Low | Medium | High
+- **BLOCK-EVIDENCE-PROFILE:** [counts, claim IDs, and route/lineage IDs by each E level]
+- **Supersession:** [...]
+
+<!-- CERTIFICATION-ENVELOPE: excluded from semantic version/fingerprint -->
+
+- **BLUEPRINT-STATUS:** [B-DRAFT] | [B-POPULATED] | [B-CONFIRMED] | [B-STALE]
+- **Confirmation:** [CNF-ID required only for B-CONFIRMED]
+- **Confirmation Envelope Version:** [positive integer]
+- **Confirmation Envelope Audit:** [...]
+<!-- END-CERTIFICATION-ENVELOPE -->
+```
+
+Coverage is semantic payload; blueprint status is envelope metadata. `[B-CONFIRMED]` requires `[C-COVERED]`, no stale dependency, a passing candidate binding, and a valid human confirmation of the exact semantic version/fingerprint. Attaching confirmation MUST NOT change semantic bytes. Empty domains require inventory-backed zero claims and may then be confirmed as empty.
 END
 
 FIELD SYNTHESIS-BLOCK-HEADER
@@ -116,13 +158,26 @@ NUMBER 11.3
 TITLE "Architecture blueprint — `90-ARCH-BLUEPRINT.md`"
 
 GOAL
-  The architecture blueprint contains system boundary and context diagrams;
-  actors/personas and external systems; observed legacy technology separated from target
-  decisions; atomic MOD records; inter-module contracts and error propagation;
-  deployment topology; architectural invariants and modernization consequences;
-  capability navigation; and a prominent active-versus-disabled architecture view.
-  Purely navigational module indexes are grouping containers under §4.2 and list MOD IDs
-  only.
+Contains system boundary and context diagrams; actors/personas and external systems; observed legacy technology separated from target decisions; atomic `MOD` records; inter-module contracts and error propagation; deployment topology; architectural invariants and modernization consequences; capability navigation; and a prominent active-versus-disabled architecture view. Purely navigational module indexes are grouping containers under §4.2 and list `MOD` IDs only.
+
+```markdown
+### [MOD-ID] [Module or Bounded Context]
+
+[Common semantic payload and certification envelope]
+
+- **Responsibility / Domain Boundary:** [...]
+- **Public Interfaces:** [IF IDs]
+- **Encapsulated State / Entities:** [ER/STATE IDs]
+- **Dependencies / Dependents:** [MOD/DEP/IF IDs]
+- **Data and Events Passed:** [schemas, ER/IF/event IDs]
+- **Invariants / Rules Owned:** [INV/BR IDs]
+- **Personas / Use Cases / Capabilities:** [persona/UC/CAP IDs]
+- **Failure Propagation:** [FLT IDs]
+- **Observed Legacy Placement:** [...]
+- **Target Decision:** [DEC ID or None]
+```
+
+Every semantic architecture statement about responsibility, public interface, encapsulation, dependency, or data passing MUST belong to an atomic `MOD` and have material CLMs. `MOD <-> IF/ER/DEP/BR/UC/CAP/FLT` reciprocal references are required where applicable.
 END
 
 FIELD ARCHITECTURE-MODULE
@@ -152,9 +207,28 @@ NUMBER 11.4
 TITLE "Entity — `91-DATA-MODEL.md`"
 
 GOAL
-  Entity records describe one storage-backed entity with domain context, storage
-  kind, physical sources, keys, fields, relationships, lifecycle, invariants,
-  audit, retention, permissions, capability impact, and schema drift.
+```markdown
+### [ER-ID] [Entity]
+
+[Common header]
+
+- **Domain Context / Purpose:** [...]
+- **Storage:** table | view | collection | cache-key-space | file | in-memory
+- **Physical SRC IDs:** [...]
+- **Primary Key / Secondary Keys / Indexes:** [...]
+- **Columns / Fields:**
+  | Name | Type | Null | Default | Constraints | Unique | Claims |
+- **Relationships:** [REL IDs]
+- **Enums / Lookup Domains:** [...]
+- **Lifecycle State Fields:** [field -> SM IDs]
+- **Derived / Computed Fields:** [formula, dependencies, read/write time]
+- **Invariants:** [BR/INV IDs]
+- **Audit / Soft Delete:** [...]
+- **Retention / Lifecycle:** [...]
+- **Permissions:** [persona read/write/delete matrix]
+- **Capability State Impact:** [active/disabled usage]
+- **Schema Drift Matrix:** [environment/snapshot -> differences + claims]
+```
 END
 
 ENUM STORAGE-KIND
@@ -199,9 +273,18 @@ NUMBER 11.5
 TITLE "Relationship — `91-DATA-MODEL.md`"
 
 GOAL
-  Relationship records describe one entity relationship with cardinality,
-  enforcement, delete and update semantics, inverse access, business
-  constraints, and reciprocal entity references.
+```markdown
+### [REL-ID] [EntityA.field -> EntityB.field]
+
+[Common header]
+
+- **Cardinality:** 1:1 | 1:N | M:N
+- **Enforcement:** DB-FK | application | mixed | none
+- **Delete / Update Semantics:** cascade | restrict | nullify | custom
+- **Inverse Access:** [...]
+- **Business Constraint:** [BR IDs]
+- **Reciprocal Entity References:** [ER IDs]
+```
 END
 
 ENUM RELATIONSHIP-CARDINALITY
@@ -238,9 +321,24 @@ NUMBER 11.6
 TITLE "State machine — `91-DATA-MODEL.md`"
 
 GOAL
-  A state machine is required only for an eligible lifecycle scope: an entity aggregate
-  or capability with a finite, behaviorally meaningful lifecycle, not every boolean or
-  presentation state.
+A state machine is required only for an **eligible lifecycle scope**: an entity aggregate or capability with a finite, behaviorally meaningful lifecycle, not every boolean or presentation state.
+
+```markdown
+### [SM-ID] [Lifecycle]
+
+[Common header]
+
+- **Scope / Owner Entity or Aggregate:** [ER IDs]
+- **State Field(s):** [...]
+- **States / Meaning:** [...]
+- **Initial / Terminal States:** [...]
+- **Transitions:**
+  | From | To | Event/UC | Guard BR | Effects | Claims |
+- **Invalid / Recovery Transitions:** [...]
+- **Environment / Capability Variants:** [...]
+```
+
+Eligibility decisions use the §12.1 lifecycle table so absence cannot be assumed. `Unknown` requires a ticket, is treated as eligible for closure, and blocks Exit E until resolved to `Eligible` with a complete `SM` or `Ineligible` with claim-backed provenance.
 END
 
 FIELD STATE-TRANSITION
@@ -276,10 +374,26 @@ NUMBER 11.7
 TITLE "Database routine — `91-DATA-MODEL.md`"
 
 GOAL
-  Database routine records describe one trigger, function, procedure, rule,
-  generated column, refresh, or constraint helper with owner, firing semantics,
-  body intent, inputs and outputs, enforced rules, callers, failure semantics,
-  canonical drift, and target decision.
+```markdown
+### [DR-ID] [Routine]
+
+[Common header]
+
+- **Kind:** trigger | function | procedure | rule | generated-column | materialized-refresh | constraint-helper
+- **Owner Table / Entity:** [SRC/ER IDs]
+- **Firing Event / Timing / Granularity:** [...]
+- **Atomic Body Intent:** [...]
+- **Inputs / Outputs:** [...]
+- **Entities Read / Written:** [...]
+- **Invariants / Rules Enforced:** [INV/BR IDs]
+- **Callers / Firers:** [CMP IDs]
+- **Failure / Transaction Semantics:** [...]
+- **Canonical DB Source / Drift:** [...]
+- **Target Decision:** Retain | Lift | Redesign | Retire | Undecided
+- **Target Decision DEC:** [DEC ID or None]
+```
+
+A production DB routine absent from the canonical DB source creates a material drift contradiction and follows the ticket/Human Hatch path.
 END
 
 ENUM DB-ROUTINE-KIND
@@ -327,10 +441,26 @@ NUMBER 11.8
 TITLE "Business rule — `92-BUSINESS-RULES.md`"
 
 GOAL
-  Business rule records describe one deterministic, framework-agnostic rule with
-  exactly one authoritative owner, optional consistent mirrors, condition,
-  effects, precedence, violation policy, boundary cases, idempotency, and target
-  mapping decision.
+```markdown
+### [BR-ID] [Rule]
+
+[Common header]
+
+- **Authoritative Rule Owner:** [one domain/module owner]
+- **Defense-in-Depth Mirrors:** [optional consistent enforcement locations]
+- **Applies When:** [UC/event/state]
+- **Condition:** [deterministic, framework-agnostic predicate with units]
+- **Action / Effect:** [...]
+- **Precedence / Conflict:** [related BR IDs]
+- **Inputs Read / Writable Effects:** [ER fields/events]
+- **Violation Policy:** reject | warn | clamp | default | compensate | rollback
+- **Boundary Cases / Null / Locale / Overflow:** [...]
+- **Idempotency:** [...]
+- **Capability State:** Active | Disabled
+- **Target Mapping Decision:** [target authoritative owner and optional mirrors]
+```
+
+One authoritative rule owner is REQUIRED. Multiple physical enforcement points are allowed only as consistent defense-in-depth mirrors, not competing authorities.
 END
 
 ENUM VIOLATION-POLICY
@@ -374,10 +504,41 @@ NUMBER 11.9
 TITLE "Use case — `93-USE-CASES.md`"
 
 GOAL
-  Use case records describe one observable user or system goal with actors,
-  trigger, preconditions and postconditions, main and alternate flows, failure
-  recovery, reciprocal references, a Given/When/Then behavioral contract, and an
-  explicit target decision.
+```markdown
+### [UC-ID] [Use Case]
+
+[Common header]
+
+- **Primary Persona / Secondary Actors:** [...]
+- **Goal:** [...]
+- **Trigger / Entry:** [IF/SCHED/DR IDs]
+- **Preconditions / Postconditions:** [ER/CFG/INV IDs]
+- **Invariants Relied Upon:** [INV/BR IDs]
+- **Capability Classification:** Active | Conditional | Shadow | Disabled | Retired
+- **Observed Legacy Behavior:** [...]
+
+#### Main Flow
+
+| Step | Action | Rules | Data R/W | Interface | Claims |
+
+#### Alternate Flows
+
+[branch, divergence, path, rejoin]
+
+#### Failure and Recovery
+
+[failure, detection, compensation, user/system outcome]
+
+- **Rules / Entities / Interfaces / Side Effects:** [reciprocal ID lists]
+- **Behavioral Contract:**
+  - Given [pre-state]
+  - When [trigger]
+  - Then [observable outputs and post-state]
+- **Target Decision:** Preserve | Change-By-Approved-Migration | Redesign | Retire
+- **Target Decision DEC:** [DEC ID]
+```
+
+Disabled use cases remain visible, are not presented as current normal behavior, and require an explicit target decision.
 END
 
 ENUM USE-CASE-CAPABILITY-CLASSIFICATION
@@ -430,10 +591,30 @@ NUMBER 11.10
 TITLE "Interface — `94-INTERFACES.md`"
 
 GOAL
-  Interface records describe one external or internal interface with transport,
-  actors, request and response schemas, error semantics, guarantees,
-  authentication and authorization, versioning, limits, bound records,
-  capability matrix, compatibility baseline, and target migration decision.
+```markdown
+### [IF-ID] [Interface]
+
+[Common header]
+
+- **Channel / Transport / Direction:** [...]
+- **Actor / Persona / AUTH:** [...]
+- **Protocol / Content Type:** [...]
+- **Request Schema:**
+  | Field | Type | Required | Default | Validation BR | Claim |
+- **Response Schema:**
+  | Field | Type | Notes | Claim |
+- **Error Semantics / Retryability:** [...]
+- **Guarantees:** idempotency, transactionality, delivery, ordering, timeout
+- **AuthN / AuthZ:** [...]
+- **Versioning / Compatibility:** [...]
+- **Rate Limits / Backpressure:** [...]
+- **Bound UC / ER IDs:** [...]
+- **Capability State / Environment Matrix:** [...]
+- **Compatibility Baseline:** [externally relied-upon semantics]
+- **Target Migration Decision:** [versioned approval required for breaking change]
+```
+
+External semantics are compatibility baselines, not absolutely frozen. Breaking changes require an approved, versioned migration decision, consumer impact, rollout, and rollback plan.
 END
 
 FIELD INTERFACE-REQUEST-FIELD
@@ -482,11 +663,41 @@ NUMBER 11.11
 TITLE "Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`"
 
 GOAL
-  Deployment records describe components, connections, failure exposure, and
-  environment matrices; configuration records describe flags with exact keys,
-  defaults, sources, effects, enable and disable semantics, and materialization;
-  schedule records describe jobs with triggers, owners, actions, failure
-  handling, locks, and capability state.
+```markdown
+### [DEP-ID] [Deployment Element]
+
+[Common header]
+
+- **Component / Placement / Replication:** [...]
+- **Connections:** [IF/ER/DEP IDs]
+- **Single Point of Failure:** yes | no | unknown
+- **Environment / Snapshot Matrix:** [...]
+
+### [CFG-ID] [Configuration or Feature Flag]
+
+[Common header]
+
+- **Medium:** env | DB | flag service | file | build-time
+- **Exact Key:** [...]
+- **Type / Default / Allowed Values:** [...]
+- **Source / Precedence / Setter:** [...]
+- **Behavioral Effect:** [UC/BR/IF/capability IDs]
+- **Enable/Disable Semantics and Environment Matrix:** [...]
+- **App-side / DB-side Materialization:** [...]
+
+### [SCHED-ID] [Scheduled or Async Job]
+
+[Common header]
+
+- **Type / Trigger / Frequency / Window:** [...]
+- **Owner Persona:** [...]
+- **Actions:** [UC/BR/ER IDs]
+- **Failure / Retry / Dead-Letter / Idempotency:** [...]
+- **Dependencies / Locks:** [...]
+- **Capability State:** Active | Conditional | Shadow | Disabled | Retired | Unknown
+```
+
+Every configuration flag requires a known effect or a gap. Secret values are never recorded.
 END
 
 ENUM CONFIG-MEDIUM
@@ -535,11 +746,43 @@ NUMBER 11.12
 TITLE "NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`"
 
 GOAL
-  NFR records describe one attribute with observed value, scope, drivers, and
-  target SLO; security findings describe one category, classification, risk
-  level, affected scope, safeguard or gap, and required review; fault records
-  describe one failure class with propagation, retry and rollback, quarantine,
-  outcomes, variants, and related rules.
+```markdown
+### [NFR-ID] [Attribute]
+
+[Common header]
+
+- **Attribute:** latency | throughput | availability | RPO | RTO | scalability | operability | other
+- **Observed / Inferred Value:** [...]
+- **Scope / Environment:** [...]
+- **Driver / Constraint:** [DEP/IF/ER/CLM IDs]
+- **Target Decision / SLO:** [separate from observation]
+
+### [SEC-ID] [Finding]
+
+[Common header]
+
+- **Category:** auth | authorization | transport | at-rest | in-transit | PII | secrets | audit | threat | privacy
+- **Finding / Data Classification:** [...]
+- **Risk Level:** high | medium | low | unassessed
+- **Affected IDs / Environments:** [...]
+- **Observed Safeguard / Gap:** [...]
+- **Human Review / Target Mitigation:** [...]
+
+### [FLT-ID] [Fault or Resilience Behavior]
+
+[Common header]
+
+- **Failure Class / Trigger / Detection Point:** [...]
+- **Propagation Path:** [UC/IF/SCHED/DEP/CMP IDs]
+- **Retry / Backoff / Timeout / Circuit Behavior:** [...]
+- **Rollback / Compensation / Transaction Boundary:** [...]
+- **Dead-Letter / Quarantine / Operator Action:** [...]
+- **User/System Outcome / Observability:** [...]
+- **Environment / Capability Variants:** [...]
+- **Related Rules / Claims:** [BR/CLM IDs]
+```
+
+Every relevant `0C` finding MUST have a reciprocal `SEC` mirror. Neither file declares legal compliance. Every distinct material failure class discovered in forensic records MUST map to an `FLT`; `96` MUST include a system-level failure taxonomy and retry/rollback/compensation/dead-letter topology, with an evidence-backed zero statement for any genuinely absent mechanism.
 END
 
 ENUM NFR-ATTRIBUTE
@@ -616,7 +859,43 @@ NUMBER 11.13
 TITLE "Persona profile"
 
 GOAL
-  Profile Synchronization writes one profile and its 0A row atomically.
+Profile Synchronization writes one profile and its `0A` row atomically:
+
+```markdown
+## [PRF-ID] Persona: [Name]
+
+- **PRF-ID:** [same PRF-ID derived from system namespace + persona prefix]
+- **Prefix / Actor Class:** [...]
+- **Canonical and Shared Entries:** [SRC/IF/cluster IDs]
+- **Authentication and Session:** [AUTH refs, lifecycle]
+- **Authorization Matrix:**
+  | Resource / Capability | Allowed | Enforcement | Claims |
+- **Visible Data Scope:** [ER read/write/delete]
+- **Key Active Workflows:** [UC IDs]
+- **Disabled / Historical Workflows:** [UC/capability IDs]
+- **Triggers / Events / Schedules:** [...]
+- **UI Surfaces and State:** [...]
+- **Failure / Edge Behavior:** [...]
+- **Dependencies / Couplings:** [...]
+- **Observed Legacy Facts:** [CLM IDs]
+- **Target Decisions:** [decision IDs]
+- **SEMANTIC-RECORD-VERSION:** [positive integer; included in semantic hash preimage]
+- **SEMANTIC-CONTENT-FINGERPRINT:** [sha256 per §4.1.1; this carrier field alone is excluded from its own hash preimage]
+- **DERIVED-FROM:** [dependency IDs with exact versions/fingerprints]
+- **Material Claims:** [CLM IDs]
+- **BLOCK-CONFIDENCE-RANK:** None | Low | Medium | High
+- **BLOCK-EVIDENCE-PROFILE:** [counts, claim IDs, and route/lineage IDs by each E level]
+
+<!-- CERTIFICATION-ENVELOPE: confirmation writers may update only this region -->
+
+- **BLUEPRINT-STATUS:** [B-DRAFT] | [B-POPULATED] | [B-CONFIRMED] | [B-STALE]
+- **Confirmation:** [CNF-ID required for B-CONFIRMED]
+- **Confirmation Envelope Version:** [positive integer]
+- **Confirmation Envelope Audit:** [...]
+<!-- END-CERTIFICATION-ENVELOPE -->
+```
+
+Profile Synchronization is the only writer of profile semantic payload and synchronizes its mandatory `PRF-ID` atomically with the matching `0A` persona-prefix row. Authorized `Human Hatch: Confirmation` or `Reconstruction-Handoff` confirmation actions may update only the delimited certification envelope after loading and validating the complete §8.4 direct-and-transitive dependency closure and verifying the exact candidate-bound PRF ID, semantic version, and semantic fingerprint; they MUST NOT edit profile semantic content/version. A profile without a registry row, a registry row without a profile, a duplicate PRF for one prefix, or a PRF whose canonical prefix coordinate disagrees with `0A` is invalid after Profile Synchronization begins.
 END
 
 FIELD AUTHORIZATION-MATRIX-ROW

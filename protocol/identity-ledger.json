@@ -1,11 +1,11 @@
 {
   "ledger-format": 2,
-  "generator": "cdl/0.2.0",
+  "generator": "cdl/0.2.1",
   "generated-at": "2026-09-25T00:00:00Z",
   "sources": [
     {
       "path": "protocol/acquisition-trust.cdl",
-      "source-fingerprint": "sha256:bf6ab64715036f41950ff422e9d151544418f9a057cf42704602722507d2b0b7",
+      "source-fingerprint": "sha256:4a15ece35ff189a3f8cd86d26a7826cac87f6862278f4a1a094f4d11d102a4ea",
       "ids": [
         {
           "id": "APPSMITH-INVENTORY-KIND",
@@ -61,7 +61,7 @@
     },
     {
       "path": "protocol/canonical-hash-profile.cdl",
-      "source-fingerprint": "sha256:06fc4c2033ad38ef8b32b378a0352933741e4b38648b5b9c28653f922cc839ce",
+      "source-fingerprint": "sha256:1f0d4986bd506bae0d1068cadd98e94695d5609f3a4eeda08bd0797aea312c0d",
       "ids": [
         {
           "id": "ARTIFACT-TYPE",
@@ -132,7 +132,7 @@
     },
     {
       "path": "protocol/cold-resume.cdl",
-      "source-fingerprint": "sha256:4c9653f8c3a276b634a6d966777f3c42ab78d090401667225998183e1105b89d",
+      "source-fingerprint": "sha256:17a721c1e732b676fe240c3a3fb1a84d3e2e55bc4df85f17fdc7d408ceb45c83",
       "ids": [
         {
           "id": "COLD-RESUME-FIELD",
@@ -158,7 +158,7 @@
     },
     {
       "path": "protocol/coverage-and-exits.cdl",
-      "source-fingerprint": "sha256:0ceadb4bfb869f067b6a95b545ebe8817b9378c76251b7fc052a3514d9f7d36e",
+      "source-fingerprint": "sha256:bcffd9020b6c0325ac6bc9d4ca705f209afc8c034c99641f37d207d2d986a270",
       "ids": [
         {
           "id": "COVERAGE-STATUS",
@@ -259,7 +259,7 @@
     },
     {
       "path": "protocol/evidence-and-decisions.cdl",
-      "source-fingerprint": "sha256:0a8f27341a3274427dd57fd2168f4b4f51427ff2434e8a843e9d4fae15f43fc8",
+      "source-fingerprint": "sha256:a181ad86cbbbfcd4f4132cfaed36f841d086e66ee3e030fe5a8b4088475c7772",
       "ids": [
         {
           "id": "BLOCK-EVIDENCE-SUMMARY",
@@ -330,7 +330,7 @@
     },
     {
       "path": "protocol/export-acquisition-loop.cdl",
-      "source-fingerprint": "sha256:e408916bd110775c7fa844d7872d7196bb25fbba2779504d586cfb440ba4be86",
+      "source-fingerprint": "sha256:5aec130f462da36ae9b66f98b44c2e5b5eab6216bf65ac4d05abc19986734153",
       "ids": [
         {
           "id": "ACQUISITION-STATE",
@@ -386,7 +386,7 @@
     },
     {
       "path": "protocol/export-reconciliation.cdl",
-      "source-fingerprint": "sha256:3491b685bd5f22b8c0d8f93f59e1d14cae79f476596b52ceaf9fd11452bd49b2",
+      "source-fingerprint": "sha256:8bd24060bd0399309ad658e5f254c77715c0544b95a9e6ee7abdfac0c6d9553b",
       "ids": [
         {
           "id": "13-EXPORT-RECONCILIATION",
@@ -502,7 +502,7 @@
     },
     {
       "path": "protocol/extraction-evolution.cdl",
-      "source-fingerprint": "sha256:3f3ad38e64ee6687785689b884c22f05b896c6fe1384312fb4bf1eda636682a0",
+      "source-fingerprint": "sha256:ac79b046920d1a53f48f149429e2507f9b92ae5d6ff525e87ab8cc1daa60963c",
       "ids": [
         {
           "id": "ATOMIC-COMPONENT",
@@ -583,7 +583,7 @@
     },
     {
       "path": "protocol/foundations.cdl",
-      "source-fingerprint": "sha256:1e5d9067aa0af649439489a1015e3702787bfc686c6bfb03b46fd1b7ca20b7c5",
+      "source-fingerprint": "sha256:cdcd42efdd42486a4b7d56565219822af92363872275b62f37aa3ebdad4f39c8",
       "ids": [
         {
           "id": "AUTHORITY-CLASS",
@@ -739,12 +739,12 @@
     },
     {
       "path": "protocol/globals.cdl",
-      "source-fingerprint": "sha256:317a88e7893f7293ee52b3563902deecf5965e3423c2f59264ca89687b59c0b4",
+      "source-fingerprint": "sha256:cb3e2818bc93fe9db2be1cf369a338e54670fe0f1426ec4b9ed965b2724c9c6d",
       "ids": []
     },
     {
       "path": "protocol/handbook-and-decisions.cdl",
-      "source-fingerprint": "sha256:e997e958df43223ba61723400164ea235f6b30dfd2508225621161462de854d1",
+      "source-fingerprint": "sha256:25265e0697d58b40a5e04f0f43287326b3763d058a7ac0aa4b7a6dd3542b396d",
       "ids": [
         {
           "id": "AUDIENCE-ROLE",
@@ -865,7 +865,7 @@
     },
     {
       "path": "protocol/inventory-and-frontier.cdl",
-      "source-fingerprint": "sha256:468157fe8b4724260657986c1408c08a41584d554369b954330bef5a8845819d",
+      "source-fingerprint": "sha256:1807cd39ee6c6e67829b2685529cfe7ed7931708f6c1946c771209ca4c0aacf4",
       "ids": [
         {
           "id": "COVERAGE-DISPOSITION",
@@ -986,7 +986,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "source-fingerprint": "sha256:82e7ccd0eddd7b7e4b1bf23f2bab820e20922104a5eff8b2c5fafad0caab0add",
+      "source-fingerprint": "sha256:70eea809d661c0469850ec00e51baa376cee69ee62e3467a28c7c9a62e30be31",
       "ids": [
         {
           "id": "INVOCATION-HEADER",
@@ -1122,7 +1122,7 @@
     },
     {
       "path": "protocol/migration-and-conformance.cdl",
-      "source-fingerprint": "sha256:00ccd23c52ab594319bdb1464d730c8b282ac8808a1468bacc1fa1ea5d252bd6",
+      "source-fingerprint": "sha256:ac41baca91092830c5c08a574dc5cc1e495a55f324f4f8065b504cee679ad6b8",
       "ids": [
         {
           "id": "ARTIFACT-OWNERSHIP-ROW",
@@ -1170,6 +1170,11 @@
           "status": "active"
         },
         {
+          "id": "migration-checklist",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
           "id": "migration-guarantees",
           "kind": "SECTION",
           "status": "active"
@@ -1195,6 +1200,11 @@
           "status": "active"
         },
         {
+          "id": "security-guardrails",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
           "id": "v3-compatibility",
           "kind": "SECTION",
           "status": "active"
@@ -1208,7 +1218,7 @@
     },
     {
       "path": "protocol/normalized-maps.cdl",
-      "source-fingerprint": "sha256:f092ba39c4685b48c7a5c71aee55584b24fc9cb1b840ac7c779ef82bda533c6a",
+      "source-fingerprint": "sha256:1d04091ddf52ce19e81b9864faa78b480384ea91b4ad0fd7baa160d33288659d",
       "ids": [
         {
           "id": "NORMALIZED-MAP-ROW",
@@ -1234,7 +1244,7 @@
     },
     {
       "path": "protocol/packaging.cdl",
-      "source-fingerprint": "sha256:824280ab55bf9f587ce19ba98df0f91c39ab87e35710c1019082b67ccd577d55",
+      "source-fingerprint": "sha256:40db1ca51825e6832464844d1022edfdc170efb1408b9d769a7db5eb008476c1",
       "ids": [
         {
           "id": "APPROVED-DEC-BINDING",
@@ -1490,7 +1500,7 @@
     },
     {
       "path": "protocol/personas-povs.cdl",
-      "source-fingerprint": "sha256:6e08d366afecc0e3a8ad797cbace18cfdaa83f09df8201dc6e9bd8dce918e83c",
+      "source-fingerprint": "sha256:7edf0dade99bf17c9a82a94f894c07ef0ffebf4fa403cbbda3629e764a4dab88",
       "ids": [
         {
           "id": "CAPABILITY-STATE-BLOCK",
@@ -1586,7 +1596,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "source-fingerprint": "sha256:9eba6edf96761320fc477f66c512b322808f13e311e134da9d3cc058422a7a8c",
+      "source-fingerprint": "sha256:490ea48035aedb35c496d828cb9d1e43e07d2137343f78f8fe05744a70fd5d85",
       "ids": [
         {
           "id": "DISCOVERY-BUFFER",
@@ -1637,7 +1647,7 @@
     },
     {
       "path": "protocol/semantic-payload-identity.cdl",
-      "source-fingerprint": "sha256:3f7fcc07342a91c152e6cc5d08685d652311bd8b12d5cab64c70a6e250217dd0",
+      "source-fingerprint": "sha256:0362dfffdd2cd76525881796e45a31a97673b3762e9e40da27bd6f3e8644ccab",
       "ids": [
         {
           "id": "certification-envelope",
@@ -1678,7 +1688,7 @@
     },
     {
       "path": "protocol/status-taxonomy.cdl",
-      "source-fingerprint": "sha256:1ffce8eb98f7af138e2e21471811117fbf370940a32fb2bf6b3ff94b66f88de1",
+      "source-fingerprint": "sha256:cb584fc42f5d11ef1d1ef8a6a5476b3b55c4f5a7e0e21c6afe304e7220d8a830",
       "ids": [
         {
           "id": "PREFIX-ACQUISITION",
@@ -2244,7 +2254,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "source-fingerprint": "sha256:0a0d3a19ba103e87135db6abd3af9ac64bc4aaff3ffa1bf19f2832383e39b76e",
+      "source-fingerprint": "sha256:73c6aecd7df6b475116e267ecea3b4325e64c068fae39b51950e1b5c7dcf3720",
       "ids": [
         {
           "id": "ARCHITECTURE-MODULE",
@@ -2580,7 +2590,7 @@
     },
     {
       "path": "protocol/ticket-fsm.cdl",
-      "source-fingerprint": "sha256:8222bd3abdf5d8af605dcc88c64c88cdf3c6d5b64ef7ae5bf837f58f62cb4e6d",
+      "source-fingerprint": "sha256:059d3660c1da5e4b94be2bffbd85adc1f59c7acdaf680d5673fb4bc24e823aa6",
       "ids": [
         {
           "id": "NO-MOCK-FALLBACK",
@@ -2686,7 +2696,7 @@
     },
     {
       "path": "protocol/traceability.cdl",
-      "source-fingerprint": "sha256:6d8967ade00dfe8177fcf720600841c4fed535e805c0dacf3d15e1aae59483b2",
+      "source-fingerprint": "sha256:d6552318a834113c1c3ea0f4b704990dad7ec82af6da6f359972d85dda462f1a",
       "ids": [
         {
           "id": "CLASSIFICATION",
@@ -2767,7 +2777,7 @@
     },
     {
       "path": "protocol/typed-id.cdl",
-      "source-fingerprint": "sha256:42a78986eabdd77220c8c78ae6c3d4a029f047b73549f67039698403d86d7fee",
+      "source-fingerprint": "sha256:6d56d96a81684e18d211a65cd161bad521c1f1b7eb8f412a55031fe80e562e17",
       "ids": [
         {
           "id": "ID-ITERATION",
@@ -2818,7 +2828,7 @@
     },
     {
       "path": "protocol/workspace-registries.cdl",
-      "source-fingerprint": "sha256:33d1d2ed7236fb0b7f2be5fd5644391d8dfdf299beeeec63c8f78687de2c8f38",
+      "source-fingerprint": "sha256:bc722c76a83e77867e3ac704bb537e54eecef5ea91acf67fe6514828f5b2287e",
       "ids": [
         {
           "id": "AUTH-MECHANISM",

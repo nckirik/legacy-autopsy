@@ -37,4 +37,24 @@ GLOBAL DECLARATIONS
   RULE canonical-fingerprint
   GATES A-STRUCTURALLY-COMPLETE, R-SWEPT, Exit-A, artifact-fingerprint, artifact-completeness
   WORKFLOW-TARGET handoff, section-pass
+  PART 1 "Four-Plane Information Model"
+  PART 2 "Personas, POVs, Entry Ownership, and Traversal Tracks"
+  PART 3 "Workspace Registries and Schemas"
+  PART 4 "Deterministic Identity and Universal Atomicity"
+  PART 5 "Status Taxonomy and Evidence"
+  PART 6 "Atomic Forensic Extraction and Evolution"
+  PART 7 "Serialized Export Acquisition and Local Helper Trust Model"
+  PART 8 "Invocation Isolation, Concurrency, and Reconciliation"
+  PART 9 "Ticket FSM, Static Investigation, Probes, and Human Hatch"
+  PART 10 "Evidence-Backed Sweep and Composite Deconstruction Closure"
+  PART 11 "Structured Synthesis"
+  PART 12 "Traceability, Referential Integrity, and Staleness"
+  PART 13 "Human Reconstruction Handbook"
+  PART 14 "Decisions, Reconstruction, Equivalence, and Compatibility"
+  PART 15 "Exit E — Reconstruction Readiness"
+  PART 16 "Security, Privacy, and Operational Guardrails"
+  PART 17 "Migration from v3.17 Workspaces"
+  PART 18 "Migration Checklist"
+  PART 19 "Conformance and Acceptance Checklist"
+  PART 20 "Compact Artifact Ownership Matrix"
 END

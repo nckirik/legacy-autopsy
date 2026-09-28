@@ -3,11 +3,34 @@ NUMBER 12.1
 TITLE "Traceability — `20-TRACEABILITY.md`"
 
 GOAL
-  One atomic row per source-to-semantic mapping; multiple rows MAY represent multiple
-  mappings, but source coverage is evaluated once per SRC and requires all applicable
-  mappings. The ID registry, source denominator query fingerprints, lifecycle
-  eligibility decisions, exclusions, and reciprocal reference check results are
-  included in this file.
+One atomic row per source-to-semantic mapping:
+
+```markdown
+| SRC | Persona/Owner/PRF | Track/CAP | POV/CMP | MOD | UC | BR | ER/REL/SM/DR | IF | DEP/CFG/SCHED | PRV/SEC/NFR/FLT | HBK | CLM/DEC/CNF | C Status |
+```
+
+Multiple rows MAY represent multiple mappings, but source coverage is evaluated once per `SRC` and requires all applicable mappings. The ID registry, source denominator query fingerprints, lifecycle eligibility decisions, exclusions, and reciprocal reference check results are included in this file.
+
+Lifecycle eligibility uses one row per candidate entity aggregate or capability:
+
+```markdown
+| Scope ID | Classification | Reason | CLM / Evidence Bindings | Classified By / Invocation | Snapshot |
+| :------- | :------------- | :----- | :---------------------- | :------------------------- | :------- |
+```
+
+`Classification` is `Eligible | Ineligible | Unknown`. It is a semantic predicate: the classifier MUST record provenance and claim/evidence bindings. `Unknown` is fail-inclusive and is treated as eligible for completeness and gate purposes until resolved; it requires a ticket and cannot justify omission of an `SM`. The conforming runtime deterministically verifies row uniqueness, snapshot consistency, required provenance, and the corresponding `SM` presence or explicit ineligibility result.
+
+Higher-level traceability invariants are:
+
+1. every source unit in the inventory has at least one traceability row, including exact exclusions;
+2. every `ER` is read or written by at least one `UC`, or is explicitly classified as structural/reference-only with a claim-backed reason;
+3. every `IF` is consumed or produced by at least one `UC`, or is exactly excluded/retired;
+4. every `UC` step cites at least one `BR`, entity read/write, interface effect, state transition, or explicit claim-backed no-op;
+5. every `SCHED` and `DR` maps to at least one `UC`, `BR`, or invariant;
+6. every `CFG` maps to a behavioral effect or exact approved exclusion;
+7. every semantic `MOD` has reciprocal links to each applicable `IF`, `ER`, `DEP`, `BR`, `UC`, `CAP`, and `FLT`, while module indexes carry only member links;
+8. every effective-denominator Disabled `SRC`, `CMP`, and `UC` maps to exactly one canonical `CAP`, or is exactly approved excluded; any overlap has an explicit typed relationship and approved `DEC` with one target-decision owner;
+9. every synthesis ID is reachable from a source/claim lineage and from at least one handbook navigation path when confirmed.
 END
 
 ENUM CLASSIFICATION
@@ -77,9 +100,27 @@ NUMBER 12.2
 TITLE "Required reciprocal references"
 
 GOAL
-  Validators enforce the required reciprocal reference pairs, and no dangling,
-  orphan, duplicate-owner, invalid-type, or unapproved tombstone reference is
-  allowed at Exit A or E.
+Validators enforce at least:
+
+- `ER <-> REL`; `ER state field <-> SM` when eligible;
+- `DR caller/firer <-> CMP DB-ROUTINES-FIRED`;
+- `BR authoritative owner <-> MOD`; `BR <-> UC steps`; `BR <-> ER effects`;
+- `MOD <-> IF/ER/DEP/BR/UC/CAP/FLT` where applicable; purely navigational module indexes <-> member MOD IDs only;
+- `UC <-> persona`, `UC <-> IF`, `UC <-> ER/BR/SCHED/DR`;
+- `IF <-> UC` and interface entity mappings;
+- `CFG <-> affected UC/BR/IF/CAP`;
+- `SCHED <-> UC/ER/persona`;
+- `PRV <-> SEC`; `NFR <-> driver`; `FLT <-> UC/IF/SCHED/DEP/BR`;
+- `AUTH <-> persona/IF/enforcement point`; `SHR <-> participating persona pointers`; `CAP <-> canonical member IDs/CFG/DEC`, with exact-one disabled membership and explicit overlap relations;
+- every `COV <->` its unique immutable SRC-version/persona/track/environment/snapshot tuple and evidence; every `CND <->` its helper candidate/action identity and resulting disposition IDs;
+- every `[B-CONFIRMED]` block, `PRF`, and `HBK` `<-> valid CNF` with exact candidate-bound typed ID/version/fingerprint; every exclusion/target choice `<-> DEC`;
+- every persona-prefix row in `0A <->` exactly one `PRF`, and every `PRF <->` that row plus its complete §8.4 dependency closure;
+- every `HBK <->` one normalized handbook path/stable anchor, its upstream synthesis IDs/versions/fingerprints, candidate-manifest entry, and at least one handbook navigation path;
+- `CMP <-> SRC`, claims, persona references, and dependencies;
+- normalized coordinate <-> SRC <-> atomic CMP/edge or exclusion;
+- handbook `HBK` section <-> normalized relative path/stable anchor <-> synthesis IDs and exact versions/fingerprints.
+
+No dangling, orphan, duplicate-owner, invalid-type, or unapproved tombstone reference is allowed at Exit A or E.
 END
 
 RULE required-reciprocal-references
@@ -114,10 +155,7 @@ NUMBER 12.3
 TITLE "Synthesis-ID timing"
 
 GOAL
-  Discovery records may contain Pending-Synthesis-Reference placeholders but
-  never invented IDs; synthesis allocates deterministic IDs and reconciliation
-  replaces placeholders, incrementing semantic versions and invalidating prior
-  envelopes.
+Discovery records MAY contain `Pending-Synthesis-Reference` placeholders, never invented IDs. Partial/Final Synthesis allocates deterministic semantic IDs from canonical keys. Cross-Reference-Reconciliation then replaces placeholders and adds reciprocal references without inventing new legacy facts; because reference bindings are part of semantic payload, it increments the affected semantic version/fingerprint and invalidates prior envelopes. Pending placeholders block confirmation and Exit E, but do not block early forensic discovery.
 END
 
 RULE synthesis-id-allocation-timing
@@ -137,10 +175,15 @@ NUMBER 12.4
 TITLE "Dependency and impact provenance"
 
 GOAL
-  Each synthesis and handbook block maintains DERIVED-FROM edges to exact record
-  versions and fingerprints; upstream changes trigger reverse dependency
-  closure, targeted staleness, logged impact, bounded re-derivation, and
-  preservation of unaffected confirmed blocks.
+Each synthesis/handbook block maintains `DERIVED-FROM` edges to exact record versions and fingerprints. When an upstream source, claim, mapping, decision, or exclusion changes:
+
+1. compute reverse dependency closure;
+2. mark only affected synthesis blocks and handbook sections `[B-STALE]`;
+3. log cause and impact in `0G` and the block;
+4. re-run the relevant bounded synthesis and validation;
+5. preserve unaffected confirmed blocks.
+
+Broad whole-file staleness is allowed only when dependency granularity is unavailable; that limitation is itself reported.
 END
 
 RULE dependency-impact-provenance
@@ -160,16 +203,27 @@ NUMBER 12.5
 TITLE "Deterministic validation summary"
 
 GOAL
-  Every validator run records schema/protocol/check-registry/validator versions;
-  authoritative input file fingerprints and a deterministic input-set fingerprint;
-  checks executed and stable check IDs; for every check and blocker row, the complete
-  sorted evidence-binding tuples and recomputed §4.1.2 evidence-set fingerprint;
-  pass/fail counts and exact offending IDs; coverage arithmetic by
-  kind/track/environment; broken links, invalid diagrams, duplicate IDs,
-  orphan/dangling references, stale blocks, unsupported statuses, and unresolved
-  contradictions; any authorized human review input used by a check, including
-  reviewer identity/authority, review scope, timestamp, exact candidate-bound
-  fingerprints, limitations, and result; and output fingerprint and timestamp.
+Every validator run records:
+
+- schema/protocol/check-registry/validator versions;
+- authoritative input file fingerprints and a deterministic input-set fingerprint;
+- checks executed and stable check IDs;
+- for every check and blocker row, the complete sorted evidence-binding tuples and recomputed §4.1.2 evidence-set fingerprint;
+- pass/fail counts and exact offending IDs;
+- coverage arithmetic by kind/track/environment;
+- broken links, invalid diagrams, duplicate IDs, orphan/dangling references, stale blocks, unsupported statuses, and unresolved contradictions;
+- any authorized human review input used by a check, including reviewer identity/authority, review scope, timestamp, exact candidate-bound fingerprints, limitations, and result;
+- output fingerprint and timestamp.
+
+Evidence bindings are externally observable in the validation summary using this exact table shape, with one or more rows per Check/Blocker ID as required:
+
+```markdown
+- **Evidence Bindings:**
+  | Row Kind | Check / Blocker ID | Normalized Authoritative Input Path | Binding Kind | Typed Record / Artifact ID or None | Version or None | Authoritative Fingerprint |
+  | :------- | :----------------- | :---------------------------------- | :----------- | :--------------------------------- | :-------------- | :------------------------ |
+```
+
+Rows sort by `(Row Kind, Check / Blocker ID, Normalized Authoritative Input Path, Binding Kind, Typed Record / Artifact ID or None, Version or None, Authoritative Fingerprint)`. `Binding Kind` uses the closed §4.1.2 mapping. A changed input invalidates the prior summary. Deterministic values supplied by an executor MUST be independently reproduced. A missing required check, unknown or duplicate Check ID, incomplete evidence-binding set, or mismatch against the applicable §15.1.1 registry makes the summary and dependent gate result invalid.
 END
 
 FIELD EVIDENCE-BINDING

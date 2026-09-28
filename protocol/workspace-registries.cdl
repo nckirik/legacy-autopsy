@@ -3,9 +3,89 @@ NUMBER 3.2
 TITLE "Foundational registries"
 
 GOAL
-  0B owns auth and session; 0C owns privacy and security risk without compliance
-  claims; 0D owns glossary; 0E owns index; 0F owns invariants and global state;
-  0G is the append-only invocation history; 0H is the derived resume accelerator.
+- **`0B-AUTH-MODEL.md`:** authentication mechanisms, token/session lifecycle, role/capability bindings, route/middleware/inline/DB enforcement, termination, and audit references. All POVs may propose buffered facts; Sequential Reconciliation merges them.
+- **`0C-SECURITY-PRIVACY.md`:** sensitive-data evidence and review points for human assessment. It records risks and safeguards without declaring compliance.
+- **`0D-GLOSSARY.md`:** canonical domain terms, aliases, conflicts, and evidence.
+- **`0E-INDEX.md`:** directory-to-POV and source/component/persona cross-reference index.
+- **`0F-GLOBAL-STATE.md`:** architectural invariants, shared runtime state, mutators/readers, lifecycle, and mutation history.
+- **`0G-DECONSTRUCTION-STATE.md`:** chronological append-only invocation log.
+- **`0H-CHECKPOINT-SUMMARY.md`:** derived resume accelerator.
+
+### Shared-entry, authentication, privacy, and capability records
+
+```markdown
+### [SHR-ID] [Shared Entry] <!-- stored in 0A -->
+
+- **Concrete Entry / SRC:** [...]
+- **Participating Personas and Invocation Conditions:** [...]
+- **Coordination Owner:** [...]
+- **Persona Invocation Pointers:** [...]
+- **Environment / Snapshot / Track:** [...]
+- **Material Claims / Version:** [...]
+
+### [AUTH-ID] [Authentication or Session Mechanism] <!-- stored in 0B -->
+
+- **Mechanism / Credential Form:** [...]
+- **Issuer / Validator / Storage:** [...]
+- **Creation, Refresh, Expiry, Revocation, Termination:** [...]
+- **Authorization Bindings / Enforcement Points:** [...]
+- **Personas / Interfaces / Environments:** [...]
+- **Secrets Handling / Audit:** [references only, never values]
+- **Material Claims / Version:** [...]
+
+### [PRV-ID] [Security or Privacy Finding] <!-- stored in 0C -->
+
+- **Data / Threat / Review Category:** [...]
+- **Affected SRC/ER/IF/Persona/Environment:** [...]
+- **Observed Handling / Risk / Unknowns:** [...]
+- **Human Review Required:** [...]
+- **Material Claims / Version:** [...]
+- **Synthesis SEC Mirror:** [SEC-ID or Pending-Synthesis-Reference]
+
+### [CAP-ID] [Capability] <!-- stored in 0F -->
+
+- **RECORD-KIND:** GOVERNED-CAPABILITY-CONTAINER
+- **Canonical Member SRC/CMP/UC/IF/CFG/DR IDs:** [...]
+- **Overlapping CAP Relationships / Decisions:** [typed relation + DEC IDs or None]
+- **Runtime-State Matrix / Mechanism / Last Known State:** [...]
+- **Historical and Intended Personas / Behavior:** [...]
+- **Dependencies / Safety / Risk:** [...]
+- **Observed Claims:** [CLM IDs]
+- **Target Decision State:** Bound | Pending
+- **Target Decision DEC:** [DEC-ID or None]
+- **Version / Supersession:** [...]
+```
+
+A `CAP` is a non-promotable governance container and inherits no child staging, evidence, or coverage. Its own material governance metadata remains claim-backed. Every effective-denominator Disabled `SRC`, `CMP`, and `UC` has exactly one canonical CAP membership unless exactly approved excluded; overlap requires the explicit relationship and decision defined in §2.6.
+
+### `0E` routine cross-reference
+
+```markdown
+### [CMP-ID] [Atomic Record Name]
+
+- **SRC:** [SRC IDs]
+- **Source Coordinate:** [...]
+- **Canonical Extract:** [file -> heading]
+- **Personas:** [...]
+- **Cross-Layer Consumers:** [CMP IDs or None]
+```
+
+### `0F` invariant/state records
+
+```markdown
+### [INV-ID] [Invariant]
+
+- **Constraint:** [...]
+- **Verification Vectors:** [CLM IDs]
+- **Discovered In:** [Invocation ID / POV]
+
+### [STATE-ID] [Shared State]
+
+- **Medium / Shape:** [...]
+- **Initializer / Mutators / Readers:** [CMP IDs]
+- **Lifecycle / Invalidation:** [...]
+- **Claims:** [CLM IDs]
+```
 END
 
 RULE registry-append-only

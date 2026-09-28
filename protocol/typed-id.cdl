@@ -3,9 +3,36 @@ NUMBER 4.1
 TITLE "ID generation"
 
 GOAL
-  Every canonical typed record that participates in identity, reference,
-  traceability, candidacy, or confirmation uses a legal protocol ID generated from
-  its canonical key.
+The system namespace is fixed at preflight. Every canonical typed record that participates in identity, reference, traceability, candidacy, or confirmation MUST use a legal protocol ID. Ticket IDs use §9.1; all other canonical typed record IDs use:
+
+```text
+canonical-key = protocol-id-type + "|" + system-namespace + "|" + normalized-owner-coordinate + "|" + semantic-discriminator
+hash = uppercase(first 12 hexadecimal characters of SHA-256(canonical-key UTF-8))
+id = TYPE + "-" + hash
+```
+
+Packaging artifacts are not typed records and do not receive protocol record IDs. Their normative `HASH-DOMAIN` identity is exactly `artifact-type + "|" + normalized-relative-path`; that identity is included in the artifact payload hash preimage. Only after the payload fingerprint is computed, the artifact instance receives the separate `POST-HASH-ARTIFACT-INSTANCE-BINDING` `artifact-type + "|" + normalized-relative-path + "|" + payload-fingerprint`. The post-hash binding is not part of its own fingerprint preimage and MUST NOT be substituted for the hash-domain identity.
+
+For `SRC`, include kind: `SRC-KIND-HASH`, where `KIND` is one of `FILE`, `SYM`, `ROUTE`, `RPC`, `JOB`, `QUERY`, `TABLE`, `VIEW`, `DR`, `CONSTRAINT`, `GENERATED`, `CFG`, `WORKFLOW`, `NODE`, `EDGE`, `PAGE`, `WIDGET`, `ACTION`, `BINDING`, `QUEUE`, `EVENT`, `STORAGE`, `IFACE`, or `OTHER`. Classification uses the most specific executable/data kind; a unit with several roles has one primary SRC kind and explicit typed relationship records to the others, preventing denominator double-counting. Stable platform IDs take precedence in normalized coordinates. Unicode is preserved exactly; path separators and harmless whitespace are normalized, but identifiers are never transliterated. A proven move or rename retains its original identity canonical key and records the new coordinate as versioned location metadata and an alias; the path is not rehashed.
+
+Required forms:
+
+```regex
+SRC-(FILE|SYM|ROUTE|RPC|JOB|QUERY|TABLE|VIEW|DR|CONSTRAINT|GENERATED|CFG|WORKFLOW|NODE|EDGE|PAGE|WIDGET|ACTION|BINDING|QUEUE|EVENT|STORAGE|IFACE|OTHER)-[A-F0-9]{12,64}
+(CMP|CLM|ER|REL|BR|UC|IF|DEP|CFG|SCHED|NFR|SEC|SM|DR|CAP|PRV|FLT|MOD|PRF|HBK)-[A-F0-9]{12,64}
+(INV|AUTH|STATE|DEC|CON|FRT|SWP|COV|CND|CLU|SHR|DSC|EXP|GAP|CNF)-[A-F0-9]{12,64}
+(ALFA|BRAVO|CHARLIE|DELTA|ECHO|FOXTROT|GOLF|HOTEL|INDIA|JULIETT|KILO|LIMA|MIKE|NOVEMBER|OSCAR|PAPA|QUEBEC|ROMEO|SIERRA|TANGO|UNIFORM|VICTOR|WHISKEY|X-RAY|YANKEE|ZULU)-[A-Z][A-Z0-9]{1,7}-(01|02|03|04|05)-[0-9]{3,6}
+```
+
+The auxiliary types are `INV` (invariant), `AUTH`, `STATE`, `DEC` (decision), `CON` (contradiction), `FRT` (frontier), `SWP` (sweep), `COV` (scope-specific source coverage row), `CND` (acquisition candidate or operator action), `CLU` (cluster), `SHR` (shared entry), `DSC` (discovery), `EXP` (export), `GAP` (synthesis gap), and `CNF` (human confirmation). `MOD` identifies an atomic semantic architecture module or bounded context. `PRF` identifies one persona profile; its normalized owner coordinate is the globally unique persona prefix, and its semantic discriminator is the fixed literal `persona-profile`, so its canonical key is determined only by protocol type, system namespace, and persona prefix. `HBK` identifies one semantic handbook section. Its normalized owner coordinate is the normalized handbook-relative path plus `#` plus its explicitly assigned stable section anchor, and its semantic discriminator is the fixed literal `handbook-section`, so its canonical key is determined only by protocol type, system namespace, normalized path, and stable anchor. The heading text is not an identity source. A heading/title edit does not alter the HBK ID when the assigned anchor and semantic identity remain unchanged. A proven move retains its HBK identity under the rename rule and records the prior coordinate as an alias; a semantic split creates new HBK IDs and tombstones or supersedes the old record. `CAP` identifies a governed capability container, `PRV` an atomic security/privacy finding in `0C`, and `FLT` a fault/resilience record. Schema placeholders such as `[FRONTIER-ID]`, `[COVERAGE-ROW-ID]`, `[CANDIDATE/ACTION-ID]`, `[MODULE-ID]`, `[DECISION-ID]`, or `[EXPORT-ID]` resolve to these forms. `COV` owner coordinates are the immutable SRC-version/persona/track/environment/snapshot tuple; `CND` owner coordinates are the helper-published candidate or operator-action stable identity. A semantic catalog without a physical owner coordinate uses a stable domain path plus normalized semantic title as its owner coordinate; its discriminator includes record type and authoritative domain owner.
+
+A **normalized relative path** is relative to the applicable workspace root or package root, serialized with POSIX `/`, has no leading `./`, removes repeated separators and `.` path segments, and rejects every `..` segment. Path case and Unicode code points are preserved exactly; implicit Unicode normalization, transliteration, and case folding are forbidden. The root used for normalization MUST be declared by the enclosing schema or package operation and remain fixed for the artifact or record set.
+
+An HBK **stable section anchor** is an explicitly assigned opaque ASCII lowercase token matching `[a-z0-9]+(?:-[a-z0-9]+)*`. It is never renderer-generated or inferred from heading text. For every HBK, the sole normalization root is the literal `.extracted/handbook/` directory declared in §1.4; `HANDBOOK-RELATIVE-PATH` omits that root (for example `START-HERE.md`), and package-relative encodings such as `handbook/START-HERE.md` or `.extracted/handbook/START-HERE.md` are invalid identity coordinates. The exact HBK coordinate is `normalized-handbook-relative-path + "#" + stable-section-anchor`. Punctuation, uppercase characters, non-ASCII characters, empty segments, leading/trailing hyphens, and repeated hyphens are invalid anchors.
+
+A collision MUST be resolved by extending both colliding hashes to 16, then 20, up to 64 characters; existing shorter IDs receive aliases and controlled supersession, never silent mutation.
+
+The ID registry in `20-TRACEABILITY.md` MUST verify global uniqueness, type correctness, canonical-key uniqueness, ticket-tuple uniqueness, coverage-tuple uniqueness, candidate/action identity uniqueness, PRF-per-persona-prefix uniqueness, HBK path-and-anchor uniqueness, and tombstone reservation. It MUST also verify reciprocal `PRF <-> 0A persona row`, `HBK <-> handbook path/anchor and upstream synthesis records`, and exact candidate/CNF bindings to PRF/HBK IDs. IDs are stable across movement when semantic identity and stable platform identity remain unchanged. A semantic split creates new IDs and tombstones/supersedes the old record.
 END
 
 ENUM ID-PREFIX

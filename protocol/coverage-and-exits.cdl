@@ -3,9 +3,25 @@ NUMBER 10.1
 TITLE "Evidence-backed `[R-SWEPT]`"
 
 GOAL
-  A sweep record carries SWEEP-ID. A required traversal-matrix cell may be R-SWEPT
-  only with a sweep record; every required cell has its own sweep, and claim-backed
-  Not-Applicable cells have no sweep and remain visible in the denominator.
+A required traversal-matrix cell may be `[R-SWEPT]` only with a sweep record. Every required cell has its own sweep; claim-backed `Not-Applicable` cells have no sweep and remain visible in the denominator.
+
+```markdown
+### [SWEEP-ID] [Cluster / Track]
+
+- **Snapshot / Environment:** [...]
+- **Persona / Cluster / POV / Track:** [...]
+- **Expanded Concrete Entry Coordinates:** [complete list; no wildcard-only closure]
+- **Source Denominator:** [SRC IDs or inventory query + frozen result fingerprint]
+- **Expected / Mapped / Excluded Counts by Kind:** [...]
+- **Open / Terminal Frontier Counts:** [...]
+- **Active / Terminal Ticket Counts:** [...]
+- **Export Reconciliation:** [mapped/excluded/total and report fingerprint]
+- **Coverage Result:** [...]
+- **Closing Invocation:** [...]
+- **Evidence Claims:** [CLM IDs proving enumeration and closure]
+```
+
+`R-SWEPT` is invalid if expected counts cannot be reproduced, any discovered boundary lacks exactly one `FRT`, any frontier is open, any normalized unit is unreconciled, any material contradiction is open, or a wildcard is the only denominator. Terminal-at-discovery frontiers are included in terminal counts and disposition evidence; omission is not an optimization.
 END
 
 ENUM TRAVERSAL-CELL-STATE
@@ -47,8 +63,24 @@ NUMBER 10.2
 TITLE "Per-kind coverage arithmetic"
 
 GOAL
-  Coverage is computed separately for every applicable kind, track, snapshot, and
-  environment, then aggregated; a global percentage MUST NOT hide a failed subgroup.
+For each kind `k` and each environment/snapshot/track scope:
+
+```text
+Gk = count(scope-specific rows in 16-SOURCE-COVERAGE where SRC kind=k and Scope in {In-Scope, Candidate, Approved-Excluded})
+Xk = count(rows in Gk where Scope=Approved-Excluded and C Status=C-EXCLUDED with an approved exact DEC)
+EffectiveDenominatork = Gk - Xk
+Coveredk = count(rows in EffectiveDenominatork where C Status=C-COVERED)
+Partialk = count(rows in EffectiveDenominatork where C Status=C-PARTIAL)
+Gapk = count(rows in EffectiveDenominatork where C Status=C-GAP or Disposition in {Unmapped, Human-Blocked})
+Candidatek = count(rows in EffectiveDenominatork where Scope=Candidate)
+
+Valid partition: EffectiveDenominatork = Coveredk + Partialk + Gapk
+Closed for kind k: Candidatek = 0 and Partialk = 0 and Gapk = 0 and Coveredk = EffectiveDenominatork
+```
+
+An excluded unit remains in the gross discovered population `Gk` and exclusion/risk reporting but is removed exactly once from the effective denominator. Candidate units cannot disappear; they must become In-Scope or Approved-Excluded. Coverage is computed separately for every applicable kind, track, snapshot, and environment, then aggregated. A global percentage MUST NOT hide a failed subgroup.
+
+`[C-COVERED]` for an effective-denominator unit requires: a terminal in-scope source disposition; atomic mapping; material CLMs; no unresolved contradiction; required reciprocal references; terminal frontier; applicable export reconciliation; no active ticket affecting the unit; and, for a Disabled SRC/CMP/UC, exactly one canonical CAP membership with any overlap explicitly decided. An approved exclusion yields `[C-EXCLUDED]`, not `[C-COVERED]`, and is governed by the subtraction above.
 END
 
 ENUM SCOPE-CLASS
@@ -95,7 +127,22 @@ NUMBER 10.3
 TITLE "Composite Exit A — Deconstruction Closure"
 
 GOAL
-  Exit A succeeds only when all declared conditions hold for the pinned scope.
+Exit A succeeds only when all conditions hold for the pinned scope:
+
+1. **Ticket closure:** zero `[T-OPEN]`, `[T-PENDING]`, `[T-FOLLOW-UP]`, or `[T-PROBE-REQUIRED]` entries.
+2. **Acquisition closure:** every in-scope artifact is `[A-STRUCTURALLY-COMPLETE]`; requested or blocked references are resolved or exactly approved excluded.
+3. **Registry closure:** no `[R-PENDING-HUMAN-REVIEW]`, `[R-PENDING-PERSONA-ASSIGNMENT]`, `[R-DEPROMOTION-PENDING]`, required `[R-UNSWEPT]`, or required `[R-IN-PROGRESS]` cell remains; every required traversal-matrix cell is `[R-SWEPT]` and every `Not-Applicable` cell is claim-backed.
+4. **Source disposition:** every in-scope concrete source unit is terminally disposed and no Candidate remains.
+5. **Frontier closure:** every traversal frontier is terminal.
+6. **Export reconciliation:** every normalized logical unit is atomically mapped or approved excluded.
+7. **Sweep validity:** every required traversal-matrix cell has a valid evidence-backed `[R-SWEPT]` record. Applicable POVs are exactly rows whose `Applicability` is `Required`; independent evaluation means each such row has its own valid sweep and MUST NOT inherit another row's result.
+8. **Atomic coverage:** all effective denominator units are `[C-COVERED]`; no `[C-PARTIAL]` or `[C-GAP]` remains for Exit A scope.
+9. **Forensic referential integrity:** ID uniqueness, existing forensic/assurance reciprocal links, no invalid tombstone references, no orphan claims, no dangling source/component/persona/entry references, and canonical ownership all validate. `Pending-Synthesis-Reference` placeholders are permitted until synthesis and do not count as dangling at Exit A.
+10. **Contradiction closure:** no open material contradiction remains.
+11. **Disabled equality and capability governance:** all in-scope disabled/shadow/conditional units meet the same static atomic closure rules; every effective-denominator Disabled `SRC`, `CMP`, and `UC` maps to exactly one canonical `CAP`, and every multiple/conflicting membership has the explicit relationship and approved decision required by §2.6.
+12. **Human-required effect:** every `[T-HUMAN-REQUIRED]` is paired with either an exact approved exclusion or a scope that does not claim closure. It never silently counts as covered.
+
+Exit A writes a deterministic report to `22-GATE-REPORTS.md` containing pass/fail per condition, counts by kind/track/environment, input fingerprints, validator version, and pinned snapshot.
 END
 
 ENUM EXIT-A-CONDITION
@@ -140,8 +187,7 @@ NUMBER 10.4
 TITLE "Exit B — Stagnation"
 
 GOAL
-  If a complete named iteration has zero valid mutations the pipeline halts as
-  stagnant and reports remaining state; cosmetic edits do not count.
+If a complete named iteration has zero valid mutations—no new atomic source/component/claim/frontier records, no ticket transition, no acquisition/reconciliation update, and no justified coverage change—the pipeline halts as stagnant and reports remaining state. Cosmetic edits do not count.
 END
 
 RULE exit-b-stagnation
@@ -157,9 +203,7 @@ NUMBER 10.5
 TITLE "Exit C — Oscillation"
 
 GOAL
-  If an actor-transition sequence of length 1 to 4 repeats for two consecutive
-  completed cycles in one ticket trace, run one neutral Arbitration invocation,
-  normally POV-5.
+If an actor-transition sequence of length 1–4 repeats for two consecutive completed cycles in one ticket trace, run one neutral Arbitration invocation, normally POV-5. If it fails to break the cycle, freeze the ticket and escalate through Human Hatch.
 END
 
 RULE exit-c-oscillation
@@ -174,8 +218,9 @@ NUMBER 10.6
 TITLE "Exit D — Limit exhaustion and deterministic iteration accounting"
 
 GOAL
-  The 26 canonical iteration tokens are a total per-system budget across the complete
-  protocol run; the budget never resets, and the system MUST NOT proceed beyond ZULU.
+Named iterations use exactly these canonical tokens wherever stored, compared, or consumed by an ID or state machine: `ALFA`, `BRAVO`, `CHARLIE`, `DELTA`, `ECHO`, `FOXTROT`, `GOLF`, `HOTEL`, `INDIA`, `JULIETT`, `KILO`, `LIMA`, `MIKE`, `NOVEMBER`, `OSCAR`, `PAPA`, `QUEBEC`, `ROMEO`, `SIERRA`, `TANGO`, `UNIFORM`, `VICTOR`, `WHISKEY`, `X-RAY`, `YANKEE`, `ZULU`. These 26 tokens are a total per-system budget across the complete protocol run, including every deconstruction pass reopened by synthesis gaps; the budget never resets after Exit A, synthesis, confirmation failure, or re-entry. Human-facing typography such as “X-ray” is display-only and MUST be normalized to `X-RAY` before persistence or comparison; it is not an accepted stored alias.
+
+A named iteration begins with its first logged invocation and completes only when all invocations admitted to that iteration have terminal invocation log entries, all persona-local shared-staging, question, unmapped-discovery, and synthesis-gap buffers produced in it have been reconciled, and the iteration checkpoint records mutation count, remaining tickets/frontiers/candidates, and the next action. Parallel invocations share the same current token and do not consume extra tokens. A synthesis `GAP` discovered while an iteration is open is reconciled within that iteration when possible; if that iteration is already complete, reopening consumes the next unused token. Re-running synthesis after closure continues under the current open token or next unused token and MUST NOT return to `ALFA` or reuse a completed token. The system MUST NOT proceed beyond `ZULU`. Unclosed work at completion of `ZULU` halts and requires human intervention.
 END
 
 RULE iteration-accounting

@@ -3,8 +3,37 @@ NUMBER 5.2
 TITLE "Claim-level evidence — `12-CLAIM-EVIDENCE.md`"
 
 GOAL
-  Every claim record binds its subject, field or step, evidence level, anchor, and
-  lineage so that materiality and projection classification are explicit.
+Each claim MUST contain exactly one fact and exactly one evidence level. Mixed evidence in one claim is forbidden; split it into multiple claims.
+
+```markdown
+### [CLM-ID]
+
+- **Subject ID / Record Version:** [SRC/CMP/ER/etc.]
+- **Field / Step:** [exact field name, table cell, UC step, or handbook assertion]
+- **Claim:** [one falsifiable statement]
+- **Materiality:** Material | Supporting
+- **Evidence Level:** [E-DIRECT] | [E-RUNTIME-OBSERVED] | [E-CROSS-VALIDATED] | [E-INFERRED] | [E-UNKNOWN]
+- **Anchor:** [physical path:line, virtual coordinate, probe log range, catalog query result, or approved projection pointer]
+- **Source Fingerprint / Snapshot:** [...]
+- **Evidence Route / Lineage ID:** [independent acquisition/static/runtime route]
+- **Projection Classification:** raw-visible | preserved | normalized-no-semantic-change | aliased | redacted | removed | unclassified
+- **Independent Supporting Claims:** [CLM IDs or None]
+- **Independence Basis:** [different raw lineage, different runtime observation, different physical enforcement, or None]
+- **Contradiction IDs:** [CONTRADICTION IDs or None]
+- **Created / Last Revalidated By:** [Invocation IDs]
+```
+
+### Block evidence summary
+
+Every atomic forensic or synthesis block lists its material claims and carries both fields below:
+
+```markdown
+- **BLOCK-CONFIDENCE-RANK:** None | Low | Medium | High
+- **BLOCK-EVIDENCE-PROFILE:**
+  | Evidence Level | Count | Claim IDs | Route/Lineage IDs |
+```
+
+`BLOCK-CONFIDENCE-RANK` is the minimum material-claim rank under this total mapping: `[E-UNKNOWN] -> None`, `[E-INFERRED] -> Low`, `[E-CROSS-VALIDATED] -> Medium`, and both `[E-DIRECT]` and `[E-RUNTIME-OBSERVED] -> High`. The profile MUST retain separate rows, counts, claim IDs, and route/lineage IDs for all five evidence levels; direct and runtime-observed evidence MUST NOT be collapsed into an invented evidence tag. `[E-CROSS-VALIDATED]` requires at least two supporting claims whose route/lineage IDs are independent. Claims sharing a raw fingerprint or projection lineage, duplicated from the same runtime trace, or derived from one another are not independent even when written by different POVs. A block with no material claims is invalid. Purely navigational grouping containers have neither field.
 END
 
 FIELD CLAIM
@@ -33,8 +62,11 @@ NUMBER 5.3
 TITLE "Sanitized projections and helper limitations"
 
 GOAL
-  A sanitized export produced by an approved local helper is an agent-visible
-  evidence projection.
+A sanitized export produced by an approved local helper is an agent-visible evidence projection. It MUST include raw-source fingerprint lineage and a sanitization report classifying preserved, normalized, aliased, redacted, removed, and unclassified content.
+
+`[E-DIRECT]` is permitted only for preserved or semantics-preservingly normalized behavior. Aliases prove reference existence, not secret value, connectivity, authorization, or runtime validity. Behavior dependent on redacted, removed, or unclassified content remains `[E-INFERRED]` or `[E-UNKNOWN]` and creates a ticket when material.
+
+Entity-correlation output is a candidate-discovery aid only. It MUST NOT become evidence, a call edge, ownership proof, or automatic inclusion without a direct structural signal or explicit human scope decision. Private matching hints and private entity-usage indexes MUST NOT enter agent-visible inventory.
 END
 
 RULE sanitized-projections-rules
@@ -58,7 +90,20 @@ NUMBER 5.4
 TITLE "Contradictions — `14-CONTRADICTIONS.md`"
 
 GOAL
-  Every contradiction record names the conflicting claims, scope, and stale impact.
+Conflicting material claims MUST NOT be silently resolved by selecting one. Record:
+
+```markdown
+### [CONTRADICTION-ID]
+
+- **Claims in Conflict:** [CLM IDs]
+- **Scope / Environments / Snapshots:** [...]
+- **Conflict Description:** [...]
+- **Resolution State:** Open | Explained-By-Scope | Resolved-By-Evidence | Decision-Required | Superseded
+- **Resolution / Decision ID:** [...]
+- **Affected Records and Stale Impact:** [...]
+```
+
+An open material contradiction blocks applicable coverage, Exit A, and confirmation.
 END
 
 FIELD CONTRADICTION
@@ -75,8 +120,31 @@ NUMBER 5.5
 TITLE "Authoritative decisions — `15-DECISIONS.md`"
 
 GOAL
-  Every decision record carries its content version and fingerprint, exact scope and
-  denominator effect, approval status, and approval envelope bindings.
+`15-DECISIONS.md` exists from Preflight onward and is the source of truth for scope exclusions, contradiction resolutions, disabled-capability choices, migration choices, and reconstruction decisions. `Human Hatch: Decision/Scope Approval` may append decision content or attach approval envelopes; Reconstruction-Handoff projects approved records into the handbook but does not create a second semantic log.
+
+```markdown
+### [DEC-ID] [Decision]
+
+- **DECISION-CONTENT-VERSION:** [positive integer]
+- **DECISION-CONTENT-FINGERPRINT:** [sha256 of canonical decision content under §4.1.2; this carrier field excluded]
+- **Type:** scope | contradiction | target | migration | capability
+- **Observed Inputs:** [SRC/CLM/ticket/contradiction IDs and fingerprints]
+- **Options / Decision / Rationale / Risks:** [...]
+- **Exact Scope and Denominator Effect:** [...]
+- **Affected Records / Rollout / Rollback:** [...]
+- **Content Supersession:** [...]
+
+<!-- DECISION-APPROVAL-ENVELOPE: excluded from decision-content version/fingerprint -->
+
+- **Approval Status:** Proposed | Approved | Superseded
+- **Approval Envelope Version:** [positive integer]
+- **Owner / Approver / Authority Basis / Approval Timestamp:** [...]
+- **Approved Content Binding:** [DEC-ID + exact decision-content version/fingerprint]
+- **Approval Signature / Audit:** [...]
+<!-- END-DECISION-APPROVAL-ENVELOPE -->
+```
+
+The candidate payload manifest binds immutable decision-content versions/fingerprints. Each `DEC` is canonicalized as an individual heading-delimited record under §4.1.2 and excludes exactly its fingerprint carrier and the literal decision-approval envelope shown above. Changing options, decision, rationale, risks, scope effect, rollout, rollback, or observed inputs increments the decision-content version and changes its fingerprint. Human approval after candidacy attaches only the approval envelope and does not change decision content or its fingerprint; approving content other than the candidate binding is invalid. Every decision reference includes the content version/fingerprint and, when approval is required, the matching approval-envelope status.
 END
 
 FIELD DECISION
@@ -100,9 +168,15 @@ NUMBER 5.6
 TITLE "Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md`"
 
 GOAL
-  Every helper-published candidate and operator action receives a row in
-  17-ACQUISITION-CANDIDATES.md and a deterministic CND ID whose canonical key binds
-  the stable candidate or action identity, helper policy version, and pinned snapshot.
+Every helper-published candidate and operator action receives a row:
+
+```markdown
+| CND ID | Relationship Class | Sanitized Signals | Dynamic Reference | Decision | Operator/Date | Resulting EXP/SRC/DSC/DEC IDs | State |
+```
+
+Each helper-published candidate or operator action receives a deterministic `CND` ID; its canonical key binds the stable candidate/action identity, helper policy version, and pinned snapshot. Duplicate candidate/action identities or reused CND IDs are invalid.
+
+States are `Included`, `Rejected-With-Operator-Decision`, `Approved-Excluded`, or `Pending`. The helper manifest MUST attest that all accessible workflow metadata was scanned for the pinned snapshot, all direct structural matches were included, all high-confidence entity-only matches were human-reviewed, and all configured medium-confidence candidates received an operator decision; scoring thresholds and policy versions are recorded. Lower-confidence omissions follow the configured, approved scope policy. Helper publication completeness means safe approved outputs were produced; protocol `[A-STRUCTURALLY-COMPLETE]` additionally requires every candidate/operator action/dynamic reference row terminal. Correlation remains discovery/scope input only, never behavioral evidence or an automatic edge.
 END
 
 RULE candidate-reconciliation
@@ -127,8 +201,28 @@ NUMBER 5.7
 TITLE "Human confirmations — `18-CONFIRMATIONS.md`"
 
 GOAL
-  A CNF record confirms exact typed record IDs, semantic versions, and fingerprints
-  against a pinned closed snapshot, never mutable whole-file bytes.
+```markdown
+### [CNF-ID] [Confirmation]
+
+- **Human Hatch Action:** Confirmation
+- **Approver / Role / Authority Basis:** [...]
+- **Review Timestamp / Review Scope / Limitations:** [...]
+- **Handbook Readability Review:** Pass | Fail | Not-Applicable
+- **Confirmed Record Bindings:**
+  | Typed Record ID (including PRF/HBK) | SEMANTIC-RECORD-VERSION | SEMANTIC-CONTENT-FINGERPRINT | Candidate Manifest Entry |
+- **Pinned Exit A / Exit E Candidate Report / Candidate Payload Manifest Fingerprints:** [...]
+- **Required DEC Content Versions / Fingerprints and Approval Envelopes Reviewed:** [...]
+- **Invalidated By:** semantic change | dependency change | decision supersession | None
+
+<!-- CNF-DIGEST-SIGNATURE-ENVELOPE: excluded from CNF payload hash -->
+
+- **CNF Signature Envelope Version:** [positive integer]
+- **CNF Payload Fingerprint:** [sha256 of the CNF payload under §4.1.2; this carrier field excluded]
+- **Signature or Approval Reference / Signature Timestamp:** [...]
+<!-- END-CNF-DIGEST-SIGNATURE-ENVELOPE -->
+```
+
+A B-confirmed synthesis block, `PRF` profile, or `HBK` handbook section MUST reference a valid `CNF` whose binding matches its exact typed record ID, semantic record version, and semantic-content fingerprint as listed in the candidate manifest. Confirmation validation MUST load and validate the same direct-and-transitive dependency closure required for Profile Synchronization in §8.4 when the confirmed record is a PRF, and the corresponding complete `DERIVED-FROM` closure for synthesis/HBK records. Confirmation metadata is an envelope attachment and MUST NOT alter the confirmed semantic payload/version/fingerprint. Dependency or semantic change invalidates the confirmation through targeted stale propagation; status-only and confirmation-envelope changes do not. Each `CNF` is canonicalized as an individual heading-delimited record under §4.1.2. Its payload fingerprint excludes exactly the literal CNF digest/signature envelope shown above and its own fingerprint carrier; review identity, authority, scope, limitations, typed record bindings, and review timestamp remain hashed.
 END
 
 FIELD CONFIRMATION

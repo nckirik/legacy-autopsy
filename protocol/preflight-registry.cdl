@@ -3,9 +3,81 @@ NUMBER 3.1
 TITLE "`0A-PREFLIGHT.md`"
 
 GOAL
-  Maintain metadata and boundaries, the persona registry, concrete and DB-autonomous
-  clusters, every persona-by-entry-by-track-by-environment-by-snapshot-by-POV cell,
-  claim-backed applicability, the unmapped queue, and the acquisition register.
+```markdown
+# 0A-PREFLIGHT: System Inventory and Discovery Registry
+
+## 1. Metadata and Boundaries
+
+- **System Namespace:** [stable slug]
+- **Target Repository / Evidence Roots:** [...]
+- **Primary Technology Stack:** [...]
+- **Protocol Version:** 4.1
+- **Current Iteration:** [one canonical token from §10.6: ALFA ... ZULU]
+- **Default Max Traversal Depth:** 3
+- **Included Environments / Snapshots:** [...]
+- **Explicit Scope Policy:** [...]
+- **Protocol-Migration Metadata:** None | [v3.17 migration state]
+
+## 2. Persona Registry
+
+| Persona | Prefix | Persona Slug | Persona Directory | Actor Class | Canonical Entry IDs | Scope Paths | Registry State |
+
+## 3. Entry-Point Clusters
+
+### [CLUSTER-ID] [Title]
+
+- **Concrete Entry Coordinates:** [no unexpanded wildcard at closure]
+- **Canonical Owner Persona:** [name/prefix or SHARED-ENTRY-ID]
+- **Primary POV:** POV-1 | POV-2 | POV-3 | POV-4 | POV-5
+- **Traversal Track:** Normal | Shadow/Conditional | Disabled
+- **Capability State:** Active | Conditional | Shadow | Disabled | Retired | Unknown
+- **Environment/Snapshot:** [...]
+- **Source IDs:** [SRC IDs]
+- **Max Depth:** [integer]
+- **Traversal Status:** [R-ACTIVE] | [R-UNSWEPT] | [R-IN-PROGRESS] | [R-SWEPT] | [R-PENDING-HUMAN-REVIEW] | [R-PENDING-PERSONA-ASSIGNMENT] | [R-DEPROMOTION-PENDING]
+- **Required Traversal Matrix:**
+  | Persona/Owner | Concrete Entry | Track | Environment | Snapshot | POV | Applicability | Status | SWP ID | Claims |
+  | ... | ... | ... | ... | ... | POV-1 | Required or Not-Applicable | [R-UNSWEPT]/[R-IN-PROGRESS]/[R-SWEPT] or N/A | ... | ... |
+
+Every persona × concrete entry × track × environment × snapshot × POV cell MUST exist. `Not-Applicable` requires a claim-backed reason. `Primary POV` selects the first routing pass but never reduces this closure denominator.
+
+### Database-Side Autonomous Clusters
+
+[Same schema; DBR ownership rule applies.]
+
+## 4. Unmapped Discovery Queue
+
+### [DISCOVERY-ID]
+
+- **Coordinate / SRC:** [...]
+- **Discovered By Invocation:** [...]
+- **Suggested POV / Persona:** [...]
+- **Traversal Status:** [R-PENDING-PERSONA-ASSIGNMENT] | [R-PENDING-HUMAN-REVIEW]
+
+## 5. Serialized Export Acquisition Register
+
+[Section 7.2 schema]
+```
+
+Agents MAY append acquisition reference placeholders directly where Acquisition permits. Bound Discovery invocations MUST NOT write the global Unmapped Discovery Queue; they append the persona-local buffer defined below. Only Preflight/Profile Synchronization may assign personas or alter boundaries. Sequential Reconciliation is the sole merger of persona-local unmapped discoveries into `0A`.
+
+### Persona-local unmapped discovery buffer
+
+Each `personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md` entry has this schema:
+
+```markdown
+### [DSC-ID]
+
+- **Concrete Coordinate / Proposed SRC / Fingerprint:** [...]
+- **Discovering Invocation / Persona / Cluster / Track / POV:** [...]
+- **Discovery Method / Boundary FRT:** [...]
+- **Suggested Persona / Cluster / Track / POV:** [...]
+- **Reason Unmapped / Materiality:** [...]
+- **DEDUP-KEY:** [sha256(system namespace | normalized coordinate | snapshot | environment | track)]
+- **State:** Pending-Merge | Merged | Superseded
+```
+
+A bound Discovery invocation MUST append this record in the same transaction that records the discovery and its `FRT`; delayed or conversational-only discovery is forbidden. Sequential Reconciliation sorts pending entries by `DEDUP-KEY`, then `DSC-ID`, merges equal keys into one canonical `0A` queue item while preserving all origin invocations and evidence, records contradictions for incompatible proposals, marks source entries consumed, and completes before any later Discovery invocation begins. A later Discovery invocation MUST reject a checkpoint showing unmerged pending entries. Acquisition MAY continue to create its allowed direct placeholders and global discoveries because Acquisition owns the applicable register sections.
 END
 
 RULE preflight-boundaries

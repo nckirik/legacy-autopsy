@@ -3,17 +3,19 @@ NUMBER 0.1
 TITLE "Normative language"
 
 GOAL
-  This protocol is implementation-independent. A conforming implementation MAY use any
-  programming language, runtime architecture, storage engine, agent framework, model
-  provider, user interface, or execution tooling, including ordinary local scripts
-  created by a capable coding harness, provided it preserves every normative behavior,
-  deterministic algorithm, authority boundary, artifact, state transition, and
-  conformance condition defined here. No reference implementation, product, service,
-  CLI, UI, or agent harness is normative or required. The protocol-defined .extracted/
-  layout is interoperable protocol state, not an implementation source-tree requirement.
-  In this document, conforming runtime means the implementation-neutral deterministic
-  authority role defined here; it need not be a long-lived service or separate
-  installed tool.
+The key words **MUST**, **MUST NOT**, **REQUIRED**, **SHOULD**, **SHOULD NOT**, and **MAY** are normative. MUST and MUST NOT are absolute protocol requirements. SHOULD and SHOULD NOT require a recorded reason when not followed. MAY is optional.
+
+This protocol is implementation-independent. A conforming implementation MAY use any programming language, runtime architecture, storage engine, agent framework, model provider, user interface, or execution tooling, including ordinary local scripts created by a capable coding harness, provided it preserves every normative behavior, deterministic algorithm, authority boundary, artifact, state transition, and conformance condition defined here. No reference implementation, product, service, CLI, UI, or agent harness is normative or required. The protocol-defined `.extracted/` layout is interoperable protocol state, not an implementation source-tree requirement. In this document, **conforming runtime** means the implementation-neutral deterministic authority role defined below; it need not be a long-lived service or separate installed tool.
+
+A **source unit** is one concrete, independently inventoryable unit in or affecting the system: a file, symbol, route, query, job, table, view, database routine, constraint, configuration key, workflow, node, edge, page, widget, action, binding, or equivalent. A **component** is one independently evidenced behavioral or structural record extracted from one source unit or from a precisely bounded portion of one source unit. A **material claim** is a fact whose falsity would alter behavior, scope, safety, compatibility, architecture, data semantics, or a reconstruction decision.
+
+Protocol work has three authority classes:
+
+1. **Executor-owned semantic work:** source traversal, behavior and business-rule interpretation, semantic classification, ambiguity recognition, claim formulation, and reconstruction prose. An executor MAY be a coding harness, model, remote worker, or human, but every semantic classification that affects scope, closure, mutation, or a gate MUST record its actor, invocation or human authority, reason, evidence/claim bindings, and pinned snapshot.
+2. **Conforming-runtime deterministic work:** identity, path normalization, structural parsing, canonicalization, ordering, fingerprints, scope and stale-input checks, finite-state transitions, coverage arithmetic, completeness, gates, package integrity, and other protocol-defined mechanical results. A conforming runtime MUST compute these values or independently reproduce them from authoritative inputs before commit. Executor-supplied deterministic values are proposals only and MUST NOT be accepted as authoritative unless deterministic validation reproduces them exactly.
+3. **Human-authorized decisions:** explicit exclusions, confirmations, policy or business intent, irreducible domain meaning, and acceptance of external facts only where this protocol permits it. A model inference or runtime computation MUST NOT substitute for the required human identity, authority basis, review scope, and exact input bindings.
+
+Every normative predicate that affects conformance, mutation authorization, coverage, candidacy, or a gate MUST be one of: a **deterministic predicate** computed by the conforming runtime; a **semantic predicate** classified by an executor or authorized human with the provenance above; or an **unresolved semantic predicate** recorded as `Unknown` with its affected scope and required ticket/question. Unless a section defines a stricter result, `Unknown` is fail-inclusive: the item remains applicable/in scope for closure, cannot justify omission or `Not-Applicable`, and blocks any success that depends on the predicate being false. Natural-language guidance that does not affect those outcomes need not create a protocol record.
 END
 
 ENUM NORMATIVE-KEYWORD
@@ -99,13 +101,18 @@ NUMBER 0.2
 TITLE "Guarantees"
 
 GOAL
-  When followed completely, the protocol guarantees identity and terminal
-  disposition for every in-scope source unit, denominator-backed traversal
-  closure, one evidence-bound claim per material fact, distinct capability
-  states across environments and snapshots, logical-unit export acquisition
-  without raw secrets, persona and POV isolation, finite-state ambiguity
-  resolution, derivation-proven synthesis with targeted staleness, a navigable
-  handbook, and sole-input reconstruction only under a signed outer manifest.
+When followed completely, this protocol guarantees that:
+
+1. every in-scope concrete source unit has a stable identity and a terminal disposition;
+2. traversal closure is proven from an explicit source denominator and frontier, not inferred from ticket silence;
+3. every material fact is represented by one claim with an evidence level, coordinate, and snapshot fingerprint;
+4. active, conditional, shadow, disabled, retired, and unknown capabilities remain distinct across environments and snapshots;
+5. serialized exports are acquired, exploded, reconciled, and traced at logical-unit level without exposing raw secrets;
+6. personas and POVs retain strict ownership and isolation during discovery;
+7. cross-layer ambiguity is resolved through a finite-state ticket lifecycle, runtime probes, or an explicit human hatch—never by guessing;
+8. synthesis artifacts are structured semantic projections of closed forensic and assurance records, with derivation provenance and targeted stale propagation;
+9. a separate human reconstruction handbook is navigable without using dense identifier catalogs as its primary interface;
+10. reconstruction may treat the delivered bundle as its sole input only after the signed outer bundle manifest authoritatively attests `EXIT-E-STATUS: Passed` under the strict non-cyclic Exit E sequence.
 END
 
 RULE protocol-guarantees
@@ -134,11 +141,17 @@ NUMBER 0.3
 TITLE "Non-guarantees"
 
 GOAL
-  The protocol does not determine compliance, prove repository state equals
-  production state, make low-evidence facts true by repetition, convert
-  correlation to causation, decide modernization without accountable human
-  approval, authorize production execution or dormant enablement, or make
-  sidecars authoritative.
+The protocol does not:
+
+- determine legal, privacy, security, or regulatory compliance;
+- prove that unavailable production state equals repository state;
+- make low-evidence facts true by repeating them in synthesis;
+- convert correlation into causation;
+- decide modernization architecture without accountable human approval;
+- authorize execution against production, enable dormant production features, or move production data;
+- make generated machine sidecars or helper output authoritative semantic truth.
+
+All outputs remain a draft until the applicable human confirmation gates pass. Human architects and domain owners remain responsible for modernization decisions and final validation.
 END
 
 RULE protocol-non-guarantees
@@ -160,10 +173,24 @@ NUMBER 0.4
 TITLE "Conceptual flow"
 
 GOAL
-  The conceptual flow runs from scope and snapshots through inventory,
-  acquisition, isolated traversal, forensic records, reconciliation, Exit A,
-  synthesis, handbook, Exit E candidacy and confirmation, content readiness,
-  certificate, and the signed outer bundle manifest.
+```text
+Scope and snapshots
+  -> source inventory and persona/cluster ownership
+  -> acquisition and logical explosion where required
+  -> isolated persona + cluster + POV traversal
+  -> atomic forensic records + claim evidence + frontier updates
+  -> tickets, probes, reconciliation, staging, and promotion
+  -> Composite Exit A: Deconstruction Closure
+  -> final structured synthesis
+  -> human reconstruction handbook and decisions
+  -> Exit E candidate validation and human confirmation
+  -> Exit E Content-Readiness Report
+  -> scope certificate
+  -> signed outer bundle manifest with EXIT-E-STATUS: Passed
+  -> signed, fingerprinted reconstruction bundle
+```
+
+Partial synthesis MAY run before Exit A for bounded review. It is provisional and cannot authorize reconstruction.
 END
 
 ENUM FLOW-STAGE
@@ -203,8 +230,42 @@ NUMBER 1.1
 TITLE "Plane 1 — Forensic Plane"
 
 GOAL
-  The Forensic Plane preserves what was directly found, where it was found, how it is
-  invoked, and what remains uncertain.
+**Purpose:** Preserve what was directly found, where it was found, how it is invoked, and what remains uncertain.
+
+**Authoritative records:**
+
+```text
+.extracted/
+  0A-PREFLIGHT.md
+  0B-AUTH-MODEL.md
+  0C-SECURITY-PRIVACY.md
+  0D-GLOSSARY.md
+  0E-INDEX.md
+  0F-GLOBAL-STATE.md
+  0G-DECONSTRUCTION-STATE.md
+  0H-CHECKPOINT-SUMMARY.md
+  personas/
+    _shared/
+      01-FRONTEND-POV.md
+      01-FRONTEND-QUESTIONS.md
+      ... 05-WIRING-POV.md
+      05-WIRING-QUESTIONS.md
+    {persona-prefix}-{persona-slug}/
+      PERSONA-PROFILE.md
+      01-FRONTEND-POV.md
+      ... 05-WIRING-QUESTIONS.md
+      SHARED-STAGING-BUFFER.md
+      SHARED-QUESTIONS-BUFFER.md
+      UNMAPPED-DISCOVERY-BUFFER.md
+  normalized/
+    *.export-map.md
+  probes/
+    [TICKET-ID].log
+```
+
+**Sources of truth:** original source snapshots and approved sanitized evidence projections are evidence sources; the structured forensic records are the canonical extracted representation. `0G` is append-only process history. `0H` is derived and never replaces `0G`. Normalized maps are navigation indexes, not behavioral truth.
+
+**Writers:** isolated POV invocations have exactly one semantic POV target and at most one semantic ledger target; their fixed transaction bundle MAY also append directly produced source, frontier, claim, contradiction, coverage, persona-local unmapped-discovery-buffer, and audit-log records explicitly allowed by the identity header. They cannot mutate unrelated semantic files. Acquisition writes the acquisition register, normalized maps, reconciliation records, approved registry fragments, and its directly allowed discovery placeholders. Profile Synchronization exclusively writes persona semantic payloads and synchronized `0A` persona rows. Authorized `Human Hatch: Confirmation` or `Reconstruction-Handoff` confirmation actions MAY update only the separately delimited profile certification envelope; they MUST NOT change profile semantic content, `SEMANTIC-RECORD-VERSION`, or `SEMANTIC-CONTENT-FINGERPRINT`. Sequential Reconciliation owns cross-persona/shared merges, atomic promotion and depromotion, buffered tickets, and merging persona-local unmapped discoveries into `0A`.
 END
 
 ENUM PLANE
@@ -247,8 +308,29 @@ NUMBER 1.2
 TITLE "Plane 2 — Assurance Plane"
 
 GOAL
-  The Assurance Plane proves denominator completeness, traversal closure, evidence
-  support, export reconciliation, reference integrity, and gate outcomes.
+**Purpose:** Prove denominator completeness, traversal closure, evidence support, export reconciliation, reference integrity, and gate outcomes.
+
+**Authoritative records:**
+
+```text
+.extracted/
+  10-SOURCE-INVENTORY.md
+  11-TRAVERSAL-FRONTIER.md
+  12-CLAIM-EVIDENCE.md
+  13-EXPORT-RECONCILIATION.md
+  14-CONTRADICTIONS.md
+  15-DECISIONS.md
+  16-SOURCE-COVERAGE.md
+  17-ACQUISITION-CANDIDATES.md
+  18-CONFIRMATIONS.md
+  20-TRACEABILITY.md
+  21-COVERAGE-REPORT.md
+  22-GATE-REPORTS.md
+```
+
+**Sources of truth:** assurance records are authoritative for scope, denominator membership, evidence claims, coverage arithmetic, reconciliation, contradiction status, and gate results. They cite forensic evidence but do not replace it.
+
+**Writers:** Acquisition, isolated traversal invocations, Sequential Reconciliation, Cross-Reference-Reconciliation, Human Hatch, and deterministic validators write only their explicitly owned assurance sections. Gate reports MUST be generated from the authoritative records and MUST include deterministic input fingerprints.
 END
 
 RULE assurance-plane-sources
@@ -273,8 +355,24 @@ NUMBER 1.3
 TITLE "Plane 3 — Synthesis Plane"
 
 GOAL
-  The Synthesis Plane transforms closed forensic facts and assurance proofs into
-  coherent reconstruction semantics.
+**Purpose:** Transform closed forensic facts and assurance proofs into coherent reconstruction semantics.
+
+**Authoritative records:**
+
+```text
+.extracted/
+  90-ARCH-BLUEPRINT.md
+  91-DATA-MODEL.md
+  92-BUSINESS-RULES.md
+  93-USE-CASES.md
+  94-INTERFACES.md
+  95-DEPLOYMENT.md
+  96-NON-FUNCTIONAL-SECURITY.md
+```
+
+**Sources of truth:** these structured catalogs are authoritative for synthesized architecture, entities, rules, use cases, interfaces, deployment/configuration, and NFR/security semantics. Every block MUST cite `DERIVED-FROM` IDs and fingerprints. Synthesis MUST NOT silently create a legacy fact absent from the Forensic or Assurance Plane.
+
+**Writers:** Partial-Synthesis and Final-Synthesis create or update semantic payloads and their semantic versions/fingerprints. Cross-Reference-Reconciliation MAY update only reference fields after IDs exist; any reference field included in the semantic payload is a semantic change and MUST increment the semantic record version and fingerprint. Authorized confirmation attaches only the certification envelope and transitions eligible blocks from `[B-POPULATED]` to `[B-CONFIRMED]` without regenerating or changing semantic content. Synthesis writes discovered gaps only to a synthesis gap buffer; it never opens tickets directly.
 END
 
 RULE synthesis-plane-sources
@@ -304,9 +402,34 @@ NUMBER 1.4
 TITLE "Plane 4 — Human Reconstruction Handbook"
 
 GOAL
-  The Human Reconstruction Handbook presents the confirmed bundle through progressive
-  disclosure for architects, developers, domain experts, security reviewers, data
-  engineers, QA, and operators.
+**Purpose:** Present the confirmed bundle through progressive disclosure for architects, developers, domain experts, security reviewers, data engineers, QA, and operators.
+
+**Canonical set:**
+
+```text
+.extracted/handbook/
+  START-HERE.md
+  01-SYSTEM-OVERVIEW.md
+  02-ARCHITECTURE.md
+  03-DOMAIN-AND-DATA.md
+  04-PERSONAS-AUTH-AND-VISIBILITY.md
+  05-USE-CASES.md
+  06-BUSINESS-RULES.md
+  07-INTERFACES-AND-INTEGRATIONS.md
+  08-BACKGROUND-PROCESSING.md
+  09-DEPLOYMENT-AND-CONFIGURATION.md
+  10-SECURITY-PRIVACY-AND-AUDIT.md
+  11-NON-FUNCTIONAL-PROFILE.md
+  12-DISABLED-AND-DORMANT-CAPABILITIES.md
+  13-MODERNIZATION-DECISIONS.md
+  14-EQUIVALENCE-AND-ACCEPTANCE.md
+  15-KNOWN-GAPS-AND-RISKS.md
+  16-GLOSSARY-AND-REFERENCE.md
+```
+
+**Source of truth:** the handbook is a synchronized, human-readable projection of B-populated or B-confirmed Synthesis Plane records, assurance scope, and approved decisions. It is not an independent semantic authority. Its complete semantic payload MUST be generated as `[B-POPULATED]`, assigned legal `HBK` identities, and fingerprinted before the Exit E Candidate Report and human review. Semantic corrections MUST be made in the upstream authoritative record first and then re-projected before candidacy. Confirmation only attaches the handbook certification envelope; it MUST NOT regenerate or alter semantic content. Broken derivation marks the affected handbook section `[B-STALE]`.
+
+**Writers:** Reconstruction-Handoff generates and updates handbook semantic payloads before candidacy. Human editors MAY improve wording, examples, navigation, and diagrams before candidate fingerprinting only when semantic meaning remains unchanged; after candidacy, any content edit is a semantic payload change that invalidates the candidate and restarts from populated generation. Authorized confirmation actions MAY update only certification envelopes. Semantic edits require upstream changes and reprojection.
 END
 
 RULE handbook-plane-sources
@@ -340,11 +463,7 @@ NUMBER 1.5
 TITLE "Non-authoritative sidecars"
 
 GOAL
-  JSON, SQLite, graph, search, code-generation, or validator sidecars may be
-  generated for automation; they carry source fingerprints, schema version,
-  generation time, and a prominent NON-AUTHORITATIVE-DERIVATIVE marker, and
-  conflicts resolve in favor of canonical Markdown records and original
-  evidence.
+JSON, SQLite, graph, search, code-generation, or validator sidecars MAY be generated for automation. They MUST carry source fingerprints, schema version, generation time, and a prominent `NON-AUTHORITATIVE-DERIVATIVE` marker. Conflicts are resolved in favor of the canonical Markdown records and original evidence, in that order for semantics.
 END
 
 RULE sidecar-derivatives

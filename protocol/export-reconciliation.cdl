@@ -4,7 +4,15 @@ TITLE "Export reconciliation — `13-EXPORT-RECONCILIATION.md`"
 ARTIFACT 13-EXPORT-RECONCILIATION.md
 
 GOAL
-  Every normalized export coordinate has exactly one dispositioned row.
+Every normalized coordinate has one row:
+
+```markdown
+| Export ID | Normalized Coordinate | SRC ID | Atomic CMP/POV-5 Edge ID | Exclusion Decision | Reconciliation State | CLM |
+```
+
+Allowed states: `Mapped-Atomic`, `Mapped-Container-Only` (temporary and non-closing), `Approved-Excluded`, `Gap`, `Superseded`. A container mapping does not reconcile its children. `Mapped-Atomic + Approved-Excluded == Total Normalized Units` is required for 100% reconciliation.
+
+Less than 100% reconciliation blocks `[A-STRUCTURALLY-COMPLETE]`, `[R-SWEPT]`, and Exit A. Entity correlations never satisfy reconciliation.
 END
 
 USES REGISTRY normalized-units

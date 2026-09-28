@@ -3,10 +3,13 @@ NUMBER 2.1
 TITLE "Persona definition and purity"
 
 GOAL
-  A Persona is a distinct human actor, service actor, external system, or
-  autonomous runtime class entering through a concrete execution surface.
-  Personas are selected by distinct physical or virtual entry paths, and persona
-  directories are scoped by the purity invariant.
+A **Persona** is a distinct human actor, service actor, external system, or autonomous runtime class entering through a concrete execution surface. Personas are selected by distinct physical or virtual entry paths, not merely business titles. Roles sharing identical routes, triggers, and paths SHOULD be grouped; materially different data visibility, authorization, or execution paths require distinct personas.
+
+**Persona Purity Invariant:** a `personas/{persona-directory}/` directory MUST document only that persona's triggers, invocation paths, local UI/runtime state, and usage references. Shared components are linked, not copied as another persona's behavior. Purity does not imply exclusive component ownership.
+
+`personas/` is the sole container for persona-scoped and canonical shared forensic files. `personas/_shared/` is a reserved non-persona directory containing canonical shared POV and question records; the leading underscore provides deterministic visual/sort separation and does not create a persona. Persona discovery, counting, purity, and profile validation MUST ignore that reserved directory as a persona while still validating its shared-record ownership rules.
+
+Every active persona MUST have one globally unique uppercase prefix matching `[A-Z][A-Z0-9]{1,7}` and one explicit lowercase persona slug matching `[a-z0-9]+(?:-[a-z0-9]+)*`. Prefix uniqueness is validated in `0A-PREFLIGHT.md`; reuse is forbidden, including retired personas. The canonical persona-directory basename is exactly `<persona-prefix>-<persona-slug>` and therefore matches `[A-Z][A-Z0-9]{1,7}-[a-z0-9]+(?:-[a-z0-9]+)*`. The `0A` registry stores the persona slug explicitly; it MUST NOT be inferred from, transliterated from, or normalized from the display name. The basename prefix, registry prefix, invocation `Persona Prefix`, ticket prefix, and PRF owner coordinate MUST agree exactly. A non-reserved directory directly beneath `personas/` that is unregistered, malformed, or prefix-mismatched is invalid; `_shared` MUST NOT appear as a persona prefix, slug, basename, or registry row.
 END
 
 RULE persona-purity
@@ -56,9 +59,19 @@ NUMBER 2.2
 TITLE "Canonical entry ownership"
 
 GOAL
-  Every concrete entry coordinate has exactly one canonical owner persona;
-  intentional shared surfaces use a SHARED-ENTRY record, and database-side
-  autonomous behavior is owned by the reserved db-autonomous persona.
+Every concrete entry coordinate MUST have exactly one canonical owner persona. Intentional shared entry surfaces MUST use a `SHARED-ENTRY` record that:
+
+- owns the coordinate once;
+- lists participating personas and each local invocation condition;
+- identifies one coordination owner for registry maintenance;
+- does not weaken persona purity;
+- maps each persona to its own invocation reference.
+
+Duplicate ownership without a shared-entry record is a gate failure.
+
+### DB-autonomous ownership
+
+Database-side autonomous behavior uses the reserved persona `db-autonomous` with prefix `DBR` when it fires because of database mutation, timer, internal rule, or database event rather than an app entry. An app routine that causes a trigger to fire remains owned by its app persona; the trigger body is owned by DBR and cross-linked through a `DR` record. Procedures explicitly invoked only through one app entry remain app-owned but are still extracted by POV-4. Mixed invocation requires a shared-entry record. Ownership is determined from firing mechanism, never convenience.
 END
 
 RULE entry-ownership
@@ -90,9 +103,13 @@ NUMBER 2.3
 TITLE "Five isolated POVs"
 
 GOAL
-  Five isolated POVs partition semantic extraction: frontend, backend,
-  background, data movement, and system wiring. A POV MUST NOT fill another
-  POV's semantic fields directly.
+1. **POV-1 Frontend Workflows:** client UI, server-rendered views, widget behavior, presentation state, validation before transport, templates, and interaction flow.
+2. **POV-2 Backend Workflows:** domain decisions, business logic, service pipelines, validation engines, and transactional intent independent of transport and physical schema.
+3. **POV-3 Background Workflows:** schedules, queues, event loops, delayed execution, retries, async coordination, and long-running workers.
+4. **POV-4 Data Movement Workflows:** reads, writes, queries, transactions, ORM behavior, caches, files, tables, views, constraints, triggers, stored routines, generated fields, and persistence lifecycle.
+5. **POV-5 System Wiring Workflows:** routes, middleware, transport contracts, graph edges, callbacks, integrations, orchestration, and inter-system coupling.
+
+A POV MUST NOT fill another POV's semantic fields directly. Cross-POV findings become a ticket or persona-local shared buffer entry.
 END
 
 RULE pov-isolation
@@ -117,9 +134,13 @@ NUMBER 2.4
 TITLE "Traversal tracks"
 
 GOAL
-  Every entry cluster and invocation declares exactly one traversal track:
-  Normal, Shadow/Conditional, or Disabled. Tracks require separate invocations
-  even when they share source units.
+Every entry cluster and invocation MUST declare exactly one **TRAVERSAL-TRACK**:
+
+- `Normal`: currently active, normally exposed behavior for the specified environment/snapshot;
+- `Shadow/Conditional`: flag-gated, environment-dependent, alternate, shadow, indirectly exposed, or not normally selected behavior;
+- `Disabled`: explicitly dormant, disabled, disconnected, legacy-retained, or configured off behavior.
+
+Tracks require separate invocations even when they share source units. They MAY cross-link the same `SRC` IDs. `Disabled` is not equivalent to dead code, retired code, irrelevant code, or out-of-scope code.
 END
 
 RULE track-declarations
@@ -140,7 +161,20 @@ NUMBER 2.5
 TITLE "Capability and runtime state"
 
 GOAL
-  Capability state is semantic metadata, not a prefix-group tag.
+Capability state is semantic metadata, not a prefix-group tag:
+
+```markdown
+- **CAPABILITY-STATE:** Active | Conditional | Shadow | Disabled | Retired | Unknown
+- **RUNTIME-STATE-MATRIX:**
+  | Environment | Snapshot | State | Enable/Disable Mechanism | CLM Evidence | Last Known At |
+- **Historical / Intended Personas:** [...]
+- **Dependencies:** [SRC/CMP/CFG/IF IDs]
+- **Last-Known State:** (value, environment, date, or Unknown)
+```
+
+State MAY differ by environment or snapshot. Absence of production evidence MUST NOT be converted into deployed behavior. In-scope disabled units require the same atomic static coverage as active units and block Exit A when undisposed.
+
+A disabled capability MUST NOT be enabled in production for a probe. Runtime observation is permitted only in an isolated sandbox with explicit human authorization, masked/non-production data, and a probe specification that states the disabled behavior and safety boundaries.
 END
 
 FIELD CAPABILITY-STATE-BLOCK
@@ -177,10 +211,20 @@ NUMBER 2.6
 TITLE "Capability grouping and target decision"
 
 GOAL
-  A capability groups active and dormant source units for navigation, remains
-  non-promotable, and never inherits member evidence or coverage. Every disabled
-  or dormant capability preserves exact members, state, mechanism, dependencies,
-  history, risk, and one explicit target decision.
+A capability may group active and dormant source units for navigation, but the `CAP` is non-promotable and inherits no evidence, status, or coverage from members. Every effective-denominator Disabled `SRC`, `CMP`, and `UC` MUST map to exactly one canonical `CAP`; the only alternative is an exact approved exclusion that removes that unit from the effective denominator. Shadow/Conditional units MAY map to a CAP when they represent a governed capability. CAP membership is mandatory in disabled traceability, synthesis, handbook output, and target-decision validation.
+
+Multiple or conflicting CAP memberships are invalid unless an explicit typed relationship and approved `DEC` define why the memberships overlap, identify one canonical target-decision owner, and prevent duplicate denominator or decision effects. Such a relationship does not make both memberships canonical and MUST NOT silently duplicate a unit. Every disabled/dormant capability MUST preserve:
+
+- exact member IDs, including all effective-denominator Disabled `SRC`/`CMP`/`UC` units;
+- status by environment/snapshot;
+- enable/disable mechanism and evidence;
+- dependencies and affected personas;
+- historical/intended behavior;
+- safety and reconstruction risk;
+- one explicit target decision: `Restore`, `Preserve Dormant`, `Redesign`, or `Retire`;
+- decision owner, rationale, and approval state.
+
+Observed legacy facts and target decisions MUST appear in separate fields and handbook sections.
 END
 
 ENUM TARGET-DECISION

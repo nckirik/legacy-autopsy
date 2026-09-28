@@ -3,9 +3,37 @@ NUMBER 8.1
 TITLE "Resume identity header"
 
 GOAL
-  Every invocation begins with the identity header, and the conforming runtime
-  independently validates declared actions, exact read/write scope, loaded
-  fingerprints, checkpoint freshness, and mode rights before commit.
+Every invocation begins with:
+
+```yaml
+Protocol Version: v4.1.2
+System Namespace: [slug]
+Current Iteration: [canonical §10.6 token ALFA..ZULU]
+Invocation ID: [globally unique]
+Invocation Mode: [enum below]
+Human Hatch Action:
+  [
+    Ticket Escalation | Decision/Scope Approval | Confirmation | None; non-None only when Invocation Mode is Human Hatch,
+  ]
+Invocation Scope: [exact scope]
+Persona: [exactly one or None where mode permits]
+Persona Prefix: [unique prefix or None]
+Persona Directory:
+  [exact `<persona-prefix>-<persona-slug>` basename or None where mode permits]
+Entry Cluster: [exactly one concrete cluster or None where mode permits]
+Traversal Track: [Normal | Shadow/Conditional | Disabled | None]
+Active POV: [POV-1..POV-5 | None]
+Active POV File: [exactly one or None]
+Active Question Ledger: [zero or one]
+Environment/Snapshot: [...]
+Max Traversal Depth: [integer]
+Allowed Read Targets: [...]
+Allowed Write Targets: [...]
+Forbidden Write Targets: [...]
+Loaded Checkpoint Fingerprint: [...]
+```
+
+The executor MUST declare its intended semantic actions against this header before writing. The conforming runtime MUST independently validate the declared actions, exact read/write scope, loaded fingerprints, checkpoint freshness, and mode rights before commit; an executor's self-assessment cannot authorize mutation.
 END
 
 FIELD INVOCATION-HEADER
@@ -47,8 +75,13 @@ NUMBER 8.2
 TITLE "Strict single-scope modes"
 
 GOAL
-  Discovery, Ticket Resolution, and Promotion Review bind exactly one persona,
-  prefix, directory, cluster, track, POV, POV file, and at most one question ledger.
+`Discovery`, `Ticket Resolution`, and `Promotion Review` MUST bind exactly one persona, its persona prefix, its canonical persona directory, one concrete entry cluster, one traversal track, one POV, one POV file, and at most one question ledger. Each has one semantic POV target and optional one semantic ledger target. Its fixed transactional sidecar bundle MAY append only directly produced rows/blocks in `10`, `11`, `12`, `14`, `16`, persona-local shared buffers, `personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md`, and `0G`; these are assurance/audit side effects, not permission to change scope or another POV's semantics. Cross-POV outputs go to the bound ledger or persona-local buffers. An unmapped discovery MUST use the local buffer and requires Sequential Reconciliation before any later Discovery invocation.
+
+A cluster containing wildcards MUST be expanded into concrete coordinates before a closing invocation. One invocation may traverse multiple atomic units reachable from its one concrete root, subject to depth/frontier rules, but may not switch roots, personas, POVs, or tracks.
+
+### ALFA start behavior
+
+ALFA is the first bounded discovery iteration. Every POV may log questions immediately; no maturity phase may suppress cross-boundary ambiguity. On large repositories, ALFA MUST still obey concrete cluster, track, persona, POV, and depth isolation. Branches beyond the bound become frontier records and tickets rather than an attempted full-tree sweep.
 END
 
 RULE strict-bindings
@@ -88,8 +121,32 @@ NUMBER 8.3
 TITLE "Invocation-mode enum and explicit multi-file modes"
 
 GOAL
-  The exhaustive invocation-mode enum is the declared registry; multi-file modes
-  enumerate their exact targets.
+The exhaustive invocation-mode enum is:
+
+```text
+Preflight | Export Acquisition | Discovery | Ticket Resolution | Promotion Review |
+Sequential Reconciliation | Profile Synchronization | Cross-Reference-Reconciliation |
+Partial-Synthesis | Final-Synthesis | Reconstruction-Handoff | Human Hatch | Validation/Gate
+```
+
+`Preflight` has one semantic target (`0A`); `Discovery`, `Ticket Resolution`, and `Promotion Review` obey §8.2; `Validation/Gate` writes one report target. All MAY append `0G` and fixed assurance sidecars allowed by their contracts. Probe ingestion executes as `Ticket Resolution`. Neutral arbitration executes as `Ticket Resolution` with the original persona/cluster/track and a recorded neutral POV assignment. Protocol migration is metadata on a sequence of existing modes, not a separate mode. Human confirmation executes only as `Human Hatch: Confirmation` or the equivalent explicitly authorized Reconstruction-Handoff confirmation-envelope action and writes `18-CONFIRMATIONS.md` plus exact envelope transitions without semantic mutation.
+
+Only these modes may intentionally span multiple semantic targets:
+
+- `Export Acquisition`: acquisition register, inventory/reconciliation/candidate sections, normalized maps, security findings, and `0G`.
+- `Sequential Reconciliation`: canonical `personas/_shared/` merges plus persona-local shared-staging, promotion-request, question, unmapped-discovery, and synthesis-gap buffer merges; atomic promotion and depromotion; buffered ticket/frontier creation; deterministic deduplication; indexes; traceability; frontier dispositions; and `0G`.
+- `Profile Synchronization`: exactly one persona profile semantic payload plus its atomic `0A` registry/ownership updates and `0G`; an authorized confirmation action may later update only its certification envelope.
+- `Cross-Reference-Reconciliation`: only already-existing ID reference fields, reciprocal links, traceability, and `0G`; no new legacy facts. Changed semantic reference bindings increment semantic versions/fingerprints.
+- `Partial-Synthesis`: bounded provisional `90`–`96` blocks and a synthesis gap buffer.
+- `Final-Synthesis`: closed-corpus `90`–`96` blocks and synthesis gap buffer.
+- `Reconstruction-Handoff`: populated handbook payloads, approved-decision projection, authorized confirmation envelopes, equivalence suite, candidate/outer payload manifests, scope certificate, and package assembly in the exact §15.4 stages; it does not write Validation/Gate reports.
+- `Human Hatch` has three mandatory action subtypes in its identity header:
+  - `Ticket Escalation`: after §9.3 prerequisites, terminalizes the ticket, records exact coverage/scope/risk effects, and MAY create an exact exclusion decision when authorized;
+  - `Decision/Scope Approval`: creates, approves, or supersedes `DEC` records only after the reviewer receives exact observed inputs, affected denominator tuples, risks, alternatives, authority basis, and pinned fingerprints; it has no probe prerequisite unless the decision itself resolves a ticket through Ticket Escalation;
+  - `Confirmation`: creates `CNF` records and attaches certification envelopes only after candidate validation succeeds and the reviewer receives exact semantic versions/fingerprints, candidate manifest, required decision-content bindings and approval envelopes, limitations, and authority basis; it has no probe prerequisite and cannot edit semantic payloads.
+- `Human Hatch` writes only the records authorized by its declared subtype, plus exact coverage/traceability effects and `0G`; a subtype cannot borrow another subtype's rights.
+
+Each multi-file mode MUST enumerate exact files and record sections in its identity header; the mode name alone grants no broad write access. `Validation/Gate` reads authoritative inputs and writes only its named report block plus `0G`. Human confirmation is an authorized `Human Hatch: Confirmation` or `Reconstruction-Handoff` confirmation-envelope action: it writes `18-CONFIRMATIONS.md` and exact envelope transitions only, never semantic profile/synthesis/handbook payloads.
 END
 
 RULE mode-targets
@@ -143,8 +200,13 @@ NUMBER 8.4
 TITLE "Mandatory read sets"
 
 GOAL
-  All modes load protocol constants/statuses, 0A, 0D, 0E, 0F, 0G or 0H, relevant
-  source inventory/frontier/claim records, and the active snapshot metadata.
+All modes load protocol constants/statuses, `0A`, `0D`, `0E`, `0F`, `0G` or `0H`, relevant source inventory/frontier/claim records, and the active snapshot metadata. Semantic decisions that a dependency or scope dimension is applicable or not applicable MUST carry the §0.1 classifier provenance and claim/evidence bindings. `Unknown` applicability is fail-inclusive: the dependency remains in the required read/validation closure and blocks mutation if it cannot be loaded and validated.
+
+Strict single-scope modes additionally load the active POV file, at most one active ledger, the matching shared POV/ledger for persona scope, the persona's `UNMAPPED-DISCOVERY-BUFFER.md`, concrete source excerpts, and relevant normalized map. Before Discovery, the invocation MUST verify from a current `0H` global buffer summary or a deterministic read of every persona-local unmapped buffer that no `Pending-Merge` entry exists; an absent/stale summary without the full fallback read blocks the invocation. Load `0B` for auth; `0C` for sensitive data; dependency source excerpts for cross-boundary references; probe logs for matching probe tickets; persona siblings only for promotion uniqueness.
+
+Acquisition loads `0A`, `0C`, `0G/0H`, supplied approved projections, lineage/sanitization reports, existing normalized maps, source inventory, and export reconciliation.
+
+Sequential Reconciliation loads all relevant canonical `personas/_shared/` files, persona-local shared-staging/promotion-request/question/unmapped-discovery buffers, synthesis-gap buffers, and destination records. Profile Synchronization MUST load `0A`, the target `PRF` profile, and every record directly referenced by or applicable to any profile field, then recursively load the complete transitive `DERIVED-FROM` closure of those records. This closure explicitly includes every applicable `AUTH`, `CLM`, `SRC`, `CMP`, `ER`, `REL`, `BR`, `UC`, `IF`, `CFG`, `SCHED`, `DR`, `SM`, `STATE`, `DEP`, `MOD`, `CAP`, `DEC`, `SEC`, `NFR`, and `FLT` record, plus relevant source inventory, coverage, traceability, contradiction, decision-approval, and snapshot records needed to prove currency. Every loaded dependency MUST have its exact record ID, version where applicable, semantic/content fingerprint, source snapshot, and reciprocal binding verified. Profile Synchronization MUST reject mutation if any directly applicable record or any transitive dependency is absent, unresolved, stale, version-mismatched, fingerprint-mismatched, or read from a mixed snapshot. Confirmation validation of a PRF MUST load and validate this identical closure against the candidate-bound versions and fingerprints before attaching or accepting its envelope. Partial/Final Synthesis loads required closed or bounded forensic and assurance inputs plus existing synthesis blocks. Final Synthesis MUST load all active personas, all POV/ledger files, all relevant claims, reconciliation, coverage, contradictions, and gate inputs.
 END
 
 RULE applicability-provenance
@@ -219,8 +281,15 @@ NUMBER 8.6
 TITLE "Concurrent persona traversal"
 
 GOAL
-  Personas MAY run concurrently in one named iteration but MUST NOT write canonical
-  shared POV or shared question files directly.
+Personas MAY run concurrently in one named iteration. They MUST NOT write canonical shared POV or shared question files directly.
+
+- shared component discoveries go to `personas/{persona-directory}/SHARED-STAGING-BUFFER.md`;
+- outbound shared questions go to `personas/{persona-directory}/SHARED-QUESTIONS-BUFFER.md`;
+- unmapped coordinates go to `personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md` with a same-transaction `FRT`;
+- persona-owned invocation pointers may be written immediately;
+- depromotion is annotated `[R-DEPROMOTION-PENDING]` and deferred.
+
+Sequential Reconciliation collects, deterministically sorts and deduplicates all buffer classes, promotion requests, and synthesis gaps; merges compatible claims without improperly raising `BLOCK-CONFIDENCE-RANK` or losing profile detail; records contradictions; merges persona sets; commits shared records/tickets; merges unmapped discoveries into `0A`; creates required ticket/frontier work from `GAP` records; executes promotion and depromotion atomically under §§6.3–6.4; updates assurance links; and purges consumed buffers atomically. No later Discovery invocation may begin while an unmapped-discovery buffer contains `Pending-Merge`.
 END
 
 RULE concurrency-buffers
@@ -252,8 +321,7 @@ NUMBER 8.7
 TITLE "Stale checkpoint guard"
 
 GOAL
-  Before writing, compare loaded checkpoint and source fingerprints with target record
-  versions.
+Before writing, compare loaded checkpoint and source fingerprints with target record versions. If any target changed after the checkpoint, stop and request a refreshed read set. Changed serialized fingerprints invalidate affected normalized maps, source records, claims, coverage, and downstream blocks before further mutation.
 END
 
 RULE stale-guard
@@ -269,8 +337,29 @@ NUMBER 8.8
 TITLE "`0G` invocation log"
 
 GOAL
-  Append the invocation log record after every invocation; 0H MAY compress current
-  active states but MUST include its source 0G range and fingerprint.
+Append after every invocation:
+
+```markdown
+### [ITERATION] - [INVOCATION-ID] - [Scope] - [Mode]
+
+- **Identity Header Summary:** [...]
+- **Cold-Resume Result / Check Fingerprint:** [...]
+- **Declared Semantic Actions / Runtime Authorization Result:** [...]
+- **Loaded Files / Fingerprints:** [...]
+- **Mutation Summary:** [...]
+- **Tickets Created / Updated:** [...]
+- **Frontiers Created / Closed:** [...]
+- **Unmapped Discoveries / GAP Records Buffered, Merged, or Disposed:** [...]
+- **Exports Acquired / Requested:** [...]
+- **SRC / CMP / CLM IDs Updated:** [...]
+- **Evidence Changes:** [...]
+- **Promotion / Depromotion:** [...]
+- **Coverage / Reconciliation Changes:** [...]
+- **Stale Propagation:** [...]
+- **Next Required Loads:** [...]
+```
+
+`0H` MAY compress current active states but MUST include its source `0G` range and fingerprint. When used to authorize a later Discovery invocation, it MUST also include a fingerprinted global count/list of every persona-local `Pending-Merge` unmapped discovery; otherwise the full-buffer fallback read in §8.4 is required.
 END
 
 FIELD INVOCATION-LOG

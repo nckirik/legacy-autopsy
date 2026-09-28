@@ -3,7 +3,7 @@ NUMBER 7.6
 TITLE "Normalized maps"
 
 GOAL
-  Normalized maps are navigation-only indexes over one exploded export.
+Normalized maps list metadata, each virtual unit, stable ID, type, primary POV, source fingerprint, edges, external systems, credential aliases, and ambiguities. They are navigation-only indexes. They MUST NOT summarize an export as one routine or bypass persona-driven discovery.
 END
 
 FIELD NORMALIZED-MAP-ROW

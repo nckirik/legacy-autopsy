@@ -3,8 +3,21 @@ NUMBER 7.1
 TITLE "Trust boundary"
 
 GOAL
-  Live acquisition is an operator-side activity; agents MUST NOT invoke acquisition
-  using production credentials.
+Live acquisition is an operator-side activity. The local helper MAY read raw Appsmith exports and approved read-only n8n interfaces, build private entity indexes, sanitize, fingerprint, and publish approved projections. Agents MUST NOT invoke acquisition using production credentials.
+
+The helper MUST:
+
+- default to dry-run;
+- accept credentials only through environment, stdin, or OS credential storage, never command arguments;
+- keep raw exports and private matching state outside the target repository and authoritative `.extracted/` workspace, in operator-controlled storage not published to executor-visible projections;
+- use restrictive temporary storage and best-effort cleanup;
+- perform field-aware sanitization and secret scanning;
+- fail closed for unsupported schema versions, unknown sensitive fields, unresolved high-confidence secret findings, missing lineage, mixed snapshots, or rejected operator review;
+- make no mutation to Appsmith, n8n, or production;
+- make no third-party transmission of exports, secrets, private hints, or repository content;
+- publish atomically only approved sanitized inventory and bridge fragments.
+
+Agents MAY inspect helper source and approved outputs. Bridge fragments are proposed patches requiring authorized approval before merge.
 END
 
 RULE helper-trust-boundary
@@ -32,8 +45,23 @@ NUMBER 7.2
 TITLE "Acquisition register"
 
 GOAL
-  The acquisition register records every export artifact, its projection, and its
-  acquisition status.
+```markdown
+### [EXPORT-ID] [Artifact]
+
+- **Platform:** n8n | Appsmith | Other
+- **Stable Artifact ID / Display Name:** [...]
+- **Raw Source Alias:** [non-sensitive alias]
+- **Agent-Visible Export Path:** [...]
+- **Raw Source Fingerprint / Projection Fingerprint:** [sha256]
+- **Snapshot:** [...]
+- **Acquisition Status:** [A-*]
+- **Referenced By:** [virtual coordinates]
+- **Outstanding Referenced Artifacts:** [...]
+- **Normalized Map:** [...]
+- **Reconciliation Summary:** [mapped/excluded/total]
+- **Sanitization / Lineage Reports:** [...]
+- **Operator Action Required:** [...]
+```
 END
 
 FIELD EXPORT
@@ -57,9 +85,27 @@ NUMBER 7.3
 TITLE "Logical explosion and virtual coordinates"
 
 GOAL
-  Before POV extraction, each export is decomposed into atomic logical units whose
-  virtual coordinates are canonical for entry coordinates, evidence, dependencies,
-  frontiers, and tickets.
+Before POV extraction, each export is decomposed into atomic logical units. Coordinates use:
+
+```text
+[source-export]#[logical-kind]/[stable-id]--[normalized-name]
+```
+
+Stable internal IDs take precedence. Name-only identities receive deterministic disambiguators and remain low-confidence until verified.
+
+Examples:
+
+```text
+inventory/n8n/WF-17.json#node/42--Webhook_PaymentCallback
+inventory/n8n/WF-17.json#edge/42->58--success
+inventory/appsmith/app.json#page/P1--PaymentPage
+inventory/appsmith/app.json#widget/W7--PaymentPage.PayButton
+inventory/appsmith/app.json#action/A9--PaymentPage.PayButton.onClick
+inventory/appsmith/app.json#query/Q3--GetDebtList
+inventory/appsmith/app.json#binding/B6--PaymentPage.Table1.data
+```
+
+Virtual coordinates are canonical for entry coordinates, evidence, dependencies, frontiers, and tickets. Physical container fingerprint and virtual coordinate MUST both be preserved.
 END
 
 RULE virtual-coordinates
@@ -77,7 +123,11 @@ NUMBER 7.4
 TITLE "Required explosion coverage"
 
 GOAL
-  Explosion coverage is enumerated per platform and must include every graph edge.
+For n8n, inventory workflow metadata, triggers, webhooks, schedules, nodes, code/function nodes, transformations, conditions, merges, retries, error branches, credentials references, database/cache/file I/O, external calls, sub-workflows, configured error workflows, and every graph edge.
+
+For Appsmith, inventory pages, widgets, bindings, JSObjects, actions, queries, datasources, APIs, event handlers, action chains, validations, navigation, permissions, environment references, timers, polling, and deferred behavior. A complete Appsmith application export may be complete as a physical container, but that does not prove runtime datasource values, plugin behavior, secrets, environment configuration, or external dependencies. Those remain separately evidenced, ticketed, acquired, or exactly excluded.
+
+Primary ownership follows the POV definitions. Every graph edge is an atomic POV-5 record, even when its payload meaning creates tickets for another POV.
 END
 
 ENUM N8N-INVENTORY-KIND

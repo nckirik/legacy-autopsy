@@ -3,7 +3,37 @@ NUMBER 6.1
 TITLE "Atomic component schema"
 
 GOAL
-  The atomic component record schema is declared below.
+```markdown
+### [CMP-ID] [Atomic Unit Name]
+
+- **RECORD-KIND:** ATOMIC
+- **Source IDs:** [SRC IDs]
+- **File Path & Line Range:** [...]
+- **Virtual Coordinate:** [required for serialized units]
+- **POV Owner:** POV-1 | POV-2 | POV-3 | POV-4 | POV-5
+- **General Intent:** [...]
+- **Inputs / Outputs:** [...]
+- **AUTH-BINDING:** [AUTH IDs or None]
+- **STAGING-STATUS:** [S-*]
+- **COVERAGE-STATUS:** [C-*]
+- **PERSONAS:** [persona prefixes]
+- **TRAVERSAL-TRACKS:** [Normal, Shadow/Conditional, Disabled]
+- **CAPABILITY-STATE:** Active | Conditional | Shadow | Disabled | Retired | Unknown
+- **RUNTIME-STATE-MATRIX:** [environment/snapshot state rows under §2.5]
+- **DEPENDS-ON / DEPENDED-ON-BY:** [CMP/SRC IDs]
+- **Synthesis References:** [IF/UC/BR/ER/DR/CFG/SCHED IDs; populated by reconciliation]
+- **Side Effects:** [...]
+- **Exceptional Behaviors:** [...]
+- **Edge and Odd Cases:** [...]
+- **Behavioral Notes for Reconstruction:** [deterministic observed contract, not target design]
+- **Material Claims:** [CLM IDs]
+- **BLOCK-CONFIDENCE-RANK:** None | Low | Medium | High
+- **BLOCK-EVIDENCE-PROFILE:** [counts, claim IDs, and route/lineage IDs by each E level]
+- **Evidence Anchors:** [convenience list; CLMs remain authoritative]
+- **Record Version / Supersession:** [...]
+```
+
+All fields are atomic-unit-specific. A routine block MUST NOT aggregate unrelated methods, branches, graph nodes, or queries merely because they share a module.
 END
 
 FIELD ATOMIC-COMPONENT
@@ -53,8 +83,25 @@ NUMBER 6.2
 TITLE "Dual-entry discovery"
 
 GOAL
-  Persona-driven discovery is the only behavioral discovery path. There is no
-  independent shared-code sweep.
+Persona-driven discovery is the only behavioral discovery path. There is no independent shared-code sweep.
+
+When a persona entry discovers a component:
+
+1. create the full canonical atomic record in the persona's `SHARED-STAGING-BUFFER.md` for later merge to `personas/_shared/XX-*-POV.md` with `[S-DISCOVERED]`;
+2. immediately create a persona invocation pointer in `personas/{persona-directory}/XX-*-POV.md`.
+
+```markdown
+### [CMP-ID] [Name] — Shared Reference
+
+- **Canonical Location:** `personas/_shared/XX-*-POV.md` -> [CMP-ID]
+- **Local Trigger SRC / Coordinate:** [...]
+- **Local Invocation Signature:** [...]
+- **Track:** Normal | Shadow/Conditional | Disabled
+- **Capability State:** Active | Conditional | Shadow | Disabled | Retired | Unknown
+- **Canonical Staging Status:** [S-DISCOVERED] | [S-STAGING-VERIFIED]
+```
+
+This ensures a persona manifest represents its full operational footprint without duplicating canonical behavior. If discovery reaches a coordinate that cannot yet be assigned to the bound persona/cluster/track/POV, the same transaction MUST create its `FRT` and append a `DSC` entry to `personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md`; the invocation MUST NOT write `0A` directly or continue through the unmapped boundary. Sequential Reconciliation MUST merge all such pending entries before any later Discovery invocation begins, as specified in §3.1.
 END
 
 FIELD SHARED-REFERENCE
@@ -88,9 +135,21 @@ NUMBER 6.3
 TITLE "Staging and promotion"
 
 GOAL
-  A shared atomic component advances from S-DISCOVERED to S-STAGING-VERIFIED only when
-  mandatory fields, claim evidence, source mappings, references, and ticket state
-  validate.
+A shared atomic component advances from `[S-DISCOVERED]` to `[S-STAGING-VERIFIED]` only when mandatory fields, claim evidence, source mappings, references, and ticket state validate.
+
+Promotion eligibility requires all locks:
+
+1. **Usage uniqueness:** exactly one persona, considering Normal, Shadow/Conditional, Disabled, and historical/intended usage within scope.
+2. **Ambiguity:** no active ticket or open material contradiction references the component.
+3. **Dependency:** no canonical shared component depends on it.
+4. **Coverage:** source units are `[C-COVERED]` for the promoted component.
+5. **Evidence:** no material `[E-UNKNOWN]` claim and no material unresolved redaction dependency.
+
+`Promotion Review` validates these locks but MUST NOT move or rewrite canonical blocks. It appends one `PROMOTION-REQUEST` to the bound persona's `personas/{persona-directory}/SHARED-STAGING-BUFFER.md`, containing the CMP/cohort IDs, target persona/POV, source `_shared` paths and complete file/record fingerprints, lock-evidence IDs, review invocation, and requested `[S-PROMOTED]` state. Connected atomic components MAY be requested as one cohort only when their combined persona set is singular and all locks pass. Grouping containers never promote.
+
+Sequential Reconciliation is the sole promotion executor. It loads the complete request, canonical `personas/_shared/` source blocks, target persona POV files, indexes, traceability, and current lock inputs; applies the stale-check guard; revalidates every lock; and atomically moves each full canonical block from `_shared` to the target persona file, changes it to `[S-PROMOTED]`, updates or removes shared-reference pointers as applicable, updates indexes/traceability, consumes the request, and logs one transaction. A failed or stale revalidation performs no partial move and leaves a dispositioned request for renewed review. At no point may both source and target contain canonical copies, nor may neither contain one.
+
+`[S-DEAD-CODE]` requires an inventory-backed zero-caller proof across every traversal track and every environment/snapshot in the component's bound scope denominator. Any linked nonterminal dynamic-reference or acquisition-candidate row, active ticket, open frontier, unresolved possible-caller edge, or discovered active/conditional/shadow/disabled/historical/intended caller makes `[S-DEAD-CODE]` invalid. A dynamically observed caller disproves dead-code classification. An unavailable caller domain may be removed from the proof denominator only by an exact approved exclusion; it is never equivalent to proven no caller. These effects are local to the linked component and its dependency closure and MUST NOT downgrade unrelated coverage.
 END
 
 RULE promotion-locks
@@ -146,9 +205,11 @@ NUMBER 6.4
 TITLE "Depromotion"
 
 GOAL
-  If a promoted component gains another persona caller, a shared dependency, or
-  expanded persona usage, it is depromoted back to personas/_shared/ through
-  Sequential Reconciliation with history preserved.
+If a promoted component gains another persona caller, a shared dependency, or expanded persona usage:
+
+1. during parallel work, record `[R-DEPROMOTION-PENDING]` in the discovering persona's staging buffer;
+2. Sequential Reconciliation moves the full block to `personas/_shared/`, resets it to `[S-STAGING-VERIFIED]`, merges personas and claims, and replaces persona copies with shared references;
+3. log the event in `0G` and update traceability and stale dependencies.
 END
 
 RULE depromotion-steps
@@ -167,9 +228,7 @@ NUMBER 6.5
 TITLE "Surgical evolution"
 
 GOAL
-  POV files are patched surgically: unrelated blocks are never deleted,
-  reordered, or reformatted, ticket resolution cites the ticket, and superseded
-  facts remain traceable through versions and tombstones.
+POV files MUST be patched surgically. Unrelated blocks MUST NOT be deleted, reordered, or reformatted. Ticket resolution updates affected assumptions and cites the ticket. Superseded facts remain traceable through versions/tombstones. Clean-sweep rewrites are prohibited except an explicitly approved protocol migration that preserves all IDs and history.
 END
 
 RULE surgical-patching
