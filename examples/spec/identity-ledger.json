@@ -562,6 +562,47 @@
       ]
     },
     {
+      "path": "examples/spec/preflight-registry.cdl",
+      "source-fingerprint": "sha256:3756e055b36b4ade4565f58e0638eb23122137f3ac650a542d0fcdbdda4259fb",
+      "ids": [
+        {
+          "id": "DISCOVERY-BUFFER",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "ENTRY-CLUSTER",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "PREFLIGHT-HEADER",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "UNMAPPED-DISCOVERY",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "database-autonomous-clusters",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "preflight-boundaries",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "preflight-registry",
+          "kind": "SECTION",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/semantic-payload-identity.cdl",
       "source-fingerprint": "sha256:cbd50cdd49ea7e130ced2ea4db97c4c9b8643a024416a09c9b2014437e0c943c",
       "ids": [

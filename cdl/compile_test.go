@@ -25,6 +25,7 @@ const (
 	statusTaxonomyPath    = "examples/spec/status-taxonomy.cdl"
 	evidenceDecisionsPath = "examples/spec/evidence-and-decisions.cdl"
 	workspaceRegistryPath = "examples/spec/workspace-registries.cdl"
+	preflightRegistryPath = "examples/spec/preflight-registry.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -571,6 +572,29 @@ func TestWorkspaceRegistriesCompiles(t *testing.T) {
 		"SHARED-ENTRY": 6, "AUTH-MECHANISM": 7, "PRIVACY-FINDING": 6,
 		"CAPABILITY-RECORD": 10, "ROUTINE-CROSS-REFERENCE": 5, "INVARIANT": 3, "SHARED-STATE": 4,
 	}
+	for id, size := range want {
+		if counts[id] != size {
+			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)
+		}
+	}
+}
+
+func TestPreflightRegistryCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, preflightRegistryPath)
+	found := false
+	for _, sec := range res.EIR.Sections {
+		if sec.Number == "3.1" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("section 3.1 missing")
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	want := map[string]int{"PREFLIGHT-HEADER": 9, "ENTRY-CLUSTER": 10, "UNMAPPED-DISCOVERY": 4, "DISCOVERY-BUFFER": 7}
 	for id, size := range want {
 		if counts[id] != size {
 			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)
