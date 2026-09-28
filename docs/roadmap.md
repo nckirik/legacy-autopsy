@@ -544,8 +544,8 @@ the negative fixture from that defect is retained permanently.
 S3, S4 (crown), and S5 (editor tooling) are complete. Remaining known work, in order:
 
 1. the standalone protocol-quality test on the generated `protocol.md` edition with a
-   fresh harness (source/content fidelity is established; independent prompt usability
-   is pending);
+   fresh harness, using [standalone-test.md](standalone-test.md) (source/content
+   fidelity is established; independent prompt usability is pending);
 2. generation of the 13 skill projections from EIR reference/routing views;
 3. a whole-document prompt render if a document-level prompt edition is desired;
 4. the harness track (M2-M16, including the Part 17.2 conformance families and the

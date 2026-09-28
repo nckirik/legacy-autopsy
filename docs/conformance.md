@@ -6,9 +6,18 @@ Protocol v4.1.3 conformance requires satisfying every applicable positive and ne
 
 ## Standalone protocol quality test
 
-Give a fresh capable coding harness only `protocol.md`, the target repository and approved evidence roots, and a short instruction to execute the protocol. Without Legacy Autopsy context, service APIs, CLI commands, UI, Atlas, hidden validators, repository-specific fixtures, or prior conversation, it should be able to identify required inputs, create and resume `.extracted/`, perform semantic work, implement or reproduce deterministic operations with ordinary local tools, ask required human questions, and report unsupported behavior rather than invent success.
+Give a fresh capable coding harness only `protocol.md`, the target repository and
+approved evidence roots, and a short instruction to execute the protocol. Without
+Legacy Autopsy context, service APIs, CLI commands, UI, Atlas, hidden validators,
+repository-specific fixtures, or prior conversation, it should be able to identify
+required inputs, create and resume `.extracted/`, perform semantic work, implement or
+reproduce deterministic operations with ordinary local tools, ask required human
+questions, and report unsupported behavior rather than invent success.
 
-This is a protocol-quality regression test, not by itself proof that an implementation is conforming or that a workspace has passed Exit A or Exit E.
+This is a protocol-quality regression test, not by itself proof that an implementation
+is conforming or that a workspace has passed Exit A or Exit E. The full procedure,
+instruction block, pass/fail criteria, and recording template are in
+[Standalone protocol quality test](standalone-test.md).
 
 ## Spec-track conformance (crown complete)
 
