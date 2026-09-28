@@ -239,6 +239,20 @@ END
 - Mode identifiers are document-global and are linked at assembly; they are not
   section-owned ledger identities.
 
+### Document assembly
+
+The document compiles from an ordered manifest (`examples/spec/assembly.json`):
+
+- `globals.cdl` owns document-global declarations exactly once: capabilities,
+  registries, artifacts, document-level rules, gates, and workflow targets.
+- Section files own only section-scoped declarations and never redeclare globals;
+  `BASE-READS` and `MODE` declarations may live in any source.
+- The compiler compiles the ordered set into one EIR with cross-section references
+  resolved. `internal/spec` compiles the same assembly in-process for the runtime, and
+  `legacy-autopsy spec compile` emits it with source and EIR fingerprints.
+- Assembly EIR and prompt goldens are the drift baseline; per-section goldens are not
+  maintained once a section is part of the assembly.
+
 ================================================================================
 3. CAPABILITY CONDUCT (global source rule)
 ================================================================================

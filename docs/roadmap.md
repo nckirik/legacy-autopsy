@@ -101,6 +101,10 @@ become generated reference/routing views.
 
 S3 progress:
 
+- **Document assembly implemented:** `examples/spec/globals.cdl` owns document-global
+  declarations once; `examples/spec/assembly.json` orders the sources; the compiler
+  emits one EIR with cross-section resolution; `internal/spec` compiles it in-process
+  for the runtime; assembly EIR and prompt goldens replace the per-section goldens.
 - **§4.1 implemented (capability-backed):** `examples/spec/typed-id.cdl` declares the
   ID-prefix and iteration registries plus the normative key, path, PRF/HBK, collision,
   and registry rules; `internal/capabilities.TypedID` implements base generation and is

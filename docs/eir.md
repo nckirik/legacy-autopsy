@@ -154,11 +154,13 @@ fixtures.
 
 ## 9. Source assembly
 
-The compiler accepts an ordered list of source files. Each contributes declarations
-and sections; duplicate stable IDs are errors; declaration references resolve across
-the union. This is an input contract, not source syntax: there is no `INCLUDE`
-directive in the frozen language. The eventual single `protocol.cdl` is an assembly
-of these files, not a required monolithic edit.
+The compiler accepts an ordered source manifest (`examples/spec/assembly.json`).
+Each file contributes declarations and sections; document-global declarations live in
+`globals.cdl` exactly once; duplicate stable IDs are errors; declaration references
+resolve across the union. This is an input contract, not source syntax: there is no
+`INCLUDE` directive in the language. `internal/spec` compiles the same assembly
+in-process for the runtime, and the eventual single `protocol.cdl` is an assembly of
+these files, not a required monolithic edit.
 
 ## 10. EIR example (abbreviated, §7.7)
 
