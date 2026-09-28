@@ -4,7 +4,7 @@
 
 **Status:** draft for the §7.7 pilot.
 **Depends on:** [`cdl.md`](cdl.md) (frozen language), [`eir.md`](eir.md) (interchange), [`execution-semantics.md`](execution-semantics.md) (execution model).
-**Authority:** `protocol.md@4.1.2` remains sole normative authority until parity. Nothing here may contradict CDL or the execution semantics.
+**Authority:** `protocol.md@4.1.3` remains sole normative authority until parity. Nothing here may contradict CDL or the execution semantics.
 
 ## 1. Layers
 
@@ -132,7 +132,7 @@ A. Backend conformance
 B. Protocol parity
    EIR behavior
         versus
-   protocol.md@4.1.2 + the independent 24-fixture oracle
+   protocol.md@4.1.3 + the independent 24-fixture oracle
    -> migration correctness, no silent semantic diff
 ```
 

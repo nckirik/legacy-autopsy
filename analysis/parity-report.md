@@ -3,7 +3,7 @@
 - Schema version: 1
 - Generator: parityreport parityreport/0.1
 - Generated at: 2026-09-25T00:00:00Z
-- Protocol: 4.1.2 (sha256:3c232db801edd19757a92ef3393a296b6153eb432c509ad8247313753dc1c0f4)
+- Protocol: 4.1.3 (sha256:561b5d78a8e062a89c79309dc2ae46f7ef12b6f91c573ad4b892195ec5a5e999)
 - Language: cdl/0.3 (EIR format 2)
 
 ## Section coverage
@@ -118,9 +118,9 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 27 sources |
 | drift-tests | pass | 23 tests in 23 files |
-| generated-protocol | pass | sha256:f2b7c5004c4a9c44589bf6f1421c6ea464dede57ef02518b8d08b1e64e3c28ce |
-| golden-eir | pass | sha256:5b10729d3a7ec93bdc4b729be6e2afd72f6ba7847cd8631804a6f39901b0d4e6 |
-| golden-prompt | pass | sha256:c8fca255a6002b1226af8282e13a96dd278e585bc4d7ec0534d0051ab287f701 |
+| generated-protocol | pass | sha256:cbe7f2a768b635bbf410498e4e2e8dce6c31e91b26e2a3c76c207cf15e42b3e8 |
+| golden-eir | pass | sha256:35db4396e0dfcfbf653041bc2bb88d221af86354f5981d542973e9a092fe58ac |
+| golden-prompt | pass | sha256:469688636148b488fce03232c36ab7c64439fca83db2b43b7a339b7845c63db5 |
 | fixture-oracle | pass | 24/24 passed |
 | identity-ledger | pass | 536 identities across 27 sources |
 
@@ -142,14 +142,14 @@
 | protocol/semantic-payload-identity.cdl | 1 | 7 | sha256:07747c57e064fc03ec144bec16d87a8be378b613990e2711caa7e0742e2579d9 |
 | protocol/canonical-hash-profile.cdl | 1 | 13 | sha256:a5712ff3df7c69210cd914ddb769c75ce746d128a5aadbaa59da5becf487f200 |
 | protocol/inventory-and-frontier.cdl | 5 | 23 | sha256:c78e877ce0b1e919dc1eabe424f9c3df2ebac1df19a26af02ce1fbf541b05437 |
-| protocol/status-taxonomy.cdl | 1 | 112 | sha256:3be0f9272ba3edd9a73d9c1e0a5a70b913c73bbc4177569507e4d624b23fdb6b |
+| protocol/status-taxonomy.cdl | 1 | 112 | sha256:a4f149fcb7777b4474ca0181fc16c21c467e7d035de117aa2d9f529bea0611b9 |
 | protocol/evidence-and-decisions.cdl | 6 | 13 | sha256:c5a90679f6dff72b9c5c906f13065ceb7faae8802c4f13cffbb29faa62b75b2e |
 | protocol/extraction-evolution.cdl | 5 | 15 | sha256:3ed11f0af3a85ac3e31d19b339376c3ad4ad4ce6d66cd5246a8449e15aeb239b |
 | protocol/acquisition-trust.cdl | 4 | 10 | sha256:3df535ce5dc7213a68c728f99750e82fd9a4ad4add1408057acc663c7fc004a4 |
 | protocol/export-acquisition-loop.cdl | 1 | 10 | sha256:67ef3cacc4057f22318775d9d3ecaffc62e760dcbd92eecc0c37112bd0083962 |
 | protocol/normalized-maps.cdl | 1 | 4 | sha256:909965bb69994fa0b11f24ec99f6b9081f7de558f16f82972849e09730b067ba |
 | protocol/export-reconciliation.cdl | 1 | 22 | sha256:448a3605fcb7470a17c98a77f6a00b7d7c78386323edbec7632df9ccda546d73 |
-| protocol/invocation-context.cdl | 4 | 17 | sha256:f21ce0ad11fcc1e846aeb6209c84e44db6aa48ddd95312149a53c784a95fa5bc |
+| protocol/invocation-context.cdl | 4 | 17 | sha256:f10345d91db0d68df07885dac803a6b6ee9a53ce339457b8739fcca0a1db9613 |
 | protocol/cold-resume.cdl | 1 | 4 | sha256:97410ec60b1e39177da5b3732372354becb46a39ba144b9558b3334aa28fd350 |
 | protocol/invocation-lifecycle.cdl | 3 | 8 | sha256:111d8724fe190b872b60950ce1073ad150a6e6ae410a3d2296b6b7589ada3895 |
 | protocol/ticket-fsm.cdl | 6 | 20 | sha256:caec43e35f16d1fe2f820e6dc22e7c338d514eefd6148b4e0d688405cf793c2a |
@@ -158,7 +158,7 @@
 | protocol/traceability.cdl | 5 | 15 | sha256:a376905e75a5ab3066d0755a9ec727626a94db12cc9d06504b8169656a78caf6 |
 | protocol/handbook-and-decisions.cdl | 10 | 23 | sha256:46e416664481be6b52170df20268f2b1f060ab96e6ffa88ab2ab42be4755c321 |
 | protocol/packaging.cdl | 9 | 50 | sha256:874196e684060da59fc7df7a6cca3253347b520e04df014ab504c36f166fb7f6 |
-| protocol/conformance.cdl | 5 | 10 | sha256:dfa6f0d22702fc4e880a9c00d3140e83256c3d395144134aa4864a671ed800ef |
+| protocol/conformance.cdl | 5 | 10 | sha256:b45b409c398f209b7e72d894108b741ebd4da2272f2871f7c9e5bde5f8977a4c |
 
 ## Declared deferrals
 
@@ -168,4 +168,4 @@
 - CDL editor tooling (highlighting, canonical printer) is planned after crown as S5
 - renderer emits EIR reference and prompt editions only; no HTML/backend editions yet
 
-The CDL sources under `protocol/` are the normative authority; `protocol.md` is a generated render (fingerprint above). `protocol/legacy/protocol-4.1.2.md` is the frozen bootstrap parity oracle.
+The CDL sources under `protocol/` are the normative authority; `protocol.md` is a generated render (fingerprint above). `protocol/legacy/protocol-4.1.3.md` is the frozen bootstrap parity oracle.

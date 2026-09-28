@@ -15,7 +15,7 @@ import (
 var update = flag.Bool("update", false, "rewrite analysis/metrics.golden.json")
 
 const (
-	protocolPath       = "../../protocol/legacy/protocol-4.1.2.md"
+	protocolPath       = "../../protocol/legacy/protocol-4.1.3.md"
 	classificationPath = "../../analysis/protocol-classification.json"
 	metricsPath        = "../../analysis/metrics.golden.json"
 )

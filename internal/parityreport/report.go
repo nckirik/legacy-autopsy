@@ -345,6 +345,6 @@ func RenderMarkdown(report Report) string {
 		fmt.Fprintf(&b, "- %s\n", deferral)
 	}
 
-	fmt.Fprintf(&b, "\nThe CDL sources under `protocol/` are the normative authority; `protocol.md` is a generated render (fingerprint above). `protocol/legacy/protocol-4.1.2.md` is the frozen bootstrap parity oracle.\n")
+	fmt.Fprintf(&b, "\nThe CDL sources under `protocol/` are the normative authority; `protocol.md` is a generated render (fingerprint above). `protocol/legacy/protocol-4.1.3.md` is the frozen bootstrap parity oracle.\n")
 	return b.String()
 }

@@ -158,7 +158,7 @@
     },
     {
       "path": "protocol/conformance.cdl",
-      "source-fingerprint": "sha256:cba431c65a8ae992dd0c0f44467eb9523551adf4a7d55b6b3c801910f7cb5f10",
+      "source-fingerprint": "sha256:dd0f25ebe642c6bf5d118706ce5964c34e4838cdbe8c3883f0898a4385cefbb3",
       "ids": [
         {
           "id": "ARTIFACT-OWNERSHIP-ROW",
@@ -1042,7 +1042,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "source-fingerprint": "sha256:2483fb6b8c870f11bc2e2017a2daf8344ff4a13bcd4fca75e9f430bc71e97e93",
+      "source-fingerprint": "sha256:8403d87020e8031c6086fadbc643cf39a8006f12eba38aba1ef832b1843586b0",
       "ids": [
         {
           "id": "INVOCATION-HEADER",
@@ -1654,7 +1654,7 @@
     },
     {
       "path": "protocol/status-taxonomy.cdl",
-      "source-fingerprint": "sha256:eb0a4b9a92fa1ded6b575bb684542cbe77410f154448fd38e3997c254ed3e970",
+      "source-fingerprint": "sha256:d03f71aa4e2f78d745bf1dc7eb5440fe1cc601c012d7e569876739e094a3bb74",
       "ids": [
         {
           "id": "PREFIX-ACQUISITION",

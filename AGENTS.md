@@ -1,6 +1,6 @@
 # Agent contribution rules
 
-This is operational guidance, not a protocol specification. The CDL sources under [`protocol/`](protocol/) are normative and win every conflict; [`protocol.md`](protocol.md) is a generated render, and [`protocol/legacy/protocol-4.1.2.md`](protocol/legacy/protocol-4.1.2.md) is the frozen bootstrap parity oracle.
+This is operational guidance, not a protocol specification. The CDL sources under [`protocol/`](protocol/) are normative and win every conflict; [`protocol.md`](protocol.md) is a generated render, and [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md) is the frozen bootstrap parity oracle.
 
 ## Protocol integrity and scope
 

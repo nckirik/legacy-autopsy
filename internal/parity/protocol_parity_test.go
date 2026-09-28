@@ -68,7 +68,7 @@ func setValue(rec runtime.StepRecord, target string) (string, bool) {
 }
 
 // TestBehaviorParity is test B's behavior half: EIR execution must reflect the
-// corrected §7.7 semantics recorded in protocol.md@4.1.2.
+// corrected §7.7 semantics introduced in protocol.md@4.1.2 and carried by later editions.
 func TestBehaviorParity(t *testing.T) {
 	res := compileExample(t)
 

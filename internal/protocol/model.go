@@ -14,9 +14,9 @@ import (
 
 const InvocationModeHeading = "8.3. Invocation-mode enum and explicit multi-file modes"
 
-// LegacyOracleRelPath is the frozen v4.1.2 Markdown text used as the bootstrap
+// LegacyOracleRelPath is the frozen v4.1.3 Markdown text used as the bootstrap
 // parity oracle after crown. The generated root protocol.md is not an oracle.
-const LegacyOracleRelPath = "protocol/legacy/protocol-4.1.2.md"
+const LegacyOracleRelPath = "protocol/legacy/protocol-4.1.3.md"
 
 // OraclePath returns the frozen legacy protocol text path for a repository root.
 func OraclePath(repoRoot string) string {

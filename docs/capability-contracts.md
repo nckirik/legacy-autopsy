@@ -76,7 +76,7 @@ independent work untouched, and never licenses an executor-authored substitute.
   `SHA-256(canonical-key UTF-8)`.
 - **Rules:** §4.1 ID generation and §5.1 prefix groups; alias/tombstone handling per
   §4.6. The prefix and iteration registries are authored CDL declarations
-  (`protocol/typed-id.cdl`), drift-checked against `protocol.md@4.1.2`; PRF/HBK
+  (`protocol/typed-id.cdl`), drift-checked against `protocol.md@4.1.3`; PRF/HBK
   fixed-discriminator rules are declared as normative rules.
 - **Failures:** unknown prefix, malformed namespace/owner/discriminator → fail-closed
   diagnostics.

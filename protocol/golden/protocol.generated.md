@@ -1,9 +1,9 @@
 # Protocol: Legacy System Deconstruction, Assurance, and Reconstruction
 
-**Version:** 4.1.2 (Canonical Reconstruction-Ready Edition)
+**Version:** 4.1.3 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
-**Generated-From:** cdl/0.3.0 (sha256:6c7f0060fb202847d729fd29340a8dc9a1206352fbbeb5d50cf830eff42d85ea)
+**Generated-From:** cdl/0.3.0 (sha256:229b624fb8345e0e8c9327e6e15e32bc0f8de1543dfc1f56af0840a50840d67c)
 **Language:** cdl/0.3 (eir-format 2)
 **Authority:** generated render of the canonical CDL sources; do not edit.
 
@@ -1233,7 +1233,7 @@ Predicate: complete
 Every invocation begins with:
 
 ```yaml
-Protocol Version: v4.1.2
+Protocol Version: v4.1.3
 System Namespace: [slug]
 Current Iteration: [canonical §10.6 token ALFA..ZULU]
 Invocation ID: [globally unique]
@@ -2622,8 +2622,8 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 
 ---
 
-**End of Canonical Deconstruction Protocol v4.1.2**
+**End of Canonical Deconstruction Protocol v4.1.3**
 
 ---
 
-**End of Canonical Deconstruction Protocol v4.1.2**
+**End of Canonical Deconstruction Protocol v4.1.3**

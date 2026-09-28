@@ -58,7 +58,7 @@ any normative rule.
 ================================================================================
 
 BOOTSTRAP
-  SOURCE-OF-TRUTH protocol.md@4.1.2 UNTIL parity-report accepted-by-human
+  SOURCE-OF-TRUTH protocol.md@4.1.3 UNTIL parity-report accepted-by-human
   PARITY
     machine-generated parity-report OVER hashes-of
       source protocol.md
@@ -911,7 +911,7 @@ harness IR, native channel (excerpt):
 12. SUBSTRATE COVERAGE PROFILE (next step after the CDL freeze)
 ================================================================================
 
-Classify `protocol.md`@4.1.2 with the CDL vocabulary and report:
+Classify `protocol.md`@4.1.3 with the CDL vocabulary and report:
 
         rule count
         token/line share
@@ -959,7 +959,7 @@ Deliverables:
 4. one prompt projection and one native validator projection;
 5. parity fixtures: the corrected §7.7 behavior (positive exact-line, negative old
    inversion) plus preservation of the existing 24 fixtures;
-6. dual-source drift check between `protocol.md@4.1.2` and the compiled section.
+6. dual-source drift check between `protocol.md@4.1.3` and the compiled section.
 
 Golden negative fixtures already identified by the errata (the first compiler must
 reject each):

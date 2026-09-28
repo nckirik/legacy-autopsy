@@ -64,7 +64,7 @@
 
 ```
 normative           protocol/ CDL sources (after crown); protocol.md generated render;
-                    protocol/legacy/protocol-4.1.2.md frozen bootstrap oracle
+                    protocol/legacy/protocol-4.1.3.md frozen bootstrap oracle
 frozen language     cdl.md
 design contracts    eir.md, execution-semantics.md, runtime-architecture.md
 implementation      conformance.md, development.md, workspace.md, runtime.md
@@ -105,7 +105,7 @@ Phase 4  crown: parity report accepted by human; DSL becomes normative source;
 Gates:
 
 - **G1** test A passes (native and reference VMs agree on trace hash for §7.7). [pass]
-- **G2** test B passes (EIR behavior matches `protocol.md@4.1.2`; 24 fixtures unchanged). [pass]
+- **G2** test B passes (EIR behavior matches `protocol.md@4.1.3`; 24 fixtures unchanged). [pass]
 - **G3** coverage profile produced with the context-assembly leakage category counted. [pass]
 - **G4** pilot review accepted before any frozen artifact is reworked or retired. [pass]
 

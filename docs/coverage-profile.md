@@ -1,9 +1,9 @@
-# Coverage profile — protocol.md@4.1.2 in CDL vocabulary
+# Coverage profile — protocol.md@4.1.3 in CDL vocabulary
 
 > Non-authoritative analysis. `protocol.md` remains the sole normative authority; this profile classifies its sections to plan migration and proves nothing about conformance.
 
 **Status:** S2 deliverable (implemented).
-**Inputs:** [`protocol.md`](../protocol.md)@4.1.2, [`analysis/protocol-classification.json`](../analysis/protocol-classification.json), [`analysis/metrics.golden.json`](../analysis/metrics.golden.json).
+**Inputs:** [`protocol.md`](../protocol.md)@4.1.3, [`analysis/protocol-classification.json`](../analysis/protocol-classification.json), [`analysis/metrics.golden.json`](../analysis/metrics.golden.json).
 **Companion:** [`capability-contracts.md`](capability-contracts.md).
 
 ## Method and judgement boundary

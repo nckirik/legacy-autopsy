@@ -13,7 +13,7 @@ import (
 var update = flag.Bool("update", false, "rewrite generated migration sources")
 
 const (
-	protocolPath = "../../protocol/legacy/protocol-4.1.2.md"
+	protocolPath = "../../protocol/legacy/protocol-4.1.3.md"
 	outputPath   = "../../protocol/status-taxonomy.cdl"
 )
 

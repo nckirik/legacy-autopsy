@@ -1,6 +1,6 @@
 # Protocol: Legacy System Deconstruction, Assurance, and Reconstruction
 
-**Version:** 4.1.2 (Canonical Reconstruction-Ready Edition)
+**Version:** 4.1.3 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative  
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
 
@@ -1151,7 +1151,7 @@ Less than 100% reconciliation blocks `[A-STRUCTURALLY-COMPLETE]`, `[R-SWEPT]`, a
 Every invocation begins with:
 
 ```yaml
-Protocol Version: v4.1.2
+Protocol Version: v4.1.3
 System Namespace: [slug]
 Current Iteration: [canonical §10.6 token ALFA..ZULU]
 Invocation ID: [globally unique]
@@ -2555,4 +2555,4 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 
 ---
 
-**End of Canonical Deconstruction Protocol v4.1.2**
+**End of Canonical Deconstruction Protocol v4.1.3**

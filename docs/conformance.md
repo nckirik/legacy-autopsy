@@ -1,8 +1,8 @@
 # Conformance
 
-> Non-authoritative Legacy Autopsy implementation policy. The normative conformance cases live in the CDL source `protocol/conformance.cdl` (§17.2) and win on conflict; this repository's JSON files, Go runner, CLI output, and CI workflow are one concrete test realization, not protocol prerequisites. After crown, the CDL sources under `protocol/` are the normative authority and `protocol.md` is a generated render; `protocol/legacy/protocol-4.1.2.md` is the frozen bootstrap parity oracle.
+> Non-authoritative Legacy Autopsy implementation policy. The normative conformance cases live in the CDL source `protocol/conformance.cdl` (§17.2) and win on conflict; this repository's JSON files, Go runner, CLI output, and CI workflow are one concrete test realization, not protocol prerequisites. After crown, the CDL sources under `protocol/` are the normative authority and `protocol.md` is a generated render; `protocol/legacy/protocol-4.1.3.md` is the frozen bootstrap parity oracle.
 
-Protocol v4.1.2 conformance requires satisfying every applicable positive and negative case in §17.2. A passing Legacy Autopsy unit test, file-presence check, bootstrap fixture, or unsupported/skipped family is not conformance and cannot establish a gate result.
+Protocol v4.1.3 conformance requires satisfying every applicable positive and negative case in §17.2. A passing Legacy Autopsy unit test, file-presence check, bootstrap fixture, or unsupported/skipped family is not conformance and cannot establish a gate result.
 
 ## Standalone protocol quality test
 
@@ -21,7 +21,7 @@ tests defined in the [runtime architecture](runtime-architecture.md) §6:
   same EIR and inputs and must produce the same canonical execution trace hash
   ([execution semantics](execution-semantics.md) §13).
 - **Test B — protocol parity:** EIR behavior must match the frozen oracle
-  `protocol/legacy/protocol-4.1.2.md` using the unchanged 24-fixture runner as an
+  `protocol/legacy/protocol-4.1.3.md` using the unchanged 24-fixture runner as an
   independent oracle. The oracle is never rewritten by the system it verifies, and
   `internal/parity` drift-checks every migrated section against it.
 
@@ -41,9 +41,7 @@ remaining gate is the [standalone protocol quality
 test](#standalone-protocol-quality-test) against the generated edition with a fresh
 harness; until that run is recorded, the generated edition is content-complete but not
 independently validated as a prompt. The
-`protocol/legacy/protocol-4.1.2.md` text remains the bootstrap parity oracle (revised
-in the crown revision by removing the v3.17 migration plan and checklist, Parts
-17–18; the version stays 4.1.2 for the frozen fixture oracle).
+`protocol/legacy/protocol-4.1.3.md` text remains the bootstrap parity oracle.
 
 ## Crown parity report
 
@@ -97,4 +95,4 @@ A case's protocol heading is provenance, not a claim that the case implements th
 13. packaging schemas, gate completeness, evidence bindings, and deterministic ordering;
 14. the acyclic, snapshot-consistent Exit E sequence and reproducible final verification.
 
-The repository supports neither Exit A nor Exit E and makes no Protocol v4.1.2 conformance claim. A complete family becomes implemented only when its production behavior and all required positive/negative fixtures run successfully in CI.
+The repository supports neither Exit A nor Exit E and makes no Protocol v4.1.3 conformance claim. A complete family becomes implemented only when its production behavior and all required positive/negative fixtures run successfully in CI.

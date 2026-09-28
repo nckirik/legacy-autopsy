@@ -13,7 +13,7 @@ const (
 	StdlibVersion    = "cdl-stdlib/0.1"
 	GeneratorVersion = "cdl/0.3.0"
 	EIRFormat        = 2
-	ProtocolVersion  = "canonical-deconstruction/4.1.2"
+	ProtocolVersion  = "canonical-deconstruction/4.1.3"
 )
 
 // EIRDoc is the typed execution IR contract.

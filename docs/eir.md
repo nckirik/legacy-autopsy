@@ -4,7 +4,7 @@
 
 **Status:** draft for the §7.7 pilot.
 **Depends on:** [`cdl.md`](cdl.md) (frozen language), [`execution-semantics.md`](execution-semantics.md) (what execution means).
-**Authority:** `protocol.md@4.1.2` remains sole normative authority until parity.
+**Authority:** `protocol.md@4.1.3` remains sole normative authority until parity.
 
 ## 1. Purpose
 
@@ -170,7 +170,7 @@ these files, not a required monolithic edit.
     "eir-format": 2,
     "language": "cdl/0.1",
     "stdlib": "cdl-stdlib/0.1",
-    "protocol": "canonical-deconstruction/4.1.2",
+    "protocol": "canonical-deconstruction/4.1.3",
     "source-fingerprint": "sha256:...",
     "generator": "cdl/0.1.0",
     "eir-sha256": "sha256:..."

@@ -296,7 +296,7 @@ func TestGoldenProtocolRender(t *testing.T) {
 			t.Fatalf("%s is stale (run: go test ./cdl -run TestUpdateAssets -update)", path)
 		}
 	}
-	for _, marker := range []string{"**Version:** 4.1.2", "## 8.3. Invocation-mode enum and explicit multi-file modes", "Preflight | Export Acquisition"} {
+	for _, marker := range []string{"**Version:** 4.1.3", "## 8.3. Invocation-mode enum and explicit multi-file modes", "Preflight | Export Acquisition"} {
 		if !strings.Contains(string(got), marker) {
 			t.Fatalf("generated protocol missing %q", marker)
 		}
