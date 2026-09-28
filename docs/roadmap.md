@@ -316,9 +316,16 @@ Depends only on the language toolchain (`cdl`), never on Legacy Autopsy runtime 
 
 Identified after crown; scheduled with the runtime milestones that own them:
 
-- AGENT evidence/provenance contract validation before MACHINE state changes;
-- canonical registry iteration semantics and ordering guarantees;
-- remaining context-assembly leakage review for the runtime host.
+- AGENT evidence/provenance contract validation before MACHINE state changes
+  (M6 executor contract);
+- canonical registry iteration: the §7.7 frozen fixture oracle preserves declared
+  input order, so the runtime cannot sort retroactively; producers must supply rows in
+  declared `KEY` order and the runtime enforces it when M4 introduces real registries;
+- structural leakage remaining after the S2 audit (reviewed in this pass):
+  `internal/contextpacket` resolves modes and read sets from EIR (clean), while
+  `internal/workspace` still hardcodes the four-plane file skeletons. Deriving those
+  lists needs structured handbook/persona artifact declarations that do not exist yet;
+  migrate with M3/M12, not by inventing language surface now.
 
 Done: validated EIR loading with hash/version verification and strict derived-number
 validation are implemented in `cdl.LoadEIR` (fail closed on unknown format/protocol,
