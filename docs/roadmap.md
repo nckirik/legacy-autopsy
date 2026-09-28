@@ -517,8 +517,9 @@ the negative fixture from that defect is retained permanently.
 
 ## Current next milestone
 
-Proceed to S3 in the recommended order from the [coverage profile](coverage-profile.md):
-§4.1–4.1.2, then §8 (which retires the context-assembly leakage), §10, §3+§5, §15+§12,
-then remaining MIXED schema sections and AGENT-only guidance. Each migration section
-requires compiler checks, VM support where applicable, a reference-VM comparison, and
-dual-source drift against `protocol.md`.
+S3 and S4 (crown) are complete. Proceed to **S5 — CDL editor tooling** (below), with
+these pre-S5 follow-ups recorded and unblocked: the standalone protocol-quality test on
+the generated `protocol.md` edition, generation of the skill projections from EIR
+reference/routing views, and a whole-document prompt render if one is desired. The
+harness track (M1–M16, including the Part 17.2 conformance families) proceeds
+independently of S5.
