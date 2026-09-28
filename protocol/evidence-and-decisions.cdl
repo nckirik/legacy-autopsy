@@ -1,6 +1,6 @@
 SECTION claim-evidence
 NUMBER 5.2
-TITLE "Claim-level evidence — 12-CLAIM-EVIDENCE.md"
+TITLE "Claim-level evidence — `12-CLAIM-EVIDENCE.md`"
 
 GOAL
   Every claim record binds its subject, field or step, evidence level, anchor, and
@@ -55,7 +55,7 @@ END
 
 SECTION contradictions
 NUMBER 5.4
-TITLE "Contradictions — 14-CONTRADICTIONS.md"
+TITLE "Contradictions — `14-CONTRADICTIONS.md`"
 
 GOAL
   Every contradiction record names the conflicting claims, scope, and stale impact.
@@ -72,7 +72,7 @@ END
 
 SECTION authoritative-decisions
 NUMBER 5.5
-TITLE "Authoritative decisions — 15-DECISIONS.md"
+TITLE "Authoritative decisions — `15-DECISIONS.md`"
 
 GOAL
   Every decision record carries its content version and fingerprint, exact scope and
@@ -97,7 +97,7 @@ END
 
 SECTION acquisition-candidates
 NUMBER 5.6
-TITLE "Acquisition-candidate reconciliation — 17-ACQUISITION-CANDIDATES.md"
+TITLE "Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md`"
 
 GOAL
   Every helper-published candidate and operator action receives a row in
@@ -124,7 +124,7 @@ END
 
 SECTION human-confirmations
 NUMBER 5.7
-TITLE "Human confirmations — 18-CONFIRMATIONS.md"
+TITLE "Human confirmations — `18-CONFIRMATIONS.md`"
 
 GOAL
   A CNF record confirms exact typed record IDs, semantic versions, and fingerprints

@@ -10,7 +10,7 @@ import (
 // TestSynthesisCatalogsDrift checks every §11.1–§11.13 record schema, table shape,
 // and closed enum against protocol.md.
 func TestSynthesisCatalogsDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/synthesis-catalogs.cdl")
+	res := compileWithRegistry(t, "protocol/synthesis-catalogs.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

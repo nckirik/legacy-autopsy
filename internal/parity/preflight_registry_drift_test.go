@@ -10,7 +10,7 @@ import (
 // TestPreflightRegistryDrift checks every §3.1 record block field list against
 // protocol.md.
 func TestPreflightRegistryDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/preflight-registry.cdl")
+	res := compileWithRegistry(t, "protocol/preflight-registry.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

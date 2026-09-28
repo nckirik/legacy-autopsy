@@ -16,7 +16,7 @@ type artifactBlock struct {
 // TestPackagingDrift checks every §15 packaging schema, check registry, and table
 // shape against protocol.md.
 func TestPackagingDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/packaging.cdl")
+	res := compileWithRegistry(t, "protocol/packaging.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

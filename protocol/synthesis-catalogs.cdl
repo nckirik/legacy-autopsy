@@ -113,7 +113,7 @@ END
 
 SECTION architecture-blueprint
 NUMBER 11.3
-TITLE "Architecture blueprint - 90-ARCH-BLUEPRINT.md"
+TITLE "Architecture blueprint — `90-ARCH-BLUEPRINT.md`"
 
 GOAL
   The architecture blueprint contains system boundary and context diagrams;
@@ -149,7 +149,7 @@ END
 
 SECTION entity-catalog
 NUMBER 11.4
-TITLE "Entity - 91-DATA-MODEL.md"
+TITLE "Entity — `91-DATA-MODEL.md`"
 
 ENUM STORAGE-KIND
   table
@@ -190,7 +190,7 @@ END
 
 SECTION relationship-catalog
 NUMBER 11.5
-TITLE "Relationship - 91-DATA-MODEL.md"
+TITLE "Relationship — `91-DATA-MODEL.md`"
 
 ENUM RELATIONSHIP-CARDINALITY
   1:1
@@ -223,7 +223,7 @@ END
 
 SECTION state-machine-catalog
 NUMBER 11.6
-TITLE "State machine - 91-DATA-MODEL.md"
+TITLE "State machine — `91-DATA-MODEL.md`"
 
 GOAL
   A state machine is required only for an eligible lifecycle scope: an entity aggregate
@@ -261,7 +261,7 @@ END
 
 SECTION database-routine-catalog
 NUMBER 11.7
-TITLE "Database routine - 91-DATA-MODEL.md"
+TITLE "Database routine — `91-DATA-MODEL.md`"
 
 ENUM DB-ROUTINE-KIND
   trigger
@@ -305,7 +305,7 @@ END
 
 SECTION business-rule-catalog
 NUMBER 11.8
-TITLE "Business rule - 92-BUSINESS-RULES.md"
+TITLE "Business rule — `92-BUSINESS-RULES.md`"
 
 ENUM VIOLATION-POLICY
   reject
@@ -345,7 +345,7 @@ END
 
 SECTION use-case-catalog
 NUMBER 11.9
-TITLE "Use case - 93-USE-CASES.md"
+TITLE "Use case — `93-USE-CASES.md`"
 
 ENUM USE-CASE-CAPABILITY-CLASSIFICATION
   Active
@@ -394,7 +394,7 @@ END
 
 SECTION interface-catalog
 NUMBER 11.10
-TITLE "Interface - 94-INTERFACES.md"
+TITLE "Interface — `94-INTERFACES.md`"
 
 FIELD INTERFACE-REQUEST-FIELD
   field         -> string required
@@ -439,7 +439,7 @@ END
 
 SECTION deployment-catalog
 NUMBER 11.11
-TITLE "Deployment, configuration, and scheduling - 95-DEPLOYMENT.md"
+TITLE "Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`"
 
 ENUM CONFIG-MEDIUM
   env
@@ -484,7 +484,7 @@ END
 
 SECTION nfr-security-catalog
 NUMBER 11.12
-TITLE "NFR and security - 96-NON-FUNCTIONAL-SECURITY.md"
+TITLE "NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`"
 
 ENUM NFR-ATTRIBUTE
   latency

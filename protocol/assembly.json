@@ -1,0 +1,30 @@
+{
+  "sources": [
+    "protocol/globals.cdl",
+    "protocol/foundations.cdl",
+    "protocol/personas-povs.cdl",
+    "protocol/preflight-registry.cdl",
+    "protocol/typed-id.cdl",
+    "protocol/semantic-payload-identity.cdl",
+    "protocol/canonical-hash-profile.cdl",
+    "protocol/inventory-and-frontier.cdl",
+    "protocol/status-taxonomy.cdl",
+    "protocol/evidence-and-decisions.cdl",
+    "protocol/extraction-evolution.cdl",
+    "protocol/workspace-registries.cdl",
+    "protocol/acquisition-trust.cdl",
+    "protocol/export-acquisition-loop.cdl",
+    "protocol/normalized-maps.cdl",
+    "protocol/export-reconciliation.cdl",
+    "protocol/invocation-modes.cdl",
+    "protocol/cold-resume.cdl",
+    "protocol/invocation-context.cdl",
+    "protocol/ticket-fsm.cdl",
+    "protocol/coverage-and-exits.cdl",
+    "protocol/synthesis-catalogs.cdl",
+    "protocol/traceability.cdl",
+    "protocol/handbook-and-decisions.cdl",
+    "protocol/packaging.cdl",
+    "protocol/migration-and-conformance.cdl"
+  ]
+}

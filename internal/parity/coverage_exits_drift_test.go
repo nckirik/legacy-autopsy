@@ -16,7 +16,7 @@ var (
 // TestCoverageAndExitsDrift checks the §10.3 condition list, the §10.1 sweep-record
 // fields, and the §10.6 iteration tokens against protocol.md.
 func TestCoverageAndExitsDrift(t *testing.T) {
-	res := compileSection(t, "examples/spec/coverage-and-exits.cdl")
+	res := compileSection(t, "protocol/coverage-and-exits.cdl")
 	enums := map[string][]string{}
 	fields := map[string][]string{}
 	for _, e := range res.EIR.Declarations.Enums {
@@ -68,7 +68,7 @@ func TestCoverageAndExitsDrift(t *testing.T) {
 	compareSets(t, "SWEEP-RECORD", fields["SWEEP-RECORD"], wantFields)
 
 	// 3. §10.6 iteration tokens == the ID-ITERATION enum owned by typed-id.cdl.
-	typed := compileSection(t, "examples/spec/typed-id.cdl")
+	typed := compileSection(t, "protocol/typed-id.cdl")
 	var iteration []string
 	for _, e := range typed.EIR.Declarations.Enums {
 		if e.ID == "ID-ITERATION" {

@@ -18,7 +18,7 @@ var (
 // envelope, artifact-type, row-kind, and domain-prefix registries must match the
 // protocol tables and literals exactly.
 func TestCanonicalProfileDrift(t *testing.T) {
-	res := compileSection(t, "examples/spec/canonical-hash-profile.cdl")
+	res := compileSection(t, "protocol/canonical-hash-profile.cdl")
 	cdlText := res.EIR.Sections[0].Goal
 	for _, r := range res.EIR.Declarations.Rules {
 		cdlText += "\n" + r.Goal

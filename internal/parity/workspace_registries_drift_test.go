@@ -10,7 +10,7 @@ import (
 // TestWorkspaceRegistriesDrift checks every §3.2 record block field list against
 // protocol.md.
 func TestWorkspaceRegistriesDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/workspace-registries.cdl")
+	res := compileWithRegistry(t, "protocol/workspace-registries.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

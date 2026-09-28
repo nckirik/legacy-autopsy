@@ -20,14 +20,14 @@ func compileWithRegistry(t *testing.T, rel string) *cdl.Result {
 		}
 		return b
 	}
-	ledger, err := cdl.LoadLedger(filepath.Join(root, "examples/spec/identity-ledger.json"))
+	ledger, err := cdl.LoadLedger(filepath.Join(root, "protocol/identity-ledger.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	res, err := cdl.Compile(cdl.CompileInput{
 		Sources: []cdl.Source{
-			{Path: "examples/spec/globals.cdl", Bytes: read("examples/spec/globals.cdl")},
-			{Path: "examples/spec/status-taxonomy.cdl", Bytes: read("examples/spec/status-taxonomy.cdl")},
+			{Path: "protocol/globals.cdl", Bytes: read("protocol/globals.cdl")},
+			{Path: "protocol/status-taxonomy.cdl", Bytes: read("protocol/status-taxonomy.cdl")},
 			{Path: rel, Bytes: read(rel)},
 		},
 		Ledger: ledger,
@@ -41,7 +41,7 @@ func compileWithRegistry(t *testing.T, rel string) *cdl.Result {
 // TestEvidenceAndDecisionsDrift checks the §5.2, §5.4, §5.5, and §5.7 record field
 // lists against protocol.md and requires §5.3/§5.6 normative token coverage.
 func TestEvidenceAndDecisionsDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/evidence-and-decisions.cdl")
+	res := compileWithRegistry(t, "protocol/evidence-and-decisions.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

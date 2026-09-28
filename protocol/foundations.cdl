@@ -175,7 +175,7 @@ END
 
 SECTION forensic-plane
 NUMBER 1.1
-TITLE "Plane 1 - Forensic Plane"
+TITLE "Plane 1 — Forensic Plane"
 
 GOAL
   The Forensic Plane preserves what was directly found, where it was found, how it is
@@ -219,7 +219,7 @@ END
 
 SECTION assurance-plane
 NUMBER 1.2
-TITLE "Plane 2 - Assurance Plane"
+TITLE "Plane 2 — Assurance Plane"
 
 GOAL
   The Assurance Plane proves denominator completeness, traversal closure, evidence
@@ -245,7 +245,7 @@ END
 
 SECTION synthesis-plane
 NUMBER 1.3
-TITLE "Plane 3 - Synthesis Plane"
+TITLE "Plane 3 — Synthesis Plane"
 
 GOAL
   The Synthesis Plane transforms closed forensic facts and assurance proofs into
@@ -276,7 +276,7 @@ END
 
 SECTION handbook-plane
 NUMBER 1.4
-TITLE "Plane 4 - Human Reconstruction Handbook"
+TITLE "Plane 4 — Human Reconstruction Handbook"
 
 GOAL
   The Human Reconstruction Handbook presents the confirmed bundle through progressive

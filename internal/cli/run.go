@@ -263,7 +263,7 @@ func validateCommand(args []string, stdout, stderr io.Writer) error {
 }
 
 func loadRouting(repo string) (*protocol.Model, *routing.Manifest, error) {
-	model, err := protocol.Load(filepath.Join(repo, "protocol.md"))
+	model, err := protocol.Load(protocol.OraclePath(repo))
 	if err != nil {
 		return nil, nil, err
 	}

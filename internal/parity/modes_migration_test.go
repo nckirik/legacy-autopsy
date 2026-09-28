@@ -16,7 +16,7 @@ var (
 // TestInvocationModesDrift checks the CDL MODE declarations against protocol.md
 // and proves equivalence with the frozen Go read sets before they are retired.
 func TestInvocationModesDrift(t *testing.T) {
-	res := compileSection(t, "examples/spec/invocation-modes.cdl")
+	res := compileSection(t, "protocol/invocation-modes.cdl")
 	base := res.EIR.Declarations.BaseReads
 	modes := res.EIR.Declarations.Modes
 	if len(base) == 0 || len(modes) == 0 {

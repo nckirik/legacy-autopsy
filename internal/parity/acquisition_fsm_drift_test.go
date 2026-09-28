@@ -13,7 +13,7 @@ var acquisitionStateToken = regexp.MustCompile(`\[(A-[A-Z-]+)\]`)
 // TestAcquisitionStateDrift checks the §7.5 acquisition state domain against the
 // bracket state tokens in protocol.md, and requires normative token coverage.
 func TestAcquisitionStateDrift(t *testing.T) {
-	res := compileSection(t, "examples/spec/export-acquisition-loop.cdl")
+	res := compileSection(t, "protocol/export-acquisition-loop.cdl")
 	var states []string
 	cdlText := res.EIR.Sections[0].Goal
 	for _, r := range res.EIR.Declarations.Rules {

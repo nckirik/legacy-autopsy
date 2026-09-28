@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/nckirik/legacy-autopsy/internal/protocol"
+
 	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/reference"
 	"github.com/nckirik/legacy-autopsy/internal/runtime"
@@ -25,10 +27,10 @@ func root(t *testing.T) string {
 
 func compileExample(t *testing.T) *cdl.Result {
 	t.Helper()
-	return compileSection(t, "examples/spec/export-reconciliation.cdl")
+	return compileSection(t, "protocol/export-reconciliation.cdl")
 }
 
-func protocolPathIn(root string) string { return filepath.Join(root, "protocol.md") }
+func protocolPathIn(root string) string { return protocol.OraclePath(root) }
 
 // compileSection compiles the shared globals plus one CDL section source against
 // the committed ledger.
@@ -39,17 +41,17 @@ func compileSection(t *testing.T, rel string) *cdl.Result {
 	if err != nil {
 		t.Fatal(err)
 	}
-	globals, err := os.ReadFile(filepath.Join(root, "examples/spec/globals.cdl"))
+	globals, err := os.ReadFile(filepath.Join(root, "protocol/globals.cdl"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	ledger, err := cdl.LoadLedger(filepath.Join(root, "examples/spec/identity-ledger.json"))
+	ledger, err := cdl.LoadLedger(filepath.Join(root, "protocol/identity-ledger.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	res, err := cdl.Compile(cdl.CompileInput{
 		Sources: []cdl.Source{
-			{Path: "examples/spec/globals.cdl", Bytes: globals},
+			{Path: "protocol/globals.cdl", Bytes: globals},
 			{Path: rel, Bytes: src},
 		},
 		Ledger: ledger,
@@ -62,7 +64,7 @@ func compileSection(t *testing.T, rel string) *cdl.Result {
 
 func fixturePath(t *testing.T, name string) string {
 	t.Helper()
-	return filepath.Join(root(t), "examples/spec/fixtures", name)
+	return filepath.Join(root(t), "protocol/fixtures", name)
 }
 
 func capabilityMap(ids []string) map[string]bool {

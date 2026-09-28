@@ -9,7 +9,7 @@
     "protocol.md",
     "docs/cdl.md",
     "fixtures/**",
-    "examples/spec/**",
+    "protocol/**",
     "analysis/**"
   ]
 }

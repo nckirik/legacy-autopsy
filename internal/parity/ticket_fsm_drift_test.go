@@ -17,7 +17,7 @@ var (
 // TestTicketFSMDrift checks the §9.2 transition table, the ticket state domain,
 // and the §9.1 escalation-reason enum against protocol.md.
 func TestTicketFSMDrift(t *testing.T) {
-	res := compileSection(t, "examples/spec/ticket-fsm.cdl")
+	res := compileSection(t, "protocol/ticket-fsm.cdl")
 	var allows [][2]string
 	var states []string
 	for _, st := range res.EIR.Declarations.States {

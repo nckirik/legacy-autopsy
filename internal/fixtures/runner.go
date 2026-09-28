@@ -114,7 +114,7 @@ func Run(repoRoot string) (Summary, error) {
 }
 
 func loadCases(repoRoot string) ([]Case, error) {
-	model, err := protocol.Load(filepath.Join(repoRoot, "protocol.md"))
+	model, err := protocol.Load(protocol.OraclePath(repoRoot))
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +176,7 @@ func execute(repoRoot string, fixture Case) (string, error) {
 		result, err := identity.Generate(fixture.Input["type"], fixture.Input["kind"], fixture.Input["namespace"], fixture.Input["owner"], fixture.Input["discriminator"])
 		return result.ID, classified("IDENTITY_INVALID", err)
 	case "protocol-version":
-		model, err := protocol.Load(filepath.Join(repoRoot, "protocol.md"))
+		model, err := protocol.Load(protocol.OraclePath(repoRoot))
 		if err != nil {
 			return "", err
 		}
@@ -185,7 +185,7 @@ func execute(repoRoot string, fixture Case) (string, error) {
 		}
 		return model.Version, nil
 	case "protocol-mode-count":
-		model, err := protocol.Load(filepath.Join(repoRoot, "protocol.md"))
+		model, err := protocol.Load(protocol.OraclePath(repoRoot))
 		if err != nil {
 			return "", err
 		}
@@ -198,7 +198,7 @@ func execute(repoRoot string, fixture Case) (string, error) {
 		}
 		return strconv.Itoa(len(model.Modes)), nil
 	case "protocol-section-line":
-		model, err := protocol.Load(filepath.Join(repoRoot, "protocol.md"))
+		model, err := protocol.Load(protocol.OraclePath(repoRoot))
 		if err != nil {
 			return "", err
 		}

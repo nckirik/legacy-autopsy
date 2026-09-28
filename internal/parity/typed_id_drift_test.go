@@ -18,7 +18,7 @@ var (
 // TestTypedIDRegistryDrift checks that the CDL §4.1 registries exactly match the
 // prefix and iteration forms declared in protocol.md.
 func TestTypedIDRegistryDrift(t *testing.T) {
-	res := compileSection(t, "examples/spec/typed-id.cdl")
+	res := compileSection(t, "protocol/typed-id.cdl")
 	enums := map[string][]string{}
 	for _, e := range res.EIR.Declarations.Enums {
 		enums[e.ID] = e.Values

@@ -10,7 +10,7 @@ import (
 // TestHandbookAndDecisionsDrift checks the §13.1 audience roles and the §14.5
 // equivalence-test kinds against protocol.md.
 func TestHandbookAndDecisionsDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/handbook-and-decisions.cdl")
+	res := compileWithRegistry(t, "protocol/handbook-and-decisions.cdl")
 	enums := map[string][]string{}
 	for _, e := range res.EIR.Declarations.Enums {
 		enums[e.ID] = e.Values

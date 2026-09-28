@@ -14,7 +14,7 @@ var coldResumeFieldLine = regexp.MustCompile(`^- \*\*(.+?):\*\*`)
 // TestColdResumeFieldDrift checks the §8.5 field list against the block in
 // protocol.md and requires the carrier to be the declared capability constant.
 func TestColdResumeFieldDrift(t *testing.T) {
-	res := compileSection(t, "examples/spec/cold-resume.cdl")
+	res := compileSection(t, "protocol/cold-resume.cdl")
 	var fields []string
 	for _, e := range res.EIR.Declarations.Enums {
 		if e.ID == "COLD-RESUME-FIELD" {

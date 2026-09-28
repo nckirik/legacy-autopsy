@@ -9,7 +9,7 @@ import (
 // TestHumanHatchProbeDrift checks the §9.4 probe specification, the §9.4 safety
 // classification enum, and the §9.6 no-mock fallback payload against protocol.md.
 func TestHumanHatchProbeDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/ticket-fsm.cdl")
+	res := compileWithRegistry(t, "protocol/ticket-fsm.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

@@ -19,7 +19,7 @@ var (
 // TestFoundationsDrift checks §0.1 normative keywords/authority classes/predicate
 // kinds, §0.4 flow stages, and the §1.1–§1.4 plane enum against protocol.md.
 func TestFoundationsDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/foundations.cdl")
+	res := compileWithRegistry(t, "protocol/foundations.cdl")
 	enums := map[string][]string{}
 	for _, e := range res.EIR.Declarations.Enums {
 		enums[e.ID] = e.Values

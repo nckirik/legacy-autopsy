@@ -13,7 +13,7 @@ var classificationValues = regexp.MustCompile("`Classification` is `([^`]+)`")
 // TestTraceabilityDrift checks the §12.1 row shapes, the classification enum, and
 // the §12.5 evidence-binding table shape against protocol.md.
 func TestTraceabilityDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/traceability.cdl")
+	res := compileWithRegistry(t, "protocol/traceability.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

@@ -13,7 +13,7 @@ var backtickedValue = regexp.MustCompile("`([^`]+)`")
 // TestPersonasPovsDrift checks the §2.5 capability-state block, runtime-state matrix,
 // and the §2.6 target-decision enum against protocol.md.
 func TestPersonasPovsDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/personas-povs.cdl")
+	res := compileWithRegistry(t, "protocol/personas-povs.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	assemblyPath = "examples/spec/assembly.json"
-	ledgerPath   = "examples/spec/identity-ledger.json"
+	assemblyPath = "protocol/assembly.json"
+	ledgerPath   = "protocol/identity-ledger.json"
 )
 
 // Compile compiles the repository's ordered CDL assembly with its committed

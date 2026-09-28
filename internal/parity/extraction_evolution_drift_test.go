@@ -9,7 +9,7 @@ import (
 // TestExtractionEvolutionDrift checks the §6.1 atomic-component schema, the §6.2
 // shared-reference schema, and the block-confidence-rank enum against protocol.md.
 func TestExtractionEvolutionDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/extraction-evolution.cdl")
+	res := compileWithRegistry(t, "protocol/extraction-evolution.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

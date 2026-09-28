@@ -1,6 +1,6 @@
 SECTION preflight-registry
 NUMBER 3.1
-TITLE "0A-PREFLIGHT.md"
+TITLE "`0A-PREFLIGHT.md`"
 
 GOAL
   Maintain metadata and boundaries, the persona registry, concrete and DB-autonomous

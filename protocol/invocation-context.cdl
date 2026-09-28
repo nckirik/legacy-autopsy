@@ -266,7 +266,7 @@ END
 
 SECTION invocation-log
 NUMBER 8.8
-TITLE "0G invocation log"
+TITLE "`0G` invocation log"
 
 GOAL
   Append the invocation log record after every invocation; 0H MAY compress current

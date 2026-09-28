@@ -87,14 +87,14 @@ func Build(repoRoot string) (Report, error) {
 		EIRFormat:        cdl.EIRFormat,
 	}
 
-	model, err := protocol.Load(filepath.Join(repoRoot, "protocol.md"))
+	model, err := protocol.Load(protocol.OraclePath(repoRoot))
 	if err != nil {
 		return Report{}, err
 	}
 	report.ProtocolVersion = model.Version
 	report.ProtocolFingerprint = model.Fingerprint
 
-	assemblyPath := filepath.Join(repoRoot, "examples/spec/assembly.json")
+	assemblyPath := filepath.Join(repoRoot, "protocol/assembly.json")
 	assemblyBytes, err := os.ReadFile(assemblyPath)
 	if err != nil {
 		return Report{}, err
@@ -106,7 +106,7 @@ func Build(repoRoot string) (Report, error) {
 		return Report{}, err
 	}
 
-	ledgerPath := filepath.Join(repoRoot, "examples/spec/identity-ledger.json")
+	ledgerPath := filepath.Join(repoRoot, "protocol/identity-ledger.json")
 	ledgerBytes, err := os.ReadFile(ledgerPath)
 	if err != nil {
 		return Report{}, err
@@ -185,12 +185,21 @@ func Build(repoRoot string) (Report, error) {
 		Detail: fmt.Sprintf("%d tests in %d files", len(driftNames), len(driftFiles)),
 	})
 
-	goldenEIR, err := os.ReadFile(filepath.Join(repoRoot, "examples/spec/golden/protocol.eir.json"))
+	generatedProtocol, err := os.ReadFile(filepath.Join(repoRoot, "protocol.md"))
+	if err != nil {
+		return Report{}, err
+	}
+	if _, err := protocol.Load(filepath.Join(repoRoot, "protocol.md")); err != nil {
+		return Report{}, fmt.Errorf("generated protocol.md does not parse: %w", err)
+	}
+	report.Checks = append(report.Checks, CheckReport{Name: "generated-protocol", Status: "pass", Detail: fingerprint(generatedProtocol)})
+
+	goldenEIR, err := os.ReadFile(filepath.Join(repoRoot, "protocol/golden/protocol.eir.json"))
 	if err != nil {
 		return Report{}, err
 	}
 	report.Checks = append(report.Checks, CheckReport{Name: "golden-eir", Status: "pass", Detail: fingerprint(goldenEIR)})
-	prompt, err := os.ReadFile(filepath.Join(repoRoot, "examples/spec/golden/protocol.light.prompt.md"))
+	prompt, err := os.ReadFile(filepath.Join(repoRoot, "protocol/golden/protocol.light.prompt.md"))
 	if err != nil {
 		return Report{}, err
 	}
@@ -320,6 +329,6 @@ func RenderMarkdown(report Report) string {
 		fmt.Fprintf(&b, "- %s\n", deferral)
 	}
 
-	fmt.Fprintf(&b, "\nHuman acceptance of this report is the S4 crown gate; until acceptance, `protocol.md` remains the sole normative authority.\n")
+	fmt.Fprintf(&b, "\nThe CDL sources under `protocol/` are the normative authority; `protocol.md` is a generated render (fingerprint above). `protocol/legacy/protocol-4.1.2.md` is the frozen bootstrap parity oracle.\n")
 	return b.String()
 }

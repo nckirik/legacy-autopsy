@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	defaultSpecAssembly = "examples/spec/assembly.json"
-	defaultSpecLedger   = "examples/spec/identity-ledger.json"
+	defaultSpecAssembly = "protocol/assembly.json"
+	defaultSpecLedger   = "protocol/identity-ledger.json"
 )
 
 func specCommand(args []string, stdout, stderr io.Writer) error {
@@ -41,7 +41,7 @@ func compileSpec(repo, assemblyPath, sourcePath, ledgerPath string) (*cdl.Result
 	var sources []cdl.Source
 	logical := assemblyPath
 	if sourcePath != "" {
-		globalsPath := "examples/spec/globals.cdl"
+		globalsPath := "protocol/globals.cdl"
 		globalsBytes, err := os.ReadFile(filepath.Join(repo, filepath.FromSlash(globalsPath)))
 		if err != nil {
 			return nil, "", err

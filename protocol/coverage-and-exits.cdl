@@ -1,6 +1,6 @@
 SECTION sweep-records
 NUMBER 10.1
-TITLE "Evidence-backed R-SWEPT"
+TITLE "Evidence-backed `[R-SWEPT]`"
 
 GOAL
   A sweep record carries SWEEP-ID. A required traversal-matrix cell may be R-SWEPT

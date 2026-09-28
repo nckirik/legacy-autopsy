@@ -12,36 +12,37 @@ import (
 var update = flag.Bool("update", false, "rewrite golden assets and identity ledger")
 
 const (
-	examplePath           = "examples/spec/export-reconciliation.cdl"
-	typedIDPath           = "examples/spec/typed-id.cdl"
-	semanticPayloadPath   = "examples/spec/semantic-payload-identity.cdl"
-	canonicalProfilePath  = "examples/spec/canonical-hash-profile.cdl"
-	acquisitionPath       = "examples/spec/export-acquisition-loop.cdl"
-	normalizedMapsPath    = "examples/spec/normalized-maps.cdl"
-	invocationModesPath   = "examples/spec/invocation-modes.cdl"
-	coldResumePath        = "examples/spec/cold-resume.cdl"
-	ticketFSMPath         = "examples/spec/ticket-fsm.cdl"
-	invocationContextPath = "examples/spec/invocation-context.cdl"
-	coverageExitsPath     = "examples/spec/coverage-and-exits.cdl"
-	statusTaxonomyPath    = "examples/spec/status-taxonomy.cdl"
-	evidenceDecisionsPath = "examples/spec/evidence-and-decisions.cdl"
-	workspaceRegistryPath = "examples/spec/workspace-registries.cdl"
-	preflightRegistryPath = "examples/spec/preflight-registry.cdl"
-	acquisitionTrustPath  = "examples/spec/acquisition-trust.cdl"
-	traceabilityPath      = "examples/spec/traceability.cdl"
-	packagingPath         = "examples/spec/packaging.cdl"
-	foundationsPath       = "examples/spec/foundations.cdl"
-	personasPovsPath      = "examples/spec/personas-povs.cdl"
-	inventoryFrontierPath = "examples/spec/inventory-and-frontier.cdl"
-	extractionEvoPath     = "examples/spec/extraction-evolution.cdl"
-	handbookDecisionsPath = "examples/spec/handbook-and-decisions.cdl"
-	synthesisCatalogsPath = "examples/spec/synthesis-catalogs.cdl"
-	migrationConfPath     = "examples/spec/migration-and-conformance.cdl"
-	globalsPath           = "examples/spec/globals.cdl"
-	assemblyPath          = "examples/spec/assembly.json"
-	ledgerPath            = "examples/spec/identity-ledger.json"
-	goldenEIRPath         = "examples/spec/golden/protocol.eir.json"
-	goldenPromptPath      = "examples/spec/golden/protocol.light.prompt.md"
+	examplePath           = "protocol/export-reconciliation.cdl"
+	typedIDPath           = "protocol/typed-id.cdl"
+	semanticPayloadPath   = "protocol/semantic-payload-identity.cdl"
+	canonicalProfilePath  = "protocol/canonical-hash-profile.cdl"
+	acquisitionPath       = "protocol/export-acquisition-loop.cdl"
+	normalizedMapsPath    = "protocol/normalized-maps.cdl"
+	invocationModesPath   = "protocol/invocation-modes.cdl"
+	coldResumePath        = "protocol/cold-resume.cdl"
+	ticketFSMPath         = "protocol/ticket-fsm.cdl"
+	invocationContextPath = "protocol/invocation-context.cdl"
+	coverageExitsPath     = "protocol/coverage-and-exits.cdl"
+	statusTaxonomyPath    = "protocol/status-taxonomy.cdl"
+	evidenceDecisionsPath = "protocol/evidence-and-decisions.cdl"
+	workspaceRegistryPath = "protocol/workspace-registries.cdl"
+	preflightRegistryPath = "protocol/preflight-registry.cdl"
+	acquisitionTrustPath  = "protocol/acquisition-trust.cdl"
+	traceabilityPath      = "protocol/traceability.cdl"
+	packagingPath         = "protocol/packaging.cdl"
+	foundationsPath       = "protocol/foundations.cdl"
+	personasPovsPath      = "protocol/personas-povs.cdl"
+	inventoryFrontierPath = "protocol/inventory-and-frontier.cdl"
+	extractionEvoPath     = "protocol/extraction-evolution.cdl"
+	handbookDecisionsPath = "protocol/handbook-and-decisions.cdl"
+	goldenProtocolPath    = "protocol/golden/protocol.generated.md"
+	synthesisCatalogsPath = "protocol/synthesis-catalogs.cdl"
+	migrationConfPath     = "protocol/migration-and-conformance.cdl"
+	globalsPath           = "protocol/globals.cdl"
+	assemblyPath          = "protocol/assembly.json"
+	ledgerPath            = "protocol/identity-ledger.json"
+	goldenEIRPath         = "protocol/golden/protocol.eir.json"
+	goldenPromptPath      = "protocol/golden/protocol.light.prompt.md"
 	generatedAt           = "2026-09-25T00:00:00Z"
 )
 
@@ -211,6 +212,13 @@ func TestUpdateAssets(t *testing.T) {
 	if err := os.WriteFile(repoPath(goldenPromptPath), prompt, 0o644); err != nil {
 		t.Fatal(err)
 	}
+	rendered := RenderProtocol(doc)
+	if err := os.WriteFile(repoPath(goldenProtocolPath), rendered, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(repoPath("protocol.md"), rendered, 0o644); err != nil {
+		t.Fatal(err)
+	}
 }
 
 // BuildEIRFromAssembly parses and resolves the ordered sources, then builds EIR.
@@ -263,6 +271,25 @@ func TestGoldenPrompt(t *testing.T) {
 	}
 	if string(prompt) != string(want) {
 		t.Fatalf("prompt golden mismatch\ngot:\n%s", prompt)
+	}
+}
+
+func TestGoldenProtocolRender(t *testing.T) {
+	res := compileAssembly(t)
+	got := RenderProtocol(res.EIR)
+	for _, path := range []string{goldenProtocolPath, "protocol.md"} {
+		want, err := os.ReadFile(repoPath(path))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if string(got) != string(want) {
+			t.Fatalf("%s is stale (run: go test ./cdl -run TestUpdateAssets -update)", path)
+		}
+	}
+	for _, marker := range []string{"**Version:** 4.1.2", "## 8.3. Invocation-mode enum and explicit multi-file modes", "Preflight | Export Acquisition"} {
+		if !strings.Contains(string(got), marker) {
+			t.Fatalf("generated protocol missing %q", marker)
+		}
 	}
 }
 

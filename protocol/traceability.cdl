@@ -1,6 +1,6 @@
 SECTION traceability
 NUMBER 12.1
-TITLE "Traceability - 20-TRACEABILITY.md"
+TITLE "Traceability — `20-TRACEABILITY.md`"
 
 GOAL
   One atomic row per source-to-semantic mapping; multiple rows MAY represent multiple

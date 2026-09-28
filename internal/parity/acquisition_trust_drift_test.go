@@ -10,7 +10,7 @@ import (
 // TestAcquisitionTrustDrift checks the §7.2 export register fields and the §7.4
 // per-platform inventory kinds against protocol.md.
 func TestAcquisitionTrustDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/acquisition-trust.cdl")
+	res := compileWithRegistry(t, "protocol/acquisition-trust.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))

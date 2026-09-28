@@ -6,12 +6,22 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	md "github.com/nckirik/legacy-autopsy/internal/markdown"
 )
 
 const InvocationModeHeading = "8.3. Invocation-mode enum and explicit multi-file modes"
+
+// LegacyOracleRelPath is the frozen v4.1.2 Markdown text used as the bootstrap
+// parity oracle after crown. The generated root protocol.md is not an oracle.
+const LegacyOracleRelPath = "protocol/legacy/protocol-4.1.2.md"
+
+// OraclePath returns the frozen legacy protocol text path for a repository root.
+func OraclePath(repoRoot string) string {
+	return filepath.Join(repoRoot, filepath.FromSlash(LegacyOracleRelPath))
+}
 
 type Model struct {
 	Path        string

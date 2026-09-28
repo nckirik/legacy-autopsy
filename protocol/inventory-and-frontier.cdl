@@ -39,7 +39,7 @@ END
 
 SECTION source-inventory
 NUMBER 4.3
-TITLE "Source inventory denominator - 10-SOURCE-INVENTORY.md"
+TITLE "Source inventory denominator — `10-SOURCE-INVENTORY.md`"
 
 GOAL
   One record exists per concrete source unit.
@@ -131,7 +131,7 @@ END
 
 SECTION traversal-frontier
 NUMBER 4.4
-TITLE "Traversal frontier - 11-TRAVERSAL-FRONTIER.md"
+TITLE "Traversal frontier — `11-TRAVERSAL-FRONTIER.md`"
 
 GOAL
   Every discovered traversal boundary MUST create exactly one FRT record, including a
@@ -187,7 +187,7 @@ END
 
 SECTION source-coverage
 NUMBER 4.5
-TITLE "Scope-specific source coverage - 16-SOURCE-COVERAGE.md"
+TITLE "Scope-specific source coverage — `16-SOURCE-COVERAGE.md`"
 
 GOAL
   One row exists per immutable SRC version by persona/owner by track by environment by

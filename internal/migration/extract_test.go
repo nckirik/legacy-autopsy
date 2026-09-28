@@ -13,8 +13,8 @@ import (
 var update = flag.Bool("update", false, "rewrite generated migration sources")
 
 const (
-	protocolPath = "../../protocol.md"
-	outputPath   = "../../examples/spec/status-taxonomy.cdl"
+	protocolPath = "../../protocol/legacy/protocol-4.1.2.md"
+	outputPath   = "../../protocol/status-taxonomy.cdl"
 )
 
 func generate(t *testing.T) []byte {

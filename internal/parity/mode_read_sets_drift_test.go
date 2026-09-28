@@ -10,7 +10,7 @@ import (
 // TestModeReadSetsDrift checks the §8.3 exhaustive invocation-mode enum against the
 // compiled registry and the mandatory §8.4 read-set rules.
 func TestModeReadSetsDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/invocation-context.cdl")
+	res := compileWithRegistry(t, "protocol/invocation-context.cdl")
 	enums := map[string][]string{}
 	for _, e := range res.EIR.Declarations.Enums {
 		enums[e.ID] = e.Values

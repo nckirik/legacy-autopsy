@@ -2,7 +2,6 @@ package parity
 
 import (
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -12,7 +11,7 @@ import (
 // TestMigrationAndConformanceDrift checks the §19.2 conformance-case enum and the
 // Part 20 artifact-ownership matrix shape against protocol.md.
 func TestMigrationAndConformanceDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/migration-and-conformance.cdl")
+	res := compileWithRegistry(t, "protocol/migration-and-conformance.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))
@@ -50,7 +49,7 @@ func TestMigrationAndConformanceDrift(t *testing.T) {
 	}
 	compareSets(t, "CONFORMANCE-CASE", enums["CONFORMANCE-CASE"], cases)
 
-	raw, err := os.ReadFile(filepath.Join(root(t), "protocol.md"))
+	raw, err := os.ReadFile(protocol.OraclePath(root(t)))
 	if err != nil {
 		t.Fatal(err)
 	}

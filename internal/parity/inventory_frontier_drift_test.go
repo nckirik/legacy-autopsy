@@ -10,7 +10,7 @@ import (
 // TestInventoryAndFrontierDrift checks the §4.3/§4.4/§4.5/§4.6 record schemas and
 // closed enums against protocol.md.
 func TestInventoryAndFrontierDrift(t *testing.T) {
-	res := compileWithRegistry(t, "examples/spec/inventory-and-frontier.cdl")
+	res := compileWithRegistry(t, "protocol/inventory-and-frontier.cdl")
 	fields := map[string][]string{}
 	for _, f := range res.EIR.Declarations.Fields {
 		names := make([]string, 0, len(f.Fields))
