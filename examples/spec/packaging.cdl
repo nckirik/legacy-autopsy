@@ -1,0 +1,686 @@
+SECTION exit-e-strict-conditions
+NUMBER 15.1
+TITLE "Strict conditions"
+
+GOAL
+  Exit E remains Pending through steps 1-5 of §15.4. The stage-4 Exit E Content-Readiness
+  Report validates all content, decision, confirmation, and package-member conditions
+  available at that stage, but it is not the Exit E pass artifact and MUST NOT state or
+  imply Passed. Exit E transitions to Passed only at step 6 when all conditions below are
+  true and the signed outer bundle manifest's hashed payload validates with the literal
+  field EXIT-E-STATUS: Passed.
+END
+
+RULE exit-e-conditions
+  GOAL
+    Exit E requires: composite Exit A passed for the same pinned snapshot or a
+    documented later non-semantic packaging change preserving its inputs; every
+    effective in-scope source unit C-COVERED with exact, risk-assessed, disclosed
+    exclusions removed from denominator arithmetic and no C-GAP or C-PARTIAL remaining;
+    all 90-96 mandatory domains complete with evidence-backed zero-domain records where
+    genuinely empty and valid semantic versions/fingerprints; the complete handbook
+    semantic payload existing as B-POPULATED before candidacy, passing quality gates,
+    synchronized to synthesis, and included in the candidate payload manifest without
+    later semantic regeneration; all reciprocal references, legal typed IDs including
+    COV/CND/MOD/PRF/HBK, claims, ownership, persona purity, diagrams, and links
+    validating; every eligible lifecycle scope having a complete SM and every
+    ineligible decision being explicit; every UC having a complete behavioral contract
+    and reciprocal BR/ER/IF references; every CFG having an effect, environment/state
+    matrix, or approved exclusion; every PRV finding in 0C having a reciprocal SEC
+    record; every effective-denominator Disabled SRC, CMP, and UC having exactly one
+    canonical CAP with disabled/dormant capabilities indexed, cross-linked,
+    risk-described, and having an Approved target decision, and overlaps having
+    explicit relationships and approved decisions; every material fault class having an
+    FLT record and the consolidated fault/resilience topology being complete; every
+    persona profile having a unique legal PRF ID, being atomically synchronized with
+    its 0A persona-prefix row, having the complete §8.4 dependency closure validated
+    against exact versions/fingerprints without mixed snapshots, being semantically
+    fingerprinted, B-CONFIRMED, and covered by a valid exact-PRF-binding CNF; every
+    synthesis, PRF profile, and HBK handbook semantic payload exactly matching its
+    typed-ID entry in the candidate payload manifest and every certification envelope
+    being B-CONFIRMED, referencing a valid CNF for its exact typed record ID,
+    SEMANTIC-RECORD-VERSION, and SEMANTIC-CONTENT-FINGERPRINT, and being neither draft,
+    populated-only, nor stale; every reconstruction-affecting scope, target,
+    capability, and migration decision having an approval envelope with Approval
+    Status: Approved bound to the exact candidate decision-content version/fingerprint,
+    while Proposed decisions cannot pass Exit E; the reviewed equivalence suite mapping
+    every UC contract, BR/invariant property, eligible SM transition, external IF
+    baseline, and disabled-capability safeguard to at least one test or exact approved
+    exclusion; all pending synthesis references and GAP records reconciled with no
+    orphan/dangling/tombstone violation remaining; all material contradictions and
+    decision-required items resolved or represented by approved scope exclusions that
+    preserve and disclose exact residual risk; the system namespace, protocol version,
+    environments, and snapshot present and exactly equal across the Exit A report, Exit
+    E Candidate Report, Exit E Content-Readiness Report, scope certificate, every
+    snapshot-bearing package member, and outer bundle manifest, with the source
+    inventory denominator, export projections, claims, candidate payload manifest,
+    confirmations, and remaining package members fingerprint-pinned to that identity
+    under §4.1.2 and the acyclic exclusions in §15.4, failing closed on missing
+    identity or snapshot mixing; human architect/domain confirmation recorded in
+    18-CONFIRMATIONS.md, with B-CONFIRMED never machine-assigned and confirmation
+    envelope attachment not altering any semantic version/fingerprint; and at step 6
+    the outer bundle manifest payload directly declaring the exact
+    system/protocol/environment/snapshot identity, final check-registry fingerprint,
+    and pre-signature input-set fingerprint, including every package member other than
+    itself, including the Exit E Content-Readiness Report and scope certificate, and
+    containing EXIT-E-STATUS: Passed, with all listed package-member file fingerprints,
+    required certification/approval/CNF envelope bindings, cross-artifact snapshot
+    identities, and required final checks recomputing and validating and its required
+    human signature envelope validating under §15.5. The signed outer manifest is the
+    authoritative non-cyclic Exit E completion attestation. No post-step-6
+    authoritative Exit E artifact is created. There are no row-count shortcuts: file
+    exists, section exists, or zero rows does not satisfy completeness without
+    denominator-backed proof.
+  END
+END
+
+SECTION universal-packaging-rules
+NUMBER 15.1.1
+TITLE "Universal deterministic packaging rules"
+
+GOAL
+  The five packaging artifact types are EXIT-E-CANDIDATE-REPORT,
+  CANDIDATE-PAYLOAD-MANIFEST, EXIT-E-CONTENT-READINESS-REPORT, SCOPE-CERTIFICATE, and
+  OUTER-BUNDLE-MANIFEST. Each MUST instantiate the generic §4.1.2 payload and envelope
+  boundaries and its exact ordered schema.
+END
+
+RULE packaging-payload-rules
+  GOAL
+    For every packaging payload: payload fields appear exactly once and in the declared
+    order, and an unknown, duplicate, reordered, or omitted required payload field is a
+    structural error; a declared optional or empty scalar is serialized as the exact
+    literal None, never omitted, blank, null-like, or represented by prose; an empty
+    table retains its declared header and separator rows and contains no data row; every
+    normalized path uses §4.1 with normalization before sorting, hashing, or binding;
+    every table is sorted by its schema-declared tuple after normalization using
+    ascending bytewise comparison of the exact preserved Unicode code points serialized
+    as UTF-8, and duplicate sort-key tuples are invalid unless the table schema
+    explicitly permits them; an ID list not represented as a table is sorted by
+    (record type, typed ID) and a path/member list by (normalized path, artifact type),
+    with no source discovery order semantically significant; semantically equal inputs
+    presented in different source orders MUST serialize to one canonical payload and one
+    payload fingerprint; the HASH-DOMAIN identity is exactly artifact-type + "|" +
+    normalized-relative-path, is included in the preimage, and cannot contain the
+    payload fingerprint, while the POST-HASH-ARTIFACT-INSTANCE-BINDING is computed only
+    after hashing and is never part of its own preimage. The declared table sort keys
+    are: candidate validation or readiness checks by (Check ID); blockers by (Blocker
+    ID); semantic counts by (Record Type); decision counts by (Decision Type); semantic
+    bindings by (Record Type, Typed Record ID); decision bindings by (DEC ID); confirmed
+    bindings by (Record Type, Typed Record ID); approved decision bindings by (DEC ID);
+    included scope dimensions by (Dimension, Value); source counts by (SRC Kind);
+    exclusions by (DEC ID, Excluded Unit ID); residual risks by (Risk ID); and every
+    package-member table, including the outer manifest, by (Normalized Path, Artifact
+    Type). Fields described as a deterministic set or tuple use the corresponding rule
+    above.
+  END
+END
+
+RULE exit-e-check-registry
+  GOAL
+    The required Exit E report check registry is EXIT-E-CHECKS-v1. Its canonical
+    registry fingerprint is sha256 over UTF-8 EXIT-E-CHECK-REGISTRY|EXIT-E-CHECKS-v1
+    plus one LF and the §4.1.2 canonical serialization of the exact ordered registry
+    table. A report's Check Results.Check ID set MUST equal exactly the rows for its
+    stage: no missing, duplicate, unknown, or other-stage ID is permitted. Every
+    required row is serialized and has Result: Pass | Fail; this registry defines no
+    Not-Applicable result because each check validates its own applicability denominator
+    and evidence-backed zero domains. A missing or malformed row is a structural report
+    failure, not a pass or an omitted/unknown result. Ready-For-Human-Review or
+    Ready-For-Certificate requires exact-set equality, every row Pass, every row's
+    evidence-set fingerprint to recompute, and an empty blockers table, so a
+    header-only empty check table can never satisfy either report. Any failed check
+    requires at least one corresponding blocker; a blocker cannot compensate for a
+    missing check.
+  END
+END
+
+ENUM EXIT-E-CANDIDATE-CHECKS
+  CANDIDATE-01-EXIT-A
+  CANDIDATE-02-SOURCE-CLOSURE
+  CANDIDATE-03-SYNTHESIS-DOMAINS
+  CANDIDATE-04-HANDBOOK-QUALITY
+  CANDIDATE-05-REFERENTIAL-INTEGRITY
+  CANDIDATE-06-LIFECYCLE
+  CANDIDATE-07-USE-CASES
+  CANDIDATE-08-CONFIGURATION
+  CANDIDATE-09-PRIVACY-SECURITY
+  CANDIDATE-10-DISABLED-CAPABILITIES
+  CANDIDATE-11-FAULTS
+  CANDIDATE-12-PROFILES
+  CANDIDATE-13-PENDING-AND-CONTRADICTIONS
+  CANDIDATE-14-SNAPSHOT-INPUTS
+END
+
+ENUM EXIT-E-CONTENT-READINESS-CHECKS
+  READINESS-01-CANDIDATE-IMMUTABILITY
+  READINESS-02-CONFIRMATIONS
+  READINESS-03-DECISION-APPROVALS
+  READINESS-04-EQUIVALENCE
+  READINESS-05-HANDBOOK-READABILITY
+  READINESS-06-NO-PENDING-OR-CONTRADICTIONS
+  READINESS-07-ENVELOPE-INTEGRITY
+  READINESS-08-PREPACKAGE-MEMBERS
+  READINESS-09-SNAPSHOT-CONSISTENCY
+  READINESS-10-RESIDUAL-RISK
+  READINESS-11-SEQUENCE
+END
+
+ENUM FINAL-CHECK
+  FINAL-01-OUTER-PAYLOAD
+  FINAL-02-SNAPSHOT
+  FINAL-03-MEMBER-SET
+  FINAL-04-MEMBER-FINGERPRINTS
+  FINAL-05-ENVELOPES
+  FINAL-06-CHAIN
+  FINAL-07-REGISTRY-AND-INPUTS
+  FINAL-08-CONDITIONS
+  FINAL-09-SEQUENCE
+END
+
+FIELD ARTIFACT-SIGNATURE-ENVELOPE
+  signature-signatories-timestamps -> string required
+  envelope-audit                   -> string required
+END
+
+FIELD SEMANTIC-RECORD-COUNT
+  record-type -> string required
+  count       -> int required
+END
+
+FIELD DECISION-CONTENT-COUNT
+  decision-type -> string required
+  count         -> int required
+END
+
+FIELD CHECK-RESULT
+  check-id             -> string required
+  requirement          -> string required
+  result               -> string required
+  evidence-fingerprint -> string required
+END
+
+FIELD BLOCKER
+  blocker-id           -> string required
+  affected-ids         -> string required
+  description          -> string required
+  evidence-fingerprint -> string required
+END
+
+SECTION exit-e-candidate-report
+NUMBER 15.1.2
+TITLE "Exit E Candidate Report ordered payload schema"
+
+GOAL
+  The Exit E Candidate Report is emitted before the candidate payload manifest. Its
+  exact payload field order is declared below.
+END
+
+FIELD EXIT-E-CANDIDATE-REPORT
+  artifact-type                            -> string required
+  artifact-path                            -> string required
+  protocol-artifact-schema-version         -> string required
+  system-protocol-snapshot                 -> string required
+  required-check-registry-fingerprint      -> string required
+  exit-a-report-fingerprint                -> string required
+  deterministic-candidate-input-set-fingerprint -> string required
+  coverage-validation-summary              -> string required
+  traceability-validation-summary          -> string required
+  handbook-validation-summary              -> string required
+  semantic-record-counts                   -> string required
+  decision-content-counts                  -> string required
+  check-results                            -> string required
+  blockers                                 -> string required
+  candidate-result                         -> string required
+  artifact-payload-fingerprint             -> string required
+END
+
+RULE candidate-report-ordering
+  GOAL
+    Check Results sorts by (Check ID) and uses Pass | Fail; Blockers sorts by (Blocker
+    ID). Ready-For-Human-Review requires exact CANDIDATE registry-set equality, every
+    required check passing with a valid evidence-set fingerprint, and an empty blockers
+    table. A failed check requires a blocker; a missing/duplicate/unknown check makes
+    the report structurally invalid. The report MUST NOT reference or include the later
+    candidate payload manifest, confirmations or CNFs, confirmation envelopes, Exit E
+    Content-Readiness Report, scope certificate, or outer bundle manifest. This ordering
+    prevents a candidate report/manifest hash cycle.
+  END
+END
+
+SECTION candidate-payload-manifest
+NUMBER 15.1.3
+TITLE "Candidate Payload Manifest ordered payload schema"
+
+GOAL
+  The candidate payload manifest is emitted only after the immutable candidate report
+  and references it one-way. Its exact payload field order is declared below.
+END
+
+FIELD SEMANTIC-BINDING
+  record-type                   -> string required
+  typed-record-id               -> string required
+  semantic-record-version       -> string required
+  semantic-content-fingerprint  -> string required
+  dependency-set-fingerprint    -> string required
+  normalized-path               -> string required
+END
+
+FIELD DEC-CONTENT-BINDING
+  dec-id                       -> string required
+  decision-content-version     -> string required
+  decision-content-fingerprint -> string required
+END
+
+FIELD CANDIDATE-PAYLOAD-MANIFEST
+  artifact-type                       -> string required
+  artifact-path                       -> string required
+  protocol-artifact-schema-version    -> string required
+  exit-e-candidate-report-fingerprint -> string required
+  semantic-bindings                   -> string required
+  dec-content-bindings                -> string required
+  semantic-binding-count              -> int required
+  dec-content-binding-count           -> int required
+  artifact-payload-fingerprint        -> string required
+END
+
+RULE manifest-ordering
+  GOAL
+    Semantic Bindings sorts by (Record Type, Typed Record ID) and DEC Content Bindings
+    by (DEC ID). Each count MUST equal its table's data-row count. The manifest MUST NOT
+    include future DEC approval envelopes, CNFs, confirmation envelopes, the Exit E
+    Content-Readiness Report, scope certificate, or outer bundle manifest. The
+    candidate report does not reference this manifest; only this manifest references the
+    earlier report.
+  END
+END
+
+SECTION exit-e-content-readiness
+NUMBER 15.1.4
+TITLE "Exit E Content-Readiness Report ordered payload schema"
+
+GOAL
+  The stage-4 Exit E Content-Readiness Report is a pre-certificate artifact. Its exact
+  payload field order is declared below.
+END
+
+FIELD CONFIRMED-SEMANTIC-BINDING
+  record-type                                    -> string required
+  typed-record-id                                -> string required
+  semantic-record-version                        -> string required
+  semantic-content-fingerprint                   -> string required
+  certification-envelope-binding                 -> string required
+  semantic-containing-path                       -> string required
+  semantic-package-member-file-fingerprint       -> string required
+  cnf-id                                         -> string required
+  cnf-payload-fingerprint                        -> string required
+  cnf-signature-envelope-binding                 -> string required
+  cnf-containing-path                            -> string required
+  cnf-package-member-file-fingerprint            -> string required
+END
+
+FIELD APPROVED-DEC-BINDING
+  dec-id                             -> string required
+  decision-content-version           -> string required
+  decision-content-fingerprint       -> string required
+  approval-envelope-binding          -> string required
+  dec-containing-path                -> string required
+  dec-package-member-file-fingerprint -> string required
+END
+
+FIELD PACKAGE-MEMBER
+  artifact-type                     -> string required
+  normalized-path                   -> string required
+  package-member-file-fingerprint   -> string required
+END
+
+FIELD EXIT-E-CONTENT-READINESS-REPORT
+  artifact-type                              -> string required
+  artifact-path                              -> string required
+  protocol-artifact-schema-version           -> string required
+  system-protocol-snapshot                   -> string required
+  required-check-registry-fingerprint        -> string required
+  exit-a-report-fingerprint                  -> string required
+  exit-e-candidate-report-fingerprint        -> string required
+  candidate-payload-manifest-fingerprint     -> string required
+  confirmed-semantic-bindings                -> string required
+  approved-dec-bindings                      -> string required
+  pre-certificate-package-members            -> string required
+  check-results                              -> string required
+  exit-e-prepackage-state                    -> string required
+  content-readiness-result                   -> string required
+  blockers                                   -> string required
+  artifact-payload-fingerprint               -> string required
+END
+
+RULE content-readiness-ordering
+  GOAL
+    Confirmed bindings sort by (Record Type, Typed Record ID), approved decisions by
+    (DEC ID), pre-certificate members by (Normalized Path, Artifact Type), checks by
+    (Check ID), and blockers by (Blocker ID). Check results use Pass | Fail.
+    Ready-For-Certificate requires exact CONTENT-READINESS registry-set equality, every
+    required check passing with a valid evidence-set fingerprint, and an empty blockers
+    table. A failed check requires a blocker; a missing/duplicate/unknown check makes
+    the report structurally invalid. The payload MUST omit the outer-manifest Exit E
+    completion field and completion literal and MUST NOT reference or depend on the
+    later scope certificate or outer bundle manifest. It cannot pass Exit E; Exit E
+    remains Pending until the signed outer-manifest step 6.
+  END
+END
+
+SECTION scope-certificate
+NUMBER 15.2
+TITLE "Scope certificate"
+
+GOAL
+  The scope certificate binds scope, exclusions, risks, and the prior certification
+  chain. Its exact payload field order is declared below.
+END
+
+FIELD INCLUDED-SCOPE-DIMENSION
+  dimension -> string required
+  value     -> string required
+END
+
+FIELD SOURCE-COUNT
+  src-kind              -> string required
+  gross-discovered      -> int required
+  approved-excluded     -> int required
+  effective-denominator -> int required
+  covered               -> int required
+END
+
+FIELD APPROVED-EXCLUSION-RESIDUAL-RISK
+  dec-id                       -> string required
+  excluded-unit-id             -> string required
+  decision-content-version     -> string required
+  decision-content-fingerprint -> string required
+  approval-envelope-binding    -> string required
+  risk-id                      -> string required
+  exact-residual-risk          -> string required
+END
+
+FIELD CONFIRMED-SEMANTIC-PAYLOAD-BINDING
+  record-type                   -> string required
+  typed-record-id               -> string required
+  semantic-record-version       -> string required
+  semantic-content-fingerprint  -> string required
+  cnf-id                        -> string required
+  cnf-payload-fingerprint       -> string required
+END
+
+FIELD KNOWN-RESIDUAL-RISK
+  risk-id            -> string required
+  affected-ids       -> string required
+  source-dec-id      -> string required
+  exact-residual-risk -> string required
+  disclosure-path    -> string required
+END
+
+FIELD SCOPE-CERTIFICATE
+  artifact-type                                  -> string required
+  artifact-path                                  -> string required
+  protocol-artifact-schema-version               -> string required
+  system-protocol-snapshot                       -> string required
+  included-scope-dimensions                      -> string required
+  source-counts-by-kind                          -> string required
+  approved-exclusions-and-residual-risks         -> string required
+  export-reconciliation                          -> string required
+  exit-a-report-fingerprint                      -> string required
+  exit-e-candidate-report-fingerprint            -> string required
+  candidate-payload-manifest-fingerprint         -> string required
+  exit-e-content-readiness-report-fingerprint    -> string required
+  confirmed-semantic-payload-bindings            -> string required
+  known-residual-risks                           -> string required
+  artifact-payload-fingerprint                   -> string required
+END
+
+RULE scope-certificate-ordering
+  GOAL
+    Included Scope Dimensions sorts by (Dimension, Value); source counts by (SRC Kind);
+    approved exclusions by (DEC ID, Excluded Unit ID); confirmed bindings by (Record
+    Type, Typed Record ID); and residual risks by (Risk ID). Every count and arithmetic
+    relation MUST reproduce the cited denominator/reconciliation reports. The scope
+    certificate is emitted only after the Exit E Content-Readiness Report. It references
+    that immutable report and the candidate/confirmation chain; the content-readiness
+    report does not reference or hash the later certificate. The certificate uses the
+    generic §4.1.2 artifact boundaries and exclusions; all certificate scope, risk,
+    confirmed typed-record bindings, and report-reference fields remain hashed.
+  END
+END
+
+SECTION package-contents
+NUMBER 15.3
+TITLE "Package contents"
+
+RULE certified-package-contents
+  GOAL
+    The certified package contains the human reconstruction handbook; structured 90-96
+    synthesis catalogs; assurance plane records and deterministic validation summaries;
+    persona profiles and necessary forensic reference records; the decision log; the
+    equivalence/acceptance suite; the scope certificate; the Exit E Candidate Report,
+    candidate payload manifest, Exit E Content-Readiness Report, and signed outer bundle
+    manifest; source, projection, artifact, and semantic fingerprint manifests; Exit A,
+    Exit E Candidate, and content-readiness validation reports; and a known-gap/risk
+    record that MUST disclose every approved exclusion and its residual risks even
+    though excluded from the effective denominator, MUST contain no undisclosed or
+    unapproved gap, and MUST NOT claim a gap absent from both the gross discovered
+    population and approved risk record. Raw secrets, raw private exports, private
+    matching hints, and private entity indexes are excluded.
+  END
+END
+
+SECTION certification-sequence
+NUMBER 15.4
+TITLE "Acyclic certification sequence and hash domains"
+
+GOAL
+  Certification MUST follow the declared order; no later artifact is an input to an
+  earlier hash.
+END
+
+RULE certification-steps
+  GOAL
+    Step 1: Final-Synthesis and Profile Synchronization produce complete B-POPULATED
+    synthesis and PRF profile payloads, Reconstruction-Handoff projects the complete
+    handbook as B-POPULATED HBK records, runs the deterministic pre-candidate
+    non-vacuity/link/diagram and synchronization checks in §13.4, and computes every
+    typed record's SEMANTIC-CONTENT-FINGERPRINT; human readability review does not occur
+    here. Step 2: Validation/Gate validates Exit A, all populated typed payloads,
+    proposed decision content, references, coverage, and handbook quality, then emits an
+    immutable Exit E Candidate Report and candidate payload manifest using the generic
+    §4.1.2 artifact schema; the manifest lists every candidate synthesis, PRF, and HBK
+    record ID, semantic record version, semantic-content fingerprint, dependency
+    fingerprint, and required decision-content version/fingerprint binding; neither
+    candidate artifact includes future DEC approval envelopes, CNFs, confirmation
+    envelopes, the Exit E Content-Readiness Report, certificate, or outer manifest. Step
+    3: authorized humans approve required DEC content by attaching approval envelopes
+    bound to the exact candidate DECISION-CONTENT-VERSION/DECISION-CONTENT-FINGERPRINT,
+    then create CNF records against exact candidate typed-record bindings, including
+    PRF/HBK IDs where applicable; these attachments do not alter candidate-bound content
+    fingerprints and do not by themselves restart candidacy; every CNF that confirms
+    candidate HBK content records the §13.4 handbook readability result and the combined
+    passing CNFs MUST cover every candidate HBK binding; the authorized confirmation
+    action attaches B-CONFIRMED/CNF envelopes without regenerating or changing semantic
+    payload; DEC and CNF hashes use §4.1.2 and their exact record-specific envelope
+    markers. Step 4: Validation/Gate recomputes candidate semantic fingerprints, verifies
+    unchanged payloads, recomputes and validates every certification/approval/CNF
+    envelope binding and finalized package-member file fingerprint available at this
+    stage, validates every content/confirmation/package-member condition available
+    before certificate and outer-manifest creation, and emits the immutable Exit E
+    Content-Readiness Report; its hashed payload may reference Exit A, the Exit E
+    Candidate Report/candidate payload manifest, DEC/CNF records, exact envelope
+    bindings, and all validated pre-certificate package-member file fingerprints
+    available at this stage; it MUST state that Exit E is still Pending, MUST NOT
+    contain EXIT-E-STATUS: Passed, and MUST NOT reference or depend on the later scope
+    certificate or outer bundle manifest/fingerprint. Step 5: Reconstruction-Handoff
+    emits the scope certificate referencing the immutable Exit E Content-Readiness
+    Report fingerprint and prior chain; creating it MUST NOT change the content-readiness
+    report; Exit E remains Pending. Step 6: Reconstruction-Handoff emits the outer
+    manifest, whose hashed payload directly declares the pinned System / Protocol /
+    Snapshot, the final check-registry identity/fingerprint, and the pre-signature
+    authoritative input-set fingerprint; lists every final package member other than the
+    manifest itself and each external package-member file fingerprint, including the
+    candidate artifacts, DEC/CNF records and their finalized containing files, confirmed
+    semantic records and their finalized containing files, Exit E Content-Readiness
+    Report, and scope certificate; includes the literal field EXIT-E-STATUS: Passed; and
+    does not list itself or its own digest as a package member. Validation/Gate requires
+    exact system/protocol/environment/snapshot equality across Exit A, candidate report,
+    content-readiness report, scope certificate, every snapshot-bearing package member,
+    and the outer payload; recomputes every package-member file fingerprint and required
+    certification/approval/CNF envelope binding; verifies the complete member set,
+    generic payload/envelope boundaries, the content-readiness and certificate
+    references, pre-signature input-set fingerprint, final check-registry fingerprint,
+    and all §15.1 conditions; and fails closed on missing identity, mixed snapshots, or
+    a validly hashed member from another snapshot. Authorized humans then sign the outer
+    artifact envelope, and the conforming implementation performs the §15.5
+    deterministic final-bundle verification over the completed signature envelope. Only
+    when every required final check passes does Exit E transition from Pending to Passed.
+    The signed outer manifest is the authoritative non-cyclic Exit E completion
+    attestation and its payload digest is the bundle fingerprint. No post-step-6
+    authoritative completion report or attestation is emitted.
+  END
+END
+
+RULE pre-signature-input-set
+  GOAL
+    The outer payload's Pre-Signature Validation Input-Set Fingerprint is computed
+    before outer payload hashing and signing. Its complete preimage is UTF-8
+    EXIT-E-PRE-SIGNATURE-INPUTS|, the canonically serialized outer System / Protocol /
+    Snapshot, one LF, the EXIT-E-CHECKS-v1 identity and fingerprint, one LF, the
+    EXIT-E-FINAL-CHECKS-v1 identity and fingerprint, one LF, the Exit E
+    Content-Readiness Report artifact-payload fingerprint, one LF, the scope-certificate
+    artifact-payload fingerprint, one LF, and the §4.1.2 canonical serialization of
+    exactly the outer Package Members table. Each member row MUST use
+    PACKAGE-MEMBER-FILE and the complete finalized path-bound fingerprint for that
+    normalized path/artifact type. The table MUST equal the complete final member set
+    excluding only the outer manifest itself; a missing, extra, duplicate, differently
+    domained, or mixed-snapshot binding changes or invalidates the preimage. The preimage
+    excludes the outer payload, its fingerprint carrier, and its signature envelope, so
+    it is acyclic.
+  END
+END
+
+FIELD OUTER-SIGNATURE-ENVELOPE
+  required-human-signatories-signature-timestamps -> string required
+  envelope-audit                                  -> string required
+END
+
+FIELD OUTER-BUNDLE-MANIFEST
+  artifact-type                                       -> string required
+  artifact-path                                       -> string required
+  protocol-artifact-schema-version                    -> string required
+  system-protocol-snapshot                            -> string required
+  final-verification-check-registry-fingerprint       -> string required
+  pre-signature-validation-input-set-fingerprint      -> string required
+  exit-e-content-readiness-report-fingerprint         -> string required
+  scope-certificate-fingerprint                       -> string required
+  package-members                                     -> string required
+  exit-e-status                                       -> string required
+  artifact-payload-fingerprint                        -> string required
+END
+
+RULE outer-manifest-ordering
+  GOAL
+    Package Members MUST be sorted by (Normalized Path, Artifact Type), MUST contain
+    every final package member except the outer manifest itself, and MUST reject
+    duplicate normalized paths or duplicate member bindings. The declared outer-manifest
+    field order is exact under §15.1.1.
+  END
+END
+
+RULE exclusion-rule
+  GOAL
+    The normative semantic/payload hash profile and exact boundaries are §4.1.2.
+    Packaging payload fingerprints exclude only their own ARTIFACT-PAYLOAD-FINGERPRINT
+    carrier and matching generic artifact digest/signature envelope. Synthesis/PRF/HBK
+    semantic records exclude exactly the certification envelope in §4.1.1; DEC excludes
+    exactly the decision-approval envelope in §5.5 and its own carrier; CNF excludes
+    exactly the CNF digest/signature envelope in §5.7 and its own carrier. Those
+    exclusions do not apply to canonical envelope fingerprints or external package-member
+    file fingerprints: envelope fingerprints include every field within their exact
+    envelope, and package-member file fingerprints include the complete finalized
+    member. Cross-document references, content timestamps, package-member lists,
+    EXIT-E-STATUS, and all other payload fields remain hashed. No artifact may exclude a
+    later artifact reference merely to mask a cycle; such a reference is forbidden by
+    the sequence.
+  END
+END
+
+RULE restart-rule
+  GOAL
+    A semantic payload, dependency, candidate decision-content binding, or
+    candidate-manifest change restarts at step 1 or 2 as applicable and invalidates
+    downstream CNFs. A DEC review-input or decision-content change restarts at step 2;
+    attaching a matching approval envelope occurs at step 3 and does not restart, while
+    a mismatched envelope is rejected. A CNF or confirmation-envelope defect restarts at
+    step 3. An Exit E Content-Readiness Report payload defect restarts at step 4. A
+    certificate-only payload defect restarts at step 5. An outer-manifest membership,
+    status, fingerprint, order, validation, or signature defect restarts at step 6 and
+    leaves Exit E Pending. Replacing any finalized member envelope changes its envelope
+    binding and package-member file fingerprint; it restarts from the stage that owns
+    that envelope and always invalidates/requires regeneration and re-signing of the
+    step-6 outer manifest. Replacing only the outer manifest's own signature envelope
+    with an unchanged outer payload digest restarts step 6 only and requires
+    revalidation/re-signing. Any change that reaches backward into an earlier artifact
+    restarts from the earliest affected step. There is no post-step-6 authoritative
+    artifact whose hash could create a cycle.
+  END
+END
+
+SECTION final-bundle-verification
+NUMBER 15.5
+TITLE "Reproducible final-bundle verification"
+
+GOAL
+  EXIT-E-FINAL-CHECKS-v1 is the exact final verification registry.
+END
+
+RULE final-bundle-verification-operation
+  GOAL
+    The canonical fingerprint of EXIT-E-FINAL-CHECKS-v1 is sha256 over UTF-8
+    EXIT-E-FINAL-CHECK-REGISTRY|EXIT-E-FINAL-CHECKS-v1, one LF, and the §4.1.2 canonical
+    serialization of the final check registry table. A conforming runtime MUST expose a
+    deterministic verify final bundle operation over the complete signed bundle. The
+    operation recomputes the exact registry and check results from bundle bytes; it does
+    not trust the outer payload's Passed literal, stored fingerprints, or
+    executor-supplied values. Missing, duplicate, unknown, or failed checks yield overall
+    Fail. FINAL-09-SEQUENCE verifies only bundle-observable members, references, and
+    recorded prior-stage states. The prohibition on creating later authoritative
+    completion state is separately enforced by the runtime's post-Exit-E transaction
+    rules and cannot be inferred from standalone bundle bytes.
+  END
+END
+
+FIELD FINAL-CHECK-RESULT
+  check-id            -> string required
+  result              -> string required
+  offending-bindings  -> string required
+END
+
+FIELD FINAL-VERIFICATION-RECEIPT
+  protocol-artifact-check-registry-versions-and-fingerprints -> string required
+  normalized-bundle-identity                                 -> string required
+  outer-payload-canonical-outer-envelope-fingerprints        -> string required
+  system-protocol-environment-snapshot                       -> string required
+  package-member-input-bindings-and-input-set-fingerprint    -> string required
+  check-results                                              -> string required
+  overall-result                                             -> string required
+  validator-implementation-version-timestamp                 -> string required
+  deterministic-result-fingerprint                           -> string required
+END
+
+RULE final-verification-receipt
+  GOAL
+    Every execution records a final verification receipt with the declared schema. The
+    result fingerprint covers every preceding field except Validator Implementation
+    Version / Timestamp and its own carrier under §4.1.2 with domain prefix
+    FINAL-VERIFY-RESULT|. The receipt is a NON-AUTHORITATIVE-DERIVATIVE, MUST remain
+    outside the certified package and authoritative .extracted protocol state, MUST NOT
+    be a package member or input to Exit E, and cannot change the outer payload digest,
+    signature, or gate state. It records which checks the original runtime executed; any
+    third party can discard it and reproduce the same deterministic result from the
+    signed bundle. Creating, deleting, or regenerating a receipt is not a post-step-6
+    completion artifact or attestation.
+  END
+END

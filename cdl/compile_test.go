@@ -28,6 +28,7 @@ const (
 	preflightRegistryPath = "examples/spec/preflight-registry.cdl"
 	acquisitionTrustPath  = "examples/spec/acquisition-trust.cdl"
 	traceabilityPath      = "examples/spec/traceability.cdl"
+	packagingPath         = "examples/spec/packaging.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -656,6 +657,45 @@ func TestTraceabilityCompiles(t *testing.T) {
 		if e.ID == "CLASSIFICATION" && len(e.Values) != 3 {
 			t.Fatalf("CLASSIFICATION has %d values, want 3", len(e.Values))
 		}
+	}
+}
+
+func TestPackagingCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, packagingPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"15.1", "15.1.1", "15.1.2", "15.1.3", "15.1.4", "15.2", "15.3", "15.4", "15.5"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	want := map[string]int{
+		"EXIT-E-CANDIDATE-REPORT":         16,
+		"CANDIDATE-PAYLOAD-MANIFEST":      9,
+		"EXIT-E-CONTENT-READINESS-REPORT": 16,
+		"SCOPE-CERTIFICATE":               15,
+		"OUTER-BUNDLE-MANIFEST":           11,
+		"FINAL-VERIFICATION-RECEIPT":      9,
+		"ARTIFACT-SIGNATURE-ENVELOPE":     2,
+		"OUTER-SIGNATURE-ENVELOPE":        2,
+	}
+	for id, size := range want {
+		if counts[id] != size {
+			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)
+		}
+	}
+	enumCounts := map[string]int{}
+	for _, e := range res.EIR.Declarations.Enums {
+		enumCounts[e.ID] = len(e.Values)
+	}
+	if enumCounts["EXIT-E-CANDIDATE-CHECKS"] != 14 || enumCounts["EXIT-E-CONTENT-READINESS-CHECKS"] != 11 || enumCounts["FINAL-CHECK"] != 9 {
+		t.Fatalf("unexpected check registry counts: %v", enumCounts)
 	}
 }
 

@@ -618,6 +618,262 @@
       ]
     },
     {
+      "path": "examples/spec/packaging.cdl",
+      "source-fingerprint": "sha256:44807f807b96a53fb9ba26717bd429b5fe66ace1f232397b9237fe17b2aa789d",
+      "ids": [
+        {
+          "id": "APPROVED-DEC-BINDING",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "APPROVED-EXCLUSION-RESIDUAL-RISK",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "ARTIFACT-SIGNATURE-ENVELOPE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "BLOCKER",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CANDIDATE-PAYLOAD-MANIFEST",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CHECK-RESULT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CONFIRMED-SEMANTIC-BINDING",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CONFIRMED-SEMANTIC-PAYLOAD-BINDING",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "DEC-CONTENT-BINDING",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "DECISION-CONTENT-COUNT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "EXIT-E-CANDIDATE-CHECKS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "EXIT-E-CANDIDATE-REPORT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "EXIT-E-CONTENT-READINESS-CHECKS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "EXIT-E-CONTENT-READINESS-REPORT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "FINAL-CHECK",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "FINAL-CHECK-RESULT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "FINAL-VERIFICATION-RECEIPT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "INCLUDED-SCOPE-DIMENSION",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "KNOWN-RESIDUAL-RISK",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "OUTER-BUNDLE-MANIFEST",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "OUTER-SIGNATURE-ENVELOPE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "PACKAGE-MEMBER",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "SCOPE-CERTIFICATE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "SEMANTIC-BINDING",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "SEMANTIC-RECORD-COUNT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "SOURCE-COUNT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "candidate-payload-manifest",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "candidate-report-ordering",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "certification-sequence",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "certification-steps",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "certified-package-contents",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "content-readiness-ordering",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "exclusion-rule",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "exit-e-candidate-report",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "exit-e-check-registry",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "exit-e-conditions",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "exit-e-content-readiness",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "exit-e-strict-conditions",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "final-bundle-verification",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "final-bundle-verification-operation",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "final-verification-receipt",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "manifest-ordering",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "outer-manifest-ordering",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "package-contents",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "packaging-payload-rules",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "pre-signature-input-set",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "restart-rule",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "scope-certificate",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "scope-certificate-ordering",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "universal-packaging-rules",
+          "kind": "SECTION",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/preflight-registry.cdl",
       "source-fingerprint": "sha256:3756e055b36b4ade4565f58e0638eb23122137f3ac650a542d0fcdbdda4259fb",
       "ids": [
