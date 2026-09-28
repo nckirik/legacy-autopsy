@@ -146,6 +146,10 @@ S3 progress:
   the envelope, package-member, transport, and evidence-set fingerprints;
   `internal/parity` drift-checks the registries and every normative token against
   `protocol.md`.
+- **§12 implemented (authored schema + drift):** `examples/spec/traceability.cdl`
+  declares the traceability row, lifecycle-eligibility row, classification enum, the
+  reciprocal-reference/ID-timing/provenance rules, and the §12.5 evidence-binding
+  table; row shapes drift-check against protocol.md.
 - **Skill projections decision:** the 13 projections stay hand-maintained with the
   routing validator through S3; generation from EIR reference views is deferred to S4.
 - **Collision extension implemented:** `internal/capabilities.ExtendCollision` extends
