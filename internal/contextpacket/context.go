@@ -11,9 +11,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/identity"
 	"github.com/nckirik/legacy-autopsy/internal/protocol"
 	"github.com/nckirik/legacy-autopsy/internal/routing"
+	"github.com/nckirik/legacy-autopsy/internal/spec"
 	"github.com/nckirik/legacy-autopsy/internal/workspace"
 )
 
@@ -39,31 +41,29 @@ type Packet struct {
 	CheckpointFingerprint string
 }
 
-var iterations = stringSet("ALFA", "BRAVO", "CHARLIE", "DELTA", "ECHO", "FOXTROT", "GOLF", "HOTEL", "INDIA", "JULIETT", "KILO", "LIMA", "MIKE", "NOVEMBER", "OSCAR", "PAPA", "QUEBEC", "ROMEO", "SIERRA", "TANGO", "UNIFORM", "VICTOR", "WHISKEY", "X-RAY", "YANKEE", "ZULU")
-
-func stringSet(values ...string) map[string]struct{} {
-	result := make(map[string]struct{}, len(values))
-	for _, value := range values {
-		result[value] = struct{}{}
-	}
-	return result
-}
-
 func Build(repoRoot string, model *protocol.Model, manifest *routing.Manifest, options Options) (*Packet, error) {
 	projection, ok := manifest.Projection(options.Mode)
 	if !ok {
 		return nil, fmt.Errorf("unknown invocation mode %q", options.Mode)
 	}
+	compiled, err := spec.Compile(repoRoot)
+	if err != nil {
+		return nil, fmt.Errorf("compiled protocol assembly: %w", err)
+	}
+	mode, ok := findMode(compiled.EIR.Declarations.Modes, options.Mode)
+	if !ok {
+		return nil, fmt.Errorf("invocation mode %q is not declared in the compiled assembly", options.Mode)
+	}
 	if options.SystemNamespace == "" || options.Iteration == "" || options.InvocationID == "" || options.InvocationScope == "" || options.EnvironmentSnapshot == "" {
 		return nil, fmt.Errorf("system namespace, iteration, invocation ID, invocation scope, and environment/snapshot are required")
 	}
-	if _, ok := iterations[options.Iteration]; !ok {
+	if !iterationTokens(compiled.EIR.Declarations.Enums)[options.Iteration] {
 		return nil, fmt.Errorf("iteration %q is not a canonical §10.6 token", options.Iteration)
 	}
 	if len(options.AllowedWriteTargets) == 0 || len(options.ForbiddenWriteTargets) == 0 {
 		return nil, fmt.Errorf("at least one allowed and one forbidden write target are required")
 	}
-	if strictMode(options.Mode) {
+	if mode.Strict {
 		if options.Persona == "" || options.PersonaPrefix == "" || options.PersonaDirectory == "" || options.Cluster == "" || options.Track == "" || options.POV == "" || options.POVFile == "" || options.MaxTraversalDepth <= 0 {
 			return nil, fmt.Errorf("%s requires persona, persona prefix, persona directory, cluster, track, POV, POV file, and positive traversal-depth bindings", options.Mode)
 		}
@@ -86,8 +86,7 @@ func Build(repoRoot string, model *protocol.Model, manifest *routing.Manifest, o
 	if err != nil {
 		return nil, err
 	}
-	readTargets := commonReadTargets()
-	readTargets = append(readTargets, staticModeReadTargets(options.Mode)...)
+	readTargets := append([]string(nil), mode.Reads...)
 	if options.POVFile != "" {
 		readTargets = append(readTargets, options.POVFile)
 		readTargets = append(readTargets, filepath.ToSlash(filepath.Join("personas", "_shared", filepath.Base(options.POVFile))))
@@ -95,7 +94,7 @@ func Build(repoRoot string, model *protocol.Model, manifest *routing.Manifest, o
 	if options.QuestionLedger != "" {
 		readTargets = append(readTargets, options.QuestionLedger)
 	}
-	if options.PersonaDirectory != "" && strictMode(options.Mode) {
+	if options.PersonaDirectory != "" && mode.Strict {
 		readTargets = append(readTargets, filepath.ToSlash(filepath.Join("personas", options.PersonaDirectory, "UNMAPPED-DISCOVERY-BUFFER.md")))
 	}
 	readTargets = append(readTargets, options.AdditionalReadTargets...)
@@ -122,35 +121,28 @@ func Build(repoRoot string, model *protocol.Model, manifest *routing.Manifest, o
 	return &Packet{GeneratedAt: time.Now().UTC(), Projection: projection, Protocol: model, Options: options, Files: bindings, ProjectionText: string(projectionData), CheckpointFingerprint: checkpoint}, nil
 }
 
-func commonReadTargets() []string {
-	return []string{"0A-PREFLIGHT.md", "0D-GLOSSARY.md", "0E-INDEX.md", "0F-GLOBAL-STATE.md", "0G-DECONSTRUCTION-STATE.md", "0H-CHECKPOINT-SUMMARY.md", "10-SOURCE-INVENTORY.md", "11-TRAVERSAL-FRONTIER.md", "12-CLAIM-EVIDENCE.md"}
-}
-
-func staticModeReadTargets(mode string) []string {
-	switch mode {
-	case "Export Acquisition":
-		return []string{"0C-SECURITY-PRIVACY.md", "13-EXPORT-RECONCILIATION.md", "17-ACQUISITION-CANDIDATES.md"}
-	case "Discovery", "Ticket Resolution", "Promotion Review":
-		return []string{"0B-AUTH-MODEL.md", "0C-SECURITY-PRIVACY.md", "14-CONTRADICTIONS.md", "16-SOURCE-COVERAGE.md"}
-	case "Sequential Reconciliation", "Cross-Reference-Reconciliation":
-		return []string{"13-EXPORT-RECONCILIATION.md", "14-CONTRADICTIONS.md", "15-DECISIONS.md", "16-SOURCE-COVERAGE.md", "20-TRACEABILITY.md"}
-	case "Profile Synchronization":
-		return []string{"15-DECISIONS.md", "16-SOURCE-COVERAGE.md", "18-CONFIRMATIONS.md", "20-TRACEABILITY.md"}
-	case "Partial-Synthesis", "Final-Synthesis":
-		return []string{"13-EXPORT-RECONCILIATION.md", "14-CONTRADICTIONS.md", "15-DECISIONS.md", "16-SOURCE-COVERAGE.md", "18-CONFIRMATIONS.md", "20-TRACEABILITY.md", "21-COVERAGE-REPORT.md", "22-GATE-REPORTS.md"}
-	case "Reconstruction-Handoff":
-		return []string{"15-DECISIONS.md", "18-CONFIRMATIONS.md", "20-TRACEABILITY.md", "22-GATE-REPORTS.md", "90-ARCH-BLUEPRINT.md", "91-DATA-MODEL.md", "92-BUSINESS-RULES.md", "93-USE-CASES.md", "94-INTERFACES.md", "95-DEPLOYMENT.md", "96-NON-FUNCTIONAL-SECURITY.md"}
-	case "Human Hatch":
-		return []string{"14-CONTRADICTIONS.md", "15-DECISIONS.md", "16-SOURCE-COVERAGE.md", "18-CONFIRMATIONS.md", "20-TRACEABILITY.md", "22-GATE-REPORTS.md"}
-	case "Validation/Gate":
-		return []string{"13-EXPORT-RECONCILIATION.md", "14-CONTRADICTIONS.md", "15-DECISIONS.md", "16-SOURCE-COVERAGE.md", "17-ACQUISITION-CANDIDATES.md", "18-CONFIRMATIONS.md", "20-TRACEABILITY.md", "21-COVERAGE-REPORT.md", "22-GATE-REPORTS.md"}
-	default:
-		return nil
+// findMode returns the compiled mode declaration with its materialized read set.
+func findMode(modes []cdl.EIRMode, id string) (cdl.EIRMode, bool) {
+	for _, mode := range modes {
+		if mode.ID == id {
+			return mode, true
+		}
 	}
+	return cdl.EIRMode{}, false
 }
 
-func strictMode(mode string) bool {
-	return mode == "Discovery" || mode == "Ticket Resolution" || mode == "Promotion Review"
+// iterationTokens returns the declared §10.6 iteration token set.
+func iterationTokens(enums []cdl.EIREnum) map[string]bool {
+	for _, enum := range enums {
+		if enum.ID == "ID-ITERATION" {
+			out := make(map[string]bool, len(enum.Values))
+			for _, value := range enum.Values {
+				out[value] = true
+			}
+			return out
+		}
+	}
+	return map[string]bool{}
 }
 
 func normalizedUnique(values []string) ([]string, error) {

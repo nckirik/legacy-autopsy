@@ -18,7 +18,7 @@ else
   exit 1
 fi
 
-mapfile -t go_files < <(git ls-files '*.go')
+mapfile -t go_files < <(git ls-files '*.go' | while IFS= read -r file; do [[ -f "${file}" ]] && printf '%s\n' "${file}"; done)
 if [[ ${#go_files[@]} -eq 0 ]]; then
   echo "no tracked Go files found" >&2
   exit 1

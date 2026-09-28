@@ -5,7 +5,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nckirik/legacy-autopsy/internal/contextpacket"
 	"github.com/nckirik/legacy-autopsy/internal/protocol"
 )
 
@@ -105,17 +104,8 @@ func TestInvocationModesDrift(t *testing.T) {
 		}
 	}
 
-	// 4. Equivalence with the frozen Go read sets being replaced.
-	for _, mode := range modes {
-		extras := mode.Reads[len(base):]
-		if !equalSlices(extras, contextpacket.StaticReadTargets(mode.ID)) {
-			t.Fatalf("mode %s reads drift from the Go implementation:\n cdl: %v\n go:  %v",
-				mode.ID, extras, contextpacket.StaticReadTargets(mode.ID))
-		}
-		if mode.Strict != contextpacket.StrictMode(mode.ID) {
-			t.Fatalf("mode %s strictness drift: cdl=%v go=%v", mode.ID, mode.Strict, contextpacket.StrictMode(mode.ID))
-		}
-	}
+	// 4. The runtime now consumes these declarations; the retired Go read sets are
+	// no longer the operational source, so equivalence is enforced by construction.
 }
 
 func parseModeEnum(t *testing.T, text string) []string {
