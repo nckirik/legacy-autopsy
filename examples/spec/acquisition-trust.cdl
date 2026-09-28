@@ -1,0 +1,132 @@
+SECTION trust-boundary
+NUMBER 7.1
+TITLE "Trust boundary"
+
+GOAL
+  Live acquisition is an operator-side activity; agents MUST NOT invoke acquisition
+  using production credentials.
+END
+
+RULE helper-trust-boundary
+  GOAL
+    The local helper MAY read raw Appsmith exports and approved read-only n8n
+    interfaces, build private entity indexes, sanitize, fingerprint, and publish
+    approved projections. The helper MUST default to dry-run; accept credentials only
+    through environment, stdin, or OS credential storage, never command arguments;
+    keep raw exports and private matching state outside the target repository and
+    authoritative .extracted workspace in operator-controlled storage not published to
+    executor-visible projections; use restrictive temporary storage and best-effort
+    cleanup; perform field-aware sanitization and secret scanning; fail closed for
+    unsupported schema versions, unknown sensitive fields, unresolved high-confidence
+    secret findings, missing lineage, mixed snapshots, or rejected operator review;
+    make no mutation to Appsmith, n8n, or production; make no third-party transmission
+    of exports, secrets, private hints, or repository content; and publish atomically
+    only approved sanitized inventory and bridge fragments. Agents MAY inspect helper
+    source and approved outputs; bridge fragments are proposed patches requiring
+    authorized approval before merge.
+  END
+END
+
+SECTION acquisition-register
+NUMBER 7.2
+TITLE "Acquisition register"
+
+GOAL
+  The acquisition register records every export artifact, its projection, and its
+  acquisition status.
+END
+
+FIELD EXPORT
+  platform                                    -> REGISTRY-EXPORT-PLATFORM required
+  stable-artifact-id-display-name             -> string required
+  raw-source-alias                            -> string required
+  agent-visible-export-path                   -> string required
+  raw-source-fingerprint-projection-fingerprint -> string required
+  snapshot                                    -> string required
+  acquisition-status                          -> REGISTRY-EXPORT-ACQUISITION-STATUS required
+  referenced-by                               -> set<string> optional
+  outstanding-referenced-artifacts            -> set<string> optional
+  normalized-map                              -> string optional
+  reconciliation-summary                      -> string required
+  sanitization-lineage-reports                -> string required
+  operator-action-required                    -> string required
+END
+
+SECTION logical-explosion
+NUMBER 7.3
+TITLE "Logical explosion and virtual coordinates"
+
+GOAL
+  Before POV extraction, each export is decomposed into atomic logical units whose
+  virtual coordinates are canonical for entry coordinates, evidence, dependencies,
+  frontiers, and tickets.
+END
+
+RULE virtual-coordinates
+  GOAL
+    Coordinates name the source export, then the logical kind and stable ID, then the
+    normalized name, using the declared hash and slash separators. Stable internal IDs
+    take precedence. Name-only identities receive deterministic disambiguators and
+    remain low-confidence until verified. Physical container fingerprint and virtual
+    coordinate MUST both be preserved.
+  END
+END
+
+SECTION required-explosion-coverage
+NUMBER 7.4
+TITLE "Required explosion coverage"
+
+GOAL
+  Explosion coverage is enumerated per platform and must include every graph edge.
+END
+
+ENUM N8N-INVENTORY-KIND
+  workflow metadata
+  triggers
+  webhooks
+  schedules
+  nodes
+  code/function nodes
+  transformations
+  conditions
+  merges
+  retries
+  error branches
+  credentials references
+  database/cache/file I/O
+  external calls
+  sub-workflows
+  configured error workflows
+  every graph edge
+END
+
+ENUM APPSMITH-INVENTORY-KIND
+  pages
+  widgets
+  bindings
+  JSObjects
+  actions
+  queries
+  datasources
+  APIs
+  event handlers
+  action chains
+  validations
+  navigation
+  permissions
+  environment references
+  timers
+  polling
+  deferred behavior
+END
+
+RULE explosion-coverage
+  GOAL
+    A complete Appsmith application export may be complete as a physical container, but
+    that does not prove runtime datasource values, plugin behavior, secrets,
+    environment configuration, or external dependencies. Those remain separately
+    evidenced, ticketed, acquired, or exactly excluded. Primary ownership follows the
+    POV definitions. Every graph edge is an atomic POV-5 record, even when its payload
+    meaning creates tickets for another POV.
+  END
+END

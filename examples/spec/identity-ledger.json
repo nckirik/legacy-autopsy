@@ -4,6 +4,62 @@
   "generated-at": "2026-09-25T00:00:00Z",
   "sources": [
     {
+      "path": "examples/spec/acquisition-trust.cdl",
+      "source-fingerprint": "sha256:6ed5aff8760dce527f83d0b2eb550fe43d05a924b073b7129debac66ba0b1497",
+      "ids": [
+        {
+          "id": "APPSMITH-INVENTORY-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "EXPORT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "N8N-INVENTORY-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "acquisition-register",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "explosion-coverage",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "helper-trust-boundary",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "logical-explosion",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "required-explosion-coverage",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "trust-boundary",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "virtual-coordinates",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/canonical-hash-profile.cdl",
       "source-fingerprint": "sha256:801d3ff15b2773a3037a421dab08ce37586f2b25db2b176a133333caba9be056",
       "ids": [

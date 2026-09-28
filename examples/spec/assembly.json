@@ -8,6 +8,7 @@
     "examples/spec/status-taxonomy.cdl",
     "examples/spec/evidence-and-decisions.cdl",
     "examples/spec/workspace-registries.cdl",
+    "examples/spec/acquisition-trust.cdl",
     "examples/spec/export-acquisition-loop.cdl",
     "examples/spec/normalized-maps.cdl",
     "examples/spec/export-reconciliation.cdl",

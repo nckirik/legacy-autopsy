@@ -26,6 +26,7 @@ const (
 	evidenceDecisionsPath = "examples/spec/evidence-and-decisions.cdl"
 	workspaceRegistryPath = "examples/spec/workspace-registries.cdl"
 	preflightRegistryPath = "examples/spec/preflight-registry.cdl"
+	acquisitionTrustPath  = "examples/spec/acquisition-trust.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -599,6 +600,33 @@ func TestPreflightRegistryCompiles(t *testing.T) {
 		if counts[id] != size {
 			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)
 		}
+	}
+}
+
+func TestAcquisitionTrustCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, acquisitionTrustPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"7.1", "7.2", "7.3", "7.4"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	if counts["EXPORT"] != 13 {
+		t.Fatalf("EXPORT has %d fields, want 13", counts["EXPORT"])
+	}
+	enums := map[string]int{}
+	for _, e := range res.EIR.Declarations.Enums {
+		enums[e.ID] = len(e.Values)
+	}
+	if enums["N8N-INVENTORY-KIND"] != 17 || enums["APPSMITH-INVENTORY-KIND"] != 17 {
+		t.Fatalf("unexpected inventory enum counts: %v", enums)
 	}
 }
 
