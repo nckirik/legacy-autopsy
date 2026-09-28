@@ -1264,6 +1264,57 @@
           "status": "active"
         }
       ]
+    },
+    {
+      "path": "examples/spec/workspace-registries.cdl",
+      "source-fingerprint": "sha256:47ab730ff4abc2ea6393aff671d05bf74659d0f61aa6a0d55c831eb42b116b40",
+      "ids": [
+        {
+          "id": "AUTH-MECHANISM",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CAPABILITY-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "INVARIANT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "PRIVACY-FINDING",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "ROUTINE-CROSS-REFERENCE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "SHARED-ENTRY",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "SHARED-STATE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "registry-append-only",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "workspace-registries",
+          "kind": "SECTION",
+          "status": "active"
+        }
+      ]
     }
   ]
 }

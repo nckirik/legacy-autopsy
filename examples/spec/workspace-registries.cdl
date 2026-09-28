@@ -1,0 +1,79 @@
+SECTION workspace-registries
+NUMBER 3.2
+TITLE "Foundational registries"
+
+GOAL
+  0B owns auth and session; 0C owns privacy and security risk without compliance
+  claims; 0D owns glossary; 0E owns index; 0F owns invariants and global state;
+  0G is the append-only invocation history; 0H is the derived resume accelerator.
+END
+
+RULE registry-append-only
+  GOAL
+    0G is chronological and append-only. 0H is a derived accelerator: it MAY compress
+    current active states but MUST include its source 0G range and fingerprint, and a
+    stale 0H forces authoritative fallback.
+  END
+END
+
+FIELD SHARED-ENTRY
+  concrete-entry-src                                -> string required
+  participating-personas-and-invocation-conditions  -> string required
+  coordination-owner                                -> string required
+  persona-invocation-pointers                       -> set<string> required
+  environment-snapshot-track                        -> string required
+  material-claims-version                           -> string required
+END
+
+FIELD AUTH-MECHANISM
+  mechanism-credential-form                     -> string required
+  issuer-validator-storage                      -> string required
+  creation-refresh-expiry-revocation-termination -> string required
+  authorization-bindings-enforcement-points     -> string required
+  personas-interfaces-environments              -> string required
+  secrets-handling-audit                        -> string required
+  material-claims-version                       -> string required
+END
+
+FIELD PRIVACY-FINDING
+  data-threat-review-category              -> string required
+  affected-src-er-if-persona-environment   -> string required
+  observed-handling-risk-unknowns          -> string required
+  human-review-required                    -> string required
+  material-claims-version                  -> string required
+  synthesis-sec-mirror                     -> string required
+END
+
+FIELD CAPABILITY-RECORD
+  record-kind                                  -> string required
+  canonical-member-src-cmp-uc-if-cfg-dr-ids    -> set<string> required
+  overlapping-cap-relationships-decisions      -> string required
+  runtime-state-matrix-mechanism-last-known-state -> string required
+  historical-and-intended-personas-behavior    -> string required
+  dependencies-safety-risk                     -> string required
+  observed-claims                              -> set<string> required
+  target-decision-state                        -> REGISTRY-CAPABILITYRECORD-TARGET-DECISION-STATE required
+  target-decision-dec                          -> string optional
+  version-supersession                         -> string required
+END
+
+FIELD ROUTINE-CROSS-REFERENCE
+  src                   -> set<string> required
+  source-coordinate     -> string required
+  canonical-extract     -> string required
+  personas              -> string required
+  cross-layer-consumers -> set<string> optional
+END
+
+FIELD INVARIANT
+  constraint         -> string required
+  verification-vectors -> set<string> required
+  discovered-in      -> string required
+END
+
+FIELD SHARED-STATE
+  medium-shape                  -> string required
+  initializer-mutators-readers  -> set<string> required
+  lifecycle-invalidation        -> string required
+  claims                        -> set<string> required
+END

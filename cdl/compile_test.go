@@ -24,6 +24,7 @@ const (
 	coverageExitsPath     = "examples/spec/coverage-and-exits.cdl"
 	statusTaxonomyPath    = "examples/spec/status-taxonomy.cdl"
 	evidenceDecisionsPath = "examples/spec/evidence-and-decisions.cdl"
+	workspaceRegistryPath = "examples/spec/workspace-registries.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -548,6 +549,32 @@ func TestEvidenceAndDecisionsCompiles(t *testing.T) {
 	if counts["CLAIM"] != 13 || counts["BLOCK-EVIDENCE-SUMMARY"] != 2 ||
 		counts["CONTRADICTION"] != 6 || counts["DECISION"] != 13 || counts["CONFIRMATION"] != 11 {
 		t.Fatalf("unexpected field counts: %v", counts)
+	}
+}
+
+func TestWorkspaceRegistriesCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, workspaceRegistryPath)
+	found := false
+	for _, sec := range res.EIR.Sections {
+		if sec.Number == "3.2" {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("section 3.2 missing")
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	want := map[string]int{
+		"SHARED-ENTRY": 6, "AUTH-MECHANISM": 7, "PRIVACY-FINDING": 6,
+		"CAPABILITY-RECORD": 10, "ROUTINE-CROSS-REFERENCE": 5, "INVARIANT": 3, "SHARED-STATE": 4,
+	}
+	for id, size := range want {
+		if counts[id] != size {
+			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)
+		}
 	}
 }
 
