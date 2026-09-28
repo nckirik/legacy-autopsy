@@ -874,8 +874,104 @@
       ]
     },
     {
+      "path": "examples/spec/personas-povs.cdl",
+      "source-fingerprint": "sha256:760a1c86d9eb8892227f9899df7b140cc6664dd653954e81c83cf463a75097ef",
+      "ids": [
+        {
+          "id": "CAPABILITY-STATE-BLOCK",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "RUNTIME-STATE-MATRIX",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "TARGET-DECISION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "canonical-entry-ownership",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "capability-grouping",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "capability-runtime-state",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "capability-state-rules",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "capability-target-decision",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "db-autonomous-ownership",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "entry-ownership",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "five-isolated-povs",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "persona-container",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "persona-definition",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "persona-identity-grammar",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "persona-purity",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "pov-isolation",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "track-declarations",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "traversal-tracks",
+          "kind": "SECTION",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/preflight-registry.cdl",
-      "source-fingerprint": "sha256:3756e055b36b4ade4565f58e0638eb23122137f3ac650a542d0fcdbdda4259fb",
+      "source-fingerprint": "sha256:ef47636bb13903d7b2d6fa0db6027d97af75690c09b68d470f52357f2296f451",
       "ids": [
         {
           "id": "DISCOVERY-BUFFER",
@@ -888,7 +984,17 @@
           "status": "active"
         },
         {
+          "id": "PERSONA-REGISTRY",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
           "id": "PREFLIGHT-HEADER",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "REQUIRED-TRAVERSAL-MATRIX",
           "kind": "FIELD",
           "status": "active"
         },

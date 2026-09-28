@@ -29,6 +29,7 @@ const (
 	acquisitionTrustPath  = "examples/spec/acquisition-trust.cdl"
 	traceabilityPath      = "examples/spec/traceability.cdl"
 	packagingPath         = "examples/spec/packaging.cdl"
+	personasPovsPath      = "examples/spec/personas-povs.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -597,7 +598,7 @@ func TestPreflightRegistryCompiles(t *testing.T) {
 	for _, f := range res.EIR.Declarations.Fields {
 		counts[f.ID] = len(f.Fields)
 	}
-	want := map[string]int{"PREFLIGHT-HEADER": 9, "ENTRY-CLUSTER": 10, "UNMAPPED-DISCOVERY": 4, "DISCOVERY-BUFFER": 7}
+	want := map[string]int{"PREFLIGHT-HEADER": 9, "ENTRY-CLUSTER": 10, "UNMAPPED-DISCOVERY": 4, "DISCOVERY-BUFFER": 7, "PERSONA-REGISTRY": 8, "REQUIRED-TRAVERSAL-MATRIX": 10}
 	for id, size := range want {
 		if counts[id] != size {
 			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)
@@ -696,6 +697,31 @@ func TestPackagingCompiles(t *testing.T) {
 	}
 	if enumCounts["EXIT-E-CANDIDATE-CHECKS"] != 14 || enumCounts["EXIT-E-CONTENT-READINESS-CHECKS"] != 11 || enumCounts["FINAL-CHECK"] != 9 {
 		t.Fatalf("unexpected check registry counts: %v", enumCounts)
+	}
+}
+
+func TestPersonasPovsCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, personasPovsPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"2.1", "2.2", "2.3", "2.4", "2.5", "2.6"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	if counts["CAPABILITY-STATE-BLOCK"] != 5 || counts["RUNTIME-STATE-MATRIX"] != 6 {
+		t.Fatalf("unexpected capability field counts: %v", counts)
+	}
+	for _, e := range res.EIR.Declarations.Enums {
+		if e.ID == "TARGET-DECISION" && len(e.Values) != 4 {
+			t.Fatalf("TARGET-DECISION has %d values, want 4", len(e.Values))
+		}
 	}
 }
 

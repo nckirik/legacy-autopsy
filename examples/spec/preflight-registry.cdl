@@ -26,6 +26,30 @@ RULE database-autonomous-clusters
   END
 END
 
+FIELD PERSONA-REGISTRY
+  persona              -> string required
+  prefix               -> string required
+  persona-slug         -> string required
+  persona-directory    -> string required
+  actor-class          -> string required
+  canonical-entry-ids  -> string required
+  scope-paths          -> string required
+  registry-state       -> string required
+END
+
+FIELD REQUIRED-TRAVERSAL-MATRIX
+  persona-owner    -> string required
+  concrete-entry   -> string required
+  track            -> string required
+  environment      -> string required
+  snapshot         -> string required
+  pov              -> string required
+  applicability    -> string required
+  status           -> string required
+  swp-id           -> string required
+  claims           -> string required
+END
+
 FIELD PREFLIGHT-HEADER
   system-namespace                    -> string required
   target-repository-evidence-roots    -> string required

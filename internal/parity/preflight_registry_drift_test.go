@@ -74,4 +74,24 @@ func TestPreflightRegistryDrift(t *testing.T) {
 	for fieldID, want := range labels {
 		compareSets(t, fieldID, fields[fieldID], want)
 	}
+
+	tableFields := map[string]string{"persona": "PERSONA-REGISTRY", "persona-owner": "REQUIRED-TRAVERSAL-MATRIX"}
+	seen := 0
+	for _, line := range strings.Split(text, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if !strings.HasPrefix(trimmed, "|") {
+			continue
+		}
+		cols := tableColumns(trimmed)
+		if len(cols) == 0 {
+			continue
+		}
+		if fieldID, ok := tableFields[cols[0]]; ok {
+			compareSets(t, fieldID, fields[fieldID], cols)
+			seen++
+		}
+	}
+	if seen != 2 {
+		t.Fatalf("found %d §3.1 tables, want 2", seen)
+	}
 }
