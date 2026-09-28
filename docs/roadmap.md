@@ -146,6 +146,8 @@ S3 progress:
   the envelope, package-member, transport, and evidence-set fingerprints;
   `internal/parity` drift-checks the registries and every normative token against
   `protocol.md`.
+- **Skill projections decision:** the 13 projections stay hand-maintained with the
+  routing validator through S3; generation from EIR reference views is deferred to S4.
 - **Collision extension implemented:** `internal/capabilities.ExtendCollision` extends
   colliding hashes to the declared 16/20/.../64 lengths and fails closed on identical
   or non-colliding input; aliases and supersession remain registry concerns (§12.1).

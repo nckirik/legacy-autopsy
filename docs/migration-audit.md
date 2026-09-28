@@ -94,7 +94,7 @@ Phase 1  pilot (additive): cdl subset, runtime VM, reference VM,
 Phase 2  pilot review: leakage audit (context assembly), capability extraction
          decisions (identity/canonical), skill-generation decision, docs
          consolidation into history + authority map
-         [mostly done: skill-generation decision still open]              [next]
+                                                                          [done]
 Phase 3  migration: section-by-section protocol.cdl growth, dual-source drift
          checks, roadmap/README/CI rewrite
 Phase 4  crown: parity report accepted by human; DSL becomes normative source;
@@ -106,7 +106,7 @@ Gates:
 - **G1** test A passes (native and reference VMs agree on trace hash for §7.7). [pass]
 - **G2** test B passes (EIR behavior matches `protocol.md@4.1.2`; 24 fixtures unchanged). [pass]
 - **G3** coverage profile produced with the context-assembly leakage category counted. [pass]
-- **G4** pilot review accepted before any frozen artifact is reworked or retired. [S2]
+- **G4** pilot review accepted before any frozen artifact is reworked or retired. [pass]
 
 ## 6. Deletion policy
 
@@ -124,7 +124,9 @@ It is not a migration concern.
 
 1. Timing of the `cdl` extraction into its own module or repository.
 2. Whether `internal/markdown` ever feeds `cdl` or remains oracle-only.
-3. Whether the 13 skill projections are generated from EIR or kept hand-maintained
-   with a routing validator.
+3. **Resolved:** the 13 skill projections stay hand-maintained with the routing
+   validator through S3; generation from EIR reference views is deferred to S4 when
+   every section is migrated and a reference renderer exists. Mode identifiers are
+   already pinned to the compiled EIR modes by `internal/parity`.
 4. Whether the Spec track is a new milestone series or a re-scoped M1.
 5. When to regenerate `README.md`/`roadmap.md` — after G4, per Phase 2.
