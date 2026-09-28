@@ -10,13 +10,13 @@
   "sources": [
     {
       "path": "protocol/globals.cdl",
-      "fingerprint": "sha256:f7f351b217c8c2ae284ebb06ea7a5f49b5451c0643c0aaf453680cc24fb7d53b",
+      "fingerprint": "sha256:4f61c2d7cffd630f9f2d35eae91053b7987cc422df76b3880d896b74850c507f",
       "sections": null,
       "identities": 0
     },
     {
       "path": "protocol/foundations.cdl",
-      "fingerprint": "sha256:5add40f4812f174b2c96dd5a86c531188961fefbe734af6aaa353f1faabd7af1",
+      "fingerprint": "sha256:f50326f1874e7dcb46c7b22ec18ec4713a9081f11b65e8c426979aa7011d561d",
       "sections": [
         "0.1",
         "0.2",
@@ -32,7 +32,7 @@
     },
     {
       "path": "protocol/personas-povs.cdl",
-      "fingerprint": "sha256:ab4662dedd2b1ff543b7dfbd941278e4d87881e7cded529a4cbe57129d518a5c",
+      "fingerprint": "sha256:8472228d5485d5f8de4b24b7ece20fa97a47f43fecb1dc570265ca2e732ce4d5",
       "sections": [
         "2.1",
         "2.2",
@@ -45,7 +45,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "fingerprint": "sha256:ac4141a8b9be0c11b9c3f1d5d0136edfa6e61c2923468cb621d4942393979656",
+      "fingerprint": "sha256:6a18eaf13133f2c1d3e49a9f49d90f93ca07bb844ba638a8323d663a29a933b7",
       "sections": [
         "3.1"
       ],
@@ -53,7 +53,7 @@
     },
     {
       "path": "protocol/typed-id.cdl",
-      "fingerprint": "sha256:8191941ec70330771c9d6e0b88809e67b2e44258c112c29d905381e83eb57912",
+      "fingerprint": "sha256:49efe885b452536afa13e32562f8bcd64abd109ae2bf35f9ff09847637c32018",
       "sections": [
         "4.1"
       ],
@@ -61,7 +61,7 @@
     },
     {
       "path": "protocol/semantic-payload-identity.cdl",
-      "fingerprint": "sha256:93fd4a060373fbdbd88a5bc4973f3d73d661bd902bd10a00e87c8cd85191f362",
+      "fingerprint": "sha256:047c65826b9b1aa98afd9413ec51402ea592bfdcf9b655787faab06b38e04631",
       "sections": [
         "4.1.1"
       ],
@@ -69,7 +69,7 @@
     },
     {
       "path": "protocol/canonical-hash-profile.cdl",
-      "fingerprint": "sha256:551851233d40b93595606db5c01925ef5e808a8dcb33749cb85e221cce6d4213",
+      "fingerprint": "sha256:af4fd0181fcefe46b6689e2ca48c897779d03263a682840b5b3c73ec8bfdbfb7",
       "sections": [
         "4.1.2"
       ],
@@ -77,7 +77,7 @@
     },
     {
       "path": "protocol/inventory-and-frontier.cdl",
-      "fingerprint": "sha256:fb192c748dc2aafc853f130bb68f808e761a024bf6effa2d324170797941565d",
+      "fingerprint": "sha256:eacfbd4cad5cde149c270d3b67809a9b39f917c208443d197394ede1e9d375b9",
       "sections": [
         "4.2",
         "4.3",
@@ -89,7 +89,7 @@
     },
     {
       "path": "protocol/status-taxonomy.cdl",
-      "fingerprint": "sha256:e73565b556dad4fc6e42701f252cfd26a0cabb5cc8cc80f6837b69fcbf4efb60",
+      "fingerprint": "sha256:663b69623fd1380082a7e403fb284411afec12fb244506669da5f6e190b52ec2",
       "sections": [
         "5.1"
       ],
@@ -97,7 +97,7 @@
     },
     {
       "path": "protocol/evidence-and-decisions.cdl",
-      "fingerprint": "sha256:88c67d05353ed105f72bbc0ab59dd82d76b95ebd740328d9d6f6f8fae94fbc00",
+      "fingerprint": "sha256:822b003067814ded8302e989ca78e17cf15959e6e887a1e9230fd9dbc992c27c",
       "sections": [
         "5.2",
         "5.3",
@@ -110,7 +110,7 @@
     },
     {
       "path": "protocol/extraction-evolution.cdl",
-      "fingerprint": "sha256:7b58a6e46c19555620b1c499ecec05cf9a1def94b15205e05dd35c01bfc8c11b",
+      "fingerprint": "sha256:32938e7b7f862fbc81ef144b99efe3edfaa622386e5e1e01451517aa1312b309",
       "sections": [
         "6.1",
         "6.2",
@@ -122,7 +122,7 @@
     },
     {
       "path": "protocol/workspace-registries.cdl",
-      "fingerprint": "sha256:72aaa4f50e79ca9df15ff27692c13fe1f6ab83b711e544b91ab9104396024ec6",
+      "fingerprint": "sha256:248cc6fce1b2df54fc8cf52823259d15ecdf6b3b3b217633c9e544efde8331f7",
       "sections": [
         "3.2"
       ],
@@ -130,7 +130,7 @@
     },
     {
       "path": "protocol/acquisition-trust.cdl",
-      "fingerprint": "sha256:abde8c00516c4468b670d6780ed2425f2aef430f7860d6f614ddce78fc152fa5",
+      "fingerprint": "sha256:a43b2fd0489321e5108c58b8a2e78a5713e7146c93808b821fede517e8caa809",
       "sections": [
         "7.1",
         "7.2",
@@ -141,7 +141,7 @@
     },
     {
       "path": "protocol/export-acquisition-loop.cdl",
-      "fingerprint": "sha256:973802a4a41edc9068823623e3b22d6b7eb8bad75082f61ea6b5c2a62cc1485f",
+      "fingerprint": "sha256:165ca179fe3a9a7bfd1a97d67491cafad44bdde76a2f7112a12376f25801d2a8",
       "sections": [
         "7.5"
       ],
@@ -149,7 +149,7 @@
     },
     {
       "path": "protocol/normalized-maps.cdl",
-      "fingerprint": "sha256:beb7585061fe6e045e377ab0ab7ee961b935b437c87a7e9c128cfdeee257267d",
+      "fingerprint": "sha256:4afabe97b491546b5d1dc78ffeb9e35f43ff4b2378873a0202ddc8debc8bcff9",
       "sections": [
         "7.6"
       ],
@@ -157,7 +157,7 @@
     },
     {
       "path": "protocol/export-reconciliation.cdl",
-      "fingerprint": "sha256:7d9c5101fcfec9bfd18cd764ec981970e16e93d47023b69a9ec21c49813c0d6b",
+      "fingerprint": "sha256:b77c7710d420a6c9dd34c675387f21bafd1ea454f6766e3893025e0549591410",
       "sections": [
         "7.7"
       ],
@@ -171,7 +171,7 @@
     },
     {
       "path": "protocol/cold-resume.cdl",
-      "fingerprint": "sha256:9ed5048be3887d41d5ef49a7a93e49dfcc39bf30870e4499ca97190a4758cf7b",
+      "fingerprint": "sha256:63288693e96ac576e139a553576cd50c8bba68490b52afb656bc9f4a8b0cb9f1",
       "sections": [
         "8.5"
       ],
@@ -179,7 +179,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "fingerprint": "sha256:a55d9af5fa050c2a7150e226479a1a2b0884f12a7ba657df0aad66dce213c25c",
+      "fingerprint": "sha256:98f14229b3222e63f9485198ed69e853692daf2a19520211a83723a48e69331a",
       "sections": [
         "8.1",
         "8.2",
@@ -193,7 +193,7 @@
     },
     {
       "path": "protocol/ticket-fsm.cdl",
-      "fingerprint": "sha256:2e10a42108f55fc04eaa118b8acaa34b1ec982c5a9cbc15dad45c5739206025c",
+      "fingerprint": "sha256:c6505ccc1220da4d0c8e05aff07a16af8aa2f970358a1bba3d5e3c8c2e8bea05",
       "sections": [
         "9.1",
         "9.2",
@@ -206,7 +206,7 @@
     },
     {
       "path": "protocol/coverage-and-exits.cdl",
-      "fingerprint": "sha256:cdca1eeff0c25fadccc2fe233cf8a1bd55d1adfe6d7463af6026f0ebb245562b",
+      "fingerprint": "sha256:04d57842984f9af28b40ce8d77da11e9114be9589b1e4c1d100bc5c4d73c7661",
       "sections": [
         "10.1",
         "10.2",
@@ -219,7 +219,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "fingerprint": "sha256:51131344e48774509018fea153ce505683cf8dcd7686d2e7112d4fee1c409636",
+      "fingerprint": "sha256:2b3b17b37125578e959eeb7b84ba2566037575bffbda23591b7d566dc8db0d35",
       "sections": [
         "11.1",
         "11.2",
@@ -239,7 +239,7 @@
     },
     {
       "path": "protocol/traceability.cdl",
-      "fingerprint": "sha256:a4cbc6d9175f181d0a84adeae8c9337ef4a7cb35356c993ad0452f7ebf9944b3",
+      "fingerprint": "sha256:3d1795b04582dfd07dfbf02e6d0c9af30dda3387ebbcdfa6721a843df88ea38b",
       "sections": [
         "12.1",
         "12.2",
@@ -251,7 +251,7 @@
     },
     {
       "path": "protocol/handbook-and-decisions.cdl",
-      "fingerprint": "sha256:6a498e9797958134e594923db8bd609834bb7e2993c99a68ac6c8ef053747e4f",
+      "fingerprint": "sha256:812b1ccf5fd199e62fe48b46465c1563f7d29a06e349b192dee0aa2b9bb73c39",
       "sections": [
         "13.1",
         "13.2",
@@ -268,7 +268,7 @@
     },
     {
       "path": "protocol/packaging.cdl",
-      "fingerprint": "sha256:8a1ae5f10cc4fbb6dbfb69677aef545a2519ad9d4d684bb472d2006f8ecd42df",
+      "fingerprint": "sha256:628e9034db97140c78ccf6b569b15689efd012762852e65eb1b769bc8a32062c",
       "sections": [
         "15.1",
         "15.1.1",
@@ -284,17 +284,19 @@
     },
     {
       "path": "protocol/migration-and-conformance.cdl",
-      "fingerprint": "sha256:6a042953eb424077ca834dce18bf21f2fa89511360b6779679af4232a557820c",
+      "fingerprint": "sha256:cca9b26fe8136e1ac97c5cf08dfce7766aeb4ccbce46192a5edfff3c5b333e3a",
       "sections": [
+        "16",
         "17.1",
         "17.2",
         "17.3",
         "19.1",
         "19.2",
         "19.3",
+        "18",
         "20"
       ],
-      "identities": 16
+      "identities": 18
     }
   ],
   "sections": [
@@ -937,17 +939,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:eb301ede9212a96019ed7a954f67e7b2db6c2c5797e8612a61f3eaa1fc236e72"
+      "detail": "sha256:d83e10cf5da9bf61fe7dcd063eeea17675d7fe394877affdb6a19cf367a95cc8"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:ed9c391cef76da15af913d6a5c0c3032f2b11ae138ca6e080d041c63c5c64855"
+      "detail": "sha256:24fd3fe3b3961b7cc331e8583a64e963b6ddcad2e5a8e48d66113106b20d105e"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:119c21b56526c8f646615769ebfd762c7b1171f80c4910cc47195e21155dec05"
+      "detail": "sha256:dd9cb508fce4af1a4b52d0bd25ad27c4316d66b47f9e19577260f6f5b0dd69e9"
     },
     {
       "name": "fixture-oracle",
@@ -957,7 +959,7 @@
     {
       "name": "identity-ledger",
       "status": "pass",
-      "detail": "542 identities across 26 sources"
+      "detail": "544 identities across 26 sources"
     }
   ],
   "fixtures": {
@@ -966,7 +968,7 @@
     "failed": 0
   },
   "deferrals": [
-    "generated protocol.md is a structural render with condensed rule text; the frozen oracle remains the usable standalone prompt until verbatim enrichment and the standalone protocol-quality test pass",
+    "standalone protocol-quality test on the generated protocol.md edition is pending (content completeness is enforced by TestGeneratedProtocolCoversOracle)",
     "canonical.markdown engine remains a bounded v1 implementation (internal/capabilities/canonical.go)",
     "skill projections stay hand-maintained through S4; EIR reference-view generation is deferred",
     "CDL editor tooling (highlighting, canonical printer) is planned after crown as S5",

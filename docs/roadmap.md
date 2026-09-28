@@ -249,11 +249,12 @@ S3 progress:
   regenerated (`go test ./internal/parityreport -update`). Report shows 104/104
   substantive protocol sections implemented (the §0 wrapper is a `wrapper`), all six
   checks pass, 24/24 fixtures pass, and four declared deferrals.
-- **S4 follow-up — generated-edition prompt usability:** the generated `protocol.md`
-  is structurally complete but semantically condensed; a verbatim-enrichment pass
-  (rule text verbatim from the oracle) plus the standalone protocol-quality test on the
-  generated edition are required before it replaces the frozen oracle as the usable
-  prompt. Until then `protocol/legacy/protocol-4.1.2.md` is the prompt edition.
+- **S4 follow-up — generated-edition prompt usability:** verbatim enrichment is done —
+  section GOALs now carry the oracle body verbatim (prose, lists, tables, fences,
+  field bullets), Parts 16/18/20 were added as sections, `PART` declarations render
+  the 20 Part headings, and text blocks preserve newlines/blank lines/comments.
+  `TestGeneratedProtocolCoversOracle` enforces content completeness. The standalone
+  protocol-quality test on the generated edition is the remaining gate.
 - **Generated protocol.md completed:** the renderer now keys declarations by section ID
   (previously dropped every rule/field/enum), renders global declarations under a
   `Document Declarations` preamble, and every one of the 108 sections carries a GOAL

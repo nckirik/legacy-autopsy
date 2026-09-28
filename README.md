@@ -6,11 +6,11 @@ The project is built around the CDL protocol sources under [`protocol/`](protoco
 
 > **Project status — M0 foundation + Spec track crown (S4)**
 >
-> The usable standalone prompt today is the frozen full text [`protocol/legacy/protocol-4.1.2.md`](protocol/legacy/protocol-4.1.2.md). The generated [`protocol.md`](protocol.md) is a structural render of the normative CDL sources under [`protocol/`](protocol/): it covers every section and declaration, but its rule text is a migration condensation that omits detail such as the Part 18 checklist, the Part 19.2 case bodies, and the Part 20 matrix rows, so it is **not yet a validated standalone prompt edition**. The Spec track completed the section-by-section migration and crown: one compiled EIR assembly, a deterministic renderer with goldens, per-section drift tests against the frozen oracle [`protocol/legacy/protocol-4.1.2.md`](protocol/legacy/protocol-4.1.2.md), the unchanged 24-case fixture oracle, and an accepted [crown parity report](analysis/parity-report.md). The harness track implements its M0 foundations: protocol/skill routing, an empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets, and bootstrap fixtures. The repository does **not** execute semantic deconstruction modes, prove Exit A or Exit E, or claim Protocol v4 conformance.
+> The generated [`protocol.md`](protocol.md) carries the complete frozen oracle content verbatim — every paragraph, list, table, fenced block, field bullet, Part heading, and section — enforced by `TestGeneratedProtocolCoversOracle`, and it is the intended standalone prompt edition. The frozen [`protocol/legacy/protocol-4.1.2.md`](protocol/legacy/protocol-4.1.2.md) remains the bootstrap parity oracle. The standalone protocol-quality test (fresh harness, generated edition only) has not yet been run, so the generated edition is not yet independently validated as a prompt; report issues if a harness run exposes any. The Spec track completed the section-by-section migration and crown: one compiled EIR assembly, a deterministic renderer with goldens, per-section drift tests against the frozen oracle [`protocol/legacy/protocol-4.1.2.md`](protocol/legacy/protocol-4.1.2.md), the unchanged 24-case fixture oracle, and an accepted [crown parity report](analysis/parity-report.md). The harness track implements its M0 foundations: protocol/skill routing, an empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets, and bootstrap fixtures. The repository does **not** execute semantic deconstruction modes, prove Exit A or Exit E, or claim Protocol v4 conformance.
 
 > **Normative authority**
 >
-> The CDL sources under `protocol/` are the sole normative authority; `protocol.md` is their generated structural render, and the frozen full text remains the oracle and the usable prompt until verbatim enrichment and a standalone protocol-quality test pass on the generated edition. Legacy Autopsy is one non-authoritative implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, fixtures, or validators. If any implementation or projection conflicts with the normative CDL sources, the protocol wins.
+> The CDL sources under `protocol/` are the sole normative authority; `protocol.md` is their generated edition, which carries the frozen oracle's normative content verbatim. The frozen full text remains the bootstrap parity oracle, and the standalone protocol-quality test on the generated edition is still pending. Legacy Autopsy is one non-authoritative implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, fixtures, or validators. If any implementation or projection conflicts with the normative CDL sources, the protocol wins.
 
 ## How to use Legacy Autopsy
 
@@ -27,11 +27,10 @@ All three paths use the same standalone protocol. The skill and UI add reliabili
 > [!IMPORTANT]
 > This is a manual, agent-driven protocol run—not Legacy Autopsy-managed execution or proof of Protocol v4 conformance.
 
-Work on a clean branch in an approved, non-production copy of the legacy repository. Copy the frozen full text into that repository's root as `protocol.md` (the generated edition is not yet validated for this use):
+Work on a clean branch in an approved, non-production copy of the legacy repository. Copy the generated standalone edition into that repository's root:
 
 ```sh
-cp /path/to/legacy-autopsy/protocol/legacy/protocol-4.1.2.md \
-   /path/to/your-legacy-repository/protocol.md
+cp /path/to/legacy-autopsy/protocol.md /path/to/your-legacy-repository/protocol.md
 ```
 
 Open the legacy repository with your agent and give it this instruction:
@@ -52,7 +51,7 @@ Continue in the agent session as it works through the protocol. Answer open ques
 
 The protocol does not authorize production access. Keep credentials, raw exports, probe output, production data, and private operator material outside the repository and agent-visible context.
 
-This path gives the agent the complete frozen protocol text. The planned skill and orchestration service will instead assemble bounded, mode-specific normative context for each invocation. The [standalone protocol quality test](docs/conformance.md#standalone-protocol-quality-test) keeps the generic-harness path explicit as the tooling evolves.
+This path gives the agent the complete protocol text. The planned skill and orchestration service will instead assemble bounded, mode-specific normative context for each invocation. The [standalone protocol quality test](docs/conformance.md#standalone-protocol-quality-test) keeps the generic-harness path explicit as the tooling evolves.
 
 For reproducible runs, record the protocol version or Legacy Autopsy commit used with the resulting `.extracted/` workspace.
 

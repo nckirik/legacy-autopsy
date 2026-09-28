@@ -177,6 +177,7 @@ Declarations (global or section-local):
     STEP <id>          executable step identity
     GATES <id>, ...    named gate/completion identifiers that BLOCK may reference
     WORKFLOW-TARGET <id>, ...  workflow destinations that RETURN/LOOP may reference
+    PART <number> "<title>"    document part heading (presentation structure)
     BASE-READS         document-wide mandatory read set (one declaration, artifact IDs)
     MODE <id>          invocation mode: TITLE, STRICT, READS <artifact ids>
 
@@ -208,7 +209,15 @@ Rules:
   a step boundary or a resume is a declared `VALUE` with an explicit lifetime;
 - opaque normative text is explicit: `REQUIRE """..."""` clauses and the text fields
   `GOAL`, `TEXT`, and `REASON`. There is no category of source line that is "sometimes
-  syntax, sometimes English"; a semantic clause is always a declared text field.
+  syntax, sometimes English"; a semantic clause is always a declared text field;
+- text blocks are opaque to the lexer: they preserve blank lines, comment markers, and
+  relative indentation, with a common leading indentation stripped from non-blank
+  lines. Verbatim normative prose, tables, and fenced examples therefore survive
+  round-trip into EIR and the generated Markdown edition;
+- a section or rule `GOAL` renders verbatim in the Markdown edition; when a section has
+  a `GOAL`, its documentation-only rules and structured declarations remain in EIR but
+  are not re-rendered (the prose already carries them). Executable rules with
+  `PREDICATE` still render.
 
 ### Modes and read sets
 

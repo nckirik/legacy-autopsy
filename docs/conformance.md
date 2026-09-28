@@ -34,14 +34,14 @@ EIR/prompt/protocol bytes, and eight negative compiler fixtures. Run them with
 
 ## Generated-edition usability gate
 
-The generated `protocol.md` is structurally complete (every section, rule, field,
-enum, state, and table renders) but semantically condensed: migration rule text is a
-faithful summary that omits some original detail (for example the Part 18 checklist,
-the Part 19.2 case bodies, and the Part 20 ownership matrix rows). It has not been
-validated as a standalone prompt by the [standalone protocol quality
-test](#standalone-protocol-quality-test). Until a verbatim-enrichment pass and that
-test pass, the frozen `protocol/legacy/protocol-4.1.2.md` text remains the usable
-standalone prompt edition and the parity oracle.
+The generated `protocol.md` carries the frozen oracle's normative content verbatim:
+every paragraph, list item, table row, fenced line, field bullet, Part heading, and
+section heading is present, enforced by `TestGeneratedProtocolCoversOracle`. The
+remaining gate is the [standalone protocol quality
+test](#standalone-protocol-quality-test) against the generated edition with a fresh
+harness; until that run is recorded, the generated edition is content-complete but not
+independently validated as a prompt. The frozen
+`protocol/legacy/protocol-4.1.2.md` remains the bootstrap parity oracle.
 
 ## Crown parity report
 
