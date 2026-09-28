@@ -202,6 +202,77 @@
       ]
     },
     {
+      "path": "examples/spec/evidence-and-decisions.cdl",
+      "source-fingerprint": "sha256:4d26eadcddd6b5ef91054730d96e3ab20332f21a8ebf62ed426cef1086baa98c",
+      "ids": [
+        {
+          "id": "BLOCK-EVIDENCE-SUMMARY",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CLAIM",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CONFIRMATION",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CONTRADICTION",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "DECISION",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "acquisition-candidates",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "authoritative-decisions",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "candidate-reconciliation",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "claim-evidence",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "contradictions",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "human-confirmations",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "sanitized-projections",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "sanitized-projections-rules",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/export-acquisition-loop.cdl",
       "source-fingerprint": "sha256:fc306848d9a26f1c0561e4ec388655092c0bbb3018e0076b719539f8555e9800",
       "ids": [

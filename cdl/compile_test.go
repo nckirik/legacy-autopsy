@@ -23,6 +23,7 @@ const (
 	invocationContextPath = "examples/spec/invocation-context.cdl"
 	coverageExitsPath     = "examples/spec/coverage-and-exits.cdl"
 	statusTaxonomyPath    = "examples/spec/status-taxonomy.cdl"
+	evidenceDecisionsPath = "examples/spec/evidence-and-decisions.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -56,7 +57,12 @@ func globalsSource(t *testing.T) Source {
 func compileSources(t *testing.T, rels ...string) *Result {
 	t.Helper()
 	sources := []Source{globalsSource(t)}
+	seen := map[string]bool{globalsPath: true}
 	for _, rel := range rels {
+		if seen[rel] {
+			continue
+		}
+		seen[rel] = true
 		sources = append(sources, Source{Path: rel, Bytes: readRepoFile(t, rel)})
 	}
 	ledger, err := LoadLedger(repoPath(ledgerPath))
@@ -115,12 +121,27 @@ func TestUpdateAssets(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	sharedProg, sharedDiags := Parse(statusTaxonomyPath, readRepoFile(t, statusTaxonomyPath))
+	if len(sharedDiags) > 0 {
+		t.Fatalf("status taxonomy parse: %v", sharedDiags)
+	}
+	sharedIDs := map[string]bool{}
+	for _, id := range collectIDs(sharedProg) {
+		sharedIDs[id.ID] = true
+	}
 	var ledgerSources []LedgerSource
 	for _, src := range sources {
 		globals := globalsSource(t)
 		prog, diags := Parse(globals.Path, globals.Bytes)
 		if len(diags) > 0 {
 			t.Fatalf("globals parse: %v", diags)
+		}
+		if src.Path != globalsPath && src.Path != statusTaxonomyPath {
+			shared, diags := Parse(statusTaxonomyPath, readRepoFile(t, statusTaxonomyPath))
+			if len(diags) > 0 {
+				t.Fatalf("status taxonomy parse: %v", diags)
+			}
+			mergeInto(prog, shared)
 		}
 		if src.Path != globalsPath {
 			parsed, diags := Parse(src.Path, src.Bytes)
@@ -132,10 +153,20 @@ func TestUpdateAssets(t *testing.T) {
 		if semDiags, _ := resolve(prog); len(semDiags) > 0 {
 			t.Fatalf("%s resolve: %v", src.Path, semDiags)
 		}
+		ids := collectIDs(prog)
+		if src.Path != statusTaxonomyPath {
+			var filtered []IDRecord
+			for _, id := range ids {
+				if !sharedIDs[id.ID] {
+					filtered = append(filtered, id)
+				}
+			}
+			ids = filtered
+		}
 		ledgerSources = append(ledgerSources, LedgerSource{
 			Path:              src.Path,
 			SourceFingerprint: sourceFingerprint([]Source{src}),
-			IDs:               collectIDs(prog),
+			IDs:               ids,
 		})
 	}
 	if err := os.MkdirAll(filepath.Dir(repoPath(goldenEIRPath)), 0o755); err != nil {
@@ -496,6 +527,27 @@ func TestStatusTaxonomyCompiles(t *testing.T) {
 	}
 	if len(enums["REGISTRY-CONFIGURATION-MEDIUM"]) != 5 {
 		t.Fatalf("REGISTRY-CONFIGURATION-MEDIUM has %d values", len(enums["REGISTRY-CONFIGURATION-MEDIUM"]))
+	}
+}
+
+func TestEvidenceAndDecisionsCompiles(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, evidenceDecisionsPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for _, want := range []string{"5.2", "5.3", "5.4", "5.5", "5.6", "5.7"} {
+		if !numbers[want] {
+			t.Fatalf("section %s missing from %v", want, numbers)
+		}
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	if counts["CLAIM"] != 13 || counts["BLOCK-EVIDENCE-SUMMARY"] != 2 ||
+		counts["CONTRADICTION"] != 6 || counts["DECISION"] != 13 || counts["CONFIRMATION"] != 11 {
+		t.Fatalf("unexpected field counts: %v", counts)
 	}
 }
 

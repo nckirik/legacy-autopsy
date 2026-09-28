@@ -1,0 +1,146 @@
+SECTION claim-evidence
+NUMBER 5.2
+TITLE "Claim-level evidence — 12-CLAIM-EVIDENCE.md"
+
+GOAL
+  Every claim record binds its subject, field or step, evidence level, anchor, and
+  lineage so that materiality and projection classification are explicit.
+END
+
+FIELD CLAIM
+  subject-id-record-version    -> string                                  required
+  field-step                   -> string                                  required
+  claim                        -> string                                  required
+  materiality                  -> REGISTRY-CLAIM-MATERIALITY              required
+  evidence-level               -> REGISTRY-CLAIM-EVIDENCE-LEVEL           required
+  anchor                       -> string                                  required
+  source-fingerprint-snapshot  -> string                                  required
+  evidence-route-lineage-id    -> string                                  required
+  projection-classification    -> REGISTRY-CLAIM-PROJECTION-CLASSIFICATION required
+  independent-supporting-claims -> set<string>                            optional
+  independence-basis           -> string                                  required
+  contradiction-ids            -> set<string>                             optional
+  created-last-revalidated-by  -> string                                  required
+END
+
+FIELD BLOCK-EVIDENCE-SUMMARY
+  block-confidence-rank  -> REGISTRY-ATOMICCOMPONENT-BLOCK-CONFIDENCE-RANK required
+  block-evidence-profile -> string                                          required
+END
+
+SECTION sanitized-projections
+NUMBER 5.3
+TITLE "Sanitized projections and helper limitations"
+
+GOAL
+  A sanitized export produced by an approved local helper is an agent-visible
+  evidence projection.
+END
+
+RULE sanitized-projections-rules
+  GOAL
+    The projection MUST include raw-source fingerprint lineage and a sanitization
+    report classifying preserved, normalized, aliased, redacted, removed, and
+    unclassified content. E-DIRECT is permitted only for preserved or
+    semantics-preservingly normalized behavior. Aliases prove reference existence,
+    not secret value, connectivity, authorization, or runtime validity. Behavior
+    dependent on redacted, removed, or unclassified content remains E-INFERRED or
+    E-UNKNOWN and creates a ticket when material. Entity-correlation output is a
+    candidate-discovery aid only. It MUST NOT become evidence, a call edge,
+    ownership proof, or automatic inclusion without a direct structural signal or
+    explicit human scope decision. Private matching hints and private entity-usage
+    indexes MUST NOT enter agent-visible inventory.
+  END
+END
+
+SECTION contradictions
+NUMBER 5.4
+TITLE "Contradictions — 14-CONTRADICTIONS.md"
+
+GOAL
+  Every contradiction record names the conflicting claims, scope, and stale impact.
+END
+
+FIELD CONTRADICTION
+  claims-in-conflict             -> set<string> required
+  scope-environments-snapshots   -> string       required
+  conflict-description           -> string       required
+  resolution-state               -> REGISTRY-CONTRADICTION-RESOLUTION-STATE required
+  resolution-decision-id         -> string       optional
+  affected-records-and-stale-impact -> string    required
+END
+
+SECTION authoritative-decisions
+NUMBER 5.5
+TITLE "Authoritative decisions — 15-DECISIONS.md"
+
+GOAL
+  Every decision record carries its content version and fingerprint, exact scope and
+  denominator effect, approval status, and approval envelope bindings.
+END
+
+FIELD DECISION
+  decision-content-version                          -> int required
+  decision-content-fingerprint                      -> hash required
+  type                                              -> REGISTRY-DECISION-TYPE required
+  observed-inputs                                   -> string required
+  options-decision-rationale-risks                  -> string required
+  exact-scope-and-denominator-effect                -> string required
+  affected-records-rollout-rollback                 -> string required
+  content-supersession                              -> string required
+  approval-status                                   -> REGISTRY-DECISION-APPROVAL-STATUS required
+  approval-envelope-version                         -> int required
+  owner-approver-authority-basis-approval-timestamp -> string required
+  approved-content-binding                          -> string required
+  approval-signature-audit                          -> string required
+END
+
+SECTION acquisition-candidates
+NUMBER 5.6
+TITLE "Acquisition-candidate reconciliation — 17-ACQUISITION-CANDIDATES.md"
+
+GOAL
+  Every helper-published candidate and operator action receives a row in
+  17-ACQUISITION-CANDIDATES.md and a deterministic CND ID whose canonical key binds
+  the stable candidate or action identity, helper policy version, and pinned snapshot.
+END
+
+RULE candidate-reconciliation
+  GOAL
+    Duplicate candidate or action identities and reused CND IDs are invalid. States
+    are Included, Rejected-With-Operator-Decision, Approved-Excluded, or Pending. The
+    helper manifest MUST attest that all accessible workflow metadata was scanned for
+    the pinned snapshot, all direct structural matches were included, all
+    high-confidence entity-only matches were human-reviewed, and all configured
+    medium-confidence candidates received an operator decision; scoring thresholds
+    and policy versions are recorded. Lower-confidence omissions follow the
+    configured, approved scope policy. Helper publication completeness means safe
+    approved outputs were produced; protocol A-STRUCTURALLY-COMPLETE additionally
+    requires every candidate, operator action, and dynamic reference row terminal.
+    Correlation remains discovery and scope input only, never behavioral evidence or
+    an automatic edge.
+  END
+END
+
+SECTION human-confirmations
+NUMBER 5.7
+TITLE "Human confirmations — 18-CONFIRMATIONS.md"
+
+GOAL
+  A CNF record confirms exact typed record IDs, semantic versions, and fingerprints
+  against a pinned closed snapshot, never mutable whole-file bytes.
+END
+
+FIELD CONFIRMATION
+  human-hatch-action                                -> REGISTRY-CONFIRMATION-HUMAN-HATCH-ACTION required
+  approver-role-authority-basis                     -> string required
+  review-timestamp-review-scope-limitations         -> string required
+  handbook-readability-review                       -> REGISTRY-CONFIRMATION-HANDBOOK-READABILITY-REVIEW required
+  confirmed-record-bindings                         -> set<string> required
+  pinned-exit-a-exit-e-candidate-report-candidate-payload-manifest-fingerprints -> string required
+  required-dec-content-versions-fingerprints-and-approval-envelopes-reviewed -> string required
+  invalidated-by                                    -> REGISTRY-CONFIRMATION-INVALIDATED-BY required
+  cnf-signature-envelope-version                    -> int required
+  cnf-payload-fingerprint                           -> hash required
+  signature-or-approval-reference-signature-timestamp -> string required
+END
