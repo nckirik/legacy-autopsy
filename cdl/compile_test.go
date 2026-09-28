@@ -274,6 +274,15 @@ func TestGoldenPrompt(t *testing.T) {
 	}
 }
 
+func TestEverySectionHasGoal(t *testing.T) {
+	res := compileAssembly(t)
+	for _, section := range res.EIR.Sections {
+		if strings.TrimSpace(section.Goal) == "" {
+			t.Fatalf("section %s (%s) has no GOAL description", section.Number, section.Title)
+		}
+	}
+}
+
 func TestGoldenProtocolRender(t *testing.T) {
 	res := compileAssembly(t)
 	got := RenderProtocol(res.EIR)

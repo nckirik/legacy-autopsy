@@ -35,7 +35,7 @@ func RenderProtocol(doc *EIRDoc) []byte {
 }
 
 func renderGlobals(b *strings.Builder, doc *EIRDoc) {
-	fmt.Fprintf(b, "## Document declarations\n\n")
+	fmt.Fprintf(b, "# Document Declarations\n\n")
 	if len(doc.Declarations.Capabilities) > 0 {
 		fmt.Fprintf(b, "### Capabilities\n\n| Capability | Kind | Version |\n| :-- | :-- | --: |\n")
 		for _, capability := range doc.Declarations.Capabilities {
@@ -85,7 +85,7 @@ func renderSection(b *strings.Builder, doc *EIRDoc, section EIRSection) {
 	}
 
 	for _, rule := range doc.Declarations.Rules {
-		if rule.Section != section.Number {
+		if rule.Section != section.ID {
 			continue
 		}
 		fmt.Fprintf(b, "### Rule: %s\n\n", rule.ID)
@@ -96,7 +96,7 @@ func renderSection(b *strings.Builder, doc *EIRDoc, section EIRSection) {
 		}
 	}
 	for _, enum := range doc.Declarations.Enums {
-		if enum.Section != section.Number {
+		if enum.Section != section.ID {
 			continue
 		}
 		fmt.Fprintf(b, "### Enum: %s\n\n", enum.ID)
@@ -106,7 +106,7 @@ func renderSection(b *strings.Builder, doc *EIRDoc, section EIRSection) {
 		fmt.Fprintf(b, "\n")
 	}
 	for _, state := range doc.Declarations.States {
-		if state.Section != section.Number {
+		if state.Section != section.ID {
 			continue
 		}
 		fmt.Fprintf(b, "### State: %s\n\n", state.ID)
@@ -117,7 +117,7 @@ func renderSection(b *strings.Builder, doc *EIRDoc, section EIRSection) {
 		fmt.Fprintf(b, "\n")
 	}
 	for _, field := range doc.Declarations.Fields {
-		if field.Section != section.Number {
+		if field.Section != section.ID {
 			continue
 		}
 		fmt.Fprintf(b, "### Field: %s\n\n| Field | Type | Required |\n| :-- | :-- | :-- |\n", field.ID)
@@ -127,7 +127,7 @@ func renderSection(b *strings.Builder, doc *EIRDoc, section EIRSection) {
 		fmt.Fprintf(b, "\n")
 	}
 	for _, table := range doc.Declarations.Tables {
-		if table.Section != section.Number {
+		if table.Section != section.ID {
 			continue
 		}
 		fmt.Fprintf(b, "### Table: %s\n\nRows: %s, key: %s.\n\n", table.ID, table.RowType, table.Key)

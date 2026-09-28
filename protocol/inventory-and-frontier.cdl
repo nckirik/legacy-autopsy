@@ -2,6 +2,13 @@ SECTION atomic-unit-rule
 NUMBER 4.2
 TITLE "Atomic unit rule"
 
+GOAL
+  Each promotable forensic record and each independently meaningful synthesis
+  record describes exactly one independently evidenced unit; purely navigational
+  grouping containers are marked GROUPING-CONTAINER, and serialized containers
+  never represent a whole export as one component.
+END
+
 RULE atomic-unit-principle
   GOAL
     Each promotable forensic record and each independently meaningful synthesis record

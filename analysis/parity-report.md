@@ -121,9 +121,9 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 26 sources |
 | drift-tests | pass | 23 tests in 23 files |
-| generated-protocol | pass | sha256:86913445e3558435b389a90be6131bf8b3a43745ab156aa779310e02055c5278 |
-| golden-eir | pass | sha256:e794389e18b6569e3fd6f87d127b175502cda7d43c076bb9270a6ced9e162e10 |
-| golden-prompt | pass | sha256:18f3862435f58cbd3624b84ae0809b8fe370bc7a9f755e7b1e8986948a0d0f0c |
+| generated-protocol | pass | sha256:ed777187fb2c9f0047ea141ff4c3216b911f0a2843f02dcab3ad8ec1c9284b14 |
+| golden-eir | pass | sha256:ed9c391cef76da15af913d6a5c0c3032f2b11ae138ca6e080d041c63c5c64855 |
+| golden-prompt | pass | sha256:119c21b56526c8f646615769ebfd762c7b1171f80c4910cc47195e21155dec05 |
 | fixture-oracle | pass | 24/24 passed |
 | identity-ledger | pass | 542 identities across 26 sources |
 
@@ -136,16 +136,16 @@
 | Source | Sections | Identities | Fingerprint |
 | :-- | :-- | --: | :-- |
 | protocol/globals.cdl | 0 | 0 | sha256:f7f351b217c8c2ae284ebb06ea7a5f49b5451c0643c0aaf453680cc24fb7d53b |
-| protocol/foundations.cdl | 9 | 30 | sha256:e9525b104c5969527dfd99ce40cdee35e629e662b8f3933b3dc1f2f756230807 |
-| protocol/personas-povs.cdl | 6 | 18 | sha256:9446d63a4b9d9d326d1b2e2cd0e583d17cecb600153ede61c2c9f886efe16259 |
+| protocol/foundations.cdl | 9 | 30 | sha256:5add40f4812f174b2c96dd5a86c531188961fefbe734af6aaa353f1faabd7af1 |
+| protocol/personas-povs.cdl | 6 | 18 | sha256:ab4662dedd2b1ff543b7dfbd941278e4d87881e7cded529a4cbe57129d518a5c |
 | protocol/preflight-registry.cdl | 1 | 9 | sha256:ac4141a8b9be0c11b9c3f1d5d0136edfa6e61c2923468cb621d4942393979656 |
 | protocol/typed-id.cdl | 1 | 9 | sha256:8191941ec70330771c9d6e0b88809e67b2e44258c112c29d905381e83eb57912 |
 | protocol/semantic-payload-identity.cdl | 1 | 7 | sha256:93fd4a060373fbdbd88a5bc4973f3d73d661bd902bd10a00e87c8cd85191f362 |
 | protocol/canonical-hash-profile.cdl | 1 | 13 | sha256:551851233d40b93595606db5c01925ef5e808a8dcb33749cb85e221cce6d4213 |
-| protocol/inventory-and-frontier.cdl | 5 | 23 | sha256:1fd679464e8e42e7a2f5e1519d5f6d30bb61b2da86c9a23b13afa8fa7ee60aba |
+| protocol/inventory-and-frontier.cdl | 5 | 23 | sha256:fb192c748dc2aafc853f130bb68f808e761a024bf6effa2d324170797941565d |
 | protocol/status-taxonomy.cdl | 1 | 112 | sha256:e73565b556dad4fc6e42701f252cfd26a0cabb5cc8cc80f6837b69fcbf4efb60 |
 | protocol/evidence-and-decisions.cdl | 6 | 13 | sha256:88c67d05353ed105f72bbc0ab59dd82d76b95ebd740328d9d6f6f8fae94fbc00 |
-| protocol/extraction-evolution.cdl | 5 | 15 | sha256:ca15d2c508ca414d19f1fceaeddcf3a7954f14a8ebd03e9b68d27d4859564750 |
+| protocol/extraction-evolution.cdl | 5 | 15 | sha256:7b58a6e46c19555620b1c499ecec05cf9a1def94b15205e05dd35c01bfc8c11b |
 | protocol/workspace-registries.cdl | 1 | 9 | sha256:72aaa4f50e79ca9df15ff27692c13fe1f6ab83b711e544b91ab9104396024ec6 |
 | protocol/acquisition-trust.cdl | 4 | 10 | sha256:abde8c00516c4468b670d6780ed2425f2aef430f7860d6f614ddce78fc152fa5 |
 | protocol/export-acquisition-loop.cdl | 1 | 10 | sha256:973802a4a41edc9068823623e3b22d6b7eb8bad75082f61ea6b5c2a62cc1485f |
@@ -154,13 +154,13 @@
 | protocol/invocation-modes.cdl | 0 | 0 | sha256:c599bd58c22d06daf961ddd6952a1d5e78598178f762efc7c2242f792ed75b57 |
 | protocol/cold-resume.cdl | 1 | 4 | sha256:9ed5048be3887d41d5ef49a7a93e49dfcc39bf30870e4499ca97190a4758cf7b |
 | protocol/invocation-context.cdl | 7 | 25 | sha256:a55d9af5fa050c2a7150e226479a1a2b0884f12a7ba657df0aad66dce213c25c |
-| protocol/ticket-fsm.cdl | 6 | 20 | sha256:6c6b7b4f631a8a2b6e5b30f8f955530941f8b36608285d063cdc19a5860fdd47 |
+| protocol/ticket-fsm.cdl | 6 | 20 | sha256:2e10a42108f55fc04eaa118b8acaa34b1ec982c5a9cbc15dad45c5739206025c |
 | protocol/coverage-and-exits.cdl | 6 | 19 | sha256:cdca1eeff0c25fadccc2fe233cf8a1bd55d1adfe6d7463af6026f0ebb245562b |
-| protocol/synthesis-catalogs.cdl | 13 | 66 | sha256:c663d2560e6aecc4ad768206a63f95081745f31adbc5c9b62ba70e601051a0be |
-| protocol/traceability.cdl | 5 | 15 | sha256:49417111e9e38315eaf4f75aff14f81c4c4a0b56de188a2d70801b35bf820539 |
-| protocol/handbook-and-decisions.cdl | 10 | 23 | sha256:eaae9e34a17395e90e28b7ea8b455d3b147989b437e78bd3a9206d35940b8458 |
-| protocol/packaging.cdl | 9 | 50 | sha256:01b891065ab12be512a0866943f14f43da6b915f9dbc20db7bee9ad801d2dd60 |
-| protocol/migration-and-conformance.cdl | 7 | 16 | sha256:0209969885a4c48d7cd1933a0666cb5c19bc8a97e0839689bc09b250b6468e24 |
+| protocol/synthesis-catalogs.cdl | 13 | 66 | sha256:51131344e48774509018fea153ce505683cf8dcd7686d2e7112d4fee1c409636 |
+| protocol/traceability.cdl | 5 | 15 | sha256:a4cbc6d9175f181d0a84adeae8c9337ef4a7cb35356c993ad0452f7ebf9944b3 |
+| protocol/handbook-and-decisions.cdl | 10 | 23 | sha256:6a498e9797958134e594923db8bd609834bb7e2993c99a68ac6c8ef053747e4f |
+| protocol/packaging.cdl | 9 | 50 | sha256:8a1ae5f10cc4fbb6dbfb69677aef545a2519ad9d4d684bb472d2006f8ecd42df |
+| protocol/migration-and-conformance.cdl | 7 | 16 | sha256:6a042953eb424077ca834dce18bf21f2fa89511360b6779679af4232a557820c |
 
 ## Declared deferrals
 

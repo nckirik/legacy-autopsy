@@ -151,6 +151,12 @@ SECTION entity-catalog
 NUMBER 11.4
 TITLE "Entity — `91-DATA-MODEL.md`"
 
+GOAL
+  Entity records describe one storage-backed entity with domain context, storage
+  kind, physical sources, keys, fields, relationships, lifecycle, invariants,
+  audit, retention, permissions, capability impact, and schema drift.
+END
+
 ENUM STORAGE-KIND
   table
   view
@@ -191,6 +197,12 @@ END
 SECTION relationship-catalog
 NUMBER 11.5
 TITLE "Relationship — `91-DATA-MODEL.md`"
+
+GOAL
+  Relationship records describe one entity relationship with cardinality,
+  enforcement, delete and update semantics, inverse access, business
+  constraints, and reciprocal entity references.
+END
 
 ENUM RELATIONSHIP-CARDINALITY
   1:1
@@ -263,6 +275,13 @@ SECTION database-routine-catalog
 NUMBER 11.7
 TITLE "Database routine — `91-DATA-MODEL.md`"
 
+GOAL
+  Database routine records describe one trigger, function, procedure, rule,
+  generated column, refresh, or constraint helper with owner, firing semantics,
+  body intent, inputs and outputs, enforced rules, callers, failure semantics,
+  canonical drift, and target decision.
+END
+
 ENUM DB-ROUTINE-KIND
   trigger
   function
@@ -307,6 +326,13 @@ SECTION business-rule-catalog
 NUMBER 11.8
 TITLE "Business rule — `92-BUSINESS-RULES.md`"
 
+GOAL
+  Business rule records describe one deterministic, framework-agnostic rule with
+  exactly one authoritative owner, optional consistent mirrors, condition,
+  effects, precedence, violation policy, boundary cases, idempotency, and target
+  mapping decision.
+END
+
 ENUM VIOLATION-POLICY
   reject
   warn
@@ -346,6 +372,13 @@ END
 SECTION use-case-catalog
 NUMBER 11.9
 TITLE "Use case — `93-USE-CASES.md`"
+
+GOAL
+  Use case records describe one observable user or system goal with actors,
+  trigger, preconditions and postconditions, main and alternate flows, failure
+  recovery, reciprocal references, a Given/When/Then behavioral contract, and an
+  explicit target decision.
+END
 
 ENUM USE-CASE-CAPABILITY-CLASSIFICATION
   Active
@@ -396,6 +429,13 @@ SECTION interface-catalog
 NUMBER 11.10
 TITLE "Interface — `94-INTERFACES.md`"
 
+GOAL
+  Interface records describe one external or internal interface with transport,
+  actors, request and response schemas, error semantics, guarantees,
+  authentication and authorization, versioning, limits, bound records,
+  capability matrix, compatibility baseline, and target migration decision.
+END
+
 FIELD INTERFACE-REQUEST-FIELD
   field         -> string required
   type          -> string required
@@ -441,6 +481,14 @@ SECTION deployment-catalog
 NUMBER 11.11
 TITLE "Deployment, configuration, and scheduling — `95-DEPLOYMENT.md`"
 
+GOAL
+  Deployment records describe components, connections, failure exposure, and
+  environment matrices; configuration records describe flags with exact keys,
+  defaults, sources, effects, enable and disable semantics, and materialization;
+  schedule records describe jobs with triggers, owners, actions, failure
+  handling, locks, and capability state.
+END
+
 ENUM CONFIG-MEDIUM
   env
   DB
@@ -485,6 +533,14 @@ END
 SECTION nfr-security-catalog
 NUMBER 11.12
 TITLE "NFR and security — `96-NON-FUNCTIONAL-SECURITY.md`"
+
+GOAL
+  NFR records describe one attribute with observed value, scope, drivers, and
+  target SLO; security findings describe one category, classification, risk
+  level, affected scope, safeguard or gap, and required review; fault records
+  describe one failure class with propagation, retry and rollback, quarantine,
+  outcomes, variants, and related rules.
+END
 
 ENUM NFR-ATTRIBUTE
   latency

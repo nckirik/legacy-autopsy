@@ -2,6 +2,14 @@ SECTION migration-order
 NUMBER 17.1
 TITLE "Required order"
 
+GOAL
+  Migration follows a fixed order from snapshot freezing through inventory, ID
+  allocation, wildcard expansion, atomic splitting, track classification,
+  persona normalization, explosion reconciliation, claim conversion, frontier
+  reconstruction, human-required conversion, traceability, draft marking, gap
+  exposure, reconciliation, and only then gated closure and Exit E.
+END
+
 RULE required-migration-order
   GOAL
     Migration follows this order: freeze and fingerprint the v3.17 workspace and source
@@ -38,6 +46,13 @@ SECTION migration-guarantees
 NUMBER 17.2
 TITLE "Migration guarantees"
 
+GOAL
+  Migration preserves ticket history, evidence anchors, fingerprints, old
+  identifiers as aliases, promotion and depromotion history, and uncertainty,
+  and never converts disabled to dead, terminal tickets to covered source,
+  inferred evidence to direct, or old synthesis to confirmed.
+END
+
 RULE migration-preservation
   GOAL
     Migration MUST preserve ticket history, evidence anchors, fingerprints, old
@@ -51,6 +66,13 @@ END
 SECTION v3-compatibility
 NUMBER 17.3
 TITLE "v3 final-artifact compatibility"
+
+GOAL
+  v4 supersedes the v3 final workflow atlas and human audit queue semantically;
+  legacy filenames may be retained only as non-authoritative compatibility
+  projections that identify their upstream IDs, versions, fingerprints,
+  generation time, schema, and staleness.
+END
 
 RULE v3-supersession
   GOAL
@@ -78,6 +100,12 @@ END
 SECTION conforming-capabilities
 NUMBER 19.1
 TITLE "Conforming implementation capabilities"
+
+GOAL
+  A conforming implementation provides every deterministic capability and
+  authority boundary declared for identity, scope, hashing, coverage, gates,
+  packaging, handbook validation, and final verification.
+END
 
 RULE conforming-implementation-capabilities
   GOAL
@@ -156,6 +184,12 @@ SECTION conformance-cases
 NUMBER 19.2
 TITLE "Normative conformance cases"
 
+GOAL
+  A conforming implementation satisfies every applicable positive and negative
+  normative conformance case and deterministically produces the specified
+  acceptance or rejection.
+END
+
 ENUM CONFORMANCE-CASE
   Persona workspace layout and ownership
   Context-qualified finite enums and registry completeness
@@ -188,6 +222,13 @@ END
 SECTION corpus-acceptance
 NUMBER 19.3
 TITLE "Corpus acceptance"
+
+GOAL
+  Corpus acceptance requires a green Composite Exit A with no hidden gaps,
+  atomic and terminally disposed sources, mapped or exactly excluded units,
+  claim-backed traversal cells, separated but cross-linked active and disabled
+  behavior, claim-backed synthesis records, and a step-6 Exit E transition.
+END
 
 RULE corpus-acceptance-requirements
   GOAL

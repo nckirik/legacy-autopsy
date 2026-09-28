@@ -2,6 +2,13 @@ SECTION persona-definition
 NUMBER 2.1
 TITLE "Persona definition and purity"
 
+GOAL
+  A Persona is a distinct human actor, service actor, external system, or
+  autonomous runtime class entering through a concrete execution surface.
+  Personas are selected by distinct physical or virtual entry paths, and persona
+  directories are scoped by the purity invariant.
+END
+
 RULE persona-purity
   GOAL
     A Persona is a distinct human actor, service actor, external system, or autonomous
@@ -48,6 +55,12 @@ SECTION canonical-entry-ownership
 NUMBER 2.2
 TITLE "Canonical entry ownership"
 
+GOAL
+  Every concrete entry coordinate has exactly one canonical owner persona;
+  intentional shared surfaces use a SHARED-ENTRY record, and database-side
+  autonomous behavior is owned by the reserved db-autonomous persona.
+END
+
 RULE entry-ownership
   GOAL
     Every concrete entry coordinate MUST have exactly one canonical owner persona.
@@ -76,6 +89,12 @@ SECTION five-isolated-povs
 NUMBER 2.3
 TITLE "Five isolated POVs"
 
+GOAL
+  Five isolated POVs partition semantic extraction: frontend, backend,
+  background, data movement, and system wiring. A POV MUST NOT fill another
+  POV's semantic fields directly.
+END
+
 RULE pov-isolation
   GOAL
     POV-1 Frontend Workflows: client UI, server-rendered views, widget behavior,
@@ -96,6 +115,12 @@ END
 SECTION traversal-tracks
 NUMBER 2.4
 TITLE "Traversal tracks"
+
+GOAL
+  Every entry cluster and invocation declares exactly one traversal track:
+  Normal, Shadow/Conditional, or Disabled. Tracks require separate invocations
+  even when they share source units.
+END
 
 RULE track-declarations
   GOAL
@@ -150,6 +175,13 @@ END
 SECTION capability-grouping
 NUMBER 2.6
 TITLE "Capability grouping and target decision"
+
+GOAL
+  A capability groups active and dormant source units for navigation, remains
+  non-promotable, and never inherits member evidence or coverage. Every disabled
+  or dormant capability preserves exact members, state, mechanism, dependencies,
+  history, risk, and one explicit target decision.
+END
 
 ENUM TARGET-DECISION
   Restore

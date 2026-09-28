@@ -249,6 +249,11 @@ S3 progress:
   regenerated (`go test ./internal/parityreport -update`). Report shows 104/104
   substantive protocol sections implemented (the §0 wrapper is a `wrapper`), all six
   checks pass, 24/24 fixtures pass, and four declared deferrals.
+- **Generated protocol.md completed:** the renderer now keys declarations by section ID
+  (previously dropped every rule/field/enum), renders global declarations under a
+  `Document Declarations` preamble, and every one of the 108 sections carries a GOAL
+  description; `TestEverySectionHasGoal` guards the invariant. Render counts: 164
+  rules, 86 fields, 164 enums, 3 states, 2 tables.
 - **Crown executed (S4):** the parity report was accepted by the human gate; the CDL
   sources moved to `protocol/`, the legacy text is frozen at
   `protocol/legacy/protocol-4.1.2.md` as the bootstrap parity oracle, and `protocol.md`

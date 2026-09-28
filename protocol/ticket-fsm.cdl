@@ -156,6 +156,13 @@ SECTION probe-specification
 NUMBER 9.4
 TITLE "Probe specification and asynchronous handoff"
 
+GOAL
+  Probe specifications declare exact target, question, inputs, environment,
+  safety classification, masking and isolation approval, captures, and
+  interpretation; the operator executes in an isolated sandbox and probe output
+  is fingerprinted and sanitized before agent exposure.
+END
+
 ENUM SAFETY-CLASSIFICATION
   non-destructive
   controlled mutation
@@ -188,6 +195,13 @@ END
 SECTION no-mock-integrity
 NUMBER 9.5
 TITLE "No-mock integrity"
+
+GOAL
+  When static analysis is insufficient and no sandbox is available, no
+  fabricated paths, values, payloads, mocks, or specifications may be used as
+  evidence; claims stay inferred or unknown and the Human Hatch path preserves
+  the coverage gap.
+END
 
 RULE no-mock-rules
   GOAL

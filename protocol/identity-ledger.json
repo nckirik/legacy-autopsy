@@ -502,7 +502,7 @@
     },
     {
       "path": "protocol/extraction-evolution.cdl",
-      "source-fingerprint": "sha256:238841e51c2b1b53490fdc1dc2200d705be825557d88bae00725e7a2d972774b",
+      "source-fingerprint": "sha256:3f3ad38e64ee6687785689b884c22f05b896c6fe1384312fb4bf1eda636682a0",
       "ids": [
         {
           "id": "ATOMIC-COMPONENT",
@@ -583,7 +583,7 @@
     },
     {
       "path": "protocol/foundations.cdl",
-      "source-fingerprint": "sha256:faab311880cc8d5bbf7380bf1e9347defa24fb5c83be6f508ee084c660faa85a",
+      "source-fingerprint": "sha256:1e5d9067aa0af649439489a1015e3702787bfc686c6bfb03b46fd1b7ca20b7c5",
       "ids": [
         {
           "id": "AUTHORITY-CLASS",
@@ -744,7 +744,7 @@
     },
     {
       "path": "protocol/handbook-and-decisions.cdl",
-      "source-fingerprint": "sha256:e3b5664e29b361da8cc2bf608f633fe434a992af67b8727f385a5c78106bcecf",
+      "source-fingerprint": "sha256:e997e958df43223ba61723400164ea235f6b30dfd2508225621161462de854d1",
       "ids": [
         {
           "id": "AUDIENCE-ROLE",
@@ -865,7 +865,7 @@
     },
     {
       "path": "protocol/inventory-and-frontier.cdl",
-      "source-fingerprint": "sha256:6b99735fa60697267b18a48ca3ea7ce519112d51b35cb406977a696cce29f183",
+      "source-fingerprint": "sha256:468157fe8b4724260657986c1408c08a41584d554369b954330bef5a8845819d",
       "ids": [
         {
           "id": "COVERAGE-DISPOSITION",
@@ -1122,7 +1122,7 @@
     },
     {
       "path": "protocol/migration-and-conformance.cdl",
-      "source-fingerprint": "sha256:5eb6e78894b475f62960ebee32b80810509cbccdf9039e205cb0ecea8345d56c",
+      "source-fingerprint": "sha256:00ccd23c52ab594319bdb1464d730c8b282ac8808a1468bacc1fa1ea5d252bd6",
       "ids": [
         {
           "id": "ARTIFACT-OWNERSHIP-ROW",
@@ -1234,7 +1234,7 @@
     },
     {
       "path": "protocol/packaging.cdl",
-      "source-fingerprint": "sha256:3c2e5e56d354fa4cecf677305b48de247aa8f3c4b880db52cbbf04cae0236e4a",
+      "source-fingerprint": "sha256:824280ab55bf9f587ce19ba98df0f91c39ab87e35710c1019082b67ccd577d55",
       "ids": [
         {
           "id": "APPROVED-DEC-BINDING",
@@ -1490,7 +1490,7 @@
     },
     {
       "path": "protocol/personas-povs.cdl",
-      "source-fingerprint": "sha256:2723bd4a4055aa6c5245d4ea519252a9e8570534ed76c7867b380c17df442309",
+      "source-fingerprint": "sha256:6e08d366afecc0e3a8ad797cbace18cfdaa83f09df8201dc6e9bd8dce918e83c",
       "ids": [
         {
           "id": "CAPABILITY-STATE-BLOCK",
@@ -2244,7 +2244,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "source-fingerprint": "sha256:7bceeb6d23ca2696f972f78c43151d34c34a0523ab273a5bf4ee4765d00b9090",
+      "source-fingerprint": "sha256:0a0d3a19ba103e87135db6abd3af9ac64bc4aaff3ffa1bf19f2832383e39b76e",
       "ids": [
         {
           "id": "ARCHITECTURE-MODULE",
@@ -2580,7 +2580,7 @@
     },
     {
       "path": "protocol/ticket-fsm.cdl",
-      "source-fingerprint": "sha256:c1cb7b7573fa9bb1ac97599e61240ad3d5d8284007d361fcd98b6968a8d19191",
+      "source-fingerprint": "sha256:8222bd3abdf5d8af605dcc88c64c88cdf3c6d5b64ef7ae5bf837f58f62cb4e6d",
       "ids": [
         {
           "id": "NO-MOCK-FALLBACK",
@@ -2686,7 +2686,7 @@
     },
     {
       "path": "protocol/traceability.cdl",
-      "source-fingerprint": "sha256:a6623d6f8f33fef88917ae3e888375a7b64ab11710c6ea2af2d6674e08d87300",
+      "source-fingerprint": "sha256:6d8967ade00dfe8177fcf720600841c4fed535e805c0dacf3d15e1aae59483b2",
       "ids": [
         {
           "id": "CLASSIFICATION",

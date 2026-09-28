@@ -76,6 +76,12 @@ SECTION reciprocal-references
 NUMBER 12.2
 TITLE "Required reciprocal references"
 
+GOAL
+  Validators enforce the required reciprocal reference pairs, and no dangling,
+  orphan, duplicate-owner, invalid-type, or unapproved tombstone reference is
+  allowed at Exit A or E.
+END
+
 RULE required-reciprocal-references
   GOAL
     Validators enforce ER with REL, and ER state field with SM when eligible; DR
@@ -107,6 +113,13 @@ SECTION synthesis-id-timing
 NUMBER 12.3
 TITLE "Synthesis-ID timing"
 
+GOAL
+  Discovery records may contain Pending-Synthesis-Reference placeholders but
+  never invented IDs; synthesis allocates deterministic IDs and reconciliation
+  replaces placeholders, incrementing semantic versions and invalidating prior
+  envelopes.
+END
+
 RULE synthesis-id-allocation-timing
   GOAL
     Discovery records MAY contain Pending-Synthesis-Reference placeholders, never
@@ -122,6 +135,13 @@ END
 SECTION dependency-provenance
 NUMBER 12.4
 TITLE "Dependency and impact provenance"
+
+GOAL
+  Each synthesis and handbook block maintains DERIVED-FROM edges to exact record
+  versions and fingerprints; upstream changes trigger reverse dependency
+  closure, targeted staleness, logged impact, bounded re-derivation, and
+  preservation of unaffected confirmed blocks.
+END
 
 RULE dependency-impact-provenance
   GOAL

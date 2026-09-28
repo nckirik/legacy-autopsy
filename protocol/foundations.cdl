@@ -98,6 +98,16 @@ SECTION guarantees
 NUMBER 0.2
 TITLE "Guarantees"
 
+GOAL
+  When followed completely, the protocol guarantees identity and terminal
+  disposition for every in-scope source unit, denominator-backed traversal
+  closure, one evidence-bound claim per material fact, distinct capability
+  states across environments and snapshots, logical-unit export acquisition
+  without raw secrets, persona and POV isolation, finite-state ambiguity
+  resolution, derivation-proven synthesis with targeted staleness, a navigable
+  handbook, and sole-input reconstruction only under a signed outer manifest.
+END
+
 RULE protocol-guarantees
   GOAL
     When followed completely, this protocol guarantees that every in-scope concrete
@@ -123,6 +133,14 @@ SECTION non-guarantees
 NUMBER 0.3
 TITLE "Non-guarantees"
 
+GOAL
+  The protocol does not determine compliance, prove repository state equals
+  production state, make low-evidence facts true by repetition, convert
+  correlation to causation, decide modernization without accountable human
+  approval, authorize production execution or dormant enablement, or make
+  sidecars authoritative.
+END
+
 RULE protocol-non-guarantees
   GOAL
     The protocol does not determine legal, privacy, security, or regulatory compliance;
@@ -140,6 +158,13 @@ END
 SECTION conceptual-flow
 NUMBER 0.4
 TITLE "Conceptual flow"
+
+GOAL
+  The conceptual flow runs from scope and snapshots through inventory,
+  acquisition, isolated traversal, forensic records, reconciliation, Exit A,
+  synthesis, handbook, Exit E candidacy and confirmation, content readiness,
+  certificate, and the signed outer bundle manifest.
+END
 
 ENUM FLOW-STAGE
   Scope and snapshots
@@ -313,6 +338,14 @@ END
 SECTION non-authoritative-sidecars
 NUMBER 1.5
 TITLE "Non-authoritative sidecars"
+
+GOAL
+  JSON, SQLite, graph, search, code-generation, or validator sidecars may be
+  generated for automation; they carry source fingerprints, schema version,
+  generation time, and a prominent NON-AUTHORITATIVE-DERIVATIVE marker, and
+  conflicts resolve in favor of canonical Markdown records and original
+  evidence.
+END
 
 RULE sidecar-derivatives
   GOAL

@@ -145,6 +145,12 @@ SECTION depromotion
 NUMBER 6.4
 TITLE "Depromotion"
 
+GOAL
+  If a promoted component gains another persona caller, a shared dependency, or
+  expanded persona usage, it is depromoted back to personas/_shared/ through
+  Sequential Reconciliation with history preserved.
+END
+
 RULE depromotion-steps
   GOAL
     If a promoted component gains another persona caller, a shared dependency, or
@@ -159,6 +165,12 @@ END
 SECTION surgical-evolution
 NUMBER 6.5
 TITLE "Surgical evolution"
+
+GOAL
+  POV files are patched surgically: unrelated blocks are never deleted,
+  reordered, or reformatted, ticket resolution cites the ticket, and superseded
+  facts remain traceable through versions and tombstones.
+END
 
 RULE surgical-patching
   GOAL

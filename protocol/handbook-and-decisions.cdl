@@ -29,6 +29,13 @@ SECTION chapter-behavior
 NUMBER 13.2
 TITLE "Required chapter behavior"
 
+GOAL
+  Every handbook chapter distinguishes observed legacy from target decisions,
+  separates normal from shadow and disabled behavior, links to upstream records,
+  supports navigation, avoids unexplained acronyms, shows evidence-backed or
+  labeled examples, and passes link and diagram validation.
+END
+
 RULE chapter-requirements
   GOAL
     Every chapter MUST distinguish Observed Legacy from Target Decision; separate Normal
@@ -47,6 +54,12 @@ END
 SECTION disabled-chapter
 NUMBER 13.3
 TITLE "Disabled and Dormant Features chapter"
+
+GOAL
+  12-DISABLED-AND-DORMANT-CAPABILITIES.md is mandatory and prominent, indexing
+  every canonical capability with exact disabled members, state, mechanism,
+  evidence, dependencies, history, risk, cross-links, and target decision.
+END
 
 RULE disabled-chapter-requirements
   GOAL
@@ -67,6 +80,14 @@ END
 SECTION handbook-quality-gate
 NUMBER 13.4
 TITLE "Handbook quality gate"
+
+GOAL
+  Before candidacy the runtime validates chapter non-vacuity, links and anchors,
+  deterministic diagram parsing, synthesis discoverability, active and disabled
+  clarity, decision separation, and absence of stale or provisional sections;
+  after candidacy, human readability review is recorded only through complete
+  passing CNF bindings.
+END
 
 RULE handbook-quality-checks
   GOAL
@@ -102,6 +123,13 @@ SECTION decision-log
 NUMBER 14.1
 TITLE "Decision log"
 
+GOAL
+  15-DECISIONS.md is the authoritative decision register from Preflight onward;
+  Reconstruction-Handoff projects a human-readable log without forking or
+  reinterpreting decisions, and superseded decisions remain tombstoned and
+  linked.
+END
+
 RULE decision-log-projection
   GOAL
     15-DECISIONS.md is the authoritative decision register from Preflight onward.
@@ -115,6 +143,11 @@ END
 SECTION modernization-templates
 NUMBER 14.2
 TITLE "Modernization mapping templates"
+
+GOAL
+  The modernization mapping templates are decision prompts, not mandates; the
+  target architecture owner chooses and records each result.
+END
 
 RULE mapping-prompts
   GOAL
@@ -139,6 +172,12 @@ SECTION rule-ownership
 NUMBER 14.3
 TITLE "Business-rule ownership"
 
+GOAL
+  Every business rule maps to exactly one authoritative target owner; optional
+  validation, gateway, UI, or DB mirrors must stay semantically consistent and
+  cite the authoritative rule, and conflicting mirrors are prohibited.
+END
+
 RULE business-rule-ownership
   GOAL
     Every BR maps to exactly one authoritative target owner. Optional validation,
@@ -150,6 +189,13 @@ END
 SECTION interface-compatibility
 NUMBER 14.4
 TITLE "Interface compatibility"
+
+GOAL
+  External interface schemas, errors, ordering, idempotency, delivery, and
+  timing form a compatibility baseline that changes only through an approved
+  versioned migration decision; internal transport may change freely while
+  externally observable contracts remain satisfied.
+END
 
 RULE interface-baseline
   GOAL
@@ -165,6 +211,14 @@ END
 SECTION equivalence-suite
 NUMBER 14.5
 TITLE "Equivalence and acceptance suite"
+
+GOAL
+  The equivalence suite generates reviewable acceptance tests from use-case
+  contracts, property assertions from invariants and rules, state-transition
+  tests, contract tests, disabled-capability and restoration tests, and
+  migration tests, with semantics sourced from confirmed synthesis and approved
+  decisions.
+END
 
 ENUM EQUIVALENCE-TEST-KIND
   example acceptance tests
@@ -191,6 +245,14 @@ END
 SECTION sole-input-invariant
 NUMBER 14.6
 TITLE "Sole-input invariant"
+
+GOAL
+  Legacy source may be treated as unavailable during reconstruction only when
+  the bundle has a validated signed outer manifest with EXIT-E-STATUS: Passed,
+  contains only confirmed applicable blocks, is signed, pins all authoritative
+  fingerprints, and includes assurance, scope, decisions, equivalence, and
+  residual risks.
+END
 
 RULE sole-input-conditions
   GOAL

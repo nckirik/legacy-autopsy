@@ -453,6 +453,14 @@ SECTION package-contents
 NUMBER 15.3
 TITLE "Package contents"
 
+GOAL
+  The certified package contains the handbook, structured synthesis catalogs,
+  assurance records and validation summaries, persona profiles, decisions,
+  equivalence suite, scope certificate, packaging artifacts, fingerprint
+  manifests, validation reports, and a known-gap and risk record; raw secrets
+  and private material are excluded.
+END
+
 RULE certified-package-contents
   GOAL
     The certified package contains the human reconstruction handbook; structured 90-96

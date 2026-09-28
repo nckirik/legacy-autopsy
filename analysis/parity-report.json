@@ -16,7 +16,7 @@
     },
     {
       "path": "protocol/foundations.cdl",
-      "fingerprint": "sha256:e9525b104c5969527dfd99ce40cdee35e629e662b8f3933b3dc1f2f756230807",
+      "fingerprint": "sha256:5add40f4812f174b2c96dd5a86c531188961fefbe734af6aaa353f1faabd7af1",
       "sections": [
         "0.1",
         "0.2",
@@ -32,7 +32,7 @@
     },
     {
       "path": "protocol/personas-povs.cdl",
-      "fingerprint": "sha256:9446d63a4b9d9d326d1b2e2cd0e583d17cecb600153ede61c2c9f886efe16259",
+      "fingerprint": "sha256:ab4662dedd2b1ff543b7dfbd941278e4d87881e7cded529a4cbe57129d518a5c",
       "sections": [
         "2.1",
         "2.2",
@@ -77,7 +77,7 @@
     },
     {
       "path": "protocol/inventory-and-frontier.cdl",
-      "fingerprint": "sha256:1fd679464e8e42e7a2f5e1519d5f6d30bb61b2da86c9a23b13afa8fa7ee60aba",
+      "fingerprint": "sha256:fb192c748dc2aafc853f130bb68f808e761a024bf6effa2d324170797941565d",
       "sections": [
         "4.2",
         "4.3",
@@ -110,7 +110,7 @@
     },
     {
       "path": "protocol/extraction-evolution.cdl",
-      "fingerprint": "sha256:ca15d2c508ca414d19f1fceaeddcf3a7954f14a8ebd03e9b68d27d4859564750",
+      "fingerprint": "sha256:7b58a6e46c19555620b1c499ecec05cf9a1def94b15205e05dd35c01bfc8c11b",
       "sections": [
         "6.1",
         "6.2",
@@ -193,7 +193,7 @@
     },
     {
       "path": "protocol/ticket-fsm.cdl",
-      "fingerprint": "sha256:6c6b7b4f631a8a2b6e5b30f8f955530941f8b36608285d063cdc19a5860fdd47",
+      "fingerprint": "sha256:2e10a42108f55fc04eaa118b8acaa34b1ec982c5a9cbc15dad45c5739206025c",
       "sections": [
         "9.1",
         "9.2",
@@ -219,7 +219,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "fingerprint": "sha256:c663d2560e6aecc4ad768206a63f95081745f31adbc5c9b62ba70e601051a0be",
+      "fingerprint": "sha256:51131344e48774509018fea153ce505683cf8dcd7686d2e7112d4fee1c409636",
       "sections": [
         "11.1",
         "11.2",
@@ -239,7 +239,7 @@
     },
     {
       "path": "protocol/traceability.cdl",
-      "fingerprint": "sha256:49417111e9e38315eaf4f75aff14f81c4c4a0b56de188a2d70801b35bf820539",
+      "fingerprint": "sha256:a4cbc6d9175f181d0a84adeae8c9337ef4a7cb35356c993ad0452f7ebf9944b3",
       "sections": [
         "12.1",
         "12.2",
@@ -251,7 +251,7 @@
     },
     {
       "path": "protocol/handbook-and-decisions.cdl",
-      "fingerprint": "sha256:eaae9e34a17395e90e28b7ea8b455d3b147989b437e78bd3a9206d35940b8458",
+      "fingerprint": "sha256:6a498e9797958134e594923db8bd609834bb7e2993c99a68ac6c8ef053747e4f",
       "sections": [
         "13.1",
         "13.2",
@@ -268,7 +268,7 @@
     },
     {
       "path": "protocol/packaging.cdl",
-      "fingerprint": "sha256:01b891065ab12be512a0866943f14f43da6b915f9dbc20db7bee9ad801d2dd60",
+      "fingerprint": "sha256:8a1ae5f10cc4fbb6dbfb69677aef545a2519ad9d4d684bb472d2006f8ecd42df",
       "sections": [
         "15.1",
         "15.1.1",
@@ -284,7 +284,7 @@
     },
     {
       "path": "protocol/migration-and-conformance.cdl",
-      "fingerprint": "sha256:0209969885a4c48d7cd1933a0666cb5c19bc8a97e0839689bc09b250b6468e24",
+      "fingerprint": "sha256:6a042953eb424077ca834dce18bf21f2fa89511360b6779679af4232a557820c",
       "sections": [
         "17.1",
         "17.2",
@@ -937,17 +937,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:86913445e3558435b389a90be6131bf8b3a43745ab156aa779310e02055c5278"
+      "detail": "sha256:ed777187fb2c9f0047ea141ff4c3216b911f0a2843f02dcab3ad8ec1c9284b14"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:e794389e18b6569e3fd6f87d127b175502cda7d43c076bb9270a6ced9e162e10"
+      "detail": "sha256:ed9c391cef76da15af913d6a5c0c3032f2b11ae138ca6e080d041c63c5c64855"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:18f3862435f58cbd3624b84ae0809b8fe370bc7a9f755e7b1e8986948a0d0f0c"
+      "detail": "sha256:119c21b56526c8f646615769ebfd762c7b1171f80c4910cc47195e21155dec05"
     },
     {
       "name": "fixture-oracle",
