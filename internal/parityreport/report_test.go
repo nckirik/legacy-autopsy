@@ -24,6 +24,14 @@ func TestParityReport(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	for _, section := range report.Sections {
+		if section.Status == "missing" {
+			t.Fatalf("protocol section %s %q has no CDL source", section.Number, section.Heading)
+		}
+		if section.Status == "implemented" && section.CDLSource == "" {
+			t.Fatalf("protocol section %s %q is implemented but has no CDL source", section.Number, section.Heading)
+		}
+	}
 
 	jsonBytes, err := json.MarshalIndent(report, "", "  ")
 	if err != nil {

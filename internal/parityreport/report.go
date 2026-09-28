@@ -120,8 +120,11 @@ func Build(repoRoot string) (Report, error) {
 		identities[source.Path] = len(source.IDs)
 	}
 
-	numberBySource := map[string][]string{}
-	sourceForNumber := map[string]string{}
+	idToSource := map[string]string{}
+	type sourceInfo struct {
+		fingerprint string
+	}
+	infoBySource := map[string]sourceInfo{}
 	for _, rel := range manifest.Sources {
 		data, err := os.ReadFile(filepath.Join(repoRoot, rel))
 		if err != nil {
@@ -131,16 +134,31 @@ func Build(repoRoot string) (Report, error) {
 		if len(diags) > 0 {
 			return Report{}, fmt.Errorf("parse %s: %v", rel, diags)
 		}
-		var sections []string
 		for _, section := range program.Sections {
-			sections = append(sections, section.Number)
-			sourceForNumber[section.Number] = rel
+			idToSource[section.ID] = rel
 		}
-		numberBySource[rel] = sections
+		infoBySource[rel] = sourceInfo{fingerprint: fingerprint(data)}
+	}
+
+	res, err := spec.Compile(repoRoot)
+	if err != nil {
+		return Report{}, fmt.Errorf("assembly compile: %w", err)
+	}
+	numberForSource := map[string][]string{}
+	sourceForNumber := map[string]string{}
+	for _, section := range res.EIR.Sections {
+		rel := idToSource[section.ID]
+		if rel == "" {
+			return Report{}, fmt.Errorf("compiled section %s has no source", section.ID)
+		}
+		numberForSource[rel] = append(numberForSource[rel], section.Number)
+		sourceForNumber[section.Number] = rel
+	}
+	for _, rel := range manifest.Sources {
 		report.Sources = append(report.Sources, SourceReport{
 			Path:        rel,
-			Fingerprint: fingerprint(data),
-			Sections:    sections,
+			Fingerprint: infoBySource[rel].fingerprint,
+			Sections:    numberForSource[rel],
 			Identities:  identities[rel],
 		})
 	}
@@ -170,9 +188,6 @@ func Build(repoRoot string) (Report, error) {
 		})
 	}
 
-	if _, err := spec.Compile(repoRoot); err != nil {
-		return Report{}, fmt.Errorf("assembly compile: %w", err)
-	}
 	report.Checks = append(report.Checks, CheckReport{Name: "assembly-compiles", Status: "pass", Detail: fmt.Sprintf("%d sources", len(manifest.Sources))})
 
 	driftNames, driftFiles, err := driftTests(filepath.Join(repoRoot, "internal/parity"))

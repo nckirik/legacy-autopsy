@@ -10,107 +10,107 @@
 
 | Section | Heading | CDL source | Status |
 | :-- | :-- | :-- | :-- |
-| 0 | Purpose, Guarantees, and Conceptual Flow |  | missing |
-| 1.1 | Plane 1 — Forensic Plane |  | missing |
-| 1.2 | Plane 2 — Assurance Plane |  | missing |
-| 1.3 | Plane 3 — Synthesis Plane |  | missing |
-| 1.4 | Plane 4 — Human Reconstruction Handbook |  | missing |
-| 1.5 | Non-authoritative sidecars |  | missing |
-| 2.1 | Persona definition and purity |  | missing |
-| 2.2 | Canonical entry ownership |  | missing |
-| 2.3 | Five isolated POVs |  | missing |
-| 2.4 | Traversal tracks |  | missing |
-| 2.5 | Capability and runtime state |  | missing |
-| 2.6 | Capability grouping and target decision |  | missing |
-| 3.1 | `0A-PREFLIGHT.md` |  | missing |
-| 3.2 | Foundational registries |  | missing |
-| 4.1 | ID generation |  | missing |
-| 4.1.1 | Semantic payload identity and certification envelopes |  | missing |
-| 4.1.2 | Normative canonical hash profile and packaging artifacts |  | missing |
-| 4.2 | Atomic unit rule |  | missing |
-| 4.3 | Source inventory denominator — `10-SOURCE-INVENTORY.md` |  | missing |
-| 4.4 | Traversal frontier — `11-TRAVERSAL-FRONTIER.md` |  | missing |
-| 4.5 | Scope-specific source coverage — `16-SOURCE-COVERAGE.md` |  | missing |
-| 4.6 | Stable supersession and tombstones |  | missing |
-| 5.1 | Dedicated prefix groups |  | missing |
-| 5.2 | Claim-level evidence — `12-CLAIM-EVIDENCE.md` |  | missing |
-| 5.3 | Sanitized projections and helper limitations |  | missing |
-| 5.4 | Contradictions — `14-CONTRADICTIONS.md` |  | missing |
-| 5.5 | Authoritative decisions — `15-DECISIONS.md` |  | missing |
-| 5.6 | Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md` |  | missing |
-| 5.7 | Human confirmations — `18-CONFIRMATIONS.md` |  | missing |
-| 6.1 | Atomic component schema |  | missing |
-| 6.2 | Dual-entry discovery |  | missing |
-| 6.3 | Staging and promotion |  | missing |
-| 6.4 | Depromotion |  | missing |
-| 6.5 | Surgical evolution |  | missing |
-| 7.1 | Trust boundary |  | missing |
-| 7.2 | Acquisition register |  | missing |
-| 7.3 | Logical explosion and virtual coordinates |  | missing |
-| 7.4 | Required explosion coverage |  | missing |
-| 7.5 | n8n human acquisition loop |  | missing |
-| 7.6 | Normalized maps |  | missing |
-| 7.7 | Export reconciliation — `13-EXPORT-RECONCILIATION.md` |  | missing |
-| 8.1 | Resume identity header |  | missing |
-| 8.2 | Strict single-scope modes |  | missing |
-| 8.3 | Invocation-mode enum and explicit multi-file modes |  | missing |
-| 8.4 | Mandatory read sets |  | missing |
-| 8.5 | Cold resume check |  | missing |
-| 8.6 | Concurrent persona traversal |  | missing |
-| 8.7 | Stale checkpoint guard |  | missing |
-| 8.8 | `0G` invocation log |  | missing |
-| 9.1 | Ticket schema and canonical IDs |  | missing |
-| 9.2 | FSM and write rights |  | missing |
-| 9.3 | Human Hatch action prerequisites |  | missing |
-| 9.4 | Probe specification and asynchronous handoff |  | missing |
-| 9.5 | No-mock integrity |  | missing |
-| 9.6 | No-mock fallback payload |  | missing |
-| 10.1 | Evidence-backed `[R-SWEPT]` |  | missing |
-| 10.2 | Per-kind coverage arithmetic |  | missing |
-| 10.3 | Composite Exit A — Deconstruction Closure |  | missing |
-| 10.4 | Exit B — Stagnation |  | missing |
-| 10.5 | Exit C — Oscillation |  | missing |
-| 10.6 | Exit D — Limit exhaustion and deterministic iteration accounting |  | missing |
-| 11.1 | Partial versus Final Synthesis |  | missing |
-| 11.2 | Common synthesis block header |  | missing |
-| 11.3 | Architecture blueprint — `90-ARCH-BLUEPRINT.md` |  | missing |
-| 11.4 | Entity — `91-DATA-MODEL.md` |  | missing |
-| 11.5 | Relationship — `91-DATA-MODEL.md` |  | missing |
-| 11.6 | State machine — `91-DATA-MODEL.md` |  | missing |
-| 11.7 | Database routine — `91-DATA-MODEL.md` |  | missing |
-| 11.8 | Business rule — `92-BUSINESS-RULES.md` |  | missing |
-| 11.9 | Use case — `93-USE-CASES.md` |  | missing |
-| 11.10 | Interface — `94-INTERFACES.md` |  | missing |
-| 11.11 | Deployment, configuration, and scheduling — `95-DEPLOYMENT.md` |  | missing |
-| 11.12 | NFR and security — `96-NON-FUNCTIONAL-SECURITY.md` |  | missing |
-| 11.13 | Persona profile |  | missing |
-| 12.1 | Traceability — `20-TRACEABILITY.md` |  | missing |
-| 12.2 | Required reciprocal references |  | missing |
-| 12.3 | Synthesis-ID timing |  | missing |
-| 12.4 | Dependency and impact provenance |  | missing |
-| 12.5 | Deterministic validation summary |  | missing |
-| 13.1 | Audience paths and progressive disclosure |  | missing |
-| 13.2 | Required chapter behavior |  | missing |
-| 13.3 | Disabled and Dormant Features chapter |  | missing |
-| 13.4 | Handbook quality gate |  | missing |
-| 14.1 | Decision log |  | missing |
-| 14.2 | Modernization mapping templates |  | missing |
-| 14.3 | Business-rule ownership |  | missing |
-| 14.4 | Interface compatibility |  | missing |
-| 14.5 | Equivalence and acceptance suite |  | missing |
-| 14.6 | Sole-input invariant |  | missing |
-| 15.1 | Strict conditions |  | missing |
-| 15.1.1 | Universal deterministic packaging rules |  | missing |
-| 15.1.2 | Exit E Candidate Report ordered payload schema |  | missing |
-| 15.1.3 | Candidate Payload Manifest ordered payload schema |  | missing |
-| 15.1.4 | Exit E Content-Readiness Report ordered payload schema |  | missing |
-| 15.2 | Scope certificate |  | missing |
-| 15.3 | Package contents |  | missing |
-| 15.4 | Acyclic certification sequence and hash domains |  | missing |
-| 15.5 | Reproducible final-bundle verification |  | missing |
-| 17.1 | Conforming implementation capabilities |  | missing |
-| 17.2 | Normative conformance cases |  | missing |
-| 17.3 | Corpus acceptance |  | missing |
+| 0 | Purpose, Guarantees, and Conceptual Flow |  | wrapper |
+| 1.1 | Plane 1 — Forensic Plane | protocol/foundations.cdl | implemented |
+| 1.2 | Plane 2 — Assurance Plane | protocol/foundations.cdl | implemented |
+| 1.3 | Plane 3 — Synthesis Plane | protocol/foundations.cdl | implemented |
+| 1.4 | Plane 4 — Human Reconstruction Handbook | protocol/foundations.cdl | implemented |
+| 1.5 | Non-authoritative sidecars | protocol/foundations.cdl | implemented |
+| 2.1 | Persona definition and purity | protocol/personas-povs.cdl | implemented |
+| 2.2 | Canonical entry ownership | protocol/personas-povs.cdl | implemented |
+| 2.3 | Five isolated POVs | protocol/personas-povs.cdl | implemented |
+| 2.4 | Traversal tracks | protocol/personas-povs.cdl | implemented |
+| 2.5 | Capability and runtime state | protocol/personas-povs.cdl | implemented |
+| 2.6 | Capability grouping and target decision | protocol/personas-povs.cdl | implemented |
+| 3.1 | `0A-PREFLIGHT.md` | protocol/preflight-registry.cdl | implemented |
+| 3.2 | Foundational registries | protocol/workspace-registries.cdl | implemented |
+| 4.1 | ID generation | protocol/typed-id.cdl | implemented |
+| 4.1.1 | Semantic payload identity and certification envelopes | protocol/semantic-payload-identity.cdl | implemented |
+| 4.1.2 | Normative canonical hash profile and packaging artifacts | protocol/canonical-hash-profile.cdl | implemented |
+| 4.2 | Atomic unit rule | protocol/inventory-and-frontier.cdl | implemented |
+| 4.3 | Source inventory denominator — `10-SOURCE-INVENTORY.md` | protocol/inventory-and-frontier.cdl | implemented |
+| 4.4 | Traversal frontier — `11-TRAVERSAL-FRONTIER.md` | protocol/inventory-and-frontier.cdl | implemented |
+| 4.5 | Scope-specific source coverage — `16-SOURCE-COVERAGE.md` | protocol/inventory-and-frontier.cdl | implemented |
+| 4.6 | Stable supersession and tombstones | protocol/inventory-and-frontier.cdl | implemented |
+| 5.1 | Dedicated prefix groups | protocol/status-taxonomy.cdl | implemented |
+| 5.2 | Claim-level evidence — `12-CLAIM-EVIDENCE.md` | protocol/evidence-and-decisions.cdl | implemented |
+| 5.3 | Sanitized projections and helper limitations | protocol/evidence-and-decisions.cdl | implemented |
+| 5.4 | Contradictions — `14-CONTRADICTIONS.md` | protocol/evidence-and-decisions.cdl | implemented |
+| 5.5 | Authoritative decisions — `15-DECISIONS.md` | protocol/evidence-and-decisions.cdl | implemented |
+| 5.6 | Acquisition-candidate reconciliation — `17-ACQUISITION-CANDIDATES.md` | protocol/evidence-and-decisions.cdl | implemented |
+| 5.7 | Human confirmations — `18-CONFIRMATIONS.md` | protocol/evidence-and-decisions.cdl | implemented |
+| 6.1 | Atomic component schema | protocol/extraction-evolution.cdl | implemented |
+| 6.2 | Dual-entry discovery | protocol/extraction-evolution.cdl | implemented |
+| 6.3 | Staging and promotion | protocol/extraction-evolution.cdl | implemented |
+| 6.4 | Depromotion | protocol/extraction-evolution.cdl | implemented |
+| 6.5 | Surgical evolution | protocol/extraction-evolution.cdl | implemented |
+| 7.1 | Trust boundary | protocol/acquisition-trust.cdl | implemented |
+| 7.2 | Acquisition register | protocol/acquisition-trust.cdl | implemented |
+| 7.3 | Logical explosion and virtual coordinates | protocol/acquisition-trust.cdl | implemented |
+| 7.4 | Required explosion coverage | protocol/acquisition-trust.cdl | implemented |
+| 7.5 | n8n human acquisition loop | protocol/export-acquisition-loop.cdl | implemented |
+| 7.6 | Normalized maps | protocol/normalized-maps.cdl | implemented |
+| 7.7 | Export reconciliation — `13-EXPORT-RECONCILIATION.md` | protocol/export-reconciliation.cdl | implemented |
+| 8.1 | Resume identity header | protocol/invocation-context.cdl | implemented |
+| 8.2 | Strict single-scope modes | protocol/invocation-context.cdl | implemented |
+| 8.3 | Invocation-mode enum and explicit multi-file modes | protocol/invocation-context.cdl | implemented |
+| 8.4 | Mandatory read sets | protocol/invocation-context.cdl | implemented |
+| 8.5 | Cold resume check | protocol/cold-resume.cdl | implemented |
+| 8.6 | Concurrent persona traversal | protocol/invocation-lifecycle.cdl | implemented |
+| 8.7 | Stale checkpoint guard | protocol/invocation-lifecycle.cdl | implemented |
+| 8.8 | `0G` invocation log | protocol/invocation-lifecycle.cdl | implemented |
+| 9.1 | Ticket schema and canonical IDs | protocol/ticket-fsm.cdl | implemented |
+| 9.2 | FSM and write rights | protocol/ticket-fsm.cdl | implemented |
+| 9.3 | Human Hatch action prerequisites | protocol/ticket-fsm.cdl | implemented |
+| 9.4 | Probe specification and asynchronous handoff | protocol/ticket-fsm.cdl | implemented |
+| 9.5 | No-mock integrity | protocol/ticket-fsm.cdl | implemented |
+| 9.6 | No-mock fallback payload | protocol/ticket-fsm.cdl | implemented |
+| 10.1 | Evidence-backed `[R-SWEPT]` | protocol/coverage-and-exits.cdl | implemented |
+| 10.2 | Per-kind coverage arithmetic | protocol/coverage-and-exits.cdl | implemented |
+| 10.3 | Composite Exit A — Deconstruction Closure | protocol/coverage-and-exits.cdl | implemented |
+| 10.4 | Exit B — Stagnation | protocol/coverage-and-exits.cdl | implemented |
+| 10.5 | Exit C — Oscillation | protocol/coverage-and-exits.cdl | implemented |
+| 10.6 | Exit D — Limit exhaustion and deterministic iteration accounting | protocol/coverage-and-exits.cdl | implemented |
+| 11.1 | Partial versus Final Synthesis | protocol/synthesis-catalogs.cdl | implemented |
+| 11.2 | Common synthesis block header | protocol/synthesis-catalogs.cdl | implemented |
+| 11.3 | Architecture blueprint — `90-ARCH-BLUEPRINT.md` | protocol/synthesis-catalogs.cdl | implemented |
+| 11.4 | Entity — `91-DATA-MODEL.md` | protocol/synthesis-catalogs.cdl | implemented |
+| 11.5 | Relationship — `91-DATA-MODEL.md` | protocol/synthesis-catalogs.cdl | implemented |
+| 11.6 | State machine — `91-DATA-MODEL.md` | protocol/synthesis-catalogs.cdl | implemented |
+| 11.7 | Database routine — `91-DATA-MODEL.md` | protocol/synthesis-catalogs.cdl | implemented |
+| 11.8 | Business rule — `92-BUSINESS-RULES.md` | protocol/synthesis-catalogs.cdl | implemented |
+| 11.9 | Use case — `93-USE-CASES.md` | protocol/synthesis-catalogs.cdl | implemented |
+| 11.10 | Interface — `94-INTERFACES.md` | protocol/synthesis-catalogs.cdl | implemented |
+| 11.11 | Deployment, configuration, and scheduling — `95-DEPLOYMENT.md` | protocol/synthesis-catalogs.cdl | implemented |
+| 11.12 | NFR and security — `96-NON-FUNCTIONAL-SECURITY.md` | protocol/synthesis-catalogs.cdl | implemented |
+| 11.13 | Persona profile | protocol/synthesis-catalogs.cdl | implemented |
+| 12.1 | Traceability — `20-TRACEABILITY.md` | protocol/traceability.cdl | implemented |
+| 12.2 | Required reciprocal references | protocol/traceability.cdl | implemented |
+| 12.3 | Synthesis-ID timing | protocol/traceability.cdl | implemented |
+| 12.4 | Dependency and impact provenance | protocol/traceability.cdl | implemented |
+| 12.5 | Deterministic validation summary | protocol/traceability.cdl | implemented |
+| 13.1 | Audience paths and progressive disclosure | protocol/handbook-and-decisions.cdl | implemented |
+| 13.2 | Required chapter behavior | protocol/handbook-and-decisions.cdl | implemented |
+| 13.3 | Disabled and Dormant Features chapter | protocol/handbook-and-decisions.cdl | implemented |
+| 13.4 | Handbook quality gate | protocol/handbook-and-decisions.cdl | implemented |
+| 14.1 | Decision log | protocol/handbook-and-decisions.cdl | implemented |
+| 14.2 | Modernization mapping templates | protocol/handbook-and-decisions.cdl | implemented |
+| 14.3 | Business-rule ownership | protocol/handbook-and-decisions.cdl | implemented |
+| 14.4 | Interface compatibility | protocol/handbook-and-decisions.cdl | implemented |
+| 14.5 | Equivalence and acceptance suite | protocol/handbook-and-decisions.cdl | implemented |
+| 14.6 | Sole-input invariant | protocol/handbook-and-decisions.cdl | implemented |
+| 15.1 | Strict conditions | protocol/packaging.cdl | implemented |
+| 15.1.1 | Universal deterministic packaging rules | protocol/packaging.cdl | implemented |
+| 15.1.2 | Exit E Candidate Report ordered payload schema | protocol/packaging.cdl | implemented |
+| 15.1.3 | Candidate Payload Manifest ordered payload schema | protocol/packaging.cdl | implemented |
+| 15.1.4 | Exit E Content-Readiness Report ordered payload schema | protocol/packaging.cdl | implemented |
+| 15.2 | Scope certificate | protocol/packaging.cdl | implemented |
+| 15.3 | Package contents | protocol/packaging.cdl | implemented |
+| 15.4 | Acyclic certification sequence and hash domains | protocol/packaging.cdl | implemented |
+| 15.5 | Reproducible final-bundle verification | protocol/packaging.cdl | implemented |
+| 17.1 | Conforming implementation capabilities | protocol/conformance.cdl | implemented |
+| 17.2 | Normative conformance cases | protocol/conformance.cdl | implemented |
+| 17.3 | Corpus acceptance | protocol/conformance.cdl | implemented |
 
 ## Checks
 
