@@ -97,7 +97,7 @@ The current tooling is an **M0 foundation**, not an automated autopsy runner.
 Implemented bootstrap capabilities:
 
 - a thin skill/router with exactly 13 machine-validated mode projections;
-- a provider-neutral Go CLI with `doctor`, `init`, `protocol check`, `workspace check`, `id`, `context`, implemented `validate` targets, and additive `spec compile|render|run` verbs for the §7.7 pilot;
+- a provider-neutral Go CLI with `doctor`, `init`, `protocol check`, `workspace check`, `id`, `context`, implemented `validate` targets, and `spec compile|render|run` verbs for the compiled CDL assembly;
 - a small structural Markdown model for headings, fields, code blocks, comments, tables, and bounded sections;
 - foundational typed IDs, normalized SRC-FILE paths, relative-path validation, and a deliberately limited basic Markdown hash primitive;
 - atomic creation and structural checking of a non-fabricated four-plane workspace skeleton;
