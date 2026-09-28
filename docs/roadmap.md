@@ -242,6 +242,14 @@ S3 progress:
 
 ### S4 — Crown
 
+- **Parity report generator implemented:** `internal/parityreport` deterministically
+  builds `analysis/parity-report.json` and `analysis/parity-report.md` over the protocol
+  fingerprint, assembly sources/ledger, compiler, renderer goldens, drift-test
+  inventory, and the 24-case fixture oracle; a freshness test keeps both artifacts
+  regenerated (`go test ./internal/parityreport -update`). Report shows 104/104
+  substantive protocol sections implemented (the §0 wrapper is a `wrapper`), all six
+  checks pass, 24/24 fixtures pass, and four declared deferrals.
+- **Awaiting human acceptance of the parity report before promotion/crown.**
 - machine-generated parity report over source, compiler, stdlib, renderer, fixtures,
   and outputs, accepted by a human;
 - `examples/spec/*.cdl` is promoted to `protocol/` and becomes the normative source;
