@@ -2,6 +2,7 @@ package cdl
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -33,6 +34,7 @@ const (
 	inventoryFrontierPath = "examples/spec/inventory-and-frontier.cdl"
 	extractionEvoPath     = "examples/spec/extraction-evolution.cdl"
 	handbookDecisionsPath = "examples/spec/handbook-and-decisions.cdl"
+	synthesisCatalogsPath = "examples/spec/synthesis-catalogs.cdl"
 	globalsPath           = "examples/spec/globals.cdl"
 	assemblyPath          = "examples/spec/assembly.json"
 	ledgerPath            = "examples/spec/identity-ledger.json"
@@ -858,6 +860,56 @@ func TestHandbookAndDecisionsCompiles(t *testing.T) {
 	}
 	if enumCounts["AUDIENCE-ROLE"] != 6 || enumCounts["EQUIVALENCE-TEST-KIND"] != 6 {
 		t.Fatalf("unexpected handbook enum counts: %v", enumCounts)
+	}
+}
+
+func TestSynthesisCatalogsCompile(t *testing.T) {
+	res := compileSources(t, statusTaxonomyPath, extractionEvoPath, synthesisCatalogsPath)
+	numbers := map[string]bool{}
+	for _, sec := range res.EIR.Sections {
+		numbers[sec.Number] = true
+	}
+	for i := 1; i <= 13; i++ {
+		want := fmt.Sprintf("11.%d", i)
+		if !numbers[want] {
+			t.Fatalf("section %s missing", want)
+		}
+	}
+	counts := map[string]int{}
+	for _, f := range res.EIR.Declarations.Fields {
+		counts[f.ID] = len(f.Fields)
+	}
+	want := map[string]int{
+		"SYNTHESIS-GAP": 9, "SYNTHESIS-BLOCK-HEADER": 8, "CERTIFICATION-ENVELOPE": 4,
+		"ARCHITECTURE-MODULE": 10, "ENTITY-RECORD": 15, "ENTITY-COLUMN": 7,
+		"RELATIONSHIP-RECORD": 6, "STATE-MACHINE": 7, "STATE-TRANSITION": 6,
+		"DATABASE-ROUTINE": 12, "BUSINESS-RULE-RECORD": 12, "USE-CASE": 11,
+		"USE-CASE-STEP": 6, "INTERFACE-RECORD": 14, "INTERFACE-REQUEST-FIELD": 6,
+		"INTERFACE-RESPONSE-FIELD": 4, "DEPLOYMENT-ELEMENT": 4, "CONFIGURATION-RECORD": 7,
+		"SCHEDULE-RECORD": 6, "NFR-RECORD": 5, "SECURITY-FINDING": 6, "FAULT-RECORD": 8,
+		"PERSONA-PROFILE": 20, "AUTHORIZATION-MATRIX-ROW": 4,
+	}
+	for id, size := range want {
+		if counts[id] != size {
+			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)
+		}
+	}
+	enumCounts := map[string]int{}
+	for _, e := range res.EIR.Declarations.Enums {
+		enumCounts[e.ID] = len(e.Values)
+	}
+	wantEnums := map[string]int{
+		"GAP-MATERIALITY": 2, "GAP-DISPOSITION": 7, "STORAGE-KIND": 6,
+		"RELATIONSHIP-CARDINALITY": 3, "RELATIONSHIP-ENFORCEMENT": 4,
+		"DELETE-UPDATE-SEMANTICS": 4, "DB-ROUTINE-KIND": 7, "DB-TARGET-DECISION": 5,
+		"VIOLATION-POLICY": 6, "BUSINESS-RULE-CAPABILITY-STATE": 2,
+		"USE-CASE-CAPABILITY-CLASSIFICATION": 5, "USE-CASE-TARGET-DECISION": 4,
+		"CONFIG-MEDIUM": 5, "NFR-ATTRIBUTE": 8, "SECURITY-CATEGORY": 10, "RISK-LEVEL": 4,
+	}
+	for id, size := range wantEnums {
+		if enumCounts[id] != size {
+			t.Fatalf("%s has %d values, want %d", id, enumCounts[id], size)
+		}
 	}
 }
 

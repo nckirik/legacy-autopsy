@@ -2001,6 +2001,342 @@
       ]
     },
     {
+      "path": "examples/spec/synthesis-catalogs.cdl",
+      "source-fingerprint": "sha256:fe55e0c5fb1e5acd74b86b9abc0519c71d808d339b8927267568745525d3eda7",
+      "ids": [
+        {
+          "id": "ARCHITECTURE-MODULE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "AUTHORIZATION-MATRIX-ROW",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "BUSINESS-RULE-CAPABILITY-STATE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "BUSINESS-RULE-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CERTIFICATION-ENVELOPE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "CONFIG-MEDIUM",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "CONFIGURATION-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "DATABASE-ROUTINE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "DB-ROUTINE-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "DB-TARGET-DECISION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "DELETE-UPDATE-SEMANTICS",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "DEPLOYMENT-ELEMENT",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "ENTITY-COLUMN",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "ENTITY-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "FAULT-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "GAP-DISPOSITION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "GAP-MATERIALITY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "INTERFACE-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "INTERFACE-REQUEST-FIELD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "INTERFACE-RESPONSE-FIELD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "NFR-ATTRIBUTE",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "NFR-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "PERSONA-PROFILE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "RELATIONSHIP-CARDINALITY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "RELATIONSHIP-ENFORCEMENT",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "RELATIONSHIP-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "RISK-LEVEL",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "SCHEDULE-RECORD",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "SECURITY-CATEGORY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "SECURITY-FINDING",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "STATE-MACHINE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "STATE-TRANSITION",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "STORAGE-KIND",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "SYNTHESIS-BLOCK-HEADER",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "SYNTHESIS-GAP",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "USE-CASE",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "USE-CASE-CAPABILITY-CLASSIFICATION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "USE-CASE-STEP",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "USE-CASE-TARGET-DECISION",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "VIOLATION-POLICY",
+          "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "architecture-blueprint",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "business-rule-catalog",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "common-header-requirements",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "configuration-effect",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "cross-reference-updates",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "database-routine-catalog",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "database-routine-drift",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "deployment-catalog",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "entity-catalog",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "gap-buffer-merge",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "interface-catalog",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "interface-compatibility-baseline",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "module-requirements",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "nfr-security-catalog",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "partial-vs-final-synthesis",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "persona-profile",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "profile-synchronization",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "relationship-catalog",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "security-reciprocal",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "single-rule-owner",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "state-machine-catalog",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "state-machine-eligibility",
+          "kind": "RULE",
+          "status": "active"
+        },
+        {
+          "id": "synthesis-block-header",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "synthesis-scope",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "use-case-catalog",
+          "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "use-case-visibility",
+          "kind": "RULE",
+          "status": "active"
+        }
+      ]
+    },
+    {
       "path": "examples/spec/ticket-fsm.cdl",
       "source-fingerprint": "sha256:378697e6d0eb087f47759f8c26f6c20c7aa8e1437dd537fa9ab4b8ac08117de9",
       "ids": [

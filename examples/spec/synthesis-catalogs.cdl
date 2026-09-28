@@ -1,0 +1,609 @@
+SECTION synthesis-scope
+NUMBER 11.1
+TITLE "Partial versus Final Synthesis"
+
+GOAL
+  Partial-Synthesis runs before Exit A only for an explicitly bounded
+  persona/cluster/track/snapshot; Final-Synthesis runs only after Composite Exit A
+  passes.
+END
+
+ENUM GAP-MATERIALITY
+  Material
+  Supporting
+END
+
+ENUM GAP-DISPOSITION
+  Pending
+  Ticket-Created
+  Frontier-Created
+  Both-Created
+  Merged
+  Invalid
+  Approved-Excluded
+END
+
+FIELD SYNTHESIS-GAP
+  source-synthesis-invocation-block-id            -> string required
+  observed-missing-requirement                    -> string required
+  affected-ids                                    -> string required
+  source-fingerprints-snapshot                    -> string required
+  proposed-target-persona-cluster-track-pov-ledger -> string required
+  dedup-key                                       -> hash required
+  materiality                                     -> GAP-MATERIALITY required
+  disposition                                     -> GAP-DISPOSITION required
+  resulting-ticket-frt-dec-ids                    -> string required
+END
+
+RULE partial-vs-final-synthesis
+  GOAL
+    Partial-Synthesis blocks remain B-DRAFT, are labeled provisional, and state the
+    incomplete denominator. They MUST NOT be reconstruction inputs. Final-Synthesis
+    writes complete structured catalogs from closed facts. Newly discovered gaps go to
+    SYNTHESIS-GAP-BUFFER.md; Sequential Reconciliation opens tickets, creates or updates
+    missing SRC/frontier/coverage records, immediately marks the pinned Exit A report
+    invalid, and marks all dependent B blocks stale. Deconstruction is re-armed and
+    confirmation/handoff is prohibited until Exit A passes again on a new gate-input
+    fingerprint. Final synthesis cannot directly mutate ledgers.
+  END
+END
+
+RULE cross-reference-updates
+  GOAL
+    After IDs exist, Cross-Reference-Reconciliation may update only fields such as Bound
+    Use-Cases, Rules, Entities, Interfaces, and reciprocal references. It MUST NOT
+    change observed behavior, decisions, or evidence; because these references are
+    semantic payload, a changed reference increments the semantic record
+    version/fingerprint and invalidates any certification envelope.
+  END
+END
+
+RULE gap-buffer-merge
+  GOAL
+    Partial/Final Synthesis writes only Pending GAP records and cannot create tickets or
+    frontiers. Sequential Reconciliation sorts by DEDUP-KEY, then GAP-ID; merges equal
+    keys while retaining every source invocation/block/fingerprint; records a
+    contradiction rather than merging incompatible target proposals; and
+    deterministically creates the minimum required work. A missing cross-POV answer
+    creates one canonical ticket in the proposed ledger; a newly discovered traversal
+    boundary creates one FRT; a gap requiring both creates both and cross-links them.
+    Existing equivalent active work is linked rather than duplicated. Sequential
+    Reconciliation updates disposition atomically, invalidates the pinned Exit A report
+    for material gaps, applies targeted staleness, and logs iteration-budget effects
+    under §10.6.
+  END
+END
+
+SECTION synthesis-block-header
+NUMBER 11.2
+TITLE "Common synthesis block header"
+
+GOAL
+  Every atomic synthesis block MUST contain a semantic payload followed by a separately
+  delimited certification envelope.
+END
+
+FIELD SYNTHESIS-BLOCK-HEADER
+  semantic-record-version      -> int required
+  semantic-content-fingerprint -> string required
+  coverage-status              -> string required
+  derived-from                 -> string required
+  material-claims              -> string required
+  block-confidence-rank         -> string required
+  block-evidence-profile       -> string required
+  supersession                 -> string required
+END
+
+FIELD CERTIFICATION-ENVELOPE
+  blueprint-status               -> string required
+  confirmation                   -> string required
+  confirmation-envelope-version  -> int required
+  confirmation-envelope-audit    -> string required
+END
+
+RULE common-header-requirements
+  GOAL
+    Coverage is semantic payload; blueprint status is envelope metadata. B-CONFIRMED
+    requires C-COVERED, no stale dependency, a passing candidate binding, and a valid
+    human confirmation of the exact semantic version/fingerprint. Attaching confirmation
+    MUST NOT change semantic bytes. Empty domains require inventory-backed zero claims
+    and may then be confirmed as empty.
+  END
+END
+
+SECTION architecture-blueprint
+NUMBER 11.3
+TITLE "Architecture blueprint - 90-ARCH-BLUEPRINT.md"
+
+GOAL
+  The architecture blueprint contains system boundary and context diagrams;
+  actors/personas and external systems; observed legacy technology separated from target
+  decisions; atomic MOD records; inter-module contracts and error propagation;
+  deployment topology; architectural invariants and modernization consequences;
+  capability navigation; and a prominent active-versus-disabled architecture view.
+  Purely navigational module indexes are grouping containers under §4.2 and list MOD IDs
+  only.
+END
+
+FIELD ARCHITECTURE-MODULE
+  responsibility-domain-boundary      -> string required
+  public-interfaces                   -> string required
+  encapsulated-state-entities         -> string required
+  dependencies-dependents             -> string required
+  data-and-events-passed              -> string required
+  invariants-rules-owned              -> string required
+  personas-use-cases-capabilities     -> string required
+  failure-propagation                 -> string required
+  observed-legacy-placement           -> string required
+  target-decision                     -> string required
+END
+
+RULE module-requirements
+  GOAL
+    Every semantic architecture statement about responsibility, public interface,
+    encapsulation, dependency, or data passing MUST belong to an atomic MOD and have
+    material CLMs. MOD to IF/ER/DEP/BR/UC/CAP/FLT reciprocal references are required
+    where applicable.
+  END
+END
+
+SECTION entity-catalog
+NUMBER 11.4
+TITLE "Entity - 91-DATA-MODEL.md"
+
+ENUM STORAGE-KIND
+  table
+  view
+  collection
+  cache-key-space
+  file
+  in-memory
+END
+
+FIELD ENTITY-COLUMN
+  name        -> string required
+  type        -> string required
+  null        -> string required
+  default     -> string required
+  constraints -> string required
+  unique      -> string required
+  claims      -> string required
+END
+
+FIELD ENTITY-RECORD
+  domain-context-purpose               -> string required
+  storage                              -> STORAGE-KIND required
+  physical-src-ids                     -> string required
+  primary-key-secondary-keys-indexes   -> string required
+  columns-fields                       -> string required
+  relationships                        -> string required
+  enums-lookup-domains                 -> string required
+  lifecycle-state-fields               -> string required
+  derived-computed-fields              -> string required
+  invariants                           -> string required
+  audit-soft-delete                    -> string required
+  retention-lifecycle                  -> string required
+  permissions                          -> string required
+  capability-state-impact              -> string required
+  schema-drift-matrix                  -> string required
+END
+
+SECTION relationship-catalog
+NUMBER 11.5
+TITLE "Relationship - 91-DATA-MODEL.md"
+
+ENUM RELATIONSHIP-CARDINALITY
+  1:1
+  1:N
+  M:N
+END
+
+ENUM RELATIONSHIP-ENFORCEMENT
+  DB-FK
+  application
+  mixed
+  none
+END
+
+ENUM DELETE-UPDATE-SEMANTICS
+  cascade
+  restrict
+  nullify
+  custom
+END
+
+FIELD RELATIONSHIP-RECORD
+  cardinality                  -> RELATIONSHIP-CARDINALITY required
+  enforcement                  -> RELATIONSHIP-ENFORCEMENT required
+  delete-update-semantics      -> DELETE-UPDATE-SEMANTICS required
+  inverse-access               -> string required
+  business-constraint          -> string required
+  reciprocal-entity-references -> string required
+END
+
+SECTION state-machine-catalog
+NUMBER 11.6
+TITLE "State machine - 91-DATA-MODEL.md"
+
+GOAL
+  A state machine is required only for an eligible lifecycle scope: an entity aggregate
+  or capability with a finite, behaviorally meaningful lifecycle, not every boolean or
+  presentation state.
+END
+
+FIELD STATE-TRANSITION
+  from       -> string required
+  to         -> string required
+  event-uc   -> string required
+  guard-br   -> string required
+  effects    -> string required
+  claims     -> string required
+END
+
+FIELD STATE-MACHINE
+  scope-owner-entity-or-aggregate -> string required
+  state-fields                    -> string required
+  states-meaning                  -> string required
+  initial-terminal-states         -> string required
+  transitions                     -> string required
+  invalid-recovery-transitions    -> string required
+  environment-capability-variants -> string required
+END
+
+RULE state-machine-eligibility
+  GOAL
+    Eligibility decisions use the §12.1 lifecycle table so absence cannot be assumed.
+    Unknown requires a ticket, is treated as eligible for closure, and blocks Exit E
+    until resolved to Eligible with a complete SM or Ineligible with claim-backed
+    provenance.
+  END
+END
+
+SECTION database-routine-catalog
+NUMBER 11.7
+TITLE "Database routine - 91-DATA-MODEL.md"
+
+ENUM DB-ROUTINE-KIND
+  trigger
+  function
+  procedure
+  rule
+  generated-column
+  materialized-refresh
+  constraint-helper
+END
+
+ENUM DB-TARGET-DECISION
+  Retain
+  Lift
+  Redesign
+  Retire
+  Undecided
+END
+
+FIELD DATABASE-ROUTINE
+  kind                              -> DB-ROUTINE-KIND required
+  owner-table-entity                -> string required
+  firing-event-timing-granularity   -> string required
+  atomic-body-intent                -> string required
+  inputs-outputs                    -> string required
+  entities-read-written             -> string required
+  invariants-rules-enforced         -> string required
+  callers-firers                    -> string required
+  failure-transaction-semantics     -> string required
+  canonical-db-source-drift         -> string required
+  target-decision                   -> DB-TARGET-DECISION required
+  target-decision-dec               -> string required
+END
+
+RULE database-routine-drift
+  GOAL
+    A production DB routine absent from the canonical DB source creates a material drift
+    contradiction and follows the ticket/Human Hatch path.
+  END
+END
+
+SECTION business-rule-catalog
+NUMBER 11.8
+TITLE "Business rule - 92-BUSINESS-RULES.md"
+
+ENUM VIOLATION-POLICY
+  reject
+  warn
+  clamp
+  default
+  compensate
+  rollback
+END
+
+ENUM BUSINESS-RULE-CAPABILITY-STATE
+  Active
+  Disabled
+END
+
+FIELD BUSINESS-RULE-RECORD
+  authoritative-rule-owner           -> string required
+  defense-in-depth-mirrors           -> string required
+  applies-when                       -> string required
+  condition                          -> string required
+  action-effect                      -> string required
+  precedence-conflict                -> string required
+  inputs-read-writable-effects       -> string required
+  violation-policy                   -> VIOLATION-POLICY required
+  boundary-cases-null-locale-overflow -> string required
+  idempotency                        -> string required
+  capability-state                   -> BUSINESS-RULE-CAPABILITY-STATE required
+  target-mapping-decision            -> string required
+END
+
+RULE single-rule-owner
+  GOAL
+    One authoritative rule owner is REQUIRED. Multiple physical enforcement points are
+    allowed only as consistent defense-in-depth mirrors, not competing authorities.
+  END
+END
+
+SECTION use-case-catalog
+NUMBER 11.9
+TITLE "Use case - 93-USE-CASES.md"
+
+ENUM USE-CASE-CAPABILITY-CLASSIFICATION
+  Active
+  Conditional
+  Shadow
+  Disabled
+  Retired
+END
+
+ENUM USE-CASE-TARGET-DECISION
+  Preserve
+  Change-By-Approved-Migration
+  Redesign
+  Retire
+END
+
+FIELD USE-CASE-STEP
+  step      -> string required
+  action    -> string required
+  rules     -> string required
+  data-r-w  -> string required
+  interface -> string required
+  claims    -> string required
+END
+
+FIELD USE-CASE
+  primary-persona-secondary-actors      -> string required
+  goal                                  -> string required
+  trigger-entry                         -> string required
+  preconditions-postconditions          -> string required
+  invariants-relied-upon                -> string required
+  capability-classification             -> USE-CASE-CAPABILITY-CLASSIFICATION required
+  observed-legacy-behavior              -> string required
+  rules-entities-interfaces-side-effects -> string required
+  behavioral-contract                   -> string required
+  target-decision                       -> USE-CASE-TARGET-DECISION required
+  target-decision-dec                   -> string required
+END
+
+RULE use-case-visibility
+  GOAL
+    Disabled use cases remain visible, are not presented as current normal behavior, and
+    require an explicit target decision.
+  END
+END
+
+SECTION interface-catalog
+NUMBER 11.10
+TITLE "Interface - 94-INTERFACES.md"
+
+FIELD INTERFACE-REQUEST-FIELD
+  field         -> string required
+  type          -> string required
+  required      -> string required
+  default       -> string required
+  validation-br -> string required
+  claim         -> string required
+END
+
+FIELD INTERFACE-RESPONSE-FIELD
+  field  -> string required
+  type   -> string required
+  notes  -> string required
+  claim  -> string required
+END
+
+FIELD INTERFACE-RECORD
+  channel-transport-direction           -> string required
+  actor-persona-auth                    -> string required
+  protocol-content-type                 -> string required
+  request-schema                        -> string required
+  response-schema                       -> string required
+  error-semantics-retryability          -> string required
+  guarantees                            -> string required
+  authn-authz                           -> string required
+  versioning-compatibility              -> string required
+  rate-limits-backpressure              -> string required
+  bound-uc-er-ids                       -> string required
+  capability-state-environment-matrix   -> string required
+  compatibility-baseline                -> string required
+  target-migration-decision             -> string required
+END
+
+RULE interface-compatibility-baseline
+  GOAL
+    External semantics are compatibility baselines, not absolutely frozen. Breaking
+    changes require an approved, versioned migration decision, consumer impact, rollout,
+    and rollback plan.
+  END
+END
+
+SECTION deployment-catalog
+NUMBER 11.11
+TITLE "Deployment, configuration, and scheduling - 95-DEPLOYMENT.md"
+
+ENUM CONFIG-MEDIUM
+  env
+  DB
+  flag service
+  file
+  build-time
+END
+
+FIELD DEPLOYMENT-ELEMENT
+  component-placement-replication -> string required
+  connections                     -> string required
+  single-point-of-failure         -> string required
+  environment-snapshot-matrix     -> string required
+END
+
+FIELD CONFIGURATION-RECORD
+  medium                                    -> CONFIG-MEDIUM required
+  exact-key                                 -> string required
+  type-default-allowed-values               -> string required
+  source-precedence-setter                  -> string required
+  behavioral-effect                         -> string required
+  enable-disable-semantics-and-environment-matrix -> string required
+  app-side-db-side-materialization          -> string required
+END
+
+FIELD SCHEDULE-RECORD
+  type-trigger-frequency-window     -> string required
+  owner-persona                     -> string required
+  actions                           -> string required
+  failure-retry-dead-letter-idempotency -> string required
+  dependencies-locks                -> string required
+  capability-state                  -> REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE required
+END
+
+RULE configuration-effect
+  GOAL
+    Every configuration flag requires a known effect or a gap. Secret values are never
+    recorded.
+  END
+END
+
+SECTION nfr-security-catalog
+NUMBER 11.12
+TITLE "NFR and security - 96-NON-FUNCTIONAL-SECURITY.md"
+
+ENUM NFR-ATTRIBUTE
+  latency
+  throughput
+  availability
+  RPO
+  RTO
+  scalability
+  operability
+  other
+END
+
+ENUM SECURITY-CATEGORY
+  auth
+  authorization
+  transport
+  at-rest
+  in-transit
+  PII
+  secrets
+  audit
+  threat
+  privacy
+END
+
+ENUM RISK-LEVEL
+  high
+  medium
+  low
+  unassessed
+END
+
+FIELD NFR-RECORD
+  attribute                 -> NFR-ATTRIBUTE required
+  observed-inferred-value   -> string required
+  scope-environment         -> string required
+  driver-constraint         -> string required
+  target-decision-slo       -> string required
+END
+
+FIELD SECURITY-FINDING
+  category                          -> SECURITY-CATEGORY required
+  finding-data-classification       -> string required
+  risk-level                        -> RISK-LEVEL required
+  affected-ids-environments         -> string required
+  observed-safeguard-gap            -> string required
+  human-review-target-mitigation    -> string required
+END
+
+FIELD FAULT-RECORD
+  failure-class-trigger-detection-point     -> string required
+  propagation-path                          -> string required
+  retry-backoff-timeout-circuit-behavior    -> string required
+  rollback-compensation-transaction-boundary -> string required
+  dead-letter-quarantine-operator-action    -> string required
+  user-system-outcome-observability         -> string required
+  environment-capability-variants           -> string required
+  related-rules-claims                      -> string required
+END
+
+RULE security-reciprocal
+  GOAL
+    Every relevant 0C finding MUST have a reciprocal SEC mirror. Neither file declares
+    legal compliance. Every distinct material failure class discovered in forensic
+    records MUST map to an FLT; 96 MUST include a system-level failure taxonomy and
+    retry/rollback/compensation/dead-letter topology, with an evidence-backed zero
+    statement for any genuinely absent mechanism.
+  END
+END
+
+SECTION persona-profile
+NUMBER 11.13
+TITLE "Persona profile"
+
+GOAL
+  Profile Synchronization writes one profile and its 0A row atomically.
+END
+
+FIELD AUTHORIZATION-MATRIX-ROW
+  resource-capability -> string required
+  allowed             -> string required
+  enforcement         -> string required
+  claims              -> string required
+END
+
+FIELD PERSONA-PROFILE
+  prf-id                        -> string required
+  prefix-actor-class            -> string required
+  canonical-and-shared-entries  -> string required
+  authentication-and-session    -> string required
+  authorization-matrix          -> string required
+  visible-data-scope            -> string required
+  key-active-workflows          -> string required
+  disabled-historical-workflows -> string required
+  triggers-events-schedules     -> string required
+  ui-surfaces-and-state         -> string required
+  failure-edge-behavior         -> string required
+  dependencies-couplings        -> string required
+  observed-legacy-facts         -> string required
+  target-decisions              -> string required
+  semantic-record-version       -> int required
+  semantic-content-fingerprint  -> string required
+  derived-from                  -> string required
+  material-claims               -> string required
+  block-confidence-rank         -> string required
+  block-evidence-profile        -> string required
+END
+
+RULE profile-synchronization
+  GOAL
+    Profile Synchronization is the only writer of profile semantic payload and
+    synchronizes its mandatory PRF-ID atomically with the matching 0A persona-prefix
+    row. Authorized Human Hatch: Confirmation or Reconstruction-Handoff confirmation
+    actions may update only the delimited certification envelope after loading and
+    validating the complete §8.4 direct-and-transitive dependency closure and verifying
+    the exact candidate-bound PRF ID, semantic version, and semantic fingerprint; they
+    MUST NOT edit profile semantic content/version. A profile without a registry row, a
+    registry row without a profile, a duplicate PRF for one prefix, or a PRF whose
+    canonical prefix coordinate disagrees with 0A is invalid after Profile
+    Synchronization begins.
+  END
+END
