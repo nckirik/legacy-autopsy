@@ -132,6 +132,12 @@ The printer is non-authoritative: it never changes semantics, and generated arti
 are regenerated, not reformatted. dprint remains the Markdown runner; hosting `cdl fmt`
 through dprint's Exec plugin is possible but not wired into CI.
 
+VS Code support is installed locally with:
+
+```sh
+scripts/install-vscode-extension.sh [--copy] [--editor cursor] [--uninstall] [--dry-run]
+```
+
 ## Markdown formatting
 
 Non-Go Markdown is formatted with [dprint](https://dprint.dev) using the pinned plugin in

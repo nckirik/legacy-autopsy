@@ -298,7 +298,9 @@ Depends only on the language toolchain (`cdl`), never on Legacy Autopsy runtime 
 
 - **Syntax highlighting implemented:** `editors/vscode/` ships the TextMate grammar and
   language configuration (keywords, comments, opaque `GOAL`/`TEXT`/`REQUIRE` blocks with
-  embedded Markdown, identifiers, string/number literals);
+  embedded Markdown, identifiers, string/number literals); a local installer
+  (`scripts/install-vscode-extension.sh`, symlink or copy, editor/extension-dir aware,
+  uninstall/dry-run) wires it into `code`, `code-insiders`, `cursor`, or `vscodium`;
   `internal/editing` drift-checks the grammar against the parser keyword surface.
 - **Canonical printer implemented:** `cdl.Format`/`cdl.FormatSource` is a deterministic,
   template-total AST printer that preserves opaque normative text and fails closed on

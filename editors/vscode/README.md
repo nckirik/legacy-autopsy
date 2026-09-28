@@ -6,8 +6,17 @@ and are validated against the parser keyword surface by `internal/editing`.
 
 ## Install (development)
 
-Copy or symlink this directory into `~/.vscode/extensions/cdl-language`, or use
-the "Developer: Install Extension from Location..." command.
+From the repository root:
+
+```sh
+scripts/install-vscode-extension.sh                 # symlink into ~/.vscode/extensions
+scripts/install-vscode-extension.sh --copy          # copy instead of symlink
+scripts/install-vscode-extension.sh --editor cursor  # code (default), code-insiders, cursor, vscodium
+scripts/install-vscode-extension.sh --uninstall
+```
+
+Then reload the editor window. A distributable VSIX is out of scope for the local
+installer; package one with `npx @vscode/vsce package` if needed.
 
 ## Scope
 
