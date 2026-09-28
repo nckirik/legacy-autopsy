@@ -539,6 +539,14 @@ and §7.5. `protocol.md` v4.1.2 corrected §7.7 so less than 100% reconciliation
 those states and gate. The corrected rule is the first Spec-track pilot section and
 the negative fixture from that defect is retained permanently.
 
+## Proposed protocol issues
+
+Accepted-by-run findings that may require protocol updates are tracked in
+[protocol-issues.md](protocol-issues.md): commented-out/dormant-unit extraction,
+Preflight bootstrap read set, invocation-ID grammar, and the version-literal
+mismatch. They are evaluated after the standalone run; the CDL sources are not edited
+while a run is in progress.
+
 ## Current next milestone
 
 S3, S4 (crown), and S5 (editor tooling) are complete. Remaining known work, in order:
