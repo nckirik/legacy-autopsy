@@ -66,7 +66,10 @@ and report.
 Keep every write inside this repository: the protocol workspace at .extracted/ and a
 scratch directory at ./.autopsy-tmp/ for temporary files, downloads, and tool caches.
 Point TMPDIR and any tool cache directories at the scratch directory; do not write to
-system temp, your home directory, or other repositories.
+system temp, your home directory, or other repositories. If I have installed dependency
+or vendor sources (for example node_modules/), treat them as an approved read-only
+evidence root: receipt them as an acquisition artifact with fingerprints and snapshot
+binding, use them to resolve third-party semantics, and never execute or modify them.
 
 Follow every MUST and MUST NOT requirement, evidence rule, ownership boundary,
 checkpoint, stop condition, and gate. Do not guess, fabricate evidence, access
@@ -103,6 +106,9 @@ Observed behavior, not self-assessment, decides each item.
   and out of its messages;
 - confines every write to the target repository (`.extracted/` plus the repo-local
   scratch directory);
+- receipts operator-provided dependency/vendor sources as read-only acquisition
+  artifacts, never executes or modifies them, and does not confuse installed versions
+  with deployed state;
 - does not claim Exit A, Exit E, conformance, or closure;
 - reports blocked/ambiguous requirements with exact protocol quotes.
 

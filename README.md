@@ -42,7 +42,10 @@ Preflight. Before writing, establish the required Section 8.1 invocation identit
 exact scope and snapshots, and allowed and forbidden read/write targets. Keep every
 write inside this repository: the workspace at .extracted/ and a scratch directory at
 ./.autopsy-tmp/ for temporary files and tool caches (point TMPDIR at it); do not write
-to system temp, your home directory, or other repositories. Follow every MUST and MUST
+to system temp, your home directory, or other repositories. If I have installed
+dependency or vendor sources (for example node_modules/ or vendor/), treat them as an
+approved read-only evidence root: receipt them with fingerprints and snapshot binding,
+use them to resolve third-party semantics, and never execute or modify them. Follow every MUST and MUST
 NOT requirement, evidence rule, ownership boundary, checkpoint, stop condition, and
 gate. Do not guess, fabricate evidence, access production, mutate the legacy source, or
 claim Exit A, Exit E, or Protocol v4 conformance unless the protocol's requirements are
