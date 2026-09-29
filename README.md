@@ -172,6 +172,7 @@ Legacy Autopsy is not a generic code summarizer, automatic rewrite tool, moderni
 - [Capability contracts](docs/capability-contracts.md): deterministic capability boundaries and status.
 - [Migration audit](docs/migration-audit.md): dispositions, freeze policy, phases and gates.
 - [Proposed protocol issues](docs/protocol-issues.md): run findings awaiting evaluation before any CDL change.
+- [SQLite record store](docs/sqlite-store.md): proposal for the next version's storage binding and light helpers.
 
 **Implementation and contribution**
 

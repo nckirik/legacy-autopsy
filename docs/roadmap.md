@@ -370,6 +370,29 @@ and initial structural validation. Initialization must not create covered, confi
 or passed semantic state. Structural checks migrate to declarations generated from EIR
 as sections land.
 
+### M3.5 - SQLite record store and light helpers - proposed
+
+See [sqlite-store.md](sqlite-store.md). The protocol and its record schemas do not
+change; only the storage does. The canonical store becomes
+`.extracted/legacy-autopsy.db`, serialized for hashing and packaging as a deterministic
+SQL dump, and an optional `legacy-autopsy-light/` package provides the `la` helpers so
+agents never hand-edit record files.
+
+- **Records are tables:** one table per record class with the declared fields;
+  status/enum columns `CHECK`-constrained from the §5.1 registries; unique typed IDs and
+  scope tuples; references as keys; `0G` append-only via triggers.
+- **Fingerprints unchanged:** records keep the canonical payload bytes the protocol
+  already hashes; dump-level hashes replace per-file transport fingerprints in packaging
+  and manifests (the only new binding definition).
+- **Light harness:** schema DDL plus named helpers (`init`, `import`, `write`, `read`,
+  `update`, `log`, `checkpoint`, `validate`, `render`, `dump`); optional and
+  non-authoritative. Prompt-only runs create the schema first with ordinary `sqlite3`.
+- **Human surfaces:** `la render` produces Markdown/report views; operator questions and
+  reports are plain-language first (PI-6).
+- **Versioning:** the binding becomes canonical at a minor version (proposed v4.2 or v4.5);
+  4.1.3 Markdown stays the reference with its oracle and fixtures, and the binding needs
+  its own conformance corpus before any claim.
+
 ### M4 - Local autopsy runtime foundation - harness (depends S1/S3)
 
 Introduce the first observable application shell without claiming semantic mode

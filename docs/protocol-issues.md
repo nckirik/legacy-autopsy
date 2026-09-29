@@ -123,3 +123,24 @@ oracle snapshot is an open process decision.
     defect.
 - **Impact:** No evidence-rule weakening; changes the completion posture and its
   documentation only. Exit E follows the same disposal rules.
+
+## PI-6: Operator-facing interaction surface is unspecified and tag-dense
+
+- **Status:** proposed
+- **Source:** standalone protocol run 2026-09-28 (operator feedback: tags, aliases, and
+  status tokens are hard to decode; questions and reports arrive as protocol objects
+  rather than human requests)
+- **Affected sections:** §8.6 concurrent persona buffers, §9 ticket and Human Hatch
+  interactions, §13.1 audience paths (existing rule for reconstruction output), §15
+  report schemas
+- **Issue:** The protocol specifies the handbook as progressive, human-first output,
+  but says nothing about the run-time interaction surface. Agents therefore present
+  raw record tags, IDs, and status tokens when asking humans for decisions or
+  reporting progress, which is reviewable only by decoding the record schema.
+- **Proposed direction:** define minimum presentation rules for operator-facing
+  questions and reports: plain-language summary first (what is needed and why), options
+  with consequences and authority, explicit "what happens next", with IDs and status
+  tokens secondary and hyperlinked. Machine records and schemas are unchanged; the rule
+  governs projections only. Record schemas, not prose style, remain normative.
+- **Impact:** presentation-only; no new statuses, fields, or authority. Pairs with the
+  harness-side deterministic store in roadmap M3.5.
