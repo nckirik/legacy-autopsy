@@ -82,3 +82,44 @@ oracle snapshot is an open process decision.
 - **Proposed direction:** keep one authoritative version source (the edition header),
   generate both occurrences from it, and define the exact literal format to record in
   artifacts.
+
+## PI-5: Live/sandbox access must stay optional; static-only disposal is implicit
+
+- **Status:** proposed
+- **Source:** standalone protocol run 2026-09-28, gate `GATE-A-001` (NO-SANDBOX reported
+  as the dominant irreducible blocker; runtime/deployed units stayed `[C-PARTIAL]` /
+  `Unknown` and Exit A was NOT MET)
+- **Affected sections:** §7.1 trust boundary, §9.3-9.6 probes and no-mock integrity,
+  §10 coverage, §15.1 Exit E conditions, §0.1 `Unknown` fail-inclusive
+- **Observed text:** "When static analysis is insufficient and a sandbox is
+  unavailable: ... use the Human Hatch path and preserve the coverage gap/partial
+  state." (§9.5); "Every effective in-scope source unit is `[C-COVERED]`; all approved
+  exclusions are exact, risk-assessed, disclosed, and removed from denominator
+  arithmetic; no `[C-GAP]` or `[C-PARTIAL]` remains." (§15.1); "Live acquisition is an
+  operator-side activity. ... Agents MUST NOT invoke acquisition using production
+  credentials." (§7.1)
+- **Issue:** Nothing in the protocol requires execution, sandbox, probe, live database,
+  or deployed-state access - all are stated or implied as operator-side and optional.
+  But the protocol never states that static-only completion is a first-class posture,
+  and the only legitimate Exit A path for runtime-unverifiable units (exact
+  human-approved exclusions) is implicit. Runs therefore treat NO-SANDBOX as an
+  irreducible prerequisite rather than a disposal choice, and cannot tell whether
+  static-only completion is compliant.
+- **Proposed direction:**
+  - state explicitly that execution, sandbox, probe, live database, and deployed-state
+    access are optional throughout; no mode, gate, or conformance condition requires
+    them;
+  - define the static-only disposal: runtime-unverifiable units become exact
+    `Approved-Excluded` units with unit IDs, rationale, residual risk, authority, and a
+    reason such as `Runtime-Observation-Unavailable` (or the existing `NO-SANDBOX` /
+    `EXTERNAL-FACT-UNAVAILABLE`), or remain `[C-GAP]`/`[C-PARTIAL]` and honestly block
+    Exit A;
+  - keep `Unknown` fail-inclusive and forbid fabrication or mocks as evidence; exclude
+    exact units, never blanket categories;
+  - require the run to declare its posture (probe env available versus static-only) so
+    gate results are interpreted against it;
+  - apply the identical rule to databases and external platforms: sanitized exports and
+    probes are nice-to-have; their absence is a disposal decision, not a protocol
+    defect.
+- **Impact:** No evidence-rule weakening; changes the completion posture and its
+  documentation only. Exit E follows the same disposal rules.
