@@ -144,3 +144,46 @@ oracle snapshot is an open process decision.
   governs projections only. Record schemas, not prose style, remain normative.
 - **Impact:** presentation-only; no new statuses, fields, or authority. Pairs with the
   harness-side deterministic store in roadmap M3.5.
+
+## PI-7: Cold-read scope is undefined between `0G` and `0H`
+
+- **Status:** proposed
+- **Source:** standalone protocol run 2026-09-28 (ambiguity report; the run loaded the
+  full append-only `0G` history because "0G or 0H" does not say which)
+- **Affected sections:** §8.4 mandatory read sets, §8.5 cold resume, §8.7 stale
+  checkpoint guard, §8.8 `0G` invocation log
+- **Observed text:** "All modes load protocol constants/statuses, `0A`, `0D`, `0E`,
+  `0F`, `0G` or `0H`, relevant source inventory/frontier/claim records, and the active
+  snapshot metadata." (§8.4); "`0H` is derived and never replaces `0G`." (§1.1)
+- **Issue:** "`0G` or `0H`" does not define the cold-read scope. Reading all of `0G`
+  grows without bound across a long run; reading only `0H` risks missing state when the
+  summary is stale. The stale-checkpoint guard does not say how much history must be
+  reloaded when the summary is invalid.
+- **Proposed direction:** state the rule explicitly: an invocation loads a current,
+  fingerprinted `0H` plus the `0G` range it cites; the full `0G` is required only when
+  `0H` is absent, stale, or fails its fingerprint/stale check, and then the tail from
+  the last validated checkpoint suffices. This is a read-scope clarification; `0G`
+  stays append-only and `0H` stays derived and non-authoritative.
+
+## PI-8: Harness tooling location and package membership are unspecified
+
+- **Status:** proposed
+- **Source:** standalone protocol run 2026-09-28 (ambiguity report; tooling written to
+  `.tmp/` and described as non-canonical, with no rule to cite)
+- **Affected sections:** §0.1 authority classes, §1.1 forensic-plane layout, §1.5
+  non-authoritative sidecars, §15.3 package contents
+- **Observed text:** "No reference implementation, product, service, CLI, UI, or agent
+  harness is normative or required." (§0.1); "JSON, SQLite, graph, search,
+  code-generation, or validator sidecars MAY be generated for automation. They MUST
+  carry source fingerprints, schema version, generation time, and a prominent
+  `NON-AUTHORITATIVE-DERIVATIVE` marker." (§1.5)
+- **Issue:** The protocol permits sidecars and disclaims reference implementations, but
+  never states where an executor's implementation tooling lives relative to
+  `.extracted/`, whether it may be listed as a package member, or that the prompt path
+  must remain executable without it. Runs therefore document the question instead of
+  following a rule.
+- **Proposed direction:** state that implementation tooling (runtimes, validators,
+  helper scripts) is non-authoritative, lives outside `.extracted/` in operator-local
+  scratch, is never a package member or certification input, and is never required by
+  the protocol text: `.extracted/` contains protocol records only, and the
+  Markdown-record path must remain executable with ordinary local tools.

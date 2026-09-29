@@ -566,8 +566,9 @@ the negative fixture from that defect is retained permanently.
 
 Accepted-by-run findings that may require protocol updates are tracked in
 [protocol-issues.md](protocol-issues.md): commented-out/dormant-unit extraction,
-Preflight bootstrap read set, invocation-ID grammar, the version-literal mismatch, and
-optional runtime/sandbox access with an explicit static-only disposal path. They are evaluated after the standalone run; the CDL sources are not edited
+Preflight bootstrap read set, invocation-ID grammar, the version-literal mismatch,
+optional runtime/sandbox access with an explicit static-only disposal path, cold-read
+scope between `0G` and `0H`, and harness-tooling location and package membership. They are evaluated after the standalone run; the CDL sources are not edited
 while a run is in progress.
 
 ## Current next milestone
