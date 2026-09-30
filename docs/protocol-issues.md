@@ -116,6 +116,11 @@ oracle snapshot is an open process decision.
     Exit A;
   - keep `Unknown` fail-inclusive and forbid fabrication or mocks as evidence; exclude
     exact units, never blanket categories;
+  - state that a static-only run is eligible through **both** gates: no mode, Exit A
+    condition, or Exit E condition may require execution, sandbox, probe, live database,
+    or deployed-state access; runtime-only aspects are disposed by exact exclusions with
+    disclosed residual risk, and the remaining conditions (confirmations, handbook,
+    equivalence, packaging) are satisfied on the static scope;
   - require the run to declare its posture (probe env available versus static-only) so
     gate results are interpreted against it;
   - apply the identical rule to databases and external platforms: sanitized exports and
@@ -237,9 +242,10 @@ oracle snapshot is an open process decision.
   interaction is implicit, so runs may stall Exit E on sandbox availability
   unnecessarily, or over-claim results from mocks.
 - **Proposed direction:** state that Exit E inherits the Exit A disclosed exclusion
-  scope and does not re-require runtime-only units; local mocks may scaffold
-  equivalence tests and handbook walkthroughs only as labeled test doubles, never as
-  external observations or coverage evidence; confirmations and approvals remain human
-  acts. Packaging and signatures still follow §15.4 unchanged.
+  scope and does not re-require runtime-only units; the absence of a sandbox is never an
+  Exit E blocker, and a static-only run is eligible for the full pipeline. Local mocks
+  may scaffold equivalence tests and handbook walkthroughs only as labeled test doubles,
+  never as external observations or coverage evidence; confirmations and approvals
+  remain human acts. Packaging and signatures still follow §15.4 unchanged.
 - **Impact:** no evidence weakening; makes Exit E reachable on a static-only scope
   without misrepresenting mocks.
