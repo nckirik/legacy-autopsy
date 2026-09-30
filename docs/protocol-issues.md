@@ -187,3 +187,34 @@ oracle snapshot is an open process decision.
   scratch, is never a package member or certification input, and is never required by
   the protocol text: `.extracted/` contains protocol records only, and the
   Markdown-record path must remain executable with ordinary local tools.
+
+## PI-9: Fail-inclusive stops at absent authority, not at recoverable artifact defects
+
+- **Status:** proposed
+- **Source:** standalone protocol run 2026-09-28 (sandbox probe pass; `grafana` schema
+  recreated and a foreign table materialized from delivered columns instead of being
+  parked as Unknown; the earlier classification had over-applied fail-inclusive)
+- **Affected sections:** §0.1 class-3 predicates and fail-inclusive `Unknown`, §9.5
+  no-mock integrity, §4.4 frontier terminality, §10 sweep validity
+- **Observed text:** "When static analysis is insufficient and a sandbox is
+  unavailable: ... use the Human Hatch path and preserve the coverage gap/partial
+  state." (§9.5); "`Unknown` applicability is fail-inclusive: the dependency remains in
+  the required read/validation closure and blocks mutation if it cannot be loaded and
+  validated." (§0.1); "A test double used to exercise already-proven local logic MAY be
+  a testing mechanism but MUST NOT be treated as observation of an opaque dependency."
+  (§9.5)
+- **Issue:** the line between "reconstruct what a delivered artifact already defines"
+  and "fabricate missing authority" is implicit. Runs can therefore over-apply
+  fail-inclusive and leave cells unresolved when the actual defect is recoverable (a
+  dump missing its `CREATE SCHEMA`/role, a foreign table whose columns are delivered, a
+  loadable artifact), while the opposite error - authoring a schema that was never
+  delivered - is equally possible.
+- **Proposed direction:** state the rule explicitly: fail-inclusive applies at absent
+  authority (undelivered DDL, remote or production data, missing credentials,
+  unreachable external systems), not at recoverable artifact defects. Reconstruct
+  objects only from delivered DDL/columns; label synthetic data as such; probe the
+  app-side logic those objects enable; keep the external/remote aspect as an explicit
+  residual or exclusion. Authoring schema, columns, or values that were never delivered
+  remains forbidden.
+- **Impact:** no evidence weakening; reduces false `Unknown`s and makes the §9.5 line
+  testable.
