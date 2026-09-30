@@ -218,3 +218,28 @@ oracle snapshot is an open process decision.
   remains forbidden.
 - **Impact:** no evidence weakening; reduces false `Unknown`s and makes the §9.5 line
   testable.
+
+## PI-10: Exit E scope and test doubles for external dependencies
+
+- **Status:** proposed
+- **Source:** standalone run follow-up 2026-09-30 (Exit E was modelled as
+  sandbox-blocked; operator directed local mock SAML/IdP and SMTP to continue)
+- **Affected sections:** §9.5 no-mock integrity, §14.5 equivalence suite, §15.1 Exit E
+  conditions, §15.4 certification sequence
+- **Observed text:** "A test double used to exercise already-proven local logic MAY be
+  a testing mechanism but MUST NOT be treated as observation of an opaque dependency."
+  (§9.5); "Every effective in-scope source unit is `[C-COVERED]`; all approved
+  exclusions are exact, risk-assessed, disclosed, and removed from denominator
+  arithmetic." (§15.1); "Generated tests are reviewable derivatives." (§14.5)
+- **Issue:** Exit E can be read as requiring runtime observation of external
+  dependencies (IdP, SMTP relay), while §15.1 condition 2 already disposes such units
+  through exact exclusions and §9.5 permits test doubles for proven local logic. The
+  interaction is implicit, so runs may stall Exit E on sandbox availability
+  unnecessarily, or over-claim results from mocks.
+- **Proposed direction:** state that Exit E inherits the Exit A disclosed exclusion
+  scope and does not re-require runtime-only units; local mocks may scaffold
+  equivalence tests and handbook walkthroughs only as labeled test doubles, never as
+  external observations or coverage evidence; confirmations and approvals remain human
+  acts. Packaging and signatures still follow §15.4 unchanged.
+- **Impact:** no evidence weakening; makes Exit E reachable on a static-only scope
+  without misrepresenting mocks.
