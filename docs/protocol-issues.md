@@ -132,9 +132,11 @@ oracle snapshot is an open process decision.
 ## PI-6: Operator-facing interaction surface is unspecified and tag-dense
 
 - **Status:** proposed
-- **Source:** standalone protocol run 2026-09-28 (operator feedback: tags, aliases, and
-  status tokens are hard to decode; questions and reports arrive as protocol objects
-  rather than human requests)
+- **Source:** standalone protocol run 2026-09-28/30 (operator feedback: tags, aliases,
+  and status tokens are hard to decode; questions and reports arrive as protocol
+  objects rather than human requests; the 85-decision Exit E approval digest rendered
+  to 1275 lines, and the operator chose wholesale approval because per-decision review
+  was impractical)
 - **Affected sections:** §8.6 concurrent persona buffers, §9 ticket and Human Hatch
   interactions, §13.1 audience paths (existing rule for reconstruction output), §15
   report schemas
@@ -148,7 +150,9 @@ oracle snapshot is an open process decision.
   tokens secondary and hyperlinked. Machine records and schemas are unchanged; the rule
   governs projections only. Record schemas, not prose style, remain normative.
 - **Impact:** presentation-only; no new statuses, fields, or authority. Pairs with the
-  harness-side deterministic store in roadmap M3.5.
+  harness-side deterministic store in roadmap M3.5. Confirmed by the Exit E approval
+  pass: an approval surface that a maintainer cannot practically read weakens the human
+  authority it is supposed to exercise.
 
 ## PI-7: Cold-read scope is undefined between `0G` and `0H`
 
