@@ -21,6 +21,35 @@ artifact defects (PI-9); several metadata ambiguities cost agents time (PI-1..4,
 PI-8); and Markdown-as-database remained the largest source of read/write friction
 (M3.5 in [roadmap](roadmap.md), [sqlite-store.md](sqlite-store.md)).
 
+## Run cost and behavior (session export)
+
+The session export (`legacy-deconstruction-protocol-execution.json`) makes the cost
+concrete: 1,026 assistant steps and 982 tool calls (735 bash, 83 edit, 71 read, 46
+write), 14 context compactions, 136.4M input tokens, and 71 operator messages spread
+over 160.5 elapsed hours (2026-09-28 to 2026-10-05, including a power outage) - for a
+small repository. Only 5 tool calls errored; the failures were semantic, quality, and
+process failures, not tooling failures.
+
+The transcript also confirms the behavioral gaps: the removal of a bulk `[R-SWEPT]`
+bookmarking pass after challenge, the decorative-fingerprint discovery, the
+under-reaching on a recoverable schema/FDW defect, handler stubs, and relayed
+readability. Several operator messages are nudges ("why did you stop?", repeated
+continuation prompts, one prompt sent three times) and the decision gate ended in a
+wholesale approval rather than per-batch review.
+
+## Acceptance metrics for W5
+
+- no nudges: operator interaction only at declared human gates;
+- each reconstruction-affecting decision reviewed in a readable batch - no wholesale
+  "all approved";
+- at most one compaction, no context-loss interruptions;
+- tool-call count for the same project under a quarter of this run;
+- zero decorative fingerprints by construction (one recomputing substrate shared by
+  emitter and verifier);
+- handbook chapters meet the substance floor and are actually read, with complete CNF
+  fields;
+- recoverable artifact defects resolved without operator prompting (PI-9 applied).
+
 ## Principles (unchanged)
 
 - `Unknown` stays fail-inclusive; nothing here weakens evidence or authority rules.
