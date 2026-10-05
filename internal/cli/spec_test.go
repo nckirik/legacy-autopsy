@@ -3,6 +3,7 @@ package cli
 import (
 	"bytes"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -87,5 +88,47 @@ func TestSpecRunRequiresFixture(t *testing.T) {
 	}
 	if !strings.Contains(errOut, "requires --fixture") {
 		t.Fatalf("missing fixture error: %s", errOut)
+	}
+}
+
+func TestSpecRecordCommands(t *testing.T) {
+	if _, err := exec.LookPath("sqlite3"); err != nil {
+		t.Skip("sqlite3 CLI not available")
+	}
+	dir := t.TempDir()
+	db := filepath.Join(dir, "store.db")
+	payloadPath := filepath.Join(dir, "invariant.md")
+	payload := "- **Constraint:** c\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n"
+	if err := os.WriteFile(payloadPath, []byte(payload), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, errOut, code := runSpecCLI(t, "spec", "schema", "--repo", specRepoRoot, "--apply", db); code != 0 {
+		t.Fatalf("schema apply exit %d: %s", code, errOut)
+	}
+	out, errOut, code := runSpecCLI(t, "spec", "record", "put",
+		"--repo", specRepoRoot, "--db", db, "--field", "INVARIANT", "--id", "INV-CLI", "--payload", payloadPath)
+	if code != 0 {
+		t.Fatalf("record put exit %d: %s", code, errOut)
+	}
+	if !strings.Contains(out, "put INVARIANT INV-CLI") {
+		t.Fatalf("record put output: %s", out)
+	}
+	out, errOut, code = runSpecCLI(t, "spec", "record", "list",
+		"--repo", specRepoRoot, "--db", db, "--field", "INVARIANT")
+	if code != 0 || strings.TrimSpace(out) != "INV-CLI" {
+		t.Fatalf("record list exit %d out %q err %s", code, out, errOut)
+	}
+	out, errOut, code = runSpecCLI(t, "spec", "record", "get",
+		"--repo", specRepoRoot, "--db", db, "--field", "INVARIANT", "--id", "INV-CLI")
+	if code != 0 {
+		t.Fatalf("record get exit %d: %s", code, errOut)
+	}
+	if strings.TrimSpace(out) != strings.TrimSpace(payload) {
+		t.Fatalf("record get = %q", out)
+	}
+	out, errOut, code = runSpecCLI(t, "spec", "record", "inspect",
+		"--repo", specRepoRoot, "--db", db, "--field", "INVARIANT")
+	if code != 0 || !strings.Contains(out, "DEBUG RENDER - NON-AUTHORITATIVE") {
+		t.Fatalf("record inspect exit %d out %q err %s", code, out, errOut)
 	}
 }

@@ -19,7 +19,7 @@ const (
 
 func specCommand(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec <compile|render|run> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec <compile|render|run|schema|store|record> [flags]")
 	}
 	switch args[0] {
 	case "compile":
@@ -32,8 +32,86 @@ func specCommand(args []string, stdout, stderr io.Writer) error {
 		return specSchema(args[1:], stdout, stderr)
 	case "store":
 		return specStore(args[1:], stdout, stderr)
+	case "record":
+		return specRecord(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec operation %q is unsupported; supported operations: compile, render, run, schema, store", args[0])
+		return fmt.Errorf("spec operation %q is unsupported; supported operations: compile, render, run, schema, store, record", args[0])
+	}
+}
+
+func specRecord(args []string, stdout, stderr io.Writer) error {
+	if len(args) == 0 {
+		return fmt.Errorf("usage: legacy-autopsy spec record <get|list|put|inspect> [flags]")
+	}
+	op := args[0]
+	switch op {
+	case "get", "list", "put", "inspect":
+	default:
+		return fmt.Errorf("spec record operation %q is unsupported; supported operations: get, list, put, inspect", op)
+	}
+	set := flags("spec record "+op, stderr)
+	repo := set.String("repo", ".", "repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path")
+	field := set.String("field", "", "FIELD ID (table class)")
+	id := set.String("id", "", "record ID")
+	version := set.Int("version", 1, "record version for put")
+	payloadPath := set.String("payload", "", "Markdown payload file for put")
+	if err := set.Parse(args[1:]); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" || *field == "" {
+		return fmt.Errorf("spec record %s requires --db and --field", op)
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	switch op {
+	case "get":
+		if *id == "" {
+			return fmt.Errorf("spec record get requires --id")
+		}
+		payload, err := store.Get(*db, res.EIR, *field, *id)
+		if err != nil {
+			return err
+		}
+		_, err = stdout.Write(payload)
+		return err
+	case "list":
+		ids, err := store.List(*db, res.EIR, *field)
+		if err != nil {
+			return err
+		}
+		for _, recordID := range ids {
+			fmt.Fprintln(stdout, recordID)
+		}
+		return nil
+	case "inspect":
+		view, err := store.Inspect(*db, res.EIR, *field)
+		if err != nil {
+			return err
+		}
+		_, err = stdout.Write(view)
+		return err
+	default: // put
+		if *id == "" || *payloadPath == "" {
+			return fmt.Errorf("spec record put requires --id and --payload")
+		}
+		payload, err := os.ReadFile(*payloadPath)
+		if err != nil {
+			return err
+		}
+		if err := store.Ingest(*db, res.EIR, *field, *id, *version, payload); err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "put %s %s (version %d)\n", *field, *id, *version)
+		return nil
 	}
 }
 

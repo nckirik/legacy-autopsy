@@ -27,14 +27,9 @@ func Ingest(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string, version in
 	if version < 1 {
 		return fmt.Errorf("store: ingest %s %s: version must be positive", fieldID, recordID)
 	}
-	field, err := findField(doc, fieldID)
+	field, err := tableField(doc, fieldID)
 	if err != nil {
 		return err
-	}
-	switch field.Storage {
-	case "record", "registry", "singleton", "log":
-	default:
-		return fmt.Errorf("store: ingest %s: STORAGE %s is not a table class", fieldID, field.Storage)
 	}
 	canonical, err := capabilities.CanonicalMarkdown(payload)
 	if err != nil {
