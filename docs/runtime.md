@@ -14,16 +14,16 @@ Execution channels arrive in a strict user-facing order: first a generic skill t
 
 ## Authority model
 
-| Layer                                                   | Role                                                                                                 | Authority                                         |
-| :------------------------------------------------------ | :--------------------------------------------------------------------------------------------------- | :------------------------------------------------ |
-| `protocol/` CDL sources                                 | Normative rules, modes, invariants, records, and gates                                               | Sole normative source; `protocol.md` generated    |
+| Layer                                                         | Role                                                                                                 | Authority                                         |
+| :------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------- | :------------------------------------------------ |
+| `protocol/` CDL sources                                       | Normative rules, modes, invariants, records, and gates                                               | Sole normative source; `protocol.md` generated    |
 | Canonical `.extracted/legacy-autopsy.db` store (next binding) | Persistent forensic, assurance, synthesis, and handbook state within their protocol-defined concerns | Authoritative protocol state                      |
-| Source snapshots and approved projections               | Evidence inputs cited by records                                                                     | Evidence authority as defined by the protocol     |
-| Service registry, scheduler, leases, and event delivery | Operational coordination                                                                             | Not semantic or gate authority                    |
-| Per-project `.legacy-autopsy/` configuration/state      | Adapter selection, limits, and local runtime coordination                                            | Non-authoritative operational state               |
-| Atlas, search, and UI caches                            | Regenerable views over committed records                                                             | `NON-AUTHORITATIVE-DERIVATIVE`                    |
-| Executor context and transient reasoning                | Bounded work material                                                                                | Never evidence merely because a model produced it |
-| Conversation and browser session state                  | Interaction convenience                                                                              | Disposable                                        |
+| Source snapshots and approved projections                     | Evidence inputs cited by records                                                                     | Evidence authority as defined by the protocol     |
+| Service registry, scheduler, leases, and event delivery       | Operational coordination                                                                             | Not semantic or gate authority                    |
+| Per-project `.legacy-autopsy/` configuration/state            | Adapter selection, limits, and local runtime coordination                                            | Non-authoritative operational state               |
+| Atlas, search, and UI caches                                  | Regenerable views over committed records                                                             | `NON-AUTHORITATIVE-DERIVATIVE`                    |
+| Executor context and transient reasoning                      | Bounded work material                                                                                | Never evidence merely because a model produced it |
+| Conversation and browser session state                        | Interaction convenience                                                                              | Disposable                                        |
 
 The service must derive protocol truth from validated workspace state. Operational state may coordinate work but cannot create evidence, settle contradictions, establish coverage, or pass Exit A or Exit E.
 
