@@ -103,7 +103,7 @@ func TestPreflightPlanRunsToStore(t *testing.T) {
 		t.Fatal(err)
 	}
 	units := Plan(scan, DefaultDirectives())
-	if len(units) != 2 {
+	if len(units) != 3 {
 		t.Fatalf("units = %d", len(units))
 	}
 	executor := fakeExecutor(func(inv work.Invocation) (work.Proposal, error) {
@@ -126,6 +126,10 @@ func TestPreflightPlanRunsToStore(t *testing.T) {
 					"- **Default Max Traversal Depth:** 3\n" +
 					"- **Included Environments / Snapshots:** dev\n" +
 					"- **Explicit Scope Policy:** full tree\n")}}}, nil
+		case "U-PREFLIGHT-CLUSTERS":
+			return work.Proposal{FieldID: "ENTRY-CLUSTER", Records: []work.Record{
+				{Payload: []byte("- **Cluster ID:** WEB\n- **Cluster Title:** Web UI\n- **Concrete Entry Coordinates:** web/index.js\n- **Canonical Owner Persona:** WEB\n- **Primary POV:** POV-1\n- **Traversal Track:** Normal\n- **Capability State:** Active\n- **Environment/Snapshot:** dev\n- **Source IDs:** SRC-1\n- **Max Depth:** 3\n- **Traversal Status:** [R-UNSWEPT]\n- **Required Traversal Matrix:** view\n")},
+			}}, nil
 		case "U-PREFLIGHT-PERSONAS":
 			return work.Proposal{FieldID: "PERSONA-REGISTRY", Records: []work.Record{
 				{Payload: []byte("- **Persona:** Backend\n- **Prefix:** BE\n- **Persona Slug:** backend\n- **Persona Directory:** BE-backend\n- **Actor Class:** human\n- **Canonical Entry IDs:** cmd/server\n- **Scope Paths:** internal/\n- **Registry State:** Active\n")},
@@ -144,8 +148,15 @@ func TestPreflightPlanRunsToStore(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(report.Units) != 2 || report.Units[1].Retries != 0 {
+	if len(report.Units) != 3 || report.Units[1].Retries != 0 {
 		t.Fatalf("report = %+v", report)
+	}
+	clusters, err := store.List(db, doc, "ENTRY-CLUSTER")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Join(clusters, ",") != "WEB" {
+		t.Fatalf("clusters = %v", clusters)
 	}
 	personas, err := store.List(db, doc, "PERSONA-REGISTRY")
 	if err != nil {

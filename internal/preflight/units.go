@@ -37,6 +37,10 @@ func (d Directives) Input(scan Scan) work.Input {
 	content += "- Identify distinct actors by entry path and visibility, not by business title: for example web UI, HTTP/API routes, background jobs, database/admin surfaces, operators, external systems.\n"
 	content += "- One row per materially distinct actor; never a single catch-all row when the scan shows multiple entry surfaces.\n"
 	content += "- Prefix must match [A-Z][A-Z0-9]{1,7}; slug is lowercase words joined by hyphens; directory must equal prefix-slug; Actor Class is human, service, or external; Registry State is one of Active, Conditional, Disabled, Historical, Retired.\n"
+	content += "\n## Entry-cluster guidance\n\n"
+	content += "- One cluster per distinct concrete entry surface (web routes, API routes, auth/SAML, DB/admin, scheduled jobs); cluster-id is a short uppercase token (for example WEB, API, AUTH, DB); cluster-title is human-readable.\n"
+	content += "- Concrete Entry Coordinates must be exact paths or coordinates present in the scan, never wildcards.\n"
+	content += "- Enum fields must use one of the listed options.\n"
 	return work.Input{Name: "preflight-context.md", Bytes: []byte(content)}
 }
 
@@ -57,6 +61,13 @@ func Plan(scan Scan, directives Directives) []work.Unit {
 			Reads:    []work.Ref{{FieldID: "PREFLIGHT-HEADER", RecordID: "0A"}},
 			Inputs:   []work.Input{input},
 			Sections: []string{"persona-definition"}, ReasoningEffort: "off",
+		},
+		{
+			ID: "U-PREFLIGHT-CLUSTERS", Mode: "Preflight",
+			IDFromField: "cluster-id", ResultType: "ENTRY-CLUSTER",
+			Reads:    []work.Ref{{FieldID: "PREFLIGHT-HEADER", RecordID: "0A"}},
+			Inputs:   []work.Input{input},
+			Sections: []string{"preflight-registry"}, ReasoningEffort: "off",
 		},
 	}
 }

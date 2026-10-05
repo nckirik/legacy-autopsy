@@ -4,7 +4,7 @@
   "generator-version": "parityreport/0.1",
   "generated-at": "2026-09-25T00:00:00Z",
   "protocol-version": "4.2.1",
-  "protocol-fingerprint": "sha256:4e30b380b4ea9b2f7074b2c6376d5c704019f45bc97bcd2e26a42ca3d5fad5da",
+  "protocol-fingerprint": "sha256:fecf0716201535a988b3855a89401eea2bd080b777dd042ee788deb5a700180d",
   "language-version": "cdl/0.4",
   "eir-format": 4,
   "sources": [
@@ -51,7 +51,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "fingerprint": "sha256:e8de482fdd995676e0771e5502ccab06310bbd278415872e1a1678e92f987a5b",
+      "fingerprint": "sha256:7300187143c4be64281b31c82f24bbe2c32c283a91c2a7d58e4d5e808c07323f",
       "sections": [
         "3.1"
       ],
@@ -954,17 +954,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:4e30b380b4ea9b2f7074b2c6376d5c704019f45bc97bcd2e26a42ca3d5fad5da"
+      "detail": "sha256:fecf0716201535a988b3855a89401eea2bd080b777dd042ee788deb5a700180d"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:34e8b63067b2e4ecadd8790d2c70c1ea9c83e9394b708d5bdf244aea96bb492f"
+      "detail": "sha256:eb0c306311932ad9f68c14e0a73d67f714c02e66157cfdae6bceed8260b0c8c2"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:fc4f84b3343a3f56114066dfa670fff30caafab0016e4e1d147de821e82816c6"
+      "detail": "sha256:1558e65674227bbab3e4776f633a53080ac8a18351e9cc42ac6fd4e2310cdef5"
     },
     {
       "name": "fixture-oracle",

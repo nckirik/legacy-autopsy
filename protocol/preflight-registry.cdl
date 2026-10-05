@@ -122,6 +122,8 @@ END
 
 FIELD ENTRY-CLUSTER
   STORAGE registry
+  cluster-id                 -> string                                 required
+  cluster-title              -> string                                 required
   concrete-entry-coordinates -> set<string>                            required
   canonical-owner-persona    -> string                                 required
   primary-pov                -> REGISTRY-ENTRYCLUSTER-PRIMARY-POV      required
