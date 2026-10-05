@@ -142,9 +142,11 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
       patch: §1.5, §3.1 `0A` metadata, §4.1.2, §15.3, §17.1-17.2; harness enforcement
       follows with the store work. The SQLite store stays a development artifact until
       the relational declaration semantics land.
-- [ ] Relational declaration semantics in CDL/EIR (`STORAGE`, `PARENT`, `KEY`, `REF`;
-      language `cdl/0.4`, EIR format 4) per [relational-mapping.md](relational-mapping.md);
-      table-per-`FIELD` remains explicitly provisional until this lands.
+- [x] Relational declaration semantics in CDL/EIR (`STORAGE`, `PARENT`, `KEY`, `REF`;
+      language `cdl/0.4`, EIR format 4) per [relational-mapping.md](relational-mapping.md),
+      with all 86 FIELD blocks classified and the store generator rewired to schema
+      version 2. Deferred: `child` table projection and `REF` foreign keys, with the
+      import/export work.
 
 ### W2 - Native runtime and certification engine
 
@@ -166,9 +168,10 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
 
 ### W3 - SQLite canonical store, semantic work units, context builder, review
 
-- [~] Schema generation from EIR (`internal/store.Schema`): one table per FIELD block,
-  enum `CHECK`s, provenance, append-only `0G` triggers. Provisional bootstrap: the
-  FIELD-to-table semantics item in W1 blocks treating this as normative.
+- [x] Schema generation from EIR (`internal/store.Schema`, version 2): tables from
+      declared `STORAGE` classes (48 tables today), enum `CHECK`s, declared `KEY`s as
+      `UNIQUE` natural keys, provenance, append-only `log` triggers; unknown or missing
+      classes fail closed.
 - [x] Apply without Go dependencies (`store.Apply`, `spec schema --apply`) and
       `spec schema --out`; atomic: DDL runs in one transaction and a mid-script failure
       leaves zero tables (negative test).

@@ -597,7 +597,9 @@ Human Hatch blocker classification, operator presentation, handbook substance an
 readability rules. The revision changed `cdl.ProtocolVersion` to 4.2 and snapshotted
 `protocol/legacy/protocol-4.2.md` as the then-current oracle (4.1.3 kept as history);
 the v4.2.1 patch (PI-15, declared storage bindings) snapshotted
-`protocol/legacy/protocol-4.2.1.md` as the current-edition oracle. W2/W3 are next: the native runtime, certification engine, SQLite store, and
+`protocol/legacy/protocol-4.2.1.md` as the current-edition oracle. The `cdl/0.4`
+language revision then added FIELD storage semantics (STORAGE/PARENT/KEY/REF, EIR
+format 4) and rewired the store generator to schema version 2. W2/W3 are next: the native runtime, certification engine, SQLite store, and
 bounded semantic execution.
 
 ## W2 first increment - EIR record validation

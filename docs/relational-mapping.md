@@ -1,9 +1,10 @@
 # Relational mapping semantics for the canonical store
 
-> Non-authoritative proposal. The current `internal/store.Schema` mapping is a
-> **bootstrap heuristic** (one table per declared `FIELD` block) and is marked
-> provisional in code. Language changes require the normal CDL revision process and a
-> language version bump; nothing here changes protocol semantics.
+> Implemented as the CDL `cdl/0.4` language revision with EIR format 4: every `FIELD`
+> declares a storage class, and `internal/store.Schema` (schema version 2) derives
+> tables from the declared classes. `child` projection to owned tables and `REF`
+> foreign-key generation are the remaining increments, tracked in the hardening plan;
+> nothing here changes protocol semantics.
 
 ## Why table-per-FIELD is not enough
 
@@ -25,9 +26,9 @@ At the same time parents still carry those structures as opaque text (for exampl
 disconnected tables. Storage semantics belong in the language, not in generator
 heuristics.
 
-## Proposed smallest coherent CDL extension
+## The implemented CDL extension
 
-Add storage clauses to `FIELD` only. No new declaration kind is introduced.
+Storage clauses live on `FIELD` only; no new declaration kind was introduced.
 
 ```cdl
 FIELD ENTITY-COLUMN
@@ -57,7 +58,7 @@ END
 
 ### Clauses
 
-- `STORAGE record | child | singleton | registry | log | artifact`
+- `STORAGE record | child | singleton | registry | log | artifact | value`
   - `record`: identity-bearing row with `la_record_id`, version, semantic
     fingerprint, and canonical payload.
   - `child`: owned rows with exactly one parent; primary key is the parent foreign key
@@ -66,6 +67,8 @@ END
   - `registry`: addressable natural-key rows that other records reference.
   - `log`: append-only; update/delete rejected by trigger as `0G` is today.
   - `artifact`: a validation/emit shape for one packaging artifact; never a store
+    table.
+  - `value`: an embedded fragment or row shape shared by records; never a store
     table.
 - `PARENT <FIELD-ID>[.<column>]` on `child`/`singleton`: declares ownership and the
   foreign-key target. The parent column name derives from the child field name unless
@@ -90,15 +93,18 @@ the canonical payload as its human/audit rendering and is not a queryable column
 generator skips it when a matching owned child exists and keeps it as a text column
 otherwise.
 
-## Mechanical generator rules
+## Implemented generator rules
 
-- Only `record`, `registry`, `singleton`, `log`, and `child` produce tables; `artifact`
-  produces a validation/emit schema only.
-- Metadata columns derive from `STORAGE`; no per-field guessing.
-- `CHECK`s come from enums, `UNIQUE`/primary keys from `KEY`, foreign keys from `REF`,
-  append-only triggers from `log`.
+- `record`, `registry`, `singleton`, and `log` produce tables; `child`, `value`, and
+  `artifact` do not (children stay in the owning canonical payload until projected).
+- Metadata columns derive from `STORAGE`; no per-field guessing. An unknown or missing
+  class fails closed.
+- `CHECK`s come from enums, declared `KEY` columns become `UNIQUE` natural keys,
+  append-only triggers come from `log`.
+- `child` projection to parent-keyed tables and `REF` foreign-key generation are the
+  next increments, with the store import/export work.
 - `set<string>` writes are canonicalized; `list<string>` preserves input order.
-- The `23`-`27` artifact payload fields compile to validators/emitters and must not
+- The `23`-`27` artifact payload fields compile to validators/emitters and do not
   enter the store schema.
 
 ## Version and migration impact

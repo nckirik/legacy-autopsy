@@ -49,7 +49,7 @@ or UI concerns.
 Every EIR document starts with an envelope:
 
 ```
-eir-format:        3
+eir-format:        4
 language:          cdl/<version>
 stdlib:            cdl-stdlib/<version>
 protocol:          canonical-deconstruction/<version>
@@ -180,12 +180,12 @@ these files, not a required monolithic edit.
 ```json
 {
   "envelope": {
-    "eir-format": 3,
-    "language": "cdl/0.1",
+    "eir-format": 4,
+    "language": "cdl/0.4",
     "stdlib": "cdl-stdlib/0.1",
     "protocol": "canonical-deconstruction/4.2.1",
     "source-fingerprint": "sha256:...",
-    "generator": "cdl/0.1.0",
+    "generator": "cdl/0.4.0",
     "eir-sha256": "sha256:..."
   },
   "declarations": {

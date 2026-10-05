@@ -7,7 +7,7 @@ the Canonical Deconstruction Protocol after the accepted crown parity report;
 frozen bootstrap parity oracle. Validator, IR, and reference views are generated
 projections that are never hand-edited.
 
-`LANGUAGE: cdl/0.3` - the pilot surface is frozen and has received one versioned
+`LANGUAGE: cdl/0.4` - the pilot surface is frozen and has received versioned
 addition plus one structural revision:
 
 - 0.2: `BASE-READS` and `MODE` declarations (see below), which compile into EIR
@@ -177,7 +177,8 @@ Declarations (global or section-local):
     TYPE <id>          named value type (alias of a primitive or composite type)
     VALUE <id>         declared computed value with TYPE and LIFETIME
     STATE <id>         runtime or artifact state: VALUES, INITIAL, optional ALLOWS
-    FIELD <id>         record/field shape and required-ness
+    FIELD <id>         record/field shape: STORAGE class, optional PARENT/KEY/REF,
+                       and required-ness
     ENUM <id>          closed value domain
     CAPABILITY <id>    supplied validated capability (hash, table serialization, ...)
     RULE <id>          normative rule identity
@@ -190,6 +191,32 @@ Declarations (global or section-local):
     PART <number> "<title>"    document part heading (presentation structure)
     BASE-READS         document-wide mandatory read set (one declaration, artifact IDs)
     MODE <id>          invocation mode: TITLE, STRICT, READS <artifact ids>
+
+### FIELD storage semantics (cdl/0.4)
+
+Every `FIELD` declares exactly one storage class and optional relational clauses:
+
+```
+FIELD <id>
+  STORAGE record | child | singleton | registry | log | artifact | value
+  PARENT <FIELD-ID>[.<column>]        # child/singleton only
+  KEY <column>[, <column>...]         # child requires KEY
+  REF <column> -> <FIELD-ID>.<column> # optional foreign key
+  ...
+END
+```
+
+- `record`: identity-bearing row with `la_record_id`, version, semantic fingerprint,
+  canonical payload. `registry` and `singleton` are addressable/one-per-scope variants.
+- `log`: append-only; update/delete rejected by trigger.
+- `child`: owned rows, declared here but projected to tables with the runtime
+  import/export work; until then they stay embedded in the owning canonical payload.
+- `artifact`: packaging artifact payload schema; never a table.
+- `value`: embedded fragment or row shape; never a table.
+- `PARENT` must name a `record`; `child` requires both `PARENT` and `KEY`; `REF`
+  targets must be `record`, `registry`, or `singleton`; `PARENT`/`KEY`/`REF` columns
+  must be declared; unknown or missing classes fail compilation. `cdl fmt` emits the
+  clauses in the order shown, with `REF`s sorted by column.
 
 References:
 
