@@ -152,14 +152,15 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
 
 ### W2 - Native runtime and certification engine
 
-- [ ] Execute the deterministic MACHINE slice from compiled CDL/EIR wherever
-      implemented; unsupported mechanics fail explicitly instead of being improvised by
-      the model.
+- [x] Deterministic MACHINE slice executes from compiled CDL/EIR through
+      `internal/runtime` with fixture-supplied agent outputs; unsupported mechanics
+      produce explicit diagnostics. Semantic (agent) work routes through `work` units.
 - [x] Record validation: `internal/certify.ValidateRecord` (declared fields only,
       required presence, integer and string-set types, closed enum domains).
-- [~] Canonical fingerprint substrate: content, envelope, evidence-set,
-  package-member, and transport fingerprints exist in `internal/capabilities`; not yet
-  unified into one emitter/verifier authority.
+- [x] Canonical fingerprint substrate unified in `internal/capabilities` (content,
+      envelope, evidence-set, package-member, transport, hash-domain, instance binding);
+      `internal/artifact` emit/verify paths and `work` commits use it as the single
+      recomputation authority.
 - [x] Registry-driven validity at write time: enum-typed values validate against the
       compiled §5.1 enums in `certify`, enum columns get schema `CHECK`s, and ingest
       rejects unknown values (`TestIngestRejectsUnknownEnum`).
@@ -171,10 +172,15 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
   wiring for the human deliverables, and CLI verbs. Architecture (decision 8):
   payloads are executor-authored Markdown validated through the label-to-column
   mapping; no label table is introduced.
-- [ ] Validator allow-lists (for example `.extracted/probes/[TICKET-*].log`) and
-      append-only post-conditions.
-- [ ] Typed semantic deltas: IDs, canonical serialization, fingerprints, coverage
-      arithmetic, transitions, packaging, and envelopes are runtime-owned.
+- [x] Append-only runtime post-conditions: `store.LogState` plus
+      `store.VerifyMonotonicLogs` fail closed on any disappearing log record; the
+      database triggers remain as a second guard. Validator allow-list enforcement
+      (for example `.extracted/probes/[TICKET-*].log`) follows with the probe workflow
+      validator.
+- [~] Typed semantic deltas: IDs (runtime-assigned from the unit target), canonical
+  payload serialization, fingerprints, and artifact member bindings are
+  runtime-owned. Coverage arithmetic, FSM transitions, and envelope emission follow
+  with the gate/verifier wiring.
 
 ### W3 - SQLite canonical store, semantic work units, context builder, review
 
@@ -227,9 +233,13 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
 
 ### W4 - Storage conformance and projections
 
-- [ ] Registry constraints beyond enums: unique scope tuples, references as keys,
-      canonical registry iteration order.
-- [ ] Append-only `0G` enforced as a runtime post-condition, not only a trigger.
+- [~] Registry constraints: canonical registry iteration order is deterministic
+  (tables sorted by name, rows by record ID) and declared `KEY`s become `UNIQUE`
+  natural keys; scope-tuple uniqueness and reference-as-key constraints land when
+  the scope-tuple fields are modeled as declared keys.
+- [x] Append-only `0G` as a runtime post-condition: `store.LogState` snapshots log
+      record IDs and `store.VerifyMonotonicLogs` fails closed on any disappearance, in
+      addition to the database triggers.
 - [~] Canonical dump and package-member fingerprints exist and are verified against
   EIR-derived schemas; wiring the dump into the handoff bundle and outer-manifest
   chain follows with the §15.5 verifier.
@@ -252,9 +262,10 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
       HBK bindings for Pass/Fail.
 - [ ] Real readability workflow with complete CNF fields per PI-12 (no relay-only
       attestation).
-- [ ] Operator renderer per PI-6: plain-language questions with options and
-      consequences; one-line-per-decision indexes; first screen says what changed, what is
-      blocked, and what is needed.
+- [x] Operator renderer (`internal/render`): decision batches with a
+      changed/blocked/needed first screen and one-line-per-item index, plus
+      plain-language questions with options and consequences. Runtime supplies
+      classifications and payloads; the formatter is display-only.
 
 ### W6 - Acceptance rerun
 
