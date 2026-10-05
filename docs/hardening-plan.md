@@ -163,12 +163,14 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
 - [x] Registry-driven validity at write time: enum-typed values validate against the
       compiled §5.1 enums in `certify`, enum columns get schema `CHECK`s, and ingest
       rejects unknown values (`TestIngestRejectsUnknownEnum`).
-- [ ] Schema-conformant emitters for `23`/`24`/`25`/`26`/`27` and the §15.5 verifier;
-      golden tests for emit-twice byte equality, tamper detection, fail-closed results.
-      Architecture (decision 8): artifact payloads are executor-authored Markdown that
-      the runtime validates by matching the declared FIELD sequence via the
-      label-to-column mapping, so no label table is needed; the runtime owns
-      fingerprints, member bindings, and verification.
+- [~] Artifact validation and packaging (`internal/artifact`): declared field sequence
+  and order validation, canonical payload fingerprints with carrier exclusion and
+  path binding, artifact-instance bindings, sorted package-member manifests, and
+  fail-closed member verification (tamper, missing, extra, order-independent).
+  Remaining: the full §15.5 final-bundle registry/chain checks, `23`-`27` emit
+  wiring for the human deliverables, and CLI verbs. Architecture (decision 8):
+  payloads are executor-authored Markdown validated through the label-to-column
+  mapping; no label table is introduced.
 - [ ] Validator allow-lists (for example `.extracted/probes/[TICKET-*].log`) and
       append-only post-conditions.
 - [ ] Typed semantic deltas: IDs, canonical serialization, fingerprints, coverage
@@ -228,11 +230,16 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
 - [ ] Registry constraints beyond enums: unique scope tuples, references as keys,
       canonical registry iteration order.
 - [ ] Append-only `0G` enforced as a runtime post-condition, not only a trigger.
-- [ ] Canonical dump/hash/package rules wired into the packaging emitters.
+- [~] Canonical dump and package-member fingerprints exist and are verified against
+  EIR-derived schemas; wiring the dump into the handoff bundle and outer-manifest
+  chain follows with the §15.5 verifier.
 - [x] Round-trip fixture: bootstrap `0A` import → canonical dump is identical for
       different import orders (`TestBootstrapRoundTripDeterministic`).
-- [ ] Generated human/audit projections from the store.
-- [ ] Administrative `la` helpers kept outside the semantic model contract.
+- [x] Generated human projections (`store.Render`) and diagnostic renders
+      (`store.Inspect`, canonical dump for audit) from the store.
+- [x] Administrative helpers stay outside the semantic contract: `spec schema`,
+      `spec record put|get|list|render|inspect`, `spec store`, `spec work` (no raw SQL
+      path for executors).
 
 ### W5 - Handbook and human surfaces
 
