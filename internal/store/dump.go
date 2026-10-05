@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"strconv"
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
@@ -161,6 +162,10 @@ func literal(v any) string {
 		return "'" + strings.ReplaceAll(value, "'", "''") + "'"
 	case json.Number:
 		return value.String()
+	case int:
+		return strconv.Itoa(value)
+	case int64:
+		return strconv.FormatInt(value, 10)
 	case bool:
 		if value {
 			return "1"

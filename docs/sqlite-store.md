@@ -42,6 +42,12 @@
 - **Set semantics:** `set<string>` has exactly one stored form - ascending lexical
   order, no duplicates. Validation rejects duplicates and non-string elements; the
   runtime sorts on write. Input element order is never meaningful and never persisted.
+- **Record ingestion:** the runtime canonicalizes the Markdown payload with the §4.1.2
+  profile first, stores those exact canonical bytes in `la_canonical_payload`, computes
+  the payload fingerprint over them, and derives queryable columns from the declared
+  FIELD labels with the deterministic label-to-column mapping. Columns are projections
+  and can be rebuilt from the payload; unknown, duplicate, missing-required, wrongly
+  typed, or noncanonical values fail closed.
 - **Fingerprints unchanged:** each record keeps the canonical payload bytes the
   protocol already hashes next to its queryable columns. Dump-level hashes replace
   per-file transport fingerprints for packaging/manifests only where the new binding

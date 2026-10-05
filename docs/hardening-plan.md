@@ -181,10 +181,11 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
       tests.
 - [x] `set<string>` canonical form: ascending unique; duplicates and non-string
       elements rejected (`certify.CanonicalStringSet`), order owned by the runtime.
-- [ ] Bootstrap import (`0A` and any starter Markdown) and the renderer set: human
-      semantic renders on demand, debug-only renders for mechanical records; no
-      operational Markdown is maintained. Round-trip fixtures exercise the bootstrap
-      import path.
+- [~] Record ingestion (`store.Ingest`): canonicalizes the Markdown payload, stores it
+  verbatim, derives queryable columns by the deterministic label-to-column mapping,
+  recomputes fingerprints, and fails closed on unknown/duplicate/missing/wrong-typed
+  values and non-table classes. Remaining: `0A` bootstrap import, human renderers,
+  debug renderers, CLI verbs, and import round-trip fixtures.
 - [ ] Semantic capability surface for workers (ID lookup, search, relation/evidence
       traversal, semantic proposals, control actions) over relational transactions.
 - [ ] Automatic read-set provenance: every read extends the invocation's exact
