@@ -113,6 +113,7 @@ FIELD PREFLIGHT-HEADER
   target-repository-evidence-roots -> string                               required
   primary-technology-stack         -> string                               required
   protocol-version                 -> string                               required
+  canonical-storage-binding        -> string                               required
   current-iteration                -> REGISTRY-PREFLIGHT-CURRENT-ITERATION required
   default-max-traversal-depth      -> int                                  required
   included-environments-snapshots  -> string                               required

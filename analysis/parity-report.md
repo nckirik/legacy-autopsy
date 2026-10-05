@@ -3,7 +3,7 @@
 - Schema version: 1
 - Generator: parityreport parityreport/0.1
 - Generated at: 2026-09-25T00:00:00Z
-- Protocol: 4.2.1 (sha256:fb0d55f28bfefc6bd12e6eb36ebae1ae95d81f3cf119ca136816be808b244189)
+- Protocol: 4.2.1 (sha256:dd2c56b13ac2f930d3512d45ed14ee90fe3625db71266386e50ad3638be1a4f3)
 - Language: cdl/0.4 (EIR format 4)
 
 ## Section coverage
@@ -123,9 +123,9 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 27 sources |
 | drift-tests | pass | 24 tests in 24 files |
-| generated-protocol | pass | sha256:fb0d55f28bfefc6bd12e6eb36ebae1ae95d81f3cf119ca136816be808b244189 |
-| golden-eir | pass | sha256:d0638c1e72676d31e1f8e7ee616013dc53ed85697b657a45204be342b0e56868 |
-| golden-prompt | pass | sha256:9d142db280e569c78737b13a2d354ac9c599a1f2aea8a08f00135dd71ec0b5ce |
+| generated-protocol | pass | sha256:dd2c56b13ac2f930d3512d45ed14ee90fe3625db71266386e50ad3638be1a4f3 |
+| golden-eir | pass | sha256:58f9698f08dae23c5f696cdaa4eb2d77515df3a27dbafda0ea526eb556f8b00a |
+| golden-prompt | pass | sha256:a72bb2740b4d79a45e62059d29517a7806567d84b370d0020c0d29e5e7187d8c |
 | fixture-oracle | pass | 24/24 passed |
 | identity-ledger | pass | 536 identities across 27 sources |
 
@@ -141,7 +141,7 @@
 | protocol/invocation-modes.cdl | 0 | 0 | sha256:4a8970adcf98246d33bc61684d6ca954b3a9e1f2d1c5e4df62788095f5cd7f5b |
 | protocol/foundations.cdl | 9 | 30 | sha256:e872677e91ed6a42be4037037497cc097f9875529e6e2e19492f7b83774c1e0c |
 | protocol/personas-povs.cdl | 6 | 18 | sha256:3c2ddd4f7664e2b9e032dfa4c06b3e8043ff94b28a6e6ebc0e5fedfe7982dd5a |
-| protocol/preflight-registry.cdl | 1 | 9 | sha256:4bd97105f0101ec55a50a2521d1794a35bb5968c3a89feb6fe8a83865b3387e9 |
+| protocol/preflight-registry.cdl | 1 | 9 | sha256:a7104ea78ecd3955f64f5350532ccaa04aa421cb95da7f3904df42ca32c0cff6 |
 | protocol/workspace-registries.cdl | 1 | 9 | sha256:c01cfabc67f97647d593f37897c9f5e39df3eab585207c2b2440feb67ea70436 |
 | protocol/typed-id.cdl | 1 | 9 | sha256:cc2efdcefb008626001bba599c2202b6606fa64db5e1c85ecb4b8706cd93fb65 |
 | protocol/semantic-payload-identity.cdl | 1 | 7 | sha256:76fabcee6b8afcf3c37907f03c65aad9929badd62c8a3a27420c41a64f6f99d9 |

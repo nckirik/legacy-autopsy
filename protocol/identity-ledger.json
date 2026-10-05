@@ -1562,7 +1562,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "source-fingerprint": "sha256:27ec40230402ad71f0ef04b1428875a9631729748f9f1b500fedcf940301f771",
+      "source-fingerprint": "sha256:16b7fb0a216f2dbeebaa582aa77734d6ed3b5b60a453cab961544c73ffd85b9c",
       "ids": [
         {
           "id": "DISCOVERY-BUFFER",

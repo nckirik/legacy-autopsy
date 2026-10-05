@@ -63,6 +63,29 @@ func List(dbPath string, doc *cdl.EIRDoc, fieldID string) ([]string, error) {
 	return ids, nil
 }
 
+// Render returns a clean human-readable view of every record in a table: the
+// canonical payloads, sorted by record ID, with no mechanical metadata. It is a
+// display projection, not an operational record.
+func Render(dbPath string, doc *cdl.EIRDoc, fieldID string) ([]byte, error) {
+	if _, err := tableField(doc, fieldID); err != nil {
+		return nil, err
+	}
+	ids, err := List(dbPath, doc, fieldID)
+	if err != nil {
+		return nil, err
+	}
+	var b strings.Builder
+	fmt.Fprintf(&b, "# %s\n\n", fieldID)
+	for _, id := range ids {
+		payload, err := Get(dbPath, doc, fieldID, id)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Fprintf(&b, "## %s\n\n%s\n", id, ensureTrailingNewline(string(payload)))
+	}
+	return []byte(b.String()), nil
+}
+
 // Inspect renders a debug-only, non-authoritative Markdown view of every row in a
 // table, including the mechanical la_* metadata. It is a diagnostic render, never
 // an operational record or a package member.

@@ -181,11 +181,13 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
       tests.
 - [x] `set<string>` canonical form: ascending unique; duplicates and non-string
       elements rejected (`certify.CanonicalStringSet`), order owned by the runtime.
-- [~] Record ingestion and access (`store.Ingest`, `Get`, `List`, `Inspect`, `spec
-  record put|get|list|inspect`): canonical payloads stored verbatim, columns derived
-  by the deterministic label-to-column mapping, fingerprints recomputed, debug renders
-  marked non-authoritative, all failures closed. Remaining: `0A` bootstrap import,
-  human semantic renderers, and import round-trip fixtures.
+- [x] Record ingestion and access (`store.Ingest`, `Get`, `List`, `Render`,
+      `Inspect`, `spec record put|get|list|render|inspect`): canonical payloads stored
+      verbatim, columns derived by the deterministic label-to-column mapping, fingerprints
+      recomputed, human renders clean of mechanical metadata, debug renders marked
+      non-authoritative, all failures closed. Bootstrap `0A` import (`ImportPreflight`)
+      ingests the preflight header (including the declared storage binding, defaulting to
+      `markdown/1`) and every persona registry row, with a fixture round-trip.
 - [ ] Semantic capability surface for workers (ID lookup, search, relation/evidence
       traversal, semantic proposals, control actions) over relational transactions.
 - [ ] Automatic read-set provenance: every read extends the invocation's exact

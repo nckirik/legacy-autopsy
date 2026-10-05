@@ -41,13 +41,13 @@ func specCommand(args []string, stdout, stderr io.Writer) error {
 
 func specRecord(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec record <get|list|put|inspect> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec record <get|list|put|render|inspect> [flags]")
 	}
 	op := args[0]
 	switch op {
-	case "get", "list", "put", "inspect":
+	case "get", "list", "put", "render", "inspect":
 	default:
-		return fmt.Errorf("spec record operation %q is unsupported; supported operations: get, list, put, inspect", op)
+		return fmt.Errorf("spec record operation %q is unsupported; supported operations: get, list, put, render, inspect", op)
 	}
 	set := flags("spec record "+op, stderr)
 	repo := set.String("repo", ".", "repository root")
@@ -92,6 +92,13 @@ func specRecord(args []string, stdout, stderr io.Writer) error {
 			fmt.Fprintln(stdout, recordID)
 		}
 		return nil
+	case "render":
+		view, err := store.Render(*db, res.EIR, *field)
+		if err != nil {
+			return err
+		}
+		_, err = stdout.Write(view)
+		return err
 	case "inspect":
 		view, err := store.Inspect(*db, res.EIR, *field)
 		if err != nil {

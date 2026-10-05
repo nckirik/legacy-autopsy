@@ -191,7 +191,8 @@ la dump                     canonical SQL dump for hashing and packaging
 ```
 
 Current harness verbs behind these: `spec schema --out|--apply`, `spec record
-put|get|list|inspect`, and `spec store` (canonical dump plus fingerprint).
+put|get|list|render|inspect`, `store.ImportPreflight` for the `0A` bootstrap, and
+`spec store` (canonical dump plus fingerprint).
 
 Migration/test code may have additional table-level helpers behind internal interfaces,
 but normal model execution goes through protocol-aware capabilities.

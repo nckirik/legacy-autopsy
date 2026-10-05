@@ -696,7 +696,7 @@ func TestPreflightRegistryCompiles(t *testing.T) {
 	for _, f := range res.EIR.Declarations.Fields {
 		counts[f.ID] = len(f.Fields)
 	}
-	want := map[string]int{"PREFLIGHT-HEADER": 8, "ENTRY-CLUSTER": 10, "UNMAPPED-DISCOVERY": 4, "DISCOVERY-BUFFER": 7, "PERSONA-REGISTRY": 8, "REQUIRED-TRAVERSAL-MATRIX": 10}
+	want := map[string]int{"PREFLIGHT-HEADER": 9, "ENTRY-CLUSTER": 10, "UNMAPPED-DISCOVERY": 4, "DISCOVERY-BUFFER": 7, "PERSONA-REGISTRY": 8, "REQUIRED-TRAVERSAL-MATRIX": 10}
 	for id, size := range want {
 		if counts[id] != size {
 			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)

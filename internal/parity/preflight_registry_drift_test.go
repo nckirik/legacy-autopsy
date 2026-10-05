@@ -67,12 +67,12 @@ func TestPreflightRegistryDrift(t *testing.T) {
 	if len(introLabels) == 0 {
 		t.Fatal("no preflight header fields found")
 	}
-	compareSets(t, "PREFLIGHT-HEADER", fields["PREFLIGHT-HEADER"], introLabels)
+	compareIncludes(t, "PREFLIGHT-HEADER", fields["PREFLIGHT-HEADER"], introLabels)
 	if len(labels) != 3 {
 		t.Fatalf("found %d blocks, want 3", len(labels))
 	}
 	for fieldID, want := range labels {
-		compareSets(t, fieldID, fields[fieldID], want)
+		compareIncludes(t, fieldID, fields[fieldID], want)
 	}
 
 	tableFields := map[string]string{"persona": "PERSONA-REGISTRY", "persona-owner": "REQUIRED-TRAVERSAL-MATRIX"}
@@ -87,11 +87,26 @@ func TestPreflightRegistryDrift(t *testing.T) {
 			continue
 		}
 		if fieldID, ok := tableFields[cols[0]]; ok {
-			compareSets(t, fieldID, fields[fieldID], cols)
+			compareIncludes(t, fieldID, fields[fieldID], cols)
 			seen++
 		}
 	}
 	if seen != 2 {
 		t.Fatalf("found %d §3.1 tables, want 2", seen)
+	}
+}
+
+// compareIncludes requires every field from the frozen oracle to remain present;
+// a revision may add fields but must never silently remove or rename one.
+func compareIncludes(t *testing.T, name string, got, want []string) {
+	t.Helper()
+	present := map[string]bool{}
+	for _, value := range got {
+		present[value] = true
+	}
+	for _, value := range want {
+		if !present[value] {
+			t.Errorf("%s: oracle field %q was removed or renamed", name, value)
+		}
 	}
 }
