@@ -13,7 +13,7 @@ import (
 func RenderProtocol(doc *EIRDoc) []byte {
 	var b strings.Builder
 	fmt.Fprintf(&b, "# Protocol: Legacy System Deconstruction, Assurance, and Reconstruction\n\n")
-	fmt.Fprintf(&b, "**Version:** 4.2 (Canonical Reconstruction-Ready Edition)\n")
+	fmt.Fprintf(&b, "**Version:** %s (Canonical Reconstruction-Ready Edition)\n", ProtocolEdition())
 	fmt.Fprintf(&b, "**Status:** Normative\n")
 	fmt.Fprintf(&b, "**Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.\n")
 	fmt.Fprintf(&b, "**Generated-From:** %s (%s)\n", doc.Envelope.Generator, doc.Envelope.SourceFingerprint)
@@ -41,8 +41,6 @@ func RenderProtocol(doc *EIRDoc) []byte {
 		renderSection(&b, doc, section)
 	}
 
-	fmt.Fprintf(&b, "---\n\n")
-	fmt.Fprintf(&b, "**End of Canonical Deconstruction Protocol v4.2**\n")
 	return []byte(b.String())
 }
 

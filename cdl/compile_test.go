@@ -299,9 +299,35 @@ func TestGoldenProtocolRender(t *testing.T) {
 			t.Fatalf("%s is stale (run: go test ./cdl -run TestUpdateAssets -update)", path)
 		}
 	}
-	for _, marker := range []string{"**Version:** 4.2", "## 8.3. Invocation-mode enum and explicit multi-file modes", "Preflight | Export Acquisition"} {
+	for _, marker := range []string{
+		"**Version:** 4.2",
+		"**Protocol Version:** 4.2",
+		"Protocol Version: 4.2",
+		"End of Canonical Deconstruction Protocol, edition 4.2",
+		"## 8.3. Invocation-mode enum and explicit multi-file modes",
+		"Preflight | Export Acquisition",
+	} {
 		if !strings.Contains(string(got), marker) {
 			t.Fatalf("generated protocol missing %q", marker)
+		}
+	}
+	for _, forbidden := range []string{"{{PROTOCOL-VERSION}}", "v4.2", "**Protocol Version:** 4.1"} {
+		if strings.Contains(string(got), forbidden) {
+			t.Fatalf("generated protocol contains stale version literal %q", forbidden)
+		}
+	}
+}
+
+func TestVersionTokenResolved(t *testing.T) {
+	res := compileAssembly(t)
+	for _, section := range res.EIR.Sections {
+		if strings.Contains(section.Goal, VersionToken) {
+			t.Fatalf("section %s goal still contains %s", section.ID, VersionToken)
+		}
+	}
+	for _, rule := range res.EIR.Declarations.Rules {
+		if strings.Contains(rule.Goal, VersionToken) {
+			t.Fatalf("rule %s goal still contains %s", rule.ID, VersionToken)
 		}
 	}
 }

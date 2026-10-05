@@ -4,7 +4,7 @@
   "generator-version": "parityreport/0.1",
   "generated-at": "2026-09-25T00:00:00Z",
   "protocol-version": "4.2",
-  "protocol-fingerprint": "sha256:df2dc25d6e4d53ff5f52499a4de7ec304bc6f4f1dc5dfdf95b4b8d41146bd2c5",
+  "protocol-fingerprint": "sha256:f0245e556eb4b3b2b7e2510e643e0d7bb13622063833a885812bb365faaf715a",
   "language-version": "cdl/0.3",
   "eir-format": 3,
   "sources": [
@@ -51,7 +51,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "fingerprint": "sha256:63fa8c2ca7c92ca2ac5a79816fa651182c8f1423ea2b5d8300d2cd7fed686ee0",
+      "fingerprint": "sha256:fa876967ea8dad6cdb1f3c2147cadf3652541c0e7fcfa84f72fb531f0ac8c915",
       "sections": [
         "3.1"
       ],
@@ -171,7 +171,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "fingerprint": "sha256:51765cdf7838056a01fea17e7ece04d8463e841d8a2da48b2ce64bac3716ba23",
+      "fingerprint": "sha256:f5f821ffe7446d76fe677541cce40381541e0d1246c83e08822ddf2d34edac81",
       "sections": [
         "8.1",
         "8.2",
@@ -291,7 +291,7 @@
     },
     {
       "path": "protocol/conformance.cdl",
-      "fingerprint": "sha256:32a4dce4eba05215927825cb90ee0e3eb0f2a36f8b4f6d806865a2b3b46fd81d",
+      "fingerprint": "sha256:1fb4e449cbd0712109107b9cfc76b7d450ad842c0567df6a5f129c42bc1d6832",
       "sections": [
         "16.1",
         "17.1",
@@ -954,17 +954,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:df2dc25d6e4d53ff5f52499a4de7ec304bc6f4f1dc5dfdf95b4b8d41146bd2c5"
+      "detail": "sha256:f0245e556eb4b3b2b7e2510e643e0d7bb13622063833a885812bb365faaf715a"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:e57a44053e238fa61ff9f328e2c60c66db23ea34ae4a2be21206784454b78940"
+      "detail": "sha256:e097768f088044a090020708541669d759a2600c6f32c07f13e4a7e44b45f7c5"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:fa0fd3a1645f6d8764a355ed0c6b90fbde5bf7ff503cb09f0e1d834f0c82295d"
+      "detail": "sha256:c8c2fd69ecec8ab7e5135ed2f161b1d201e50d9314fab795a5bfa25c8dcff5a7"
     },
     {
       "name": "fixture-oracle",

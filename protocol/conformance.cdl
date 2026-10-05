@@ -270,7 +270,7 @@ GOAL
 
 ---
 
-**End of Canonical Deconstruction Protocol v4.2**
+**End of Canonical Deconstruction Protocol, edition {{PROTOCOL-VERSION}}**
 END
 
 FIELD ARTIFACT-OWNERSHIP-ROW

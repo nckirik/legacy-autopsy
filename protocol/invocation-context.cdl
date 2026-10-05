@@ -7,7 +7,7 @@ GOAL
 Every invocation begins with:
 
 ```yaml
-Protocol Version: v4.2
+Protocol Version: {{PROTOCOL-VERSION}}
 System Namespace: [slug]
 Current Iteration: [canonical §10.6 token ALFA..ZULU]
 Invocation ID: [globally unique]

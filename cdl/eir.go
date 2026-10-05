@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 // Frozen pilot identities. They are recorded in every EIR envelope and every
@@ -11,10 +12,24 @@ import (
 const (
 	LanguageVersion  = "cdl/0.3"
 	StdlibVersion    = "cdl-stdlib/0.1"
-	GeneratorVersion = "cdl/0.3.1"
+	GeneratorVersion = "cdl/0.3.2"
 	EIRFormat        = 3
 	ProtocolVersion  = "canonical-deconstruction/4.2"
 )
+
+// VersionToken is the render-time placeholder for the protocol edition. CDL
+// normative text may contain it; BuildEIR substitutes ProtocolEdition into every
+// GOAL so prompts and the Markdown edition render one literal from one source.
+const VersionToken = "{{PROTOCOL-VERSION}}"
+
+// ProtocolEdition returns the edition portion of ProtocolVersion, the single
+// display literal rendered into generated artifacts.
+func ProtocolEdition() string {
+	if i := strings.LastIndex(ProtocolVersion, "/"); i >= 0 {
+		return ProtocolVersion[i+1:]
+	}
+	return ProtocolVersion
+}
 
 // EIRDoc is the typed execution IR contract.
 type EIRDoc struct {
@@ -283,6 +298,13 @@ func BuildEIR(prog *Program, versions Versions, sourceFingerprint string) (*EIRD
 			RuleTexts: p.RuleTexts,
 			Omissions: omissionsEIR(p.Omissions),
 		})
+	}
+	edition := ProtocolEdition()
+	for i := range doc.Sections {
+		doc.Sections[i].Goal = strings.ReplaceAll(doc.Sections[i].Goal, VersionToken, edition)
+	}
+	for i := range doc.Declarations.Rules {
+		doc.Declarations.Rules[i].Goal = strings.ReplaceAll(doc.Declarations.Rules[i].Goal, VersionToken, edition)
 	}
 	hashInput := *doc
 	hashInput.Envelope.EIRHash = ""
