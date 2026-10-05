@@ -4,20 +4,40 @@ Legacy Autopsy is a **local-first reference/tooling implementation** for evidenc
 
 The project is built around the CDL protocol sources under [`protocol/`](protocol/) and their generated standalone edition [`protocol.md`](protocol.md), which can be used directly with any capable coding agent. Legacy Autopsy adds orchestration, deterministic validation, persistent workspace management, and - over time - an interactive workbench.
 
-> **Project status - M0 foundation + Spec track crown (S4)**
+> **Project status - Spec track v4.2, harness track W1 done**
 >
-> The generated [`protocol.md`](protocol.md) carries the complete frozen oracle content verbatim - every paragraph, list, table, fenced block, field bullet, Part heading, and section - enforced by `TestGeneratedProtocolCoversOracle`, and it is the intended standalone prompt edition. The [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md) text remains the bootstrap parity oracle. The standalone protocol-quality test (fresh harness, generated edition only) has not yet been run, so the generated edition is not yet independently validated as a prompt; report issues if a harness run exposes any. The Spec track completed the section-by-section migration and crown: one compiled EIR assembly, a deterministic renderer with goldens, per-section drift tests against the frozen oracle [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md), the 24-case fixture oracle, and an accepted [crown parity report](analysis/parity-report.md). The harness track implements its M0 foundations: protocol/skill routing, an empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets, and bootstrap fixtures. The repository does **not** execute semantic deconstruction modes, prove Exit A or Exit E, or claim Protocol v4 conformance.
+> The Spec track completed the section migration, crown, and the first revision:
+> [`protocol.md`](protocol.md) is the generated **v4.2** edition of the CDL sources, with
+> [`protocol/legacy/protocol-4.2.md`](protocol/legacy/protocol-4.2.md) as the
+> current-edition oracle and [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md)
+> kept as history. Content completeness is enforced by
+> `TestGeneratedProtocolCoversOracle` and the revision-marker test.
+>
+> A first full standalone run (a small project, 2026-09-28/10-05) exercised the
+> protocol with an unmanaged coding agent: it reached a technically verified Exit A
+> assertion and a signed Exit E bundle on a disclosed static-only scope, but the
+> handbook was metadata shells and readability was relayed rather than read - recorded
+> as PI-11/PI-12 in [protocol-issues.md](docs/protocol-issues.md) and addressed in the
+> v4.2 text. The run also quantified the cost (160 elapsed hours, 14 compactions) and
+> motivated the [hardening plan](docs/hardening-plan.md): canonical SQLite store,
+> native certification engine, and bounded semantic execution are the critical path
+> (W2/W3).
+>
+> The harness track still implements only M0 foundations: protocol/skill routing, an
+> empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets,
+> and bootstrap fixtures. This repository does **not** execute semantic deconstruction
+> modes, prove Exit A or Exit E for you, or claim Protocol v4.2 conformance.
 
 > **Normative authority**
 >
-> The CDL sources under `protocol/` are the sole normative authority; `protocol.md` is their generated edition, which carries the frozen oracle's normative content verbatim. The frozen full text remains the bootstrap parity oracle, and the standalone protocol-quality test on the generated edition is still pending. Legacy Autopsy is one non-authoritative implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, fixtures, or validators. If any implementation or projection conflicts with the normative CDL sources, the protocol wins.
+> The CDL sources under `protocol/` are the sole normative authority; `protocol.md` is their generated edition. Revision oracles are snapshotted per accepted revision: the current-edition oracle is `protocol/legacy/protocol-4.2.md`, and `protocol/legacy/protocol-4.1.3.md` is retained as history. Legacy Autopsy is one non-authoritative implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, fixtures, or validators. If any implementation or projection conflicts with the normative CDL sources, the protocol wins.
 
 ## How to use Legacy Autopsy
 
 There are three intended ways to run the protocol. Only the first is usable today, and it remains a manual workflow rather than proof of conformance.
 
 1. **Manual run with your own coding agent - available today.** Give the agent `protocol.md` and the execution prompt below. It works directly in the legacy repository and pauses when it needs scope, access, evidence, or an authorized human answer.
-2. **Legacy Autopsy skill with your own coding agent - planned for M6.** Invoke the skill from a compatible coding harness. Legacy Autopsy will attach the project, schedule bounded protocol tasks, assemble exact context, validate results, persist `.extracted/`, and surface questions while your agent performs semantic work. Complete Exit A-Exit E automation still depends on later milestones.
+2. **Legacy Autopsy skill with your own coding agent - planned for M6.** Invoke the skill from a compatible coding harness. Legacy Autopsy will attach the project, schedule bounded semantic work items, derive the authoritative dependency closure while materializing only the bounded projection, validate results transactionally against the canonical store, and surface plain-language questions while your agent performs one work unit at a time. Complete Exit A-Exit E automation still depends on later milestones.
 3. **Legacy Autopsy UI - future, milestone not yet assigned.** Select a repository, start and monitor an autopsy, answer questions and tickets, inspect the Atlas and handbook, and retrieve the final bundle without manually driving an external agent session. M4/M6 intentionally keep semantic-work start and claim control outside the UI.
 
 All three paths use the same standalone protocol. The skill and UI add reliability, observability, and convenience; they do not redefine protocol behavior or authority. The [roadmap](docs/roadmap.md) runs two tracks: the Spec track (protocol ownership through the CDL sources and EIR) and the harness track (runtime services and workbench).
@@ -159,11 +179,12 @@ Legacy Autopsy is not a generic code summarizer, automatic rewrite tool, moderni
 
 - [`protocol/`](protocol/): normative CDL sources and assembly.
 - [`protocol.md`](protocol.md): generated standalone specification edition.
-- [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md): frozen bootstrap parity oracle.
+- [`protocol/legacy/protocol-4.2.md`](protocol/legacy/protocol-4.2.md): current-edition oracle snapshot.
+- [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md): historical bootstrap parity oracle.
 - [`analysis/parity-report.md`](analysis/parity-report.md): accepted S4 crown parity report.
 - [Minimal example](examples/minimal/README.md): shortest implemented tooling flow.
 - [Workspace guide](docs/workspace.md): the four planes and initialization boundary.
-- [Roadmap](docs/roadmap.md): Spec track S0-S4 (crown complete) and harness track M0-M16.
+- [Roadmap](docs/roadmap.md): Spec track S0-S4 + v4.2 revision, harness track M0-M16.
 
 **Spec track (design contracts)**
 
@@ -187,6 +208,8 @@ Legacy Autopsy is not a generic code summarizer, automatic rewrite tool, moderni
 - [Runtime and workbench](docs/runtime.md): multi-autopsy orchestration, executors, Atlas, questions, and UI design.
 - [Conformance](docs/conformance.md) and [fixture corpus](fixtures/README.md): implementation cases versus normative completeness.
 - [Standalone protocol test](docs/standalone-test.md): how to evaluate `protocol.md` as a prompt with a fresh harness.
+- [Hardening plan](docs/hardening-plan.md): W1-W6 sequencing after the first full run.
+- [SQLite record store](docs/sqlite-store.md): canonical-store and semantic-capability direction.
 - [Editor tooling](editors/README.md): CDL syntax highlighting and the canonical `cdl fmt` printer.
 - [Schema projections](schemas/README.md): current schema status and future boundary.
 - [Export-helper boundary](tools/export-helper/README.md): operator-only acquisition trust model.
