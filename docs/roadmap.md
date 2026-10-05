@@ -381,8 +381,9 @@ agents never hand-edit record files and semantic workers never need to serialize
 - **Implemented increment:** `internal/store.Schema` generates the deterministic DDL
   from compiled EIR - one table per declared FIELD block, enum `CHECK` constraints from
   the EIR enums, provenance header, and append-only triggers for the invocation log;
-  driver application and import/export are the next increment. See
-  [sqlite-store.md](sqlite-store.md).
+  `store.Apply` and `spec schema --out|--apply` instantiate it via the `sqlite3` CLI
+  (zero Go dependencies). Import/export, canonical dump, and the semantic capability
+  surface are next. See [sqlite-store.md](sqlite-store.md).
 - **Records are tables:** one table per record class with the declared fields;
   status/enum columns `CHECK`-constrained from the §5.1 registries; unique typed IDs and
   scope tuples; references as keys; `0G` append-only via triggers.

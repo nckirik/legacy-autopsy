@@ -189,9 +189,11 @@ projection/export, not working state.
   outcomes, and operator escalations per work item so context pathologies are visible
   rather than inferred after a week-long run.
 
-The first W3 storage increment is implemented: `internal/store.Schema` renders the
-DDL from compiled EIR (tables, enum CHECKs, provenance, append-only `0G` triggers).
-Driver application, import/export, and the semantic capability surface follow.
+The first W3 storage increments are implemented: `internal/store.Schema` renders the
+DDL from compiled EIR (tables, enum CHECKs, provenance, append-only `0G` triggers) and
+`store.Apply` plus `spec schema --apply` instantiate it through the operator's
+`sqlite3` CLI, so the toolchain keeps zero Go dependencies. Import/export, the
+canonical dump, and the semantic capability surface follow.
 
 ### W4 - Storage conformance and projections
 

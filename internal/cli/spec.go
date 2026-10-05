@@ -9,6 +9,7 @@ import (
 
 	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/runtime"
+	"github.com/nckirik/legacy-autopsy/internal/store"
 )
 
 const (
@@ -27,8 +28,10 @@ func specCommand(args []string, stdout, stderr io.Writer) error {
 		return specRender(args[1:], stdout, stderr)
 	case "run":
 		return specRun(args[1:], stdout, stderr)
+	case "schema":
+		return specSchema(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec operation %q is unsupported; supported operations: compile, render, run", args[0])
+		return fmt.Errorf("spec operation %q is unsupported; supported operations: compile, render, run, schema", args[0])
 	}
 }
 
@@ -115,6 +118,55 @@ func specCompile(args []string, stdout, stderr io.Writer) error {
 			return fmt.Errorf("EIR golden mismatch: %s", path)
 		}
 		fmt.Fprintf(stdout, "golden:     %s ok\n", *golden)
+	}
+	return nil
+}
+
+func specSchema(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec schema", stderr)
+	repo := set.String("repo", ".", "repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	out := set.String("out", "", "write DDL to this path instead of stdout")
+	apply := set.String("apply", "", "apply DDL to this SQLite database path")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	ddl, err := store.Schema(res.EIR, store.Provenance{
+		Generator:         cdl.GeneratorVersion,
+		SourceFingerprint: res.SourceFingerprint,
+	})
+	if err != nil {
+		return err
+	}
+	if *apply != "" {
+		if err := store.Apply(*apply, ddl); err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "applied schema to %s\n", *apply)
+	}
+	if *out != "" {
+		path := *out
+		if !filepath.IsAbs(path) {
+			path = filepath.Join(*repo, filepath.FromSlash(path))
+		}
+		if err := os.WriteFile(path, []byte(ddl), 0o644); err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "wrote schema to %s\n", *out)
+		return nil
+	}
+	if *apply == "" {
+		_, err := io.WriteString(stdout, ddl)
+		return err
 	}
 	return nil
 }

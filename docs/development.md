@@ -81,6 +81,8 @@ go run ./cmd/legacy-autopsy spec render --out /tmp/export-reconciliation.light.p
   --generated-at 2026-09-25T00:00:00Z
 go run ./cmd/legacy-autopsy spec run --fixture protocol/fixtures/incomplete.json
 go run ./cmd/legacy-autopsy spec run --fixture protocol/fixtures/reconciled.json --json
+go run ./cmd/legacy-autopsy spec schema --out /tmp/schema.sql        # print/write DDL
+go run ./cmd/legacy-autopsy spec schema --apply /tmp/autopsy.db      # apply via sqlite3
 ```
 
 `spec compile` validates the identity ledger and prints the source fingerprint and EIR
