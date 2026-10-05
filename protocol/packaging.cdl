@@ -195,21 +195,25 @@ ENUM FINAL-CHECK
 END
 
 FIELD ARTIFACT-SIGNATURE-ENVELOPE
+  STORAGE artifact
   signature-signatories-timestamps -> string required
   envelope-audit                   -> string required
 END
 
 FIELD SEMANTIC-RECORD-COUNT
+  STORAGE artifact
   record-type -> string required
   count       -> int    required
 END
 
 FIELD DECISION-CONTENT-COUNT
+  STORAGE artifact
   decision-type -> string required
   count         -> int    required
 END
 
 FIELD CHECK-RESULT
+  STORAGE artifact
   check-id             -> string required
   requirement          -> string required
   result               -> string required
@@ -217,6 +221,7 @@ FIELD CHECK-RESULT
 END
 
 FIELD BLOCKER
+  STORAGE artifact
   blocker-id           -> string required
   affected-ids         -> string required
   description          -> string required
@@ -322,6 +327,7 @@ The Exit E Candidate Report is emitted before the candidate payload manifest. It
 END
 
 FIELD EXIT-E-CANDIDATE-REPORT
+  STORAGE artifact
   artifact-type                                 -> string required
   artifact-path                                 -> string required
   protocol-artifact-schema-version              -> string required
@@ -391,6 +397,7 @@ The candidate payload manifest is emitted only after the immutable candidate rep
 END
 
 FIELD SEMANTIC-BINDING
+  STORAGE artifact
   record-type                  -> string required
   typed-record-id              -> string required
   semantic-record-version      -> string required
@@ -400,12 +407,14 @@ FIELD SEMANTIC-BINDING
 END
 
 FIELD DEC-CONTENT-BINDING
+  STORAGE artifact
   dec-id                       -> string required
   decision-content-version     -> string required
   decision-content-fingerprint -> string required
 END
 
 FIELD CANDIDATE-PAYLOAD-MANIFEST
+  STORAGE artifact
   artifact-type                       -> string required
   artifact-path                       -> string required
   protocol-artifact-schema-version    -> string required
@@ -479,6 +488,7 @@ Confirmed bindings sort by `(Record Type, Typed Record ID)`, approved decisions 
 END
 
 FIELD CONFIRMED-SEMANTIC-BINDING
+  STORAGE artifact
   record-type                              -> string required
   typed-record-id                          -> string required
   semantic-record-version                  -> string required
@@ -494,6 +504,7 @@ FIELD CONFIRMED-SEMANTIC-BINDING
 END
 
 FIELD APPROVED-DEC-BINDING
+  STORAGE artifact
   dec-id                              -> string required
   decision-content-version            -> string required
   decision-content-fingerprint        -> string required
@@ -503,12 +514,14 @@ FIELD APPROVED-DEC-BINDING
 END
 
 FIELD PACKAGE-MEMBER
+  STORAGE artifact
   artifact-type                   -> string required
   normalized-path                 -> string required
   package-member-file-fingerprint -> string required
 END
 
 FIELD EXIT-E-CONTENT-READINESS-REPORT
+  STORAGE artifact
   artifact-type                          -> string required
   artifact-path                          -> string required
   protocol-artifact-schema-version       -> string required
@@ -589,11 +602,13 @@ GOAL
 END
 
 FIELD INCLUDED-SCOPE-DIMENSION
+  STORAGE artifact
   dimension -> string required
   value     -> string required
 END
 
 FIELD SOURCE-COUNT
+  STORAGE artifact
   src-kind              -> string required
   gross-discovered      -> int    required
   approved-excluded     -> int    required
@@ -602,6 +617,7 @@ FIELD SOURCE-COUNT
 END
 
 FIELD APPROVED-EXCLUSION-RESIDUAL-RISK
+  STORAGE artifact
   dec-id                       -> string required
   excluded-unit-id             -> string required
   decision-content-version     -> string required
@@ -612,6 +628,7 @@ FIELD APPROVED-EXCLUSION-RESIDUAL-RISK
 END
 
 FIELD CONFIRMED-SEMANTIC-PAYLOAD-BINDING
+  STORAGE artifact
   record-type                  -> string required
   typed-record-id              -> string required
   semantic-record-version      -> string required
@@ -621,6 +638,7 @@ FIELD CONFIRMED-SEMANTIC-PAYLOAD-BINDING
 END
 
 FIELD KNOWN-RESIDUAL-RISK
+  STORAGE artifact
   risk-id             -> string required
   affected-ids        -> string required
   source-dec-id       -> string required
@@ -629,6 +647,7 @@ FIELD KNOWN-RESIDUAL-RISK
 END
 
 FIELD SCOPE-CERTIFICATE
+  STORAGE artifact
   artifact-type                               -> string required
   artifact-path                               -> string required
   protocol-artifact-schema-version            -> string required
@@ -752,11 +771,13 @@ The authoritative step-6 outer manifest MUST instantiate the generic schema as f
 END
 
 FIELD OUTER-SIGNATURE-ENVELOPE
+  STORAGE artifact
   required-human-signatories-signature-timestamps -> string required
   envelope-audit                                  -> string required
 END
 
 FIELD OUTER-BUNDLE-MANIFEST
+  STORAGE artifact
   artifact-type                                  -> string required
   artifact-path                                  -> string required
   protocol-artifact-schema-version               -> string required
@@ -940,12 +961,14 @@ The result fingerprint covers every preceding field except `Validator Implementa
 END
 
 FIELD FINAL-CHECK-RESULT
+  STORAGE artifact
   check-id           -> string required
   result             -> string required
   offending-bindings -> string required
 END
 
 FIELD FINAL-VERIFICATION-RECEIPT
+  STORAGE artifact
   protocol-artifact-check-registry-versions-and-fingerprints -> string required
   normalized-bundle-identity                                 -> string required
   outer-payload-canonical-outer-envelope-fingerprints        -> string required

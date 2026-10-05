@@ -69,6 +69,7 @@ ENUM RECONCILIATION-STATE
 END
 
 FIELD RECONCILIATION-ROW
+  STORAGE record
   export-id             -> EXPORT-ID            required
   normalized-coordinate -> COORDINATE           required
   src-id                -> SRC-ID               required

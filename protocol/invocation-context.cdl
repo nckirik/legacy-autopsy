@@ -43,6 +43,7 @@ zero-padded per-iteration/persona/POV sequence that is never reused. The registr
 END
 
 FIELD INVOCATION-HEADER
+  STORAGE value
   protocol-version              -> string      required
   system-namespace              -> string      required
   current-iteration             -> string      required

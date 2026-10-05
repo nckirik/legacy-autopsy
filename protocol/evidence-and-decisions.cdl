@@ -38,6 +38,7 @@ Every atomic forensic or synthesis block lists its material claims and carries b
 END
 
 FIELD CLAIM
+  STORAGE record
   subject-id-record-version     -> string                                   required
   field-step                    -> string                                   required
   claim                         -> string                                   required
@@ -54,6 +55,7 @@ FIELD CLAIM
 END
 
 FIELD BLOCK-EVIDENCE-SUMMARY
+  STORAGE value
   block-confidence-rank  -> REGISTRY-ATOMICCOMPONENT-BLOCK-CONFIDENCE-RANK required
   block-evidence-profile -> string                                         required
 END
@@ -106,6 +108,7 @@ An open material contradiction blocks applicable coverage, Exit A, and confirmat
 END
 
 FIELD CONTRADICTION
+  STORAGE record
   claims-in-conflict                -> set<string>                             required
   scope-environments-snapshots      -> string                                  required
   conflict-description              -> string                                  required
@@ -146,6 +149,7 @@ The candidate payload manifest binds immutable decision-content versions/fingerp
 END
 
 FIELD DECISION
+  STORAGE record
   decision-content-version                          -> int                               required
   decision-content-fingerprint                      -> hash                              required
   type                                              -> REGISTRY-DECISION-TYPE            required
@@ -227,6 +231,7 @@ declared unread instead.
 END
 
 FIELD CONFIRMATION
+  STORAGE record
   human-hatch-action                                                            -> REGISTRY-CONFIRMATION-HUMAN-HATCH-ACTION          required
   approver-role-authority-basis                                                 -> string                                            required
   review-timestamp-review-scope-limitations                                     -> string                                            required

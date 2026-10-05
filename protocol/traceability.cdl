@@ -41,6 +41,7 @@ ENUM CLASSIFICATION
 END
 
 FIELD TRACEABILITY-ROW
+  STORAGE record
   src               -> string required
   persona-owner-prf -> string required
   track-cap         -> string required
@@ -58,6 +59,7 @@ FIELD TRACEABILITY-ROW
 END
 
 FIELD LIFECYCLE-ELIGIBILITY
+  STORAGE record
   scope-id                 -> string         required
   classification           -> CLASSIFICATION required
   reason                   -> string         required
@@ -224,6 +226,7 @@ Rows sort by `(Row Kind, Check / Blocker ID, Normalized Authoritative Input Path
 END
 
 FIELD EVIDENCE-BINDING
+  STORAGE value
   row-kind                            -> string required
   check-blocker-id                    -> string required
   normalized-authoritative-input-path -> string required

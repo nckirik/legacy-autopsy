@@ -84,6 +84,7 @@ Append after every invocation:
 END
 
 FIELD INVOCATION-LOG
+  STORAGE log
   identity-header-summary                                      -> string required
   cold-resume-result-check-fingerprint                         -> string required
   declared-semantic-actions-runtime-authorization-result       -> string required

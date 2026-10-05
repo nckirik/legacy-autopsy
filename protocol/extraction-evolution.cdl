@@ -45,6 +45,7 @@ ENUM BLOCK-CONFIDENCE-RANK
 END
 
 FIELD ATOMIC-COMPONENT
+  STORAGE record
   record-kind                         -> string                                 required
   source-ids                          -> string                                 required
   file-path-line-range                -> string                                 required
@@ -105,6 +106,7 @@ This ensures a persona manifest represents its full operational footprint withou
 END
 
 FIELD SHARED-REFERENCE
+  STORAGE record
   canonical-location           -> string                                 required
   local-trigger-src-coordinate -> string                                 required
   local-invocation-signature   -> string                                 required

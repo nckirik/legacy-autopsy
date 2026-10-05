@@ -54,6 +54,7 @@ ENUM TICKET-ESCALATION-REASON
 END
 
 FIELD TICKET
+  STORAGE record
   source-pov-file-invocation -> string                   required
   target-pov-ledger          -> string                   required
   status                     -> TICKET-STATE             required
@@ -236,6 +237,7 @@ ENUM SAFETY-CLASSIFICATION
 END
 
 FIELD PROBE-SPECIFICATION
+  STORAGE record
   probe-id                            -> string                required
   target-src-cmp                      -> string                required
   question-expected-observable        -> string                required
@@ -308,6 +310,7 @@ GOAL
 END
 
 FIELD NO-MOCK-FALLBACK
+  STORAGE record
   suspected-behavior                     -> string required
   evidence-claims-anchors                -> string required
   missing-runtime-observation            -> string required

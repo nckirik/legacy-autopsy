@@ -188,6 +188,7 @@ and residual risk.
 END
 
 FIELD CAPABILITY-STATE-BLOCK
+  STORAGE registry
   capability-state             -> REGISTRY-ENTRYCLUSTER-CAPABILITY-STATE required
   runtime-state-matrix         -> string                                 required
   historical-intended-personas -> string                                 required
@@ -196,6 +197,7 @@ FIELD CAPABILITY-STATE-BLOCK
 END
 
 FIELD RUNTIME-STATE-MATRIX
+  STORAGE value
   environment              -> string required
   snapshot                 -> string required
   state                    -> string required

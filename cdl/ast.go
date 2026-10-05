@@ -110,10 +110,21 @@ type FieldSpec struct {
 	Required bool
 }
 
-// FieldDecl is a record shape.
+// FieldRef is a foreign-key declaration: Column references TargetField.TargetColumn.
+type FieldRef struct {
+	Column      string
+	TargetField string
+	TargetCol   string
+}
+
+// FieldDecl is a record shape with storage semantics.
 type FieldDecl struct {
-	ID     string
-	Fields []FieldSpec
+	ID      string
+	Storage string // record | child | singleton | registry | log | artifact
+	Parent  string // "<FIELD-ID>" or "<FIELD-ID>.<column>" for child/singleton
+	Key     []string
+	Refs    []FieldRef
+	Fields  []FieldSpec
 }
 
 // TableDecl is a table shape over a registry.

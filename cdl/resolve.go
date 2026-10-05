@@ -265,6 +265,7 @@ func (r *resolver) checkSectionDeclarations(sec *Section) {
 		}
 	}
 	for _, f := range sec.Fields {
+		r.checkFieldStorage(f)
 		for _, spec := range f.Fields {
 			if !r.typeResolves(spec.Type) {
 				r.fail("CDL_UNRESOLVED_REFERENCE", "field %s.%s refers to unknown type %q", f.ID, spec.Name, spec.Type)
@@ -667,6 +668,83 @@ func (r *resolver) possibleValues(e Expr) []string {
 		return nil
 	}
 	return nil
+}
+
+// storageClasses is the closed set of declared FIELD storage semantics.
+var storageClasses = map[string]bool{
+	"record":    true,
+	"child":     true,
+	"singleton": true,
+	"registry":  true,
+	"log":       true,
+	"artifact":  true,
+	"value":     true,
+}
+
+// checkFieldStorage validates storage clauses: class, ownership, keys, and
+// references. Semantic content stays with the LLM; the mechanics are closed.
+func (r *resolver) checkFieldStorage(f FieldDecl) {
+	if f.Storage == "" {
+		r.fail("CDL_PARSE", "field %s declares no STORAGE class", f.ID)
+	} else if !storageClasses[f.Storage] {
+		r.fail("CDL_PARSE", "field %s has invalid STORAGE %q", f.ID, f.Storage)
+	}
+	if f.Storage == "child" && f.Parent == "" {
+		r.fail("CDL_PARSE", "child field %s requires PARENT", f.ID)
+	}
+	if f.Parent != "" && f.Storage != "child" && f.Storage != "singleton" {
+		r.fail("CDL_PARSE", "field %s declares PARENT with STORAGE %s", f.ID, f.Storage)
+	}
+	if f.Storage == "child" && len(f.Key) == 0 {
+		r.fail("CDL_PARSE", "child field %s requires KEY", f.ID)
+	}
+	if f.Storage == "artifact" || f.Storage == "value" {
+		if len(f.Key) > 0 || len(f.Refs) > 0 || f.Parent != "" {
+			r.fail("CDL_PARSE", "%s field %s cannot declare KEY, REF, or PARENT", f.Storage, f.ID)
+		}
+	}
+	for _, key := range f.Key {
+		if !fieldDeclared(f, key) {
+			r.fail("CDL_UNRESOLVED_REFERENCE", "field %s KEY %q is not a declared field", f.ID, key)
+		}
+	}
+	if f.Parent != "" {
+		parentID, parentCol := splitTarget(f.Parent)
+		parent, ok := r.sym.fields[parentID]
+		if !ok {
+			r.fail("CDL_UNRESOLVED_REFERENCE", "field %s PARENT target %q is unknown", f.ID, parentID)
+		} else if parent.Storage != "record" {
+			r.fail("CDL_UNRESOLVED_REFERENCE", "field %s PARENT target %s is STORAGE %s, not record", f.ID, parentID, parent.Storage)
+		} else if parentCol != "" && !fieldDeclared(parent, parentCol) {
+			r.fail("CDL_UNRESOLVED_REFERENCE", "field %s PARENT column %q is not declared on %s", f.ID, parentCol, parentID)
+		}
+	}
+	for _, ref := range f.Refs {
+		if !fieldDeclared(f, ref.Column) {
+			r.fail("CDL_UNRESOLVED_REFERENCE", "field %s REF column %q is not a declared field", f.ID, ref.Column)
+			continue
+		}
+		target, ok := r.sym.fields[ref.TargetField]
+		if !ok {
+			r.fail("CDL_UNRESOLVED_REFERENCE", "field %s REF target %q is unknown", f.ID, ref.TargetField)
+			continue
+		}
+		switch target.Storage {
+		case "record", "registry", "singleton":
+		default:
+			r.fail("CDL_UNRESOLVED_REFERENCE", "field %s REF target %s is STORAGE %s and cannot be referenced", f.ID, ref.TargetField, target.Storage)
+		}
+		if !fieldDeclared(target, ref.TargetCol) {
+			r.fail("CDL_UNRESOLVED_REFERENCE", "field %s REF target column %q is not declared on %s", f.ID, ref.TargetCol, ref.TargetField)
+		}
+	}
+}
+
+func splitTarget(target string) (string, string) {
+	if i := strings.LastIndex(target, "."); i > 0 {
+		return target[:i], target[i+1:]
+	}
+	return target, ""
 }
 
 func (r *resolver) typeResolves(t string) bool {

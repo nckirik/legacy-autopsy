@@ -10,10 +10,10 @@ import (
 // Frozen pilot identities. They are recorded in every EIR envelope and every
 // generated projection provenance header.
 const (
-	LanguageVersion  = "cdl/0.3"
+	LanguageVersion  = "cdl/0.4"
 	StdlibVersion    = "cdl-stdlib/0.1"
-	GeneratorVersion = "cdl/0.3.2"
-	EIRFormat        = 3
+	GeneratorVersion = "cdl/0.4.0"
+	EIRFormat        = 4
 	ProtocolVersion  = "canonical-deconstruction/4.2.1"
 )
 
@@ -122,11 +122,21 @@ type EIREnum struct {
 	Section string   `json:"section"`
 }
 
-// EIRField is a record shape.
+// EIRField is a record shape with storage semantics.
 type EIRField struct {
 	ID      string         `json:"id"`
+	Storage string         `json:"storage"`
+	Parent  string         `json:"parent,omitempty"`
+	Key     []string       `json:"key,omitempty"`
+	Refs    []EIRFieldRef  `json:"refs,omitempty"`
 	Fields  []EIRFieldSpec `json:"fields"`
 	Section string         `json:"section"`
+}
+
+// EIRFieldRef is a foreign-key declaration.
+type EIRFieldRef struct {
+	Column string `json:"column"`
+	Target string `json:"target"` // "<FIELD-ID>.<column>"
 }
 
 // EIRFieldSpec is one record field.
@@ -379,7 +389,10 @@ func sectionEnums(sec Section) []EIREnum {
 func sectionFields(sec Section) []EIRField {
 	var out []EIRField
 	for _, f := range sec.Fields {
-		field := EIRField{ID: f.ID, Section: sec.ID}
+		field := EIRField{ID: f.ID, Storage: f.Storage, Parent: f.Parent, Key: f.Key, Section: sec.ID}
+		for _, ref := range f.Refs {
+			field.Refs = append(field.Refs, EIRFieldRef{Column: ref.Column, Target: ref.TargetField + "." + ref.TargetCol})
+		}
 		for _, spec := range f.Fields {
 			field.Fields = append(field.Fields, EIRFieldSpec{Name: spec.Name, Type: spec.Type, Required: spec.Required})
 		}

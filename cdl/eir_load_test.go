@@ -1,6 +1,7 @@
 package cdl
 
 import (
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -30,10 +31,10 @@ func TestLoadEIRRejectsTampering(t *testing.T) {
 	}
 	text := string(data)
 
-	if _, err := LoadEIR([]byte(strings.Replace(text, `"eir-format":3`, `"eir-format":9`, 1))); err == nil {
+	if _, err := LoadEIR([]byte(strings.Replace(text, fmt.Sprintf(`"eir-format":%d`, EIRFormat), `"eir-format":9`, 1))); err == nil {
 		t.Fatal("unknown format accepted")
 	}
-	if _, err := LoadEIR([]byte(strings.Replace(text, `"eir-format":3`, `"eir-format":3,"extra":1`, 1))); err == nil {
+	if _, err := LoadEIR([]byte(strings.Replace(text, fmt.Sprintf(`"eir-format":%d`, EIRFormat), fmt.Sprintf(`"eir-format":%d,"extra":1`, EIRFormat), 1))); err == nil {
 		t.Fatal("unknown field accepted")
 	}
 	tampered := strings.Replace(text, `"eir-sha256":"sha256:`, `"eir-sha256":"sha256:f`, 1)

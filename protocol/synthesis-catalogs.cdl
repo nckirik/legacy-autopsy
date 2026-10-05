@@ -47,6 +47,7 @@ ENUM GAP-DISPOSITION
 END
 
 FIELD SYNTHESIS-GAP
+  STORAGE record
   source-synthesis-invocation-block-id             -> string          required
   observed-missing-requirement                     -> string          required
   affected-ids                                     -> string          required
@@ -126,6 +127,7 @@ Coverage is semantic payload; blueprint status is envelope metadata. `[B-CONFIRM
 END
 
 FIELD SYNTHESIS-BLOCK-HEADER
+  STORAGE value
   semantic-record-version      -> int    required
   semantic-content-fingerprint -> string required
   coverage-status              -> string required
@@ -137,6 +139,7 @@ FIELD SYNTHESIS-BLOCK-HEADER
 END
 
 FIELD CERTIFICATION-ENVELOPE
+  STORAGE value
   blueprint-status              -> string required
   confirmation                  -> string required
   confirmation-envelope-version -> int    required
@@ -180,6 +183,7 @@ Every semantic architecture statement about responsibility, public interface, en
 END
 
 FIELD ARCHITECTURE-MODULE
+  STORAGE record
   responsibility-domain-boundary  -> string required
   public-interfaces               -> string required
   encapsulated-state-entities     -> string required
@@ -239,6 +243,9 @@ ENUM STORAGE-KIND
 END
 
 FIELD ENTITY-COLUMN
+  STORAGE child
+  PARENT ENTITY-RECORD
+  KEY name
   name        -> string required
   type        -> string required
   null        -> string required
@@ -249,6 +256,7 @@ FIELD ENTITY-COLUMN
 END
 
 FIELD ENTITY-RECORD
+  STORAGE record
   domain-context-purpose             -> string       required
   storage                            -> STORAGE-KIND required
   physical-src-ids                   -> string       required
@@ -305,6 +313,7 @@ ENUM DELETE-UPDATE-SEMANTICS
 END
 
 FIELD RELATIONSHIP-RECORD
+  STORAGE record
   cardinality                  -> RELATIONSHIP-CARDINALITY required
   enforcement                  -> RELATIONSHIP-ENFORCEMENT required
   delete-update-semantics      -> DELETE-UPDATE-SEMANTICS  required
@@ -338,6 +347,9 @@ Eligibility decisions use the §12.1 lifecycle table so absence cannot be assume
 END
 
 FIELD STATE-TRANSITION
+  STORAGE child
+  PARENT STATE-MACHINE
+  KEY from, to
   from     -> string required
   to       -> string required
   event-uc -> string required
@@ -347,6 +359,7 @@ FIELD STATE-TRANSITION
 END
 
 FIELD STATE-MACHINE
+  STORAGE record
   scope-owner-entity-or-aggregate -> string required
   state-fields                    -> string required
   states-meaning                  -> string required
@@ -410,6 +423,7 @@ ENUM DB-TARGET-DECISION
 END
 
 FIELD DATABASE-ROUTINE
+  STORAGE record
   kind                            -> DB-ROUTINE-KIND    required
   owner-table-entity              -> string             required
   firing-event-timing-granularity -> string             required
@@ -472,6 +486,7 @@ ENUM BUSINESS-RULE-CAPABILITY-STATE
 END
 
 FIELD BUSINESS-RULE-RECORD
+  STORAGE record
   authoritative-rule-owner            -> string                         required
   defense-in-depth-mirrors            -> string                         required
   applies-when                        -> string                         required
@@ -550,6 +565,9 @@ ENUM USE-CASE-TARGET-DECISION
 END
 
 FIELD USE-CASE-STEP
+  STORAGE child
+  PARENT USE-CASE
+  KEY step
   step      -> string required
   action    -> string required
   rules     -> string required
@@ -559,6 +577,7 @@ FIELD USE-CASE-STEP
 END
 
 FIELD USE-CASE
+  STORAGE record
   primary-persona-secondary-actors       -> string                             required
   goal                                   -> string                             required
   trigger-entry                          -> string                             required
@@ -610,6 +629,9 @@ External semantics are compatibility baselines, not absolutely frozen. Breaking 
 END
 
 FIELD INTERFACE-REQUEST-FIELD
+  STORAGE child
+  PARENT INTERFACE-RECORD
+  KEY field
   field         -> string required
   type          -> string required
   required      -> string required
@@ -619,6 +641,9 @@ FIELD INTERFACE-REQUEST-FIELD
 END
 
 FIELD INTERFACE-RESPONSE-FIELD
+  STORAGE child
+  PARENT INTERFACE-RECORD
+  KEY field
   field -> string required
   type  -> string required
   notes -> string required
@@ -626,6 +651,7 @@ FIELD INTERFACE-RESPONSE-FIELD
 END
 
 FIELD INTERFACE-RECORD
+  STORAGE record
   channel-transport-direction         -> string required
   actor-persona-auth                  -> string required
   protocol-content-type               -> string required
@@ -700,6 +726,7 @@ ENUM CONFIG-MEDIUM
 END
 
 FIELD DEPLOYMENT-ELEMENT
+  STORAGE record
   component-placement-replication -> string required
   connections                     -> string required
   single-point-of-failure         -> string required
@@ -707,6 +734,7 @@ FIELD DEPLOYMENT-ELEMENT
 END
 
 FIELD CONFIGURATION-RECORD
+  STORAGE record
   medium                                          -> CONFIG-MEDIUM required
   exact-key                                       -> string        required
   type-default-allowed-values                     -> string        required
@@ -717,6 +745,7 @@ FIELD CONFIGURATION-RECORD
 END
 
 FIELD SCHEDULE-RECORD
+  STORAGE record
   type-trigger-frequency-window         -> string                                 required
   owner-persona                         -> string                                 required
   actions                               -> string                                 required
@@ -807,6 +836,7 @@ ENUM RISK-LEVEL
 END
 
 FIELD NFR-RECORD
+  STORAGE record
   attribute               -> NFR-ATTRIBUTE required
   observed-inferred-value -> string        required
   scope-environment       -> string        required
@@ -815,6 +845,7 @@ FIELD NFR-RECORD
 END
 
 FIELD SECURITY-FINDING
+  STORAGE record
   category                       -> SECURITY-CATEGORY required
   finding-data-classification    -> string            required
   risk-level                     -> RISK-LEVEL        required
@@ -824,6 +855,7 @@ FIELD SECURITY-FINDING
 END
 
 FIELD FAULT-RECORD
+  STORAGE record
   failure-class-trigger-detection-point      -> string required
   propagation-path                           -> string required
   retry-backoff-timeout-circuit-behavior     -> string required
@@ -888,6 +920,9 @@ Profile Synchronization is the only writer of profile semantic payload and synch
 END
 
 FIELD AUTHORIZATION-MATRIX-ROW
+  STORAGE child
+  PARENT PERSONA-PROFILE
+  KEY resource-capability
   resource-capability -> string required
   allowed             -> string required
   enforcement         -> string required
@@ -895,6 +930,7 @@ FIELD AUTHORIZATION-MATRIX-ROW
 END
 
 FIELD PERSONA-PROFILE
+  STORAGE record
   prf-id                        -> string required
   prefix-actor-class            -> string required
   canonical-and-shared-entries  -> string required

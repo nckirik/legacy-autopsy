@@ -576,18 +576,54 @@ func (p *parser) parseField(id string) (FieldDecl, bool) {
 		if line == "" {
 			continue
 		}
-		parts := strings.SplitN(line, "->", 2)
-		if len(parts) != 2 {
-			p.failHere("CDL_PARSE", "FIELD row expects <name> -> <type> required|optional")
-			return fd, false
+		switch {
+		case strings.HasPrefix(line, "STORAGE "):
+			if fd.Storage != "" {
+				p.failHere("CDL_PARSE", "FIELD %s declares STORAGE twice", id)
+				return fd, false
+			}
+			fd.Storage = strings.TrimSpace(strings.TrimPrefix(line, "STORAGE "))
+		case strings.HasPrefix(line, "PARENT "):
+			if fd.Parent != "" {
+				p.failHere("CDL_PARSE", "FIELD %s declares PARENT twice", id)
+				return fd, false
+			}
+			fd.Parent = strings.TrimSpace(strings.TrimPrefix(line, "PARENT "))
+		case strings.HasPrefix(line, "KEY "):
+			for _, key := range strings.Split(strings.TrimPrefix(line, "KEY "), ",") {
+				key = strings.TrimSpace(key)
+				if key != "" {
+					fd.Key = append(fd.Key, key)
+				}
+			}
+		case strings.HasPrefix(line, "REF "):
+			parts := strings.SplitN(strings.TrimPrefix(line, "REF "), "->", 2)
+			if len(parts) != 2 {
+				p.failHere("CDL_PARSE", "FIELD REF expects <column> -> <FIELD-ID>.<column>")
+				return fd, false
+			}
+			column := strings.TrimSpace(parts[0])
+			target := strings.TrimSpace(parts[1])
+			dot := strings.LastIndex(target, ".")
+			if dot <= 0 || dot == len(target)-1 {
+				p.failHere("CDL_PARSE", "FIELD REF target %q expects <FIELD-ID>.<column>", target)
+				return fd, false
+			}
+			fd.Refs = append(fd.Refs, FieldRef{Column: column, TargetField: target[:dot], TargetCol: target[dot+1:]})
+		default:
+			parts := strings.SplitN(line, "->", 2)
+			if len(parts) != 2 {
+				p.failHere("CDL_PARSE", "FIELD row expects <name> -> <type> required|optional")
+				return fd, false
+			}
+			name := strings.TrimSpace(parts[0])
+			rest := strings.Fields(parts[1])
+			if len(rest) != 2 {
+				p.failHere("CDL_PARSE", "FIELD row expects <type> required|optional")
+				return fd, false
+			}
+			fd.Fields = append(fd.Fields, FieldSpec{Name: name, Type: rest[0], Required: rest[1] == "required"})
 		}
-		name := strings.TrimSpace(parts[0])
-		rest := strings.Fields(parts[1])
-		if len(rest) != 2 {
-			p.failHere("CDL_PARSE", "FIELD row expects <type> required|optional")
-			return fd, false
-		}
-		fd.Fields = append(fd.Fields, FieldSpec{Name: name, Type: rest[0], Required: rest[1] == "required"})
 	}
 }
 

@@ -90,6 +90,7 @@ A `CAP` is a non-promotable governance container and inherits no child staging, 
 END
 
 FIELD SHARED-ENTRY
+  STORAGE registry
   concrete-entry-src                               -> string      required
   participating-personas-and-invocation-conditions -> string      required
   coordination-owner                               -> string      required
@@ -99,6 +100,7 @@ FIELD SHARED-ENTRY
 END
 
 FIELD AUTH-MECHANISM
+  STORAGE record
   mechanism-credential-form                      -> string required
   issuer-validator-storage                       -> string required
   creation-refresh-expiry-revocation-termination -> string required
@@ -109,6 +111,7 @@ FIELD AUTH-MECHANISM
 END
 
 FIELD PRIVACY-FINDING
+  STORAGE record
   data-threat-review-category            -> string required
   affected-src-er-if-persona-environment -> string required
   observed-handling-risk-unknowns        -> string required
@@ -118,6 +121,7 @@ FIELD PRIVACY-FINDING
 END
 
 FIELD CAPABILITY-RECORD
+  STORAGE record
   record-kind                                     -> string                                          required
   canonical-member-src-cmp-uc-if-cfg-dr-ids       -> set<string>                                     required
   overlapping-cap-relationships-decisions         -> string                                          required
@@ -131,6 +135,7 @@ FIELD CAPABILITY-RECORD
 END
 
 FIELD ROUTINE-CROSS-REFERENCE
+  STORAGE record
   src                   -> set<string> required
   source-coordinate     -> string      required
   canonical-extract     -> string      required
@@ -139,12 +144,14 @@ FIELD ROUTINE-CROSS-REFERENCE
 END
 
 FIELD INVARIANT
+  STORAGE record
   constraint           -> string      required
   verification-vectors -> set<string> required
   discovered-in        -> string      required
 END
 
 FIELD SHARED-STATE
+  STORAGE record
   medium-shape                 -> string      required
   initializer-mutators-readers -> set<string> required
   lifecycle-invalidation       -> string      required

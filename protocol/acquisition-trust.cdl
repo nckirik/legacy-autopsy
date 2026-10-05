@@ -65,6 +65,7 @@ GOAL
 END
 
 FIELD EXPORT
+  STORAGE record
   platform                                      -> REGISTRY-EXPORT-PLATFORM           required
   stable-artifact-id-display-name               -> string                             required
   raw-source-alias                              -> string                             required

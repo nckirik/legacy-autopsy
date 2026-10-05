@@ -36,6 +36,7 @@ ENUM TRAVERSAL-CELL-STATE
 END
 
 FIELD SWEEP-RECORD
+  STORAGE record
   snapshot-environment                    -> string      required
   persona-cluster-pov-track               -> string      required
   expanded-concrete-entry-coordinates     -> set<string> required

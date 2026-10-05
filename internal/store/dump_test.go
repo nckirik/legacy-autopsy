@@ -26,7 +26,7 @@ func buildStore(t *testing.T, insertOrder []string) (string, string, string) {
 		t.Fatal(err)
 	}
 	for _, id := range insertOrder {
-		sql := `insert into decision_content_count (la_record_id, la_canonical_payload, decision_type, count) values ('` + id + `','{}','scope',1);`
+		sql := `insert into invariant (la_record_id, la_canonical_payload, "constraint", verification_vectors, discovered_in) values ('` + id + `','{}','c','[\"v\"]','d');`
 		if _, err := sqlite(t, db, sql); err != nil {
 			t.Fatal(err)
 		}
@@ -59,7 +59,7 @@ func TestCanonicalDumpDeterministic(t *testing.T) {
 	if !strings.Contains(first, "BEGIN;") || !strings.Contains(first, "COMMIT;") {
 		t.Fatal("dump is not a transaction")
 	}
-	if !strings.Contains(first, `CREATE TABLE "decision_content_count"`) {
+	if !strings.Contains(first, `CREATE TABLE "invariant"`) {
 		t.Fatal("dump does not carry the relational schema")
 	}
 	third, fpThird := dumpFixture(t, []string{"rec-a", "rec-b", "rec-c"})
@@ -87,7 +87,7 @@ func TestCanonicalDumpRestorable(t *testing.T) {
 	if out != strconv.Itoa(wantTables) {
 		t.Fatalf("restored %s tables, dump declares %d", out, wantTables)
 	}
-	rows, err := sqlite(t, restored, "select count(*) from decision_content_count;")
+	rows, err := sqlite(t, restored, "select count(*) from invariant;")
 	if err != nil {
 		t.Fatal(err, rows)
 	}
@@ -119,7 +119,7 @@ func TestCanonicalDumpRejectsIndexDrift(t *testing.T) {
 		t.Skip("sqlite3 CLI not available")
 	}
 	db, _, _ := buildStore(t, []string{"rec-a"})
-	if _, err := sqlite(t, db, `create index "zz_idx" on "decision_content_count" ("count");`); err != nil {
+	if _, err := sqlite(t, db, `create index "zz_idx" on "invariant" ("constraint");`); err != nil {
 		t.Fatal(err)
 	}
 	res, err := spec.Compile(repoRoot(t))

@@ -131,6 +131,7 @@ ENUM INVENTORY-KIND
 END
 
 FIELD SOURCE-INVENTORY-RECORD
+  STORAGE record
   kind                                    -> string           required
   concrete-coordinate                     -> string           required
   parent-container-src                    -> string           required
@@ -217,6 +218,7 @@ ENUM FRONTIER-STATE
 END
 
 FIELD FRONTIER-RECORD
+  STORAGE record
   origin-invocation-cluster-pov-track           -> string                    required
   from-src-cmp                                  -> string                    required
   target-concrete-coordinate-or-resolution-rule -> string                    required
@@ -269,6 +271,7 @@ ENUM COVERAGE-DISPOSITION
 END
 
 FIELD SOURCE-COVERAGE-ROW
+  STORAGE record
   cov-id                         -> string               required
   src-version                    -> string               required
   persona-owner                  -> string               required
@@ -309,6 +312,7 @@ Tombstones preserve old IDs, incoming references, and snapshot lineage. Validato
 END
 
 FIELD SUPERSESSION-TOMBSTONE
+  STORAGE record
   record-version            -> int    required
   supersedes                -> string required
   superseded-by             -> string required

@@ -8,6 +8,7 @@ Normalized maps list metadata, each virtual unit, stable ID, type, primary POV, 
 END
 
 FIELD NORMALIZED-MAP-ROW
+  STORAGE record
   metadata           -> string      required
   virtual-unit       -> id          required
   stable-id          -> id          required

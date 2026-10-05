@@ -281,6 +281,20 @@ func (f *formatter) emitSection(sec Section, parts map[string]string) {
 
 func (f *formatter) emitField(field FieldDecl) {
 	f.line(0, "FIELD %s", field.ID)
+	if field.Storage != "" {
+		f.line(2, "STORAGE %s", field.Storage)
+	}
+	if field.Parent != "" {
+		f.line(2, "PARENT %s", field.Parent)
+	}
+	if len(field.Key) > 0 {
+		f.line(2, "KEY %s", strings.Join(field.Key, ", "))
+	}
+	refs := append([]FieldRef(nil), field.Refs...)
+	sort.SliceStable(refs, func(i, j int) bool { return refs[i].Column < refs[j].Column })
+	for _, ref := range refs {
+		f.line(2, "REF %s -> %s.%s", ref.Column, ref.TargetField, ref.TargetCol)
+	}
 	nameWidth, typeWidth := 0, 0
 	for _, spec := range field.Fields {
 		if len(spec.Name) > nameWidth {

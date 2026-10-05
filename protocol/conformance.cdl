@@ -277,6 +277,7 @@ GOAL
 END
 
 FIELD ARTIFACT-OWNERSHIP-ROW
+  STORAGE artifact
   artifact-record     -> string required
   semantic-purpose    -> string required
   authoritative-plane -> string required

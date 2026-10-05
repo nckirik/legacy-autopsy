@@ -11,8 +11,9 @@ import (
 	"github.com/nckirik/legacy-autopsy/cdl"
 )
 
-// SchemaVersion identifies the generated DDL shape.
-const SchemaVersion = 1
+// SchemaVersion identifies the generated DDL shape. Version 2 generates tables
+// from declared STORAGE classes instead of one table per FIELD block.
+const SchemaVersion = 2
 
 // Provenance identifies the generated schema.
 type Provenance struct {
@@ -20,14 +21,14 @@ type Provenance struct {
 	SourceFingerprint string
 }
 
-// PROVISIONAL: the current mapping is one table per declared FIELD block. FIELD
-// blocks also describe owned child shapes (ENTITY-COLUMN, USE-CASE-STEP), value
-// shapes, artifact payload schemas, and singletons, so table-per-FIELD is a
-// bootstrap heuristic, not the final relational contract. Relational semantics
-// (identity, ownership, keys, references) belong in the CDL/EIR declarations; see
-// docs/relational-mapping.md. Do not build certified behavior on this shape yet.
+// Tables are derived from declared STORAGE classes: record, registry, singleton,
+// and log blocks become tables; child, value, and artifact blocks stay embedded
+// in their owning payload until the runtime projects them. Declared KEY columns
+// become unique natural keys; log blocks get append-only triggers. Relational
+// projection of child tables follows the import/export work; see
+// docs/relational-mapping.md.
 //
-// Schema renders deterministic DDL: one table per declared FIELD block, columns
+// Schema renders deterministic DDL: one table per table-class FIELD block, columns
 // from the declared field specs, CHECK constraints for enum-typed columns, and
 // append-only triggers for the invocation log. Callers apply it atomically with
 // Apply, which wraps the statements in a transaction.
@@ -83,11 +84,27 @@ type tableSpec struct {
 	Field cdl.EIRField
 }
 
-// tableSpecs derives the deterministic table set from the EIR declarations.
+// tableStorageClasses are the declared storage classes that become tables.
+var tableStorageClasses = map[string]bool{
+	"record":    true,
+	"registry":  true,
+	"singleton": true,
+	"log":       true,
+}
+
+// tableSpecs derives the deterministic table set from the declared STORAGE
+// classes. Blocks without a recognized class fail closed.
 func tableSpecs(doc *cdl.EIRDoc) ([]tableSpec, error) {
 	seen := map[string]string{}
 	specs := make([]tableSpec, 0, len(doc.Declarations.Fields))
 	for _, field := range doc.Declarations.Fields {
+		switch field.Storage {
+		case "record", "registry", "singleton", "log":
+		case "child", "value", "artifact":
+			continue
+		default:
+			return nil, fmt.Errorf("store: field %q declares no usable STORAGE class (got %q)", field.ID, field.Storage)
+		}
 		name := ident(field.ID)
 		if name == "" {
 			return nil, fmt.Errorf("store: field %q does not yield a usable table name", field.ID)
@@ -136,9 +153,25 @@ func tableStatements(name string, field cdl.EIRField, enums map[string][]string)
 		}
 		b.WriteString(",\n")
 	}
-	b.WriteString("  UNIQUE (\"la_record_id\", \"la_record_version\")\n);")
+	constraints := []string{"UNIQUE (\"la_record_id\", \"la_record_version\")"}
+	if len(field.Key) > 0 {
+		quoted := make([]string, len(field.Key))
+		for i, key := range field.Key {
+			quoted[i] = fmt.Sprintf("%q", ident(key))
+		}
+		constraints = append(constraints, fmt.Sprintf("UNIQUE (%s)", strings.Join(quoted, ", ")))
+	}
+	for i, constraint := range constraints {
+		b.WriteString("  " + constraint)
+		if i == len(constraints)-1 {
+			b.WriteString("\n")
+		} else {
+			b.WriteString(",\n")
+		}
+	}
+	b.WriteString(");")
 	out := []Statement{{Type: "table", Name: name, SQL: b.String()}}
-	if strings.EqualFold(field.ID, "INVOCATION-LOG") {
+	if field.Storage == "log" {
 		out = append(out,
 			Statement{
 				Type: "trigger",

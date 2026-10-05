@@ -1,11 +1,11 @@
 {
   "ledger-format": 2,
-  "generator": "cdl/0.3.2",
+  "generator": "cdl/0.4.0",
   "generated-at": "2026-09-25T00:00:00Z",
   "sources": [
     {
       "path": "protocol/acquisition-trust.cdl",
-      "source-fingerprint": "sha256:ac128fb8c4584867bd0f36dadc641ab22bf240b8aa49efbc8e7b8f0d27a99512",
+      "source-fingerprint": "sha256:43b52a970d807bcbbcff55fe70f4c2f7c4015b8e48cb68826431c2cd52d0b40b",
       "ids": [
         {
           "id": "APPSMITH-INVENTORY-KIND",
@@ -158,7 +158,7 @@
     },
     {
       "path": "protocol/conformance.cdl",
-      "source-fingerprint": "sha256:b57cd21da3687caf83849019b3fee8f7161feba2ee33109432b5f655053ba39e",
+      "source-fingerprint": "sha256:03abce0fe095d0bf1c053524f91feb651a0cf822a7bde371157bf670c903f000",
       "ids": [
         {
           "id": "ARTIFACT-OWNERSHIP-ROW",
@@ -214,7 +214,7 @@
     },
     {
       "path": "protocol/coverage-and-exits.cdl",
-      "source-fingerprint": "sha256:b02f0b8ce6ad8d9a18d5bd7e6048c8549753e32871e77138791deb7bd020c1b2",
+      "source-fingerprint": "sha256:50197350f8c720c61bf6a06afc0216a32f1d89212c0642498984ec895a005b62",
       "ids": [
         {
           "id": "COVERAGE-STATUS",
@@ -315,7 +315,7 @@
     },
     {
       "path": "protocol/evidence-and-decisions.cdl",
-      "source-fingerprint": "sha256:7d8bdf5d62e0e5df8e3467d8d4aeca153507c035982b61a1ea5e9bb7fef4c087",
+      "source-fingerprint": "sha256:8539b1937996b50debbdaafdc5f7d379dfac878208c7a0649d0751879bf9b1de",
       "ids": [
         {
           "id": "BLOCK-EVIDENCE-SUMMARY",
@@ -442,7 +442,7 @@
     },
     {
       "path": "protocol/export-reconciliation.cdl",
-      "source-fingerprint": "sha256:9c7684f813fce879e7058231f1faf2403befdb64ccb9850d790928e4e053aa7e",
+      "source-fingerprint": "sha256:25e5c699e9bcfc4b8fe921a9cb10487a88acd4b24836074502655289ac76a6cc",
       "ids": [
         {
           "id": "13-EXPORT-RECONCILIATION",
@@ -558,7 +558,7 @@
     },
     {
       "path": "protocol/extraction-evolution.cdl",
-      "source-fingerprint": "sha256:6381c83f1099b72c337790c65131babdc5aa0cd04dd5943bf22eaf8c7abf32e0",
+      "source-fingerprint": "sha256:39926d2b4c7ba2d6f75efa39519f5494203355f83fd07e09807e8a7d7793f348",
       "ids": [
         {
           "id": "ATOMIC-COMPONENT",
@@ -921,7 +921,7 @@
     },
     {
       "path": "protocol/inventory-and-frontier.cdl",
-      "source-fingerprint": "sha256:bbad793bcceb1e9144f607c9446bae46884a9d74f62ffbe326b98a9b0b191fe3",
+      "source-fingerprint": "sha256:32c08074f85db3d903883091982e23ffbdf69a3538a8fa2aefac8a9c453c9475",
       "ids": [
         {
           "id": "COVERAGE-DISPOSITION",
@@ -1042,7 +1042,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "source-fingerprint": "sha256:beb5791a388964558cfea14b3a1a2b78e78d863e178ead664d93f12689117b81",
+      "source-fingerprint": "sha256:35b0aabf1bf9b04b0f5e85bd78c0608233f10352008569e0cd050ff65d9d0618",
       "ids": [
         {
           "id": "INVOCATION-HEADER",
@@ -1133,7 +1133,7 @@
     },
     {
       "path": "protocol/invocation-lifecycle.cdl",
-      "source-fingerprint": "sha256:623a5af65d45a3da6575a8c32583910384dc8f648160054fd7d94595b6ec813e",
+      "source-fingerprint": "sha256:9b93d80ff7d5ab0339e834d97a591ce4f8c3d5d0dd4282575e2fec51299508bb",
       "ids": [
         {
           "id": "INVOCATION-LOG",
@@ -1184,7 +1184,7 @@
     },
     {
       "path": "protocol/normalized-maps.cdl",
-      "source-fingerprint": "sha256:906424b15dd5b192725b274e8c5b3e187d6592605f205ce3ab36d2f64ba47ec2",
+      "source-fingerprint": "sha256:e19ec3a90506f1369c72d938752b1a7003d232a6f57611a9d2ed96d9ac31fc1f",
       "ids": [
         {
           "id": "NORMALIZED-MAP-ROW",
@@ -1210,7 +1210,7 @@
     },
     {
       "path": "protocol/packaging.cdl",
-      "source-fingerprint": "sha256:8f61865ea335adbce89b5a8b1429d382c8066012a5330ab9fb9ceef07e384b78",
+      "source-fingerprint": "sha256:58addd7bf5ea618b6f801c2ec70e8f6db8d8408cec78db30dfe9f57df2152fbe",
       "ids": [
         {
           "id": "APPROVED-DEC-BINDING",
@@ -1466,7 +1466,7 @@
     },
     {
       "path": "protocol/personas-povs.cdl",
-      "source-fingerprint": "sha256:beda61a1bf37861de2c5b30d3aff3380ec24ce9b1187c5d32d7e72de88705455",
+      "source-fingerprint": "sha256:5280c0b6be451f713564ff966d22a3781b9a72dc819b6a5fa2c7c45bfa840035",
       "ids": [
         {
           "id": "CAPABILITY-STATE-BLOCK",
@@ -1562,7 +1562,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "source-fingerprint": "sha256:d1a97daec1a28ae7a742f201bee734ec06968cb500b16c0e3c6f19fbdc910bfc",
+      "source-fingerprint": "sha256:27ec40230402ad71f0ef04b1428875a9631729748f9f1b500fedcf940301f771",
       "ids": [
         {
           "id": "DISCOVERY-BUFFER",
@@ -2220,7 +2220,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "source-fingerprint": "sha256:6d7cf39a4614dc65663ecd8003f18c45e7c89a0c2d099c011706a4ea9751c2c9",
+      "source-fingerprint": "sha256:1399748eb05b73f2c1285b4a897390f6ade227acf92054874b89bcbed1c1779e",
       "ids": [
         {
           "id": "ARCHITECTURE-MODULE",
@@ -2556,7 +2556,7 @@
     },
     {
       "path": "protocol/ticket-fsm.cdl",
-      "source-fingerprint": "sha256:260fbf7c4a3e2b59563c40abf906efbffe114f071c65b8fd54d0990833c22f6c",
+      "source-fingerprint": "sha256:50954fcca9fd6ba46afa92fc82f9e28868918dabf7fe66e5bb30a7a7f164498b",
       "ids": [
         {
           "id": "NO-MOCK-FALLBACK",
@@ -2662,7 +2662,7 @@
     },
     {
       "path": "protocol/traceability.cdl",
-      "source-fingerprint": "sha256:4b0519dd8f7286de3eee6a29ae5c07ab4fe5b7eae84682e2d9a3a23936b61de2",
+      "source-fingerprint": "sha256:a4d57a56f8f3b048bdf3069a86c7484a98d714724eb0e23fabacd72f977c211d",
       "ids": [
         {
           "id": "CLASSIFICATION",
@@ -2794,7 +2794,7 @@
     },
     {
       "path": "protocol/workspace-registries.cdl",
-      "source-fingerprint": "sha256:a315aca6f4d3b838cd6916e989b1ebc9a3e1242727af61512f5a5ec0ffbb023e",
+      "source-fingerprint": "sha256:1a573564616d1a2f790f65263e9ee23b22daff6d498ecfe662e04e6856c9a2f1",
       "ids": [
         {
           "id": "AUTH-MECHANISM",

@@ -82,6 +82,7 @@ A bound Discovery invocation MUST append this record in the same transaction tha
 END
 
 FIELD PERSONA-REGISTRY
+  STORAGE registry
   persona             -> string required
   prefix              -> string required
   persona-slug        -> string required
@@ -93,6 +94,7 @@ FIELD PERSONA-REGISTRY
 END
 
 FIELD REQUIRED-TRAVERSAL-MATRIX
+  STORAGE value
   persona-owner  -> string required
   concrete-entry -> string required
   track          -> string required
@@ -106,6 +108,7 @@ FIELD REQUIRED-TRAVERSAL-MATRIX
 END
 
 FIELD PREFLIGHT-HEADER
+  STORAGE singleton
   system-namespace                 -> string                               required
   target-repository-evidence-roots -> string                               required
   primary-technology-stack         -> string                               required
@@ -117,6 +120,7 @@ FIELD PREFLIGHT-HEADER
 END
 
 FIELD ENTRY-CLUSTER
+  STORAGE registry
   concrete-entry-coordinates -> set<string>                            required
   canonical-owner-persona    -> string                                 required
   primary-pov                -> REGISTRY-ENTRYCLUSTER-PRIMARY-POV      required
@@ -130,6 +134,7 @@ FIELD ENTRY-CLUSTER
 END
 
 FIELD UNMAPPED-DISCOVERY
+  STORAGE record
   coordinate-src           -> string                                      required
   discovered-by-invocation -> string                                      required
   suggested-pov-persona    -> string                                      required
@@ -137,6 +142,7 @@ FIELD UNMAPPED-DISCOVERY
 END
 
 FIELD DISCOVERY-BUFFER
+  STORAGE value
   concrete-coordinate-proposed-src-fingerprint     -> string                                 required
   discovering-invocation-persona-cluster-track-pov -> string                                 required
   discovery-method-boundary-frt                    -> string                                 required
