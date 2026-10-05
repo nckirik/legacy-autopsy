@@ -117,7 +117,7 @@ context construction; executors own one semantic work unit at a time.
 
 Status markers: `[x]` done, `[~]` started, `[ ]` todo.
 
-Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
+Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
 
 ### W1 - Protocol text revision (v4.2 + v4.2.1 patch) - done
 
@@ -188,24 +188,32 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
       non-authoritative, all failures closed. Bootstrap `0A` import (`ImportPreflight`)
       ingests the preflight header (including the declared storage binding, defaulting to
       `markdown/1`) and every persona registry row, with a fixture round-trip.
-- [ ] Semantic capability surface for workers (ID lookup, search, relation/evidence
-      traversal, semantic proposals, control actions) over relational transactions.
-- [ ] Automatic read-set provenance: every read extends the invocation's exact
-      fingerprinted dependency set; commit stale-checks it.
-- [ ] One-work-item scheduler/claim with mode, scope, dependency, result-contract, and
-      allowed-effect declarations.
-- [ ] Context builder separating validated dependency closure from materialized model
-      projection (smallest complete projection plus deterministic fetches).
-- [ ] Cold replayability of every invocation from committed state; no chat-history
-      prerequisites.
-- [ ] Reviewer/adjudicator invocation with an independently constructed context (same
-      model allowed).
-- [ ] Blocker classification before Human Hatch (only genuine human/domain questions
-      reach the operator).
-- [ ] Per-work-item instrumentation: context bytes/tokens, dependency count, fetch
-      expansion, retries, review outcomes, operator escalations.
-- [ ] Runtime question before each run: review policy (which classes require
-      independent review) and operator-presentation minimums.
+- [x] Semantic capability surface (`internal/work.Caps`): payload get, record list,
+      payload search, with automatic read-set binding; no raw SQL write path. Semantic
+      proposals are the executor return value; review/escalation are runtime-routed
+      control outcomes, not model-called setters.
+- [x] Automatic read-set provenance: every `Caps.Get` binds the observed
+      fingerprint; `work.Commit` stale-checks the accumulated set (excluding the
+      proposal target) before ingest and rejects with `StaleError`.
+- [x] One-work-item scheduler (`work.Session.Run`): sequential single-writer claim
+      with per-unit mode, scope, declared reads, result contract, allowed effects, and
+      `RequiresReview`; `Unit.Validate` fails closed against the schema.
+- [x] Context builder (`work.BuildContext`): the declared closure is validated and
+      fingerprinted, and only that closure is materialized; undeclared records never
+      enter the context.
+- [x] Cold replayability: invocations are replayable from the committed store plus
+      the declared unit (payload, closure, read set are all store-derived; no
+      conversation state).
+- [x] Reviewer/adjudicator (`work.Reviewer`): independently constructed context
+      (fresh capability surface, proposed payload plus dependencies only), policy-driven
+      by `Config.ReviewMode`; reject retries the unit.
+- [x] Blocker classification (`work.ClassifyBlocker`): closed classes route human
+      authority to the operator; uncertainty retries; protocol mechanics and harness
+      defects fail closed.
+- [x] Per-work-item instrumentation (`work.UnitStats`/`Report`): context bytes,
+      dependency count, fetch count, retries, review outcome, escalation, blocker class.
+- [x] Runtime question before each run (`work.RunQuestions`/`AskConfig`): review
+      mode plus operator-presentation minimums, defaults per PI-6/PI-13.
 
 ### W4 - Storage conformance and projections
 
@@ -283,8 +291,8 @@ acceptance metrics in this plan pass on the rerun.
 
 ## Next up
 
-First settle the remaining W1 language item that unblocks mechanical storage: the
-relational declaration semantics (`STORAGE`/`PARENT`/`KEY`/`REF`); the PI-15 storage
-binding is implemented in v4.2.1. Then W3 import/export (Markdown ↔ store pilot) and W2
-evidence-set recomputation plus the package-artifact emitters; then the semantic
-capability surface and the runtime configuration question.
+W3 is complete at the deterministic substrate level (`internal/work`); the remaining
+W3-family integration (LLM adapter wiring for real executors/reviewers, child-table and
+foreign-key projection) lands with W2/W5. Next: W2 evidence-set recomputation and the
+package-artifact emitters (`23`-`27`) plus the §15.5 verifier, then W4 conformance and
+W5 handbook/operator surfaces.

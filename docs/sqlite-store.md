@@ -197,6 +197,17 @@ put|get|list|render|inspect`, `store.ImportPreflight` for the `0A` bootstrap, an
 Migration/test code may have additional table-level helpers behind internal interfaces,
 but normal model execution goes through protocol-aware capabilities.
 
+## Semantic work substrate (implemented)
+
+`internal/work` implements the deterministic side of bounded semantic execution:
+`Unit` (mode, scope, declared reads, result contract, allowed effects, review flag),
+`Caps` (payload get, list, search with automatic read-set binding), `BuildContext`
+(declared closure only), `Commit` (result-contract, effect, and stale checks before
+ingest), `Reviewer` with an independently built context, blocker classification, a
+sequential single-writer `Session`, per-unit instrumentation, and the pre-run
+configuration questions. Real LLM executors and reviewers plug into the `Executor`
+and `Reviewer` interfaces; the mechanics above are runtime-owned.
+
 ## Human and machine projections
 
 The canonical SQLite store is not intended as a human interface. The runtime may derive

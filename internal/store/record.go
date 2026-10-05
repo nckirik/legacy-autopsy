@@ -63,6 +63,47 @@ func List(dbPath string, doc *cdl.EIRDoc, fieldID string) ([]string, error) {
 	return ids, nil
 }
 
+// FingerprintOf returns the stored semantic fingerprint of one record. It is the
+// value read-set provenance compares against at commit time.
+func FingerprintOf(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string) (string, error) {
+	if _, err := tableField(doc, fieldID); err != nil {
+		return "", err
+	}
+	rows, err := queryRows(dbPath, fmt.Sprintf("select la_semantic_fingerprint from %q where la_record_id = %s;", ident(fieldID), literal(recordID)))
+	if err != nil {
+		return "", err
+	}
+	if len(rows) == 0 {
+		return "", fmt.Errorf("store: %s %s not found", fieldID, recordID)
+	}
+	fingerprint, ok := rows[0]["la_semantic_fingerprint"].(string)
+	if !ok {
+		return "", fmt.Errorf("store: %s %s has no fingerprint", fieldID, recordID)
+	}
+	return fingerprint, nil
+}
+
+// Search returns the sorted record IDs of a table whose canonical payload
+// contains the exact needle.
+func Search(dbPath string, doc *cdl.EIRDoc, fieldID, needle string) ([]string, error) {
+	if _, err := tableField(doc, fieldID); err != nil {
+		return nil, err
+	}
+	rows, err := queryRows(dbPath, fmt.Sprintf("select la_record_id from %q where instr(la_canonical_payload, %s) > 0 order by la_record_id;", ident(fieldID), literal(needle)))
+	if err != nil {
+		return nil, err
+	}
+	ids := make([]string, 0, len(rows))
+	for _, row := range rows {
+		id, ok := row["la_record_id"].(string)
+		if !ok {
+			return nil, fmt.Errorf("store: %s has a non-text record ID", fieldID)
+		}
+		ids = append(ids, id)
+	}
+	return ids, nil
+}
+
 // Render returns a clean human-readable view of every record in a table: the
 // canonical payloads, sorted by record ID, with no mechanical metadata. It is a
 // display projection, not an operational record.
