@@ -574,6 +574,15 @@ Exit E scope versus test doubles for external dependencies, handbook substance
 criteria, and readability confirmations that cannot be relay-only. They are evaluated after the standalone run; the CDL sources are not edited
 while a run is in progress.
 
+## Post-run hardening plan
+
+The first full standalone run (small project, 2026-09-28/10-05) produced PI-1..12 and
+concrete failure evidence (handbook shells, relayed readability, decorative
+fingerprints, operator-surface friction). The sequenced fix plan is in
+[hardening-plan.md](hardening-plan.md), covering the v4.2 protocol revision, the
+certification/verification engine, the SQLite storage binding, handbook/human surfaces,
+and the acceptance rerun.
+
 ## Current next milestone
 
 S3, S4 (crown), and S5 (editor tooling) are complete. Remaining known work, in order:
