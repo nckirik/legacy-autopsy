@@ -401,9 +401,8 @@ agents never hand-edit record files and semantic workers never need to serialize
   not the normal executor contract.
 - **Human surfaces:** `la render` produces Markdown/report views; operator questions and
   reports are plain-language first (PI-6).
-- **Versioning:** the binding becomes canonical at a minor version (proposed v4.2 or v4.5);
-  the current 4.2 edition has its own oracle snapshot, 4.1.3 is historical, and the binding needs
-  its own conformance corpus before any claim.
+- **Versioning:** the storage-binding abstraction landed as the v4.2.1 patch; the canonical
+  flip to a non-Markdown binding still needs its own conformance corpus before any claim.
 
 ### M4 - Local autopsy runtime foundation - harness (depends S1/S3)
 
@@ -596,8 +595,9 @@ fail-inclusive boundaries, tooling location, invocation-ID grammar, the single v
 literal, static-only eligibility through both gates, Exit E scope and test doubles,
 Human Hatch blocker classification, operator presentation, handbook substance and
 readability rules. The revision changed `cdl.ProtocolVersion` to 4.2 and snapshotted
-`protocol/legacy/protocol-4.2.md` as the current-edition oracle (4.1.3 kept as
-history). W2/W3 are next: the native runtime, certification engine, SQLite store, and
+`protocol/legacy/protocol-4.2.md` as the then-current oracle (4.1.3 kept as history);
+the v4.2.1 patch (PI-15, declared storage bindings) snapshotted
+`protocol/legacy/protocol-4.2.1.md` as the current-edition oracle. W2/W3 are next: the native runtime, certification engine, SQLite store, and
 bounded semantic execution.
 
 ## W2 first increment - EIR record validation

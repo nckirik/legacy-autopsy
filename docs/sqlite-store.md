@@ -48,10 +48,10 @@
 - **Raw SQL/table helpers are implementation/admin tools:** maintainers, migration code,
   validators, and tests may use lower-level SQLite operations. They are not the normal
   semantic-executor contract and must not become a way to bypass protocol transitions.
-- **Versioning:** the binding becomes canonical at a minor protocol version (candidate
-  v4.2 or v4.5), not a major bump on its own. The current edition is 4.2 with its
-  frozen oracle; 4.1.3 remains as historical reference with the 24 fixtures; conversion must round-trip and the binding needs
-  its own conformance corpus before any conformance claim.
+- **Versioning:** the binding abstraction is now normative (v4.2.1): a workspace declares
+  exactly one canonical storage binding. The canonical flip to `sqlite/1` still requires
+  round-trip proof and its own conformance corpus before any conformance claim. 4.1.3 and
+  4.2 remain as historical oracles with the frozen fixtures.
 
 ## Semantic executor capability surface
 
@@ -208,14 +208,15 @@ fix. The cleaner abstraction:
   Markdown files are human/audit exports and conflicts resolve to the declared binding;
 - package verification uses the declared binding's serialization rules.
 
-This is a normative revision (see PI-15 in [protocol-issues.md](protocol-issues.md)),
-not a harness detail. Until it lands, the SQLite store is a development artifact and
-the Markdown edition remains the only declared binding.
+This is implemented as PI-15 in the v4.2.1 patch (see
+[protocol-issues.md](protocol-issues.md)). Harness enforcement follows with the store
+work; until the relational declaration semantics land, the SQLite store is a
+development artifact, and `markdown/1` remains the default declared binding.
 
 ## Owner sign-off needed
 
-1. Minor-version number and timing for the storage-binding revision and the
-   canonical-storage flip (current candidate: v4.3).
+1. Timing and scope review for the canonical flip to `sqlite/1` (the binding
+   abstraction itself is implemented in v4.2.1).
 2. Whether Markdown remains the official human-review export or another rendered view
    becomes primary. Either way, Markdown stops being the working database once a
    non-Markdown binding is declared.

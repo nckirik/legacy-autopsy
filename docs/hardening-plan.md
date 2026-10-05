@@ -119,9 +119,9 @@ Status markers: `[x]` done, `[~]` started, `[ ]` todo.
 
 Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
 
-### W1 - Protocol text revision (v4.2, minor) - done
+### W1 - Protocol text revision (v4.2 + v4.2.1 patch) - done
 
-- [x] PI-1..PI-14 accepted and recorded with decisions.
+- [x] PI-1..PI-15 accepted and recorded with decisions.
 - [x] Clarifications batch 1: dormant/commented-out units, bootstrap read set,
       cold-read scope, closure vs prompt materialization, invocation-ID grammar,
       fail-inclusive boundary, tooling location, static-only eligibility, Human Hatch
@@ -130,16 +130,18 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
       field and relay ban, static-only Exit E eligibility.
 - [x] PI-4 single generated version literal: one `{{PROTOCOL-VERSION}}` render token
       substituted from `ProtocolVersion` at EIR build; renderer, 0A template, §8.1
-      example, and footer share the one `4.2` form (no `v` prefix, no duplicate footer).
-- [x] Current-edition oracle snapshot `protocol/legacy/protocol-4.2.md` with freshness
-      test; 4.1.3 kept as history.
+      example, and footer share one edition literal (no `v` prefix, no duplicate footer).
+- [x] Current-edition oracle snapshot `protocol/legacy/protocol-4.2.1.md` with freshness
+      test; `protocol-4.2.md` and 4.1.3 kept as history.
 - [x] Revision-marker guard test keeps accepted clarifications in the generated edition.
 - [x] Routing/skill manifest aligned to 4.2; parity report regenerated.
 - [ ] Harness-side enforcement of the PI-11 substance lint and PI-12 CNF schema
       (lands with W2/W5).
-- [ ] Storage-binding abstraction (declared canonical binding, per-binding canonical
-      serialization/fingerprint/package rules): proposed PI-15, candidate v4.3; the
-      SQLite store stays a development artifact until then.
+- [x] Storage-binding abstraction (declared canonical binding, per-binding canonical
+      serialization/fingerprint/package rules) per PI-15, implemented in the v4.2.1
+      patch: §1.5, §3.1 `0A` metadata, §4.1.2, §15.3, §17.1-17.2; harness enforcement
+      follows with the store work. The SQLite store stays a development artifact until
+      the relational declaration semantics land.
 - [ ] Relational declaration semantics in CDL/EIR (`STORAGE`, `PARENT`, `KEY`, `REF`;
       language `cdl/0.4`, EIR format 4) per [relational-mapping.md](relational-mapping.md);
       table-per-`FIELD` remains explicitly provisional until this lands.
@@ -221,7 +223,7 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
 
 ### W6 - Acceptance rerun
 
-- [ ] Rerun the same small project on v4.2 through the bounded semantic-work harness.
+- [ ] Rerun the same small project on v4.2.1 through the bounded semantic-work harness.
 - [ ] Acceptance criteria: zero illegal tokens by construction; every fingerprint
       recomputed; handbook meets the substance floor and is actually read; decision batch
       reviewable in the target time; static-only run reaches both gates with disclosed
@@ -244,8 +246,8 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
 
 ## Decisions
 
-1. [x] Revision mechanics: v4.2, snapshot each accepted revision as the current oracle
-       (old oracles kept).
+1. [x] Revision mechanics: v4.2 then the v4.2.1 patch, snapshot each accepted revision
+       as the current oracle (old oracles kept).
 2. [x] Handbook substance floor: required sections plus at least eight claim-backed
        assertions per chapter, reason-bearing `N/A` allowed.
 3. [x] Invocation-ID grammar: `ITERATION-PERSONA-POV-SEQUENCE`.
@@ -254,10 +256,10 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
 5. [x] `set<string>` canonical form: ascending unique; duplicates rejected, order
        runtime-owned. `list<string>` preserves order; structured collections use owned
        child rows, not list columns.
-6. [~] Canonical state versus physical form: declare a canonical storage binding rather
-   than mandating SQLite or fixing Markdown (`markdown/1` stays the default). The
-   normative revision is PI-15; the store remains provisional until PI-15 and the
-   relational declaration semantics land (W1).
+6. [x] Canonical state versus physical form: PI-15 implemented in v4.2.1; declared
+       canonical storage binding (`markdown/1` stays the default), bindings agree on
+       identity/payload digests, unsupported bindings fail closed. The store remains
+       provisional until the relational declaration semantics land (W1).
 
 ## Temporary usage notice
 
@@ -267,8 +269,8 @@ acceptance metrics in this plan pass on the rerun.
 
 ## Next up
 
-First settle the W1 language/normative items that unblock mechanical storage: the
-relational declaration semantics (`STORAGE`/`PARENT`/`KEY`/`REF`) and the PI-15 storage
-binding. Then W3 import/export (Markdown ↔ store pilot, frozen until the binding
-question is answered) and W2 evidence-set recomputation plus the package-artifact
-emitters; then the semantic capability surface and the runtime configuration question.
+First settle the remaining W1 language item that unblocks mechanical storage: the
+relational declaration semantics (`STORAGE`/`PARENT`/`KEY`/`REF`); the PI-15 storage
+binding is implemented in v4.2.1. Then W3 import/export (Markdown ↔ store pilot) and W2
+evidence-set recomputation plus the package-artifact emitters; then the semantic
+capability surface and the runtime configuration question.

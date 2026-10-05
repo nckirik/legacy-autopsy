@@ -4,13 +4,13 @@ Legacy Autopsy is a **local-first reference/tooling implementation** for evidenc
 
 The project is built around the CDL protocol sources under [`protocol/`](protocol/) and their generated standalone edition [`protocol.md`](protocol.md), which can be used directly with any capable coding agent. Legacy Autopsy adds orchestration, deterministic validation, persistent workspace management, and - over time - an interactive workbench.
 
-> **Project status - Spec track v4.2, harness track W1 done**
+> **Project status - Spec track v4.2.1, harness track W1 done**
 >
 > The Spec track completed the section migration, crown, and the first revision:
-> [`protocol.md`](protocol.md) is the generated **v4.2** edition of the CDL sources, with
-> [`protocol/legacy/protocol-4.2.md`](protocol/legacy/protocol-4.2.md) as the
-> current-edition oracle and [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md)
-> kept as history. Content completeness is enforced by
+> [`protocol.md`](protocol.md) is the generated **v4.2.1** edition of the CDL sources, with
+> [`protocol/legacy/protocol-4.2.1.md`](protocol/legacy/protocol-4.2.1.md) as the
+> current-edition oracle; [`protocol/legacy/protocol-4.2.md`](protocol/legacy/protocol-4.2.md)
+> and [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md) are kept as history. Content completeness is enforced by
 > `TestGeneratedProtocolCoversOracle` and the revision-marker test.
 >
 > A first full standalone run (a small project, 2026-09-28/10-05) exercised the
@@ -26,12 +26,12 @@ The project is built around the CDL protocol sources under [`protocol/`](protoco
 > The harness track still implements only M0 foundations: protocol/skill routing, an
 > empty `.extracted/` workspace skeleton, foundational IDs, bounded context packets,
 > and bootstrap fixtures. This repository does **not** execute semantic deconstruction
-> modes, prove Exit A or Exit E for you, or claim Protocol v4.2 conformance.
+> modes, prove Exit A or Exit E for you, or claim Protocol v4.2.1 conformance.
 
 <!-- TEMP: remove this block once W2/W3 and W6 acceptance metrics pass -->
 
 > [!WARNING]
-> **Temporary: not for real autopsies yet.** The v4.2 normative text is in place, but
+> **Temporary: not for real autopsies yet.** The v4.2.1 normative text is in place, but
 > the execution/certification engine, canonical SQLite store, bounded semantic
 > execution, and handbook substance/readability controls from the
 > [hardening plan](docs/hardening-plan.md) are not implemented. Running it on a real
@@ -43,7 +43,7 @@ The project is built around the CDL protocol sources under [`protocol/`](protoco
 
 > **Normative authority**
 >
-> The CDL sources under `protocol/` are the sole normative authority; `protocol.md` is their generated edition. Revision oracles are snapshotted per accepted revision: the current-edition oracle is `protocol/legacy/protocol-4.2.md`, and `protocol/legacy/protocol-4.1.3.md` is retained as history. Legacy Autopsy is one non-authoritative implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, fixtures, or validators. If any implementation or projection conflicts with the normative CDL sources, the protocol wins.
+> The CDL sources under `protocol/` are the sole normative authority; `protocol.md` is their generated edition. Revision oracles are snapshotted per accepted revision: the current-edition oracle is `protocol/legacy/protocol-4.2.1.md`, and `protocol/legacy/protocol-4.2.md` plus `protocol/legacy/protocol-4.1.3.md` are retained as history. Legacy Autopsy is one non-authoritative implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, fixtures, or validators. If any implementation or projection conflicts with the normative CDL sources, the protocol wins.
 
 ## How to use Legacy Autopsy
 
@@ -59,7 +59,7 @@ All three paths use the same standalone protocol. The skill and UI add reliabili
 
 > [!IMPORTANT]
 > This is a manual, agent-driven protocol run - not Legacy Autopsy-managed execution or
-> proof of Protocol v4 conformance. See the temporary warning above: the v4.2 edition
+> proof of Protocol v4 conformance. See the temporary warning above: the v4.2.1 edition
 > is not yet recommended for real autopsies.
 
 Work on a clean branch in an approved, non-production copy of the legacy repository. Copy the generated standalone edition into that repository's root:
@@ -194,12 +194,12 @@ Legacy Autopsy is not a generic code summarizer, automatic rewrite tool, moderni
 
 - [`protocol/`](protocol/): normative CDL sources and assembly.
 - [`protocol.md`](protocol.md): generated standalone specification edition.
-- [`protocol/legacy/protocol-4.2.md`](protocol/legacy/protocol-4.2.md): current-edition oracle snapshot.
+- [`protocol/legacy/protocol-4.2.1.md`](protocol/legacy/protocol-4.2.1.md): current-edition oracle snapshot (`protocol-4.2.md` is the previous snapshot).
 - [`protocol/legacy/protocol-4.1.3.md`](protocol/legacy/protocol-4.1.3.md): historical bootstrap parity oracle.
 - [`analysis/parity-report.md`](analysis/parity-report.md): accepted S4 crown parity report.
 - [Minimal example](examples/minimal/README.md): shortest implemented tooling flow.
 - [Workspace guide](docs/workspace.md): the four planes and initialization boundary.
-- [Roadmap](docs/roadmap.md): Spec track S0-S4 + v4.2 revision, harness track M0-M16.
+- [Roadmap](docs/roadmap.md): Spec track S0-S4 + the v4.2/v4.2.1 revisions, harness track M0-M16.
 
 **Spec track (design contracts)**
 
