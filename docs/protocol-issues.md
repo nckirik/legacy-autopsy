@@ -306,7 +306,6 @@ oracle snapshot is an open process decision.
 - **Impact:** prevents certifying unread handbooks; other confirmation types keep their
   existing relay policy.
 
-
 ## PI-13: Human Hatch conflates human authority with executor uncertainty
 
 - **Status:** proposed

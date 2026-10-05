@@ -576,7 +576,8 @@ optional runtime/sandbox access with an explicit static-only disposal path, cold
 scope between `0G` and `0H`, harness-tooling location and package membership, and
 fail-inclusive boundaries between absent authority and recoverable artifact defects,
 Exit E scope versus test doubles for external dependencies, handbook substance
-criteria, and readability confirmations that cannot be relay-only. They are evaluated after the standalone run; the CDL sources are not edited
+criteria, readability confirmations that cannot be relay-only, Human Hatch scope versus
+executor/harness uncertainty, and validated closure versus prompt materialization. They are evaluated after the standalone run; the CDL sources are not edited
 while a run is in progress.
 
 ## Post-run hardening plan
