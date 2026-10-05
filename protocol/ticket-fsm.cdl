@@ -141,6 +141,22 @@ This subtype does not require a fake static investigation or probe. It requires:
 ### Human Hatch Action: Confirmation
 
 This subtype does not require a static investigation or probe. It requires: a passing Exit E Candidate Report; candidate payload manifest; exact typed record IDs including `PRF`/`HBK` where applicable; exact `SEMANTIC-RECORD-VERSION` and `SEMANTIC-CONTENT-FINGERPRINT` bindings; required approved `DECISION-CONTENT-VERSION`/`DECISION-CONTENT-FINGERPRINT` bindings and matching approval envelopes; review scope and limitations; reviewer identity and authority basis. For a PRF it MUST validate the complete §8.4 dependency closure; for other semantic records it MUST validate the complete applicable `DERIVED-FROM` closure. It may create `CNF` records and attach certification envelopes only; semantic payload edits are forbidden.
+
+Blocker classification: before any Human Hatch escalation, classify the blocker as
+human authority or domain fact, unavailable external fact, unresolved source semantics,
+protocol mechanics, implementation or harness defect, or executor uncertainty. Only
+genuine human authority or domain facts, and external facts this protocol assigns to
+humans, reach the operator. Protocol mechanics are resolved from this specification and
+the runtime; harness defects block the implementation; executor uncertainty is retried
+or independently reviewed first. A recommended option carries no authority, and human
+approval cannot legalize a transition that violates protocol mechanics.
+
+Operator presentation: operator-facing questions and reports MUST lead with plain
+language - what is needed, why it matters, the options and their consequences, the
+authority required, and what happens next - with identifiers secondary. The exact
+review policy (which semantic result classes require independent review before human
+presentation) and the presentation minimums are selected with the operator as a runtime
+question before a run starts, never assumed.
 END
 
 RULE ticket-escalation-prerequisites
@@ -255,6 +271,14 @@ When static analysis is insufficient and a sandbox is unavailable:
 - use the Human Hatch path and preserve the coverage gap/partial state.
 
 A test double used to exercise already-proven local logic MAY be a testing mechanism but MUST NOT be treated as observation of an opaque dependency.
+
+Static-only runs are eligible through both gates: no mode, Exit A condition, or Exit E
+condition requires execution, sandbox, probe, live database, or deployed-state access.
+Runtime-only aspects are disposed as exact excluded units with disclosed residual risk;
+test doubles may scaffold equivalence tests and handbook walkthroughs but are never
+observations of an opaque dependency; confirmations and approvals remain human acts.
+Exit E inherits the disclosed exclusion scope and does not re-require runtime-only
+units.
 END
 
 RULE no-mock-rules

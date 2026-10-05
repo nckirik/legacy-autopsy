@@ -15,6 +15,14 @@ Protocol work has three authority classes:
 3. **Human-authorized decisions:** explicit exclusions, confirmations, policy or business intent, irreducible domain meaning, and acceptance of external facts only where this protocol permits it. A model inference or runtime computation MUST NOT substitute for the required human identity, authority basis, review scope, and exact input bindings.
 
 Every normative predicate that affects conformance, mutation authorization, coverage, candidacy, or a gate MUST be one of: a **deterministic predicate** computed by the conforming runtime; a **semantic predicate** classified by an executor or authorized human with the provenance above; or an **unresolved semantic predicate** recorded as `Unknown` with its affected scope and required ticket/question. Unless a section defines a stricter result, `Unknown` is fail-inclusive: the item remains applicable/in scope for closure, cannot justify omission or `Not-Applicable`, and blocks any success that depends on the predicate being false. Natural-language guidance that does not affect those outcomes need not create a protocol record.
+
+Fail-inclusive Unknown applies at absent authority: undelivered schema or DDL, remote or
+production data, missing credentials, and unreachable external systems. It does not
+apply to defects recoverable from delivered artifacts - for example a missing
+CREATE SCHEMA or role, or a foreign table whose columns are delivered. Reconstruct such
+objects only from delivered definitions, label synthetic data as synthetic, and keep the
+external or remote aspect as an explicit residual or exclusion. Authoring schema,
+columns, or values that were never delivered remains forbidden.
 END
 
 ENUM NORMATIVE-KEYWORD
@@ -458,6 +466,12 @@ TITLE "Non-authoritative sidecars"
 
 GOAL
 JSON, SQLite, graph, search, code-generation, or validator sidecars MAY be generated for automation. They MUST carry source fingerprints, schema version, generation time, and a prominent `NON-AUTHORITATIVE-DERIVATIVE` marker. Conflicts are resolved in favor of the canonical Markdown records and original evidence, in that order for semantics.
+
+Implementation tooling - runtimes, validators, helper scripts, and caches - is
+non-authoritative, lives outside .extracted/ in operator-local scratch, is never a
+package member or certification input, and is never required by this protocol.
+.extracted/ contains protocol records only, and the Markdown record path remains
+executable with ordinary local tools.
 END
 
 RULE sidecar-derivatives

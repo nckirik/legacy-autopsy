@@ -35,6 +35,11 @@ Loaded Checkpoint Fingerprint: [...]
 ```
 
 The executor MUST declare its intended semantic actions against this header before writing. The conforming runtime MUST independently validate the declared actions, exact read/write scope, loaded fingerprints, checkpoint freshness, and mode rights before commit; an executor's self-assessment cannot authorize mutation.
+
+Invocation IDs use the canonical form ITERATION-PERSONA-POV-SEQUENCE: the iteration
+token, the persona prefix or NONE for unbound modes, the target POV or NONE, and a
+zero-padded per-iteration/persona/POV sequence that is never reused. The registry in
+20-TRACEABILITY.md verifies global uniqueness and non-reuse across iterations.
 END
 
 FIELD INVOCATION-HEADER
@@ -205,6 +210,23 @@ Strict single-scope modes additionally load the active POV file, at most one act
 Acquisition loads `0A`, `0C`, `0G/0H`, supplied approved projections, lineage/sanitization reports, existing normalized maps, source inventory, and export reconciliation.
 
 Sequential Reconciliation loads all relevant canonical `personas/_shared/` files, persona-local shared-staging/promotion-request/question/unmapped-discovery buffers, synthesis-gap buffers, and destination records. Profile Synchronization MUST load `0A`, the target `PRF` profile, and every record directly referenced by or applicable to any profile field, then recursively load the complete transitive `DERIVED-FROM` closure of those records. This closure explicitly includes every applicable `AUTH`, `CLM`, `SRC`, `CMP`, `ER`, `REL`, `BR`, `UC`, `IF`, `CFG`, `SCHED`, `DR`, `SM`, `STATE`, `DEP`, `MOD`, `CAP`, `DEC`, `SEC`, `NFR`, and `FLT` record, plus relevant source inventory, coverage, traceability, contradiction, decision-approval, and snapshot records needed to prove currency. Every loaded dependency MUST have its exact record ID, version where applicable, semantic/content fingerprint, source snapshot, and reciprocal binding verified. Profile Synchronization MUST reject mutation if any directly applicable record or any transitive dependency is absent, unresolved, stale, version-mismatched, fingerprint-mismatched, or read from a mixed snapshot. Confirmation validation of a PRF MUST load and validate this identical closure against the candidate-bound versions and fingerprints before attaching or accepting its envelope. Partial/Final Synthesis loads required closed or bounded forensic and assurance inputs plus existing synthesis blocks. Final Synthesis MUST load all active personas, all POV/ledger files, all relevant claims, reconciliation, coverage, contradictions, and gate inputs.
+
+Bootstrap: the first Preflight invocation has no 0A or 0D-0H records to read; its
+minimum read set is the protocol constants and statuses, the operator-provided scope and
+snapshot inputs, and the target repository itself. The full base read set applies from
+the next invocation onward, once those records exist.
+
+Cold read: an invocation loads a current fingerprinted 0H plus the 0G range it cites;
+the full 0G is required only when 0H is absent, stale, or fails its check, and then the
+tail from the last validated checkpoint suffices.
+
+Closure and materialization: the mandatory read set is the authoritative dependency
+closure that the conforming runtime MUST validate, fingerprint, and make addressable
+before mutation. A conforming runtime MAY materialize only the smallest task-complete
+projection of that closure into a semantic executor context, provided omitted
+dependencies remain deterministically retrievable and their identities and fingerprints
+are bound to the invocation. No invocation depends on conversation history, prior model
+reasoning, or compaction summaries.
 END
 
 RULE applicability-provenance

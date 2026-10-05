@@ -22,7 +22,7 @@
     },
     {
       "path": "protocol/foundations.cdl",
-      "fingerprint": "sha256:eecc53a95fe0796c938de88f6e8dde78bb9b85a86bde996bee381f263beabb6c",
+      "fingerprint": "sha256:99955fcfd782c6b9fe086aab5db6ba9b4124ca715d43185f84eaa5d7398fb6a7",
       "sections": [
         "0.1",
         "0.2",
@@ -38,7 +38,7 @@
     },
     {
       "path": "protocol/personas-povs.cdl",
-      "fingerprint": "sha256:72eb43e746a0f44a4157e75efdbe3d79248c9b8f1ae1015bf42344a11297d11f",
+      "fingerprint": "sha256:0589cce227972317bd7f63f271001125d4743fe7997c550ce596e7878f64c360",
       "sections": [
         "2.1",
         "2.2",
@@ -124,7 +124,7 @@
     },
     {
       "path": "protocol/extraction-evolution.cdl",
-      "fingerprint": "sha256:4b29bb676c443cc17763508662e9f2b4188e44912a4fc1a7bf430905c44857ed",
+      "fingerprint": "sha256:355235731afd4f07809f5133d2cbd3c1c7c32aaeaf82917f341957d04d0a21f2",
       "sections": [
         "6.1",
         "6.2",
@@ -171,7 +171,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "fingerprint": "sha256:5f8bb00320469e5d87519e9691c90cfcb055c9bfb7c5bd939cf319e367682061",
+      "fingerprint": "sha256:ddfb55666012a7c74809a66d974f76e6a46570876ce7faec5537d592595c100b",
       "sections": [
         "8.1",
         "8.2",
@@ -200,7 +200,7 @@
     },
     {
       "path": "protocol/ticket-fsm.cdl",
-      "fingerprint": "sha256:dec33eb1f5e7ac723ed786d71cdb2c7107063b85791c93eda18f1c5491c4e562",
+      "fingerprint": "sha256:ee9df2e138cb46840e8680243d58f64620acdafa96d7ef69ed7e4adfa5be025e",
       "sections": [
         "9.1",
         "9.2",
@@ -924,17 +924,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:9e4b001a848f31876c8720dd809093553df95ba5adcf58ff827d158b25c18f57"
+      "detail": "sha256:31cefc302e4b24b472905cd3d82546b682e4ff309cbeb0ae5fdd31c40d0eef89"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:7543077b0c82cebfa1a354870a9b0b18b9d7cb54dd9073e89d9c8ac46b54e7ce"
+      "detail": "sha256:8d0f34bd3a875af32b8bd17a81d5fbf3a17d66a58f0dc6af4ca4479a3ae7b95c"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:8723695a2d17bd2826b2e2be67fd25595e8f308fac23be51ddefd9dc3166e061"
+      "detail": "sha256:0e1afee36badda74b663f091e839503cef777951def8f0080c79f06e0b39debe"
     },
     {
       "name": "fixture-oracle",

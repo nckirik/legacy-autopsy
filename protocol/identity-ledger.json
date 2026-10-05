@@ -558,7 +558,7 @@
     },
     {
       "path": "protocol/extraction-evolution.cdl",
-      "source-fingerprint": "sha256:dc63d35ccb9d1345e7fc5c1fe4103b3d872d22874a885cb5991df6cf93ad6d59",
+      "source-fingerprint": "sha256:6381c83f1099b72c337790c65131babdc5aa0cd04dd5943bf22eaf8c7abf32e0",
       "ids": [
         {
           "id": "ATOMIC-COMPONENT",
@@ -639,7 +639,7 @@
     },
     {
       "path": "protocol/foundations.cdl",
-      "source-fingerprint": "sha256:48348621800eefaa122b7c9705fa780fd6ddb454ec484ab8a024d464b24b4875",
+      "source-fingerprint": "sha256:76b4df95e7b4c88e321f34352418102644cfc6e5ea47606ca6406e51431d3bda",
       "ids": [
         {
           "id": "AUTHORITY-CLASS",
@@ -1042,7 +1042,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "source-fingerprint": "sha256:6f395562f18820bb6a7dd526a95ad2bb4766f291b4737aa6583d5fbe86abd1b4",
+      "source-fingerprint": "sha256:8e2fdcb873e65c380863df3ab0ddc174d24027ddb414b74070d720bd2e182e5f",
       "ids": [
         {
           "id": "INVOCATION-HEADER",
@@ -1466,7 +1466,7 @@
     },
     {
       "path": "protocol/personas-povs.cdl",
-      "source-fingerprint": "sha256:6293e2d263c2c8c8cba1af0e0fe7ca0d4b65f95ddf49e61e45eddfc2e45d0905",
+      "source-fingerprint": "sha256:beda61a1bf37861de2c5b30d3aff3380ec24ce9b1187c5d32d7e72de88705455",
       "ids": [
         {
           "id": "CAPABILITY-STATE-BLOCK",
@@ -2556,7 +2556,7 @@
     },
     {
       "path": "protocol/ticket-fsm.cdl",
-      "source-fingerprint": "sha256:4412e9d85eb8e558284041610378cd42ac85051af6a65958cd1d4fc3ac98ba73",
+      "source-fingerprint": "sha256:260fbf7c4a3e2b59563c40abf906efbffe114f071c65b8fd54d0990833c22f6c",
       "ids": [
         {
           "id": "NO-MOCK-FALLBACK",

@@ -3,7 +3,7 @@
 **Version:** 4.1.3 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
-**Generated-From:** cdl/0.3.1 (sha256:a72619bb0e5d9cc838e84514ecfcff8e6445362af2bd357f3c2e031c4869b4d0)
+**Generated-From:** cdl/0.3.1 (sha256:63c280c5db015c5365c21bfe6add629c59757fb0238a5ab4b927caabffa05492)
 **Language:** cdl/0.3 (eir-format 3)
 **Authority:** generated render of the canonical CDL sources; do not edit.
 
@@ -115,6 +115,14 @@ Protocol work has three authority classes:
 3. **Human-authorized decisions:** explicit exclusions, confirmations, policy or business intent, irreducible domain meaning, and acceptance of external facts only where this protocol permits it. A model inference or runtime computation MUST NOT substitute for the required human identity, authority basis, review scope, and exact input bindings.
 
 Every normative predicate that affects conformance, mutation authorization, coverage, candidacy, or a gate MUST be one of: a **deterministic predicate** computed by the conforming runtime; a **semantic predicate** classified by an executor or authorized human with the provenance above; or an **unresolved semantic predicate** recorded as `Unknown` with its affected scope and required ticket/question. Unless a section defines a stricter result, `Unknown` is fail-inclusive: the item remains applicable/in scope for closure, cannot justify omission or `Not-Applicable`, and blocks any success that depends on the predicate being false. Natural-language guidance that does not affect those outcomes need not create a protocol record.
+
+Fail-inclusive Unknown applies at absent authority: undelivered schema or DDL, remote or
+production data, missing credentials, and unreachable external systems. It does not
+apply to defects recoverable from delivered artifacts - for example a missing
+CREATE SCHEMA or role, or a foreign table whose columns are delivered. Reconstruct such
+objects only from delivered definitions, label synthetic data as synthetic, and keep the
+external or remote aspect as an explicit residual or exclusion. Authoring schema,
+columns, or values that were never delivered remains forbidden.
 
 ## 0.2. Guarantees
 
@@ -289,6 +297,12 @@ Partial synthesis MAY run before Exit A for bounded review. It is provisional an
 
 JSON, SQLite, graph, search, code-generation, or validator sidecars MAY be generated for automation. They MUST carry source fingerprints, schema version, generation time, and a prominent `NON-AUTHORITATIVE-DERIVATIVE` marker. Conflicts are resolved in favor of the canonical Markdown records and original evidence, in that order for semantics.
 
+Implementation tooling - runtimes, validators, helper scripts, and caches - is
+non-authoritative, lives outside .extracted/ in operator-local scratch, is never a
+package member or certification input, and is never required by this protocol.
+.extracted/ contains protocol records only, and the Markdown record path remains
+executable with ordinary local tools.
+
 # Part 2. Personas, POVs, Entry Ownership, and Traversal Tracks
 
 ## 2.1. Persona definition and purity
@@ -337,6 +351,14 @@ Every entry cluster and invocation MUST declare exactly one **TRAVERSAL-TRACK**:
 
 Tracks require separate invocations even when they share source units. They MAY cross-link the same `SRC` IDs. `Disabled` is not equivalent to dead code, retired code, irrelevant code, or out-of-scope code.
 
+Commented-out code, commented call sites, and loaded-but-never-executed units are
+forensic evidence of dormant or legacy-retained behavior. The units they reference are
+in scope and MUST be extracted with Traversal Track: Disabled; when an authorized human
+identifies an intended paused or re-enableable feature, Shadow/Conditional applies
+instead. Comment status never proves dead code, an exclusion, or a zero-caller result,
+and the unit keeps the same atomic static coverage as active units until a human target
+decision disposes it.
+
 ## 2.5. Capability and runtime state
 
 Capability state is semantic metadata, not a prefix-group tag:
@@ -353,6 +375,11 @@ Capability state is semantic metadata, not a prefix-group tag:
 State MAY differ by environment or snapshot. Absence of production evidence MUST NOT be converted into deployed behavior. In-scope disabled units require the same atomic static coverage as active units and block Exit A when undisposed.
 
 A disabled capability MUST NOT be enabled in production for a probe. Runtime observation is permitted only in an isolated sandbox with explicit human authorization, masked/non-production data, and a probe specification that states the disabled behavior and safety boundaries.
+
+Dormant and disabled units follow the extraction-first rule: extract, evidence, and
+cover them like active units, then dispose them through an explicit human target
+decision (Retain, Preserve Dormant, Redesign, or Retire) recorded with its authority
+and residual risk.
 
 ## 2.6. Capability grouping and target decision
 
@@ -1108,6 +1135,10 @@ Sequential Reconciliation is the sole promotion executor. It loads the complete 
 
 `[S-DEAD-CODE]` requires an inventory-backed zero-caller proof across every traversal track and every environment/snapshot in the component's bound scope denominator. Any linked nonterminal dynamic-reference or acquisition-candidate row, active ticket, open frontier, unresolved possible-caller edge, or discovered active/conditional/shadow/disabled/historical/intended caller makes `[S-DEAD-CODE]` invalid. A dynamically observed caller disproves dead-code classification. An unavailable caller domain may be removed from the proof denominator only by an exact approved exclusion; it is never equivalent to proven no caller. These effects are local to the linked component and its dependency closure and MUST NOT downgrade unrelated coverage.
 
+Commented-out or disabled wiring is not a zero-caller proof: S-DEAD-CODE still
+requires the complete inventory-backed no-caller evidence across every traversal track
+and every environment/snapshot in the bound scope denominator.
+
 ## 6.4. Depromotion
 
 If a promoted component gains another persona caller, a shared dependency, or expanded persona usage:
@@ -1262,6 +1293,11 @@ Loaded Checkpoint Fingerprint: [...]
 
 The executor MUST declare its intended semantic actions against this header before writing. The conforming runtime MUST independently validate the declared actions, exact read/write scope, loaded fingerprints, checkpoint freshness, and mode rights before commit; an executor's self-assessment cannot authorize mutation.
 
+Invocation IDs use the canonical form ITERATION-PERSONA-POV-SEQUENCE: the iteration
+token, the persona prefix or NONE for unbound modes, the target POV or NONE, and a
+zero-padded per-iteration/persona/POV sequence that is never reused. The registry in
+20-TRACEABILITY.md verifies global uniqueness and non-reuse across iterations.
+
 ## 8.2. Strict single-scope modes
 
 `Discovery`, `Ticket Resolution`, and `Promotion Review` MUST bind exactly one persona, its persona prefix, its canonical persona directory, one concrete entry cluster, one traversal track, one POV, one POV file, and at most one question ledger. Each has one semantic POV target and optional one semantic ledger target. Its fixed transactional sidecar bundle MAY append only directly produced rows/blocks in `10`, `11`, `12`, `14`, `16`, persona-local shared buffers, `personas/{persona-directory}/UNMAPPED-DISCOVERY-BUFFER.md`, and `0G`; these are assurance/audit side effects, not permission to change scope or another POV's semantics. Cross-POV outputs go to the bound ledger or persona-local buffers. An unmapped discovery MUST use the local buffer and requires Sequential Reconciliation before any later Discovery invocation.
@@ -1310,6 +1346,23 @@ Strict single-scope modes additionally load the active POV file, at most one act
 Acquisition loads `0A`, `0C`, `0G/0H`, supplied approved projections, lineage/sanitization reports, existing normalized maps, source inventory, and export reconciliation.
 
 Sequential Reconciliation loads all relevant canonical `personas/_shared/` files, persona-local shared-staging/promotion-request/question/unmapped-discovery buffers, synthesis-gap buffers, and destination records. Profile Synchronization MUST load `0A`, the target `PRF` profile, and every record directly referenced by or applicable to any profile field, then recursively load the complete transitive `DERIVED-FROM` closure of those records. This closure explicitly includes every applicable `AUTH`, `CLM`, `SRC`, `CMP`, `ER`, `REL`, `BR`, `UC`, `IF`, `CFG`, `SCHED`, `DR`, `SM`, `STATE`, `DEP`, `MOD`, `CAP`, `DEC`, `SEC`, `NFR`, and `FLT` record, plus relevant source inventory, coverage, traceability, contradiction, decision-approval, and snapshot records needed to prove currency. Every loaded dependency MUST have its exact record ID, version where applicable, semantic/content fingerprint, source snapshot, and reciprocal binding verified. Profile Synchronization MUST reject mutation if any directly applicable record or any transitive dependency is absent, unresolved, stale, version-mismatched, fingerprint-mismatched, or read from a mixed snapshot. Confirmation validation of a PRF MUST load and validate this identical closure against the candidate-bound versions and fingerprints before attaching or accepting its envelope. Partial/Final Synthesis loads required closed or bounded forensic and assurance inputs plus existing synthesis blocks. Final Synthesis MUST load all active personas, all POV/ledger files, all relevant claims, reconciliation, coverage, contradictions, and gate inputs.
+
+Bootstrap: the first Preflight invocation has no 0A or 0D-0H records to read; its
+minimum read set is the protocol constants and statuses, the operator-provided scope and
+snapshot inputs, and the target repository itself. The full base read set applies from
+the next invocation onward, once those records exist.
+
+Cold read: an invocation loads a current fingerprinted 0H plus the 0G range it cites;
+the full 0G is required only when 0H is absent, stale, or fails its check, and then the
+tail from the last validated checkpoint suffices.
+
+Closure and materialization: the mandatory read set is the authoritative dependency
+closure that the conforming runtime MUST validate, fingerprint, and make addressable
+before mutation. A conforming runtime MAY materialize only the smallest task-complete
+projection of that closure into a semantic executor context, provided omitted
+dependencies remain deterministically retrievable and their identities and fingerprints
+are bound to the invocation. No invocation depends on conversation history, prior model
+reasoning, or compaction summaries.
 
 ## 8.5. Cold resume check
 
@@ -1437,6 +1490,22 @@ This subtype does not require a fake static investigation or probe. It requires:
 
 This subtype does not require a static investigation or probe. It requires: a passing Exit E Candidate Report; candidate payload manifest; exact typed record IDs including `PRF`/`HBK` where applicable; exact `SEMANTIC-RECORD-VERSION` and `SEMANTIC-CONTENT-FINGERPRINT` bindings; required approved `DECISION-CONTENT-VERSION`/`DECISION-CONTENT-FINGERPRINT` bindings and matching approval envelopes; review scope and limitations; reviewer identity and authority basis. For a PRF it MUST validate the complete §8.4 dependency closure; for other semantic records it MUST validate the complete applicable `DERIVED-FROM` closure. It may create `CNF` records and attach certification envelopes only; semantic payload edits are forbidden.
 
+Blocker classification: before any Human Hatch escalation, classify the blocker as
+human authority or domain fact, unavailable external fact, unresolved source semantics,
+protocol mechanics, implementation or harness defect, or executor uncertainty. Only
+genuine human authority or domain facts, and external facts this protocol assigns to
+humans, reach the operator. Protocol mechanics are resolved from this specification and
+the runtime; harness defects block the implementation; executor uncertainty is retried
+or independently reviewed first. A recommended option carries no authority, and human
+approval cannot legalize a transition that violates protocol mechanics.
+
+Operator presentation: operator-facing questions and reports MUST lead with plain
+language - what is needed, why it matters, the options and their consequences, the
+authority required, and what happens next - with identifiers secondary. The exact
+review policy (which semantic result classes require independent review before human
+presentation) and the presentation minimums are selected with the operator as a runtime
+question before a run starts, never assumed.
+
 ## 9.4. Probe specification and asynchronous handoff
 
 ```markdown
@@ -1464,6 +1533,14 @@ When static analysis is insufficient and a sandbox is unavailable:
 - use the Human Hatch path and preserve the coverage gap/partial state.
 
 A test double used to exercise already-proven local logic MAY be a testing mechanism but MUST NOT be treated as observation of an opaque dependency.
+
+Static-only runs are eligible through both gates: no mode, Exit A condition, or Exit E
+condition requires execution, sandbox, probe, live database, or deployed-state access.
+Runtime-only aspects are disposed as exact excluded units with disclosed residual risk;
+test doubles may scaffold equivalence tests and handbook walkthroughs but are never
+observations of an opaque dependency; confirmations and approvals remain human acts.
+Exit E inherits the disclosed exclusion scope and does not re-require runtime-only
+units.
 
 ## 9.6. No-mock fallback payload
 

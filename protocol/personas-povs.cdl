@@ -139,6 +139,14 @@ Every entry cluster and invocation MUST declare exactly one **TRAVERSAL-TRACK**:
 - `Disabled`: explicitly dormant, disabled, disconnected, legacy-retained, or configured off behavior.
 
 Tracks require separate invocations even when they share source units. They MAY cross-link the same `SRC` IDs. `Disabled` is not equivalent to dead code, retired code, irrelevant code, or out-of-scope code.
+
+Commented-out code, commented call sites, and loaded-but-never-executed units are
+forensic evidence of dormant or legacy-retained behavior. The units they reference are
+in scope and MUST be extracted with Traversal Track: Disabled; when an authorized human
+identifies an intended paused or re-enableable feature, Shadow/Conditional applies
+instead. Comment status never proves dead code, an exclusion, or a zero-caller result,
+and the unit keeps the same atomic static coverage as active units until a human target
+decision disposes it.
 END
 
 RULE track-declarations
@@ -172,6 +180,11 @@ Capability state is semantic metadata, not a prefix-group tag:
 State MAY differ by environment or snapshot. Absence of production evidence MUST NOT be converted into deployed behavior. In-scope disabled units require the same atomic static coverage as active units and block Exit A when undisposed.
 
 A disabled capability MUST NOT be enabled in production for a probe. Runtime observation is permitted only in an isolated sandbox with explicit human authorization, masked/non-production data, and a probe specification that states the disabled behavior and safety boundaries.
+
+Dormant and disabled units follow the extraction-first rule: extract, evidence, and
+cover them like active units, then dispose them through an explicit human target
+decision (Retain, Preserve Dormant, Redesign, or Retire) recorded with its authority
+and residual risk.
 END
 
 FIELD CAPABILITY-STATE-BLOCK

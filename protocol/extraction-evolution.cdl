@@ -149,6 +149,10 @@ Promotion eligibility requires all locks:
 Sequential Reconciliation is the sole promotion executor. It loads the complete request, canonical `personas/_shared/` source blocks, target persona POV files, indexes, traceability, and current lock inputs; applies the stale-check guard; revalidates every lock; and atomically moves each full canonical block from `_shared` to the target persona file, changes it to `[S-PROMOTED]`, updates or removes shared-reference pointers as applicable, updates indexes/traceability, consumes the request, and logs one transaction. A failed or stale revalidation performs no partial move and leaves a dispositioned request for renewed review. At no point may both source and target contain canonical copies, nor may neither contain one.
 
 `[S-DEAD-CODE]` requires an inventory-backed zero-caller proof across every traversal track and every environment/snapshot in the component's bound scope denominator. Any linked nonterminal dynamic-reference or acquisition-candidate row, active ticket, open frontier, unresolved possible-caller edge, or discovered active/conditional/shadow/disabled/historical/intended caller makes `[S-DEAD-CODE]` invalid. A dynamically observed caller disproves dead-code classification. An unavailable caller domain may be removed from the proof denominator only by an exact approved exclusion; it is never equivalent to proven no caller. These effects are local to the linked component and its dependency closure and MUST NOT downgrade unrelated coverage.
+
+Commented-out or disabled wiring is not a zero-caller proof: S-DEAD-CODE still
+requires the complete inventory-backed no-caller evidence across every traversal track
+and every environment/snapshot in the bound scope denominator.
 END
 
 RULE promotion-locks
