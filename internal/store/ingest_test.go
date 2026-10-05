@@ -122,3 +122,15 @@ func TestIngestFailsClosed(t *testing.T) {
 		t.Fatal("duplicate record ID accepted")
 	}
 }
+
+func TestIngestRejectsUnknownEnum(t *testing.T) {
+	if _, err := exec.LookPath("sqlite3"); err != nil {
+		t.Skip("sqlite3 CLI not available")
+	}
+	db, res := ingestStore(t)
+	payload := "- **Capability State:** Nonsense\n- **Runtime State Matrix:** m\n- **Historical Intended Personas:** h\n- **Dependencies:** d\n- **Last Known State:** l\n"
+	err := Ingest(db, res.EIR, "CAPABILITY-STATE-BLOCK", "CAP-1", 1, []byte(payload))
+	if err == nil || !strings.Contains(err.Error(), "not in enum") {
+		t.Fatalf("invalid registry value accepted: %v", err)
+	}
+}

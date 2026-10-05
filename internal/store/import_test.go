@@ -102,3 +102,35 @@ func TestImportPreflightFailsClosed(t *testing.T) {
 		t.Fatal("missing persona registry accepted")
 	}
 }
+
+func TestBootstrapRoundTripDeterministic(t *testing.T) {
+	if _, err := exec.LookPath("sqlite3"); err != nil {
+		t.Skip("sqlite3 CLI not available")
+	}
+	prov := Provenance{Generator: "store/test", SourceFingerprint: "sha256:test"}
+	db1, res := ingestStore(t)
+	if err := ImportPreflight(db1, res.EIR, []byte(preflightFixture)); err != nil {
+		t.Fatal(err)
+	}
+	dump1, fp1, err := CanonicalDump(db1, res.EIR, prov)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reversed := strings.Replace(preflightFixture,
+		"| Backend | BE | backend | BE-backend | human | SRC-1 | src/ | Registered |\n| Operator | OP | operator | OP-operator | external | SRC-2 | ops/ | Registered |",
+		"| Operator | OP | operator | OP-operator | external | SRC-2 | ops/ | Registered |\n| Backend | BE | backend | BE-backend | human | SRC-1 | src/ | Registered |", 1)
+	if reversed == preflightFixture {
+		t.Fatal("fixture rows were not reversed")
+	}
+	db2, res2 := ingestStore(t)
+	if err := ImportPreflight(db2, res2.EIR, []byte(reversed)); err != nil {
+		t.Fatal(err)
+	}
+	dump2, fp2, err := CanonicalDump(db2, res2.EIR, prov)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(dump1) != string(dump2) || fp1 != fp2 {
+		t.Fatal("canonical dump depends on bootstrap import order")
+	}
+}

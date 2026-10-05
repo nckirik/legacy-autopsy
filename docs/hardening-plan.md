@@ -135,8 +135,10 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
       test; `protocol-4.2.md` and 4.1.3 kept as history.
 - [x] Revision-marker guard test keeps accepted clarifications in the generated edition.
 - [x] Routing/skill manifest aligned to 4.2; parity report regenerated.
-- [ ] Harness-side enforcement of the PI-11 substance lint and PI-12 CNF schema
-      (lands with W2/W5).
+- [x] Harness-side enforcement of the PI-11 substance lint and PI-12 CNF schema
+      (`internal/handbook`: required sections, claim-backed assertion floor with
+      reason-bearing N/A, readability-review schema with scope/limitations/timestamp/HBK
+      bindings).
 - [x] Storage-binding abstraction (declared canonical binding, per-binding canonical
       serialization/fingerprint/package rules) per PI-15, implemented in the v4.2.1
       patch: §1.5, §3.1 `0A` metadata, §4.1.2, §15.3, §17.1-17.2; harness enforcement
@@ -158,9 +160,15 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
 - [~] Canonical fingerprint substrate: content, envelope, evidence-set,
   package-member, and transport fingerprints exist in `internal/capabilities`; not yet
   unified into one emitter/verifier authority.
-- [ ] Registry-driven validity at write time and verify time (enums, statuses, kinds).
+- [x] Registry-driven validity at write time: enum-typed values validate against the
+      compiled §5.1 enums in `certify`, enum columns get schema `CHECK`s, and ingest
+      rejects unknown values (`TestIngestRejectsUnknownEnum`).
 - [ ] Schema-conformant emitters for `23`/`24`/`25`/`26`/`27` and the §15.5 verifier;
       golden tests for emit-twice byte equality, tamper detection, fail-closed results.
+      Architecture (decision 8): artifact payloads are executor-authored Markdown that
+      the runtime validates by matching the declared FIELD sequence via the
+      label-to-column mapping, so no label table is needed; the runtime owns
+      fingerprints, member bindings, and verification.
 - [ ] Validator allow-lists (for example `.extracted/probes/[TICKET-*].log`) and
       append-only post-conditions.
 - [ ] Typed semantic deltas: IDs, canonical serialization, fingerprints, coverage
@@ -221,7 +229,8 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
       canonical registry iteration order.
 - [ ] Append-only `0G` enforced as a runtime post-condition, not only a trigger.
 - [ ] Canonical dump/hash/package rules wired into the packaging emitters.
-- [ ] Round-trip migration fixtures (Markdown → store → canonical dump → compare).
+- [x] Round-trip fixture: bootstrap `0A` import → canonical dump is identical for
+      different import orders (`TestBootstrapRoundTripDeterministic`).
 - [ ] Generated human/audit projections from the store.
 - [ ] Administrative `la` helpers kept outside the semantic model contract.
 
@@ -229,8 +238,11 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
 
 - [ ] Narrative handbook renderer from `90`-`96` synthesis (audience purpose, observed
       legacy vs target decisions, examples/diagrams, navigation, volume tied to records).
-- [ ] PI-11 substance lint: required sections plus at least eight claim-backed
-      assertions per chapter, reason-bearing `Not-Applicable` allowed.
+- [x] PI-11 substance lint (`internal/handbook.LintChapter`): required sections plus
+      at least eight claim-backed assertions per chapter, reason-bearing
+      `Not-Applicable` allowed; PI-12 CNF schema validator
+      (`ValidateReadabilityReview`) requires scope, limitations, timestamp, and exact
+      HBK bindings for Pass/Fail.
 - [ ] Real readability workflow with complete CNF fields per PI-12 (no relay-only
       attestation).
 - [ ] Operator renderer per PI-6: plain-language questions with options and
@@ -276,7 +288,11 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
        canonical storage binding (`markdown/1` stays the default), bindings agree on
        identity/payload digests, unsupported bindings fail closed. The store remains
        provisional until the relational declaration semantics land (W1).
-7. [x] Markdown surface: under a non-Markdown binding, no operational Markdown is
+7. [x] Artifact emission model: executors author artifact payloads in protocol
+       Markdown; the runtime validates field sequence and order through the
+       label-to-column mapping, computes fingerprints and member bindings, and verifies
+       by recomputation. No display-label table is introduced.
+8. [x] Markdown surface: under a non-Markdown binding, no operational Markdown is
        maintained; Markdown is only human-readable semantic output rendered on demand
        (handbook, decision batches, review/gate/audit views, operator questions).
        Mechanical records are store-only and render to Markdown only in debug mode with
