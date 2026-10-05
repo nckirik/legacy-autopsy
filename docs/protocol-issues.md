@@ -253,3 +253,55 @@ oracle snapshot is an open process decision.
   remain human acts. Packaging and signatures still follow §15.4 unchanged.
 - **Impact:** no evidence weakening; makes Exit E reachable on a static-only scope
   without misrepresenting mocks.
+
+## PI-11: Handbook quality gate admits metadata shells
+
+- **Status:** proposed
+- **Source:** standalone protocol run, Exit E verification 2026-10-05 (the run passed the
+  handbook checks with a 17-file handbook whose chapters are roughly 29 lines each,
+  mostly HBK envelope metadata plus one summary bullet)
+- **Affected sections:** §13.2 chapter behavior, §13.4 handbook quality gate, §15.1
+  condition 4, §5.7 CNF/bindings
+- **Observed text:** "all required chapters exist and each contains at least one
+  claim-backed semantic handbook assertion or an evidence-backed zero-domain statement;
+  headings, navigation links, placeholders, or grouping prose alone are vacuous"
+  (§13.4)
+- **Issue:** the non-vacuity rule is satisfied by a single sentence per chapter, so a
+  handbook can certify while delivering no usable reconstruction prose: no audience
+  paths (§13.1), no observed-versus-target separation, no examples or diagrams, no
+  navigation, and no assertion density tied to the underlying synthesis records. The
+  run's `02-ARCHITECTURE.md`, for example, is a 29-line envelope with one bullet for 12
+  modules.
+- **Proposed direction:** define testable handbook substance: per-chapter required
+  sections (audience purpose, observed legacy, target decisions, navigation), an
+  assertion-density floor tied to claims and synthesis records, representative
+  examples/diagrams where the chapter class requires them, and an explicit N/A with
+  reason where a chapter is legitimately empty. The deterministic gate fails chapters
+  that are shells; a human usefulness test remains separate from the boolean
+  readability field.
+- **Impact:** raises handoff work and makes Exit E's handbook claim meaningful; no new
+  statuses or authority changes.
+
+## PI-12: Human readability confirmation can be relay-only
+
+- **Status:** proposed
+- **Source:** standalone protocol run 2026-10-05 (90 HBK CNFs record readability "Pass"
+  while stating "no independent line-by-line human read attested"; envelope audit
+  fields are `None`)
+- **Affected sections:** §5.7 CNF schema, §13.4 post-candidacy review, §15.1 conditions
+  13 and 19
+- **Observed text:** "After candidacy, authorized human readability review is recorded
+  through one or more §5.7 `CNF` records ... and whose `Handbook Readability Review` is
+  `Pass`" (§13.4); "`[B-CONFIRMED]` is never machine-assigned" (§15.1 condition 19)
+- **Issue:** readability CNFs were relayed under operator standing authorization with
+  empty envelope version/audit fields, and the declared `Handbook Readability Review`
+  field was not used; the run explicitly disclosed that no line-by-line human read
+  occurred, yet the gate passed. Relay may be acceptable for some approvals, but a
+  handbook readability claim without a human read undermines the confirmation gate.
+- **Proposed direction:** require readability CNFs to use the declared schema
+  (`Handbook Readability Review` in Pass/Fail/Not-Applicable), record non-empty review
+  scope, limitations, and timestamp, and bind the exact reviewed HBK payload; reject
+  relay-only attestation for handbook readability, or require the operator to declare
+  the handbook unread and block content readiness until a real review is recorded.
+- **Impact:** prevents certifying unread handbooks; other confirmation types keep their
+  existing relay policy.
