@@ -315,7 +315,7 @@
     },
     {
       "path": "protocol/evidence-and-decisions.cdl",
-      "source-fingerprint": "sha256:d5e0a1baa420c71462e1a80160a778804e9b1ed1224963fcf3d766c6378b9bbc",
+      "source-fingerprint": "sha256:7d8bdf5d62e0e5df8e3467d8d4aeca153507c035982b61a1ea5e9bb7fef4c087",
       "ids": [
         {
           "id": "BLOCK-EVIDENCE-SUMMARY",
@@ -800,7 +800,7 @@
     },
     {
       "path": "protocol/handbook-and-decisions.cdl",
-      "source-fingerprint": "sha256:349c422d10adc3fce38a3a5c96a8ca17db3510c419e31673b58f58226be219ec",
+      "source-fingerprint": "sha256:e0940212fb5bd7e4b6a718a4cf5f96c67aaebc3e1d1764b100e5f998c00567ee",
       "ids": [
         {
           "id": "AUDIENCE-ROLE",
@@ -1210,7 +1210,7 @@
     },
     {
       "path": "protocol/packaging.cdl",
-      "source-fingerprint": "sha256:a2c2688ac7f2086c146d0c4c36648a65a3c0606cb3e75e63702a15cf3f062d5f",
+      "source-fingerprint": "sha256:77154c9f02ffbfffe1a85b3136cf7d95c4309d2cba7dc12c504600352b5ef320",
       "ids": [
         {
           "id": "APPROVED-DEC-BINDING",

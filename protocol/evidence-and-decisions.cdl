@@ -219,6 +219,11 @@ GOAL
 ```
 
 A B-confirmed synthesis block, `PRF` profile, or `HBK` handbook section MUST reference a valid `CNF` whose binding matches its exact typed record ID, semantic record version, and semantic-content fingerprint as listed in the candidate manifest. Confirmation validation MUST load and validate the same direct-and-transitive dependency closure required for Profile Synchronization in §8.4 when the confirmed record is a PRF, and the corresponding complete `DERIVED-FROM` closure for synthesis/HBK records. Confirmation metadata is an envelope attachment and MUST NOT alter the confirmed semantic payload/version/fingerprint. Dependency or semantic change invalidates the confirmation through targeted stale propagation; status-only and confirmation-envelope changes do not. Each `CNF` is canonicalized as an individual heading-delimited record under §4.1.2. Its payload fingerprint excludes exactly the literal CNF digest/signature envelope shown above and its own fingerprint carrier; review identity, authority, scope, limitations, typed record bindings, and review timestamp remain hashed.
+
+CNF records for handbook readability MUST carry the Handbook Readability Review field
+(Pass, Fail, or Not-Applicable) with a complete review basis. Empty envelope audit
+fields or relay-only attestation are invalid for readability, and the handbook MUST be
+declared unread instead.
 END
 
 FIELD CONFIRMATION

@@ -3,7 +3,7 @@
 **Version:** 4.1.3 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
-**Generated-From:** cdl/0.3.1 (sha256:63c280c5db015c5365c21bfe6add629c59757fb0238a5ab4b927caabffa05492)
+**Generated-From:** cdl/0.3.1 (sha256:d497e7a273f6491ac5d58dcd0360a836c04e3e263a16b268420ce3846e203b1f)
 **Language:** cdl/0.3 (eir-format 3)
 **Authority:** generated render of the canonical CDL sources; do not edit.
 
@@ -1058,6 +1058,11 @@ States are `Included`, `Rejected-With-Operator-Decision`, `Approved-Excluded`, o
 ```
 
 A B-confirmed synthesis block, `PRF` profile, or `HBK` handbook section MUST reference a valid `CNF` whose binding matches its exact typed record ID, semantic record version, and semantic-content fingerprint as listed in the candidate manifest. Confirmation validation MUST load and validate the same direct-and-transitive dependency closure required for Profile Synchronization in §8.4 when the confirmed record is a PRF, and the corresponding complete `DERIVED-FROM` closure for synthesis/HBK records. Confirmation metadata is an envelope attachment and MUST NOT alter the confirmed semantic payload/version/fingerprint. Dependency or semantic change invalidates the confirmation through targeted stale propagation; status-only and confirmation-envelope changes do not. Each `CNF` is canonicalized as an individual heading-delimited record under §4.1.2. Its payload fingerprint excludes exactly the literal CNF digest/signature envelope shown above and its own fingerprint carrier; review identity, authority, scope, limitations, typed record bindings, and review timestamp remain hashed.
+
+CNF records for handbook readability MUST carry the Handbook Readability Review field
+(Pass, Fail, or Not-Applicable) with a complete review basis. Empty envelope audit
+fields or relay-only attestation are invalid for readability, and the handbook MUST be
+declared unread instead.
 
 # Part 6. Atomic Forensic Extraction and Evolution
 
@@ -2171,6 +2176,18 @@ Before candidacy, the conforming runtime validates:
 
 After candidacy, authorized human readability review is recorded through one or more §5.7 `CNF` records whose combined exact HBK bindings cover every candidate handbook section and whose `Handbook Readability Review` is `Pass`; their hashed review scope/limitations state how core user goals were followed without reading raw catalogs. A CNF that does not review HBK content uses `Not-Applicable`; `Fail` or incomplete HBK coverage blocks content readiness. The Exit E Content-Readiness Report MUST validate reviewer authority, candidate manifest/report bindings, complete HBK coverage, timestamps, results, and unchanged handbook fingerprints. Human review cannot substitute for deterministic link, diagram, or non-vacuity checks, and an unrecorded review has no gate effect.
 
+Substance: each chapter MUST contain the required sections - audience purpose,
+observed legacy behavior, target decisions, and navigation - plus at least eight
+claim-backed semantic assertions derived from its synthesis records, or an explicit
+reason-bearing Not-Applicable where the chapter class is legitimately empty. Headings,
+envelope metadata, and summary bullets alone fail the gate.
+
+Readability review: readability CNFs MUST use the declared Handbook Readability Review
+value (Pass, Fail, or Not-Applicable), record non-empty review scope, limitations, and
+timestamp, and bind the exact reviewed HBK payload. Relay-only attestation without a
+real human read is invalid and blocks content readiness; in that case the handbook MUST
+be declared unread rather than confirmed.
+
 # Part 14. Decisions, Reconstruction, Equivalence, and Compatibility
 
 ## 14.1. Decision log
@@ -2255,6 +2272,13 @@ Exit E remains `Pending` through steps 1-5 of §15.4. The stage-4 Exit E Content
 20. At step 6, the outer bundle manifest payload directly declares the exact system/protocol/environment/snapshot identity, final check-registry fingerprint, and pre-signature input-set fingerprint; includes every package member other than itself, including the Exit E Content-Readiness Report and scope certificate; and contains `EXIT-E-STATUS: Passed`. All listed package-member file fingerprints, required certification/approval/CNF envelope bindings, cross-artifact snapshot identities, and required final checks recompute and validate, and its required human signature envelope validates under §15.5. The signed outer manifest is the authoritative non-cyclic Exit E completion attestation. No post-step-6 authoritative Exit E artifact is created.
 
 There are no row-count shortcuts. “File exists,” “section exists,” or “zero rows” does not satisfy completeness without denominator-backed proof.
+
+Static-only eligibility: no condition in this section requires execution, sandbox,
+probe, live database, or deployed-state access. Runtime-only units are exact approved
+exclusions with disclosed residual risk and are removed from denominator arithmetic;
+Exit E inherits the disclosed Exit A scope, and the absence of a runtime sandbox is
+never an Exit E blocker. Test doubles may scaffold equivalence tests but are never
+external observations.
 
 ## 15.1.1. Universal deterministic packaging rules
 

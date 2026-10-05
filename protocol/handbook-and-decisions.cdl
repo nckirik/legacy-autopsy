@@ -132,6 +132,18 @@ Before candidacy, the conforming runtime validates:
 - no `[B-STALE]`, provisional, or pending-reference section remains.
 
 After candidacy, authorized human readability review is recorded through one or more §5.7 `CNF` records whose combined exact HBK bindings cover every candidate handbook section and whose `Handbook Readability Review` is `Pass`; their hashed review scope/limitations state how core user goals were followed without reading raw catalogs. A CNF that does not review HBK content uses `Not-Applicable`; `Fail` or incomplete HBK coverage blocks content readiness. The Exit E Content-Readiness Report MUST validate reviewer authority, candidate manifest/report bindings, complete HBK coverage, timestamps, results, and unchanged handbook fingerprints. Human review cannot substitute for deterministic link, diagram, or non-vacuity checks, and an unrecorded review has no gate effect.
+
+Substance: each chapter MUST contain the required sections - audience purpose,
+observed legacy behavior, target decisions, and navigation - plus at least eight
+claim-backed semantic assertions derived from its synthesis records, or an explicit
+reason-bearing Not-Applicable where the chapter class is legitimately empty. Headings,
+envelope metadata, and summary bullets alone fail the gate.
+
+Readability review: readability CNFs MUST use the declared Handbook Readability Review
+value (Pass, Fail, or Not-Applicable), record non-empty review scope, limitations, and
+timestamp, and bind the exact reviewed HBK payload. Relay-only attestation without a
+real human read is invalid and blocks content readiness; in that case the handbook MUST
+be declared unread rather than confirmed.
 END
 
 RULE handbook-quality-checks

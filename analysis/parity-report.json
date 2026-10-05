@@ -111,7 +111,7 @@
     },
     {
       "path": "protocol/evidence-and-decisions.cdl",
-      "fingerprint": "sha256:5e55a03c390d9c403d566435facb5100d84f9ece6ebb37b571cc04ec6a634d9a",
+      "fingerprint": "sha256:09a2ff0b2c8435d42ed78e7bf18a78f91b554f5266f4a26801fc75834012c6e5",
       "sections": [
         "5.2",
         "5.3",
@@ -258,7 +258,7 @@
     },
     {
       "path": "protocol/handbook-and-decisions.cdl",
-      "fingerprint": "sha256:17559ddc63714d3d9a550198b15a6fc4fc4508eeb80d8ff58739e29bd4536796",
+      "fingerprint": "sha256:56c6ad208fbc054697e2cd51b3b8c15e3b4872407ac456328c5c2b175273c066",
       "sections": [
         "13.1",
         "13.2",
@@ -275,7 +275,7 @@
     },
     {
       "path": "protocol/packaging.cdl",
-      "fingerprint": "sha256:03b543729634698585e60bb49e2dd1e3acde88cfce27830c527e1116712b00b4",
+      "fingerprint": "sha256:377e13a8219831259690ef4f15ecda16bf6dc65de2e12e7c3f534f050c56967d",
       "sections": [
         "15.1",
         "15.1.1",
@@ -924,17 +924,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:31cefc302e4b24b472905cd3d82546b682e4ff309cbeb0ae5fdd31c40d0eef89"
+      "detail": "sha256:09569efbd06d83ff856a7d589c46c3eae66cd02170a1fbcae5804833d587f89b"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:8d0f34bd3a875af32b8bd17a81d5fbf3a17d66a58f0dc6af4ca4479a3ae7b95c"
+      "detail": "sha256:f0ccf1a2f43bf48c656e19e71be4548cf2332dade66fccb970c3bcc11f9e58cf"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:0e1afee36badda74b663f091e839503cef777951def8f0080c79f06e0b39debe"
+      "detail": "sha256:7b8da7d38e28c32dd9dc2f36c07faa1468c078bb701273e0e6883ed096cc21fd"
     },
     {
       "name": "fixture-oracle",

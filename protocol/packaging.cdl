@@ -28,6 +28,13 @@ Exit E remains `Pending` through steps 1-5 of §15.4. The stage-4 Exit E Content
 20. At step 6, the outer bundle manifest payload directly declares the exact system/protocol/environment/snapshot identity, final check-registry fingerprint, and pre-signature input-set fingerprint; includes every package member other than itself, including the Exit E Content-Readiness Report and scope certificate; and contains `EXIT-E-STATUS: Passed`. All listed package-member file fingerprints, required certification/approval/CNF envelope bindings, cross-artifact snapshot identities, and required final checks recompute and validate, and its required human signature envelope validates under §15.5. The signed outer manifest is the authoritative non-cyclic Exit E completion attestation. No post-step-6 authoritative Exit E artifact is created.
 
 There are no row-count shortcuts. “File exists,” “section exists,” or “zero rows” does not satisfy completeness without denominator-backed proof.
+
+Static-only eligibility: no condition in this section requires execution, sandbox,
+probe, live database, or deployed-state access. Runtime-only units are exact approved
+exclusions with disclosed residual risk and are removed from denominator arithmetic;
+Exit E inherits the disclosed Exit A scope, and the absence of a runtime sandbox is
+never an Exit E blocker. Test doubles may scaffold equivalence tests but are never
+external observations.
 END
 
 RULE exit-e-conditions

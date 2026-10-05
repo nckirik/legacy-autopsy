@@ -21,6 +21,10 @@ var revisionMarkers = []string{
 	"Closure and materialization: the mandatory read set",
 	"Blocker classification: before any Human Hatch escalation",
 	"Static-only runs are eligible through both gates",
+	"at least eight",
+	"Handbook Readability Review",
+	"Static-only eligibility: no condition in this section",
+	"relay-only attestation",
 }
 
 func TestGeneratedEditionCarriesRevisionMarkers(t *testing.T) {
