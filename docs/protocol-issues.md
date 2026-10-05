@@ -305,3 +305,81 @@ oracle snapshot is an open process decision.
   the handbook unread and block content readiness until a real review is recorded.
 - **Impact:** prevents certifying unread handbooks; other confirmation types keep their
   existing relay policy.
+
+
+## PI-13: Human Hatch conflates human authority with executor uncertainty
+
+- **Status:** proposed
+- **Source:** standalone protocol run 2026-09-28/10-05 and session export review
+  2026-10-05 (operator was repeatedly asked to resolve protocol mechanics and executor
+  uncertainty; recommended options were accepted as human choices, including one bulk
+  sweep disposition later reverted as protocol-invalid)
+- **Affected sections:** §8 invocation/resume semantics, §9 ticket and Human Hatch
+  behavior, §10 sweep execution, §15 approvals and confirmations
+- **Issue:** The protocol defines how unresolved work can reach a Human Hatch, but does
+  not sharply distinguish a fact/choice that belongs to human authority from an
+  executor that is uncertain about protocol interpretation, record mechanics, or its
+  own reasoning. In the run, questions about sweep legality, gate semantics, record
+  encoding, and certification mechanics were surfaced to the operator. Selecting the
+  executor's recommended option then made model uncertainty appear as human authority.
+  One such recommended bulk `[R-SWEPT]` operation was later discovered to violate the
+  protocol and had to be reverted.
+- **Proposed direction:**
+  - require every escalation to classify its blocker before Human Hatch presentation:
+    human authority/domain fact, unavailable external fact, unresolved source
+    semantics, protocol mechanics, implementation/harness defect, or executor
+    uncertainty;
+  - permit Human Hatch only for genuine human-authority/domain decisions and external
+    facts that the protocol explicitly assigns to a human; unresolved source semantics
+    MAY reach a human only when the protocol requires domain interpretation rather than
+    more executor/reviewer work;
+  - protocol mechanics are resolved from the normative specification/runtime;
+    implementation defects block the implementation; executor uncertainty is retried
+    or independently reviewed, never converted into a human decision merely because a
+    model asks;
+  - a recommended option is presentation only and carries no additional authority;
+    human approval cannot legalize a transition or artifact that violates protocol
+    mechanics;
+  - keep the resulting operator question linked to the semantic blocker and authority
+    basis so later audits can distinguish decision, delegation, and attestation.
+- **Impact:** strengthens rather than weakens human authority. It prevents the operator
+  from becoming a fallback protocol interpreter and prevents executor mistakes from
+  being laundered through human approval.
+
+## PI-14: Mandatory read closure is conflated with model-context materialization
+
+- **Status:** proposed
+- **Source:** standalone protocol run 2026-09-28/10-05 and session export review
+  2026-10-05 (1,026 assistant steps, 14 compactions, 136.4M reported input tokens;
+  hundreds of invocations carried 100k+ token contexts while the run repeatedly loaded
+  growing protocol/workspace state)
+- **Affected sections:** §8.4 mandatory read sets, §8.5 cold resume, §8.7 stale
+  checkpoint guard, §8.8 invocation log, context/read terminology throughout §8
+- **Observed text:** "All modes load protocol constants/statuses, `0A`, `0D`, `0E`,
+  `0F`, `0G` or `0H`, relevant source inventory/frontier/claim records, and the active
+  snapshot metadata." (§8.4)
+- **Issue:** The protocol correctly requires a complete authoritative read/dependency
+  closure, but "load" can be interpreted by prompt-based executors as "materialize all
+  required bytes into one model context." That couples semantic work to accumulated run
+  history, drives context growth and compaction, and makes an executor deep inside a
+  long-running context less able to independently reassess assumptions. The required
+  dependency closure and the model's working projection are separate concepts.
+- **Proposed direction:**
+  - define the mandatory read set as the authoritative dependency closure that a
+    conforming executor/runtime MUST validate, fingerprint, and make addressable before
+    mutation;
+  - explicitly allow a conforming runtime or harness to materialize only a bounded,
+    task-complete projection of that closure into a semantic executor context, provided
+    omitted dependencies remain deterministically retrievable and their identities /
+    fingerprints are bound to the invocation;
+  - require semantic invocations to be cold-replayable from committed state and
+    declared inputs; conversation history, prior model reasoning, and compaction
+    summaries are never authoritative prerequisites;
+  - require independently constructed contexts for independent review/adjudication;
+    the same underlying model MAY perform worker and reviewer roles because independence
+    is established by context and role separation, not model identity;
+  - failure to fit a semantic work item into a bounded projection is an execution /
+    decomposition problem, not permission to depend on an ever-growing chat transcript.
+- **Impact:** no reduction in evidence or read-set obligations. It separates protocol
+  dependency correctness from prompt rendering and makes native/runtime, skill, and
+  prompt backends capable of equivalent semantics without equivalent context size.
