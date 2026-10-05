@@ -89,12 +89,12 @@ flowchart TB
 - **Normative protocol:** execution law, records, authority, modes, invariants, and gates; never generated from implementation metadata.
 - **Local service:** coordinates many isolated autopsies and owns the runtime state machine, scheduling, validation, commit boundary, and event ordering.
 - **Autopsy boundary:** explicit `autopsy_id`, repository root, pinned snapshot, rooted workspace, lifecycle, limits, questions, and projections. Isolation is not inferred from filenames.
-- **Protocol engine and context builder:** route exact normative sections and assemble complete fingerprinted read sets for one bounded invocation.
+- **Protocol engine and context builder:** route exact normative sections, derive the complete authoritative dependency/read closure, and render only the bounded semantic projection needed for one invocation. Model context is not the persistence layer.
 - **Execution channels:** the generic skill is first and initially exclusive; named harness adapters add managed runners second; direct-model execution is the final minimal method. No channel may authorize its own writes, commits, gates, or state transitions.
 - **Per-project configuration:** reserved `.legacy-autopsy/` operational files select adapters and limits without becoming protocol/evidence authority; `.extracted/` remains separate and authoritative.
-- **Workspace transaction manager:** revalidates scope, ownership, stale inputs, and implemented rules before atomically committing protocol effects.
-- **Deterministic core:** identity, parsing, scope, ordering, canonicalization, hashing, validation, and state transitions become EIR instructions and declared deterministic capabilities. The runtime must independently reproduce executor-supplied deterministic values, persist protocol-bound cold-resume outcomes, enforce exact gate-check registries/evidence bindings and snapshot equality, and keep final verification receipts non-authoritative and outside the certified package.
-- **Workspace:** `.extracted/` remains persistent authoritative protocol state; conversation memory is disposable.
+- **Workspace transaction manager:** revalidates scope, ownership, stale inputs, and implemented rules before atomically committing protocol effects to the canonical store. Executors express semantic intent; the runtime owns relational mutations and deterministic cascading effects.
+- **Deterministic core:** identity, parsing, scope, ordering, canonicalization, hashing, validation, state transitions, relational consistency, and canonical persistence become EIR instructions and declared deterministic capabilities. The runtime must independently reproduce executor-supplied deterministic values, persist protocol-bound cold-resume outcomes, enforce exact gate-check registries/evidence bindings and snapshot equality, and keep final verification receipts non-authoritative and outside the certified package.
+- **Canonical store:** for the next binding, `.extracted/legacy-autopsy.db` is the persistent authoritative operational state. Markdown record files become generated projections/exports rather than the working database; conversation memory is disposable.
 - **Projections:** Atlas, search, event acceleration, and UI caches are regenerable non-authoritative derivatives of committed records.
 - **Clients:** during the first stage, the browser and CLI observe, configure, administer, and present authorized human actions but cannot manually start or claim semantic work; the skill is the only semantic-work ingress.
 - **Acquisition boundary:** an independent operator tool keeps raw Appsmith/n8n material private and publishes only approved sanitized projections.
@@ -153,10 +153,28 @@ The initial graph representation is JSON under `.legacy-autopsy/atlas/*`; the in
 
 No service, scheduler, executor, HTTP/event, graph, or UI package exists today. Planned runtime responsibilities remain conceptual until implemented under the [roadmap](roadmap.md). The service/application layer should orchestrate provider-neutral packages; the target CLI should remain a thin client rather than contain protocol logic.
 
+## Semantic storage and tool boundary
+
+The next binding uses SQLite as canonical operational state. Semantic executors do not
+edit Markdown record files or receive unrestricted SQL access. They operate through a
+small protocol-aware capability surface for record lookup, search/traversal, evidence
+retrieval, semantic proposals, and control actions. The runtime compiles those
+operations to relational reads/transactions and owns IDs, canonical serialization,
+fingerprints, coverage arithmetic, FSM transitions, gate effects, packaging, and other
+mechanical consequences.
+
+Every model-facing read capability automatically extends the invocation's bound read
+set with the exact committed IDs/versions/fingerprints observed. The model may explore
+incrementally, but the runtime retains complete stale-check provenance. Worker and
+reviewer invocations use the same capability surface with independently constructed
+contexts; model identity is irrelevant to independence.
+
+See [sqlite-store.md](sqlite-store.md) for the storage and capability design.
+
 ## Structural Markdown direction
 
 The current parser recognizes headings, emphasized fields, fenced blocks, comments, tables, paragraphs, blanks, and bounded sections. Later milestones must deepen it for typed-record boundaries, complete field paths, table schemas, certification/artifact envelopes, canonical serialization, and stable anchors. Protocol-significant validation must remain structural; regex is appropriate only after locating a protocol-defined regex-constrained value.
 
 ## Safety and persistence
 
-Reads and writes use declared roots and path normalization; M0 context reads also reject traversal and symlink escape. Future mutations require restrictive permissions where sensitive, atomic publication, stale-input checks, explicit autopsy scoping, and cross-autopsy isolation tests. Persistent authority comes from validated filesystem records, never chat history, service memory, a graph database, or browser state.
+Reads and writes use declared roots and path normalization; M0 context reads also reject traversal and symlink escape. Future mutations require restrictive permissions where sensitive, atomic publication, stale-input checks, explicit autopsy scoping, and cross-autopsy isolation tests. Persistent authority comes from the validated canonical protocol store (SQLite in the next binding), never chat history, service memory, Atlas/graph projections, rendered Markdown, or browser state.
