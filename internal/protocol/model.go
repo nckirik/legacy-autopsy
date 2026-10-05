@@ -19,7 +19,7 @@ const InvocationModeHeading = "8.3. Invocation-mode enum and explicit multi-file
 const LegacyOracleRelPath = "protocol/legacy/protocol-4.1.3.md"
 
 // EditionOracleRelPath is the frozen snapshot of the current generated edition.
-const EditionOracleRelPath = "protocol/legacy/protocol-4.2.md"
+const EditionOracleRelPath = "protocol/legacy/protocol-4.2.1.md"
 
 // OraclePath returns the frozen legacy protocol text path for a repository root.
 func OraclePath(repoRoot string) string {

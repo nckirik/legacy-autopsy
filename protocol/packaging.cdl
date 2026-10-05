@@ -675,6 +675,7 @@ The certified package contains:
 - scope certificate;
 - Exit E Candidate Report, candidate payload manifest, Exit E Content-Readiness Report, and signed outer bundle manifest;
 - source, projection, artifact, and semantic fingerprint manifests;
+- declaration of the canonical storage binding identity and binding schema version, and, when the binding is not `markdown/1`, the binding's canonical serialization of protocol records as a package member;
 - Exit A, Exit E Candidate, and content-readiness validation reports;
 - known-gap/risk record, which MUST disclose every approved exclusion and its residual risks even though excluded from the effective denominator; it MUST contain no undisclosed or unapproved gap and MUST NOT claim a gap absent from both the gross discovered population and approved risk record.
 
@@ -688,8 +689,11 @@ RULE certified-package-contents
     persona profiles and necessary forensic reference records; the decision log; the
     equivalence/acceptance suite; the scope certificate; the Exit E Candidate Report,
     candidate payload manifest, Exit E Content-Readiness Report, and signed outer bundle
-    manifest; source, projection, artifact, and semantic fingerprint manifests; Exit A,
-    Exit E Candidate, and content-readiness validation reports; and a known-gap/risk
+    manifest; source, projection, artifact, and semantic fingerprint manifests; the
+    declared canonical storage binding identity and binding schema version and, when the
+    binding is not markdown/1, the binding's canonical serialization of protocol records
+    as a package member; Exit A, Exit E Candidate, and content-readiness validation
+    reports; and a known-gap/risk
     record that MUST disclose every approved exclusion and its residual risks even
     though excluded from the effective denominator, MUST contain no undisclosed or
     unapproved gap, and MUST NOT claim a gap absent from both the gross discovered

@@ -465,7 +465,11 @@ SECTION non-authoritative-sidecars
 TITLE "Non-authoritative sidecars"
 
 GOAL
-JSON, SQLite, graph, search, code-generation, or validator sidecars MAY be generated for automation. They MUST carry source fingerprints, schema version, generation time, and a prominent `NON-AUTHORITATIVE-DERIVATIVE` marker. Conflicts are resolved in favor of the canonical Markdown records and original evidence, in that order for semantics.
+Every workspace declares exactly one canonical storage binding in `0A` metadata: a binding identity plus binding schema version, with `markdown/1` as the default. The binding defines the canonical physical form and canonical serialization of protocol records for that workspace; bindings MUST round-trip protocol records losslessly, agree on record identity and canonical payload digests, and keep record payload digests independent of physical storage. A conforming implementation MAY support a subset of bindings, but MUST fail closed when a workspace declares an unsupported binding and MUST NOT silently fall back to another binding.
+
+When the declared binding is `markdown/1`, the Markdown records under `.extracted/` are the canonical operational state. When a non-Markdown binding is declared, the binding's records are the canonical operational state and every generated Markdown record is a projection/export: it MUST carry a prominent `NON-AUTHORITATIVE-DERIVATIVE` marker, conflicts are resolved in favor of the declared binding, and original evidence remains authoritative over both for semantics.
+
+Derived artifacts that are not the declared binding's canonical records - JSON, graph, search, code-generation, or validator outputs - MAY be generated for automation. They MUST carry source fingerprints, schema version, generation time, and a prominent `NON-AUTHORITATIVE-DERIVATIVE` marker. Conflicts are resolved in favor of the canonical records of the declared binding and original evidence, in that order for semantics.
 
 Implementation tooling - runtimes, validators, helper scripts, and caches - is
 non-authoritative, lives outside .extracted/ in operator-local scratch, is never a
@@ -476,11 +480,16 @@ END
 
 RULE sidecar-derivatives
   GOAL
-    JSON, SQLite, graph, search, code-generation, or validator sidecars MAY be generated
-    for automation. They MUST carry source fingerprints, schema version, generation
-    time, and a prominent NON-AUTHORITATIVE-DERIVATIVE marker. Conflicts are resolved in
-    favor of the canonical Markdown records and original evidence, in that order for
-    semantics.
+    A workspace declares exactly one canonical storage binding (identity plus binding
+    schema version, default markdown/1) that defines the canonical physical form and
+    canonical serialization of protocol records. Bindings round-trip records losslessly,
+    agree on record identity and canonical payload digests independent of physical
+    storage, and fail closed when unsupported with no silent fallback. When a
+    non-Markdown binding is declared, generated Markdown records are
+    NON-AUTHORITATIVE-DERIVATIVE projections and conflicts resolve in favor of the
+    declared binding; derived artifacts that are not the binding's canonical records
+    carry a NON-AUTHORITATIVE-DERIVATIVE marker. Beyond the binding, conflicts resolve
+    to the declared binding and original evidence, in that order for semantics.
   END
 END
 

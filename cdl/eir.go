@@ -14,7 +14,7 @@ const (
 	StdlibVersion    = "cdl-stdlib/0.1"
 	GeneratorVersion = "cdl/0.3.2"
 	EIRFormat        = 3
-	ProtocolVersion  = "canonical-deconstruction/4.2"
+	ProtocolVersion  = "canonical-deconstruction/4.2.1"
 )
 
 // VersionToken is the render-time placeholder for the protocol edition. CDL

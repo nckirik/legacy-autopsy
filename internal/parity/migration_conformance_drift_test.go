@@ -47,7 +47,17 @@ func TestMigrationAndConformanceDrift(t *testing.T) {
 	if len(cases) == 0 {
 		t.Fatal("no conformance cases parsed")
 	}
-	compareSets(t, "CONFORMANCE-CASE", enums["CONFORMANCE-CASE"], cases)
+	// The frozen oracle's case set is a lower bound: a revision may add cases but
+	// must never silently remove or rename one.
+	current := map[string]bool{}
+	for _, value := range enums["CONFORMANCE-CASE"] {
+		current[value] = true
+	}
+	for _, c := range cases {
+		if !current[c] {
+			t.Errorf("legacy CONFORMANCE-CASE %q was removed or renamed", c)
+		}
+	}
 
 	raw, err := os.ReadFile(protocol.OraclePath(root(t)))
 	if err != nil {

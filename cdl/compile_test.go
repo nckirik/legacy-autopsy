@@ -220,7 +220,7 @@ func TestUpdateAssets(t *testing.T) {
 	if err := os.WriteFile(repoPath("protocol.md"), rendered, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(repoPath("protocol/legacy/protocol-4.2.md"), rendered, 0o644); err != nil {
+	if err := os.WriteFile(repoPath("protocol/legacy/protocol-4.2.1.md"), rendered, 0o644); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -300,10 +300,10 @@ func TestGoldenProtocolRender(t *testing.T) {
 		}
 	}
 	for _, marker := range []string{
-		"**Version:** 4.2",
-		"**Protocol Version:** 4.2",
-		"Protocol Version: 4.2",
-		"End of Canonical Deconstruction Protocol, edition 4.2",
+		"**Version:** 4.2.1",
+		"**Protocol Version:** 4.2.1",
+		"Protocol Version: 4.2.1",
+		"End of Canonical Deconstruction Protocol, edition 4.2.1",
 		"## 8.3. Invocation-mode enum and explicit multi-file modes",
 		"Preflight | Export Acquisition",
 	} {
@@ -344,7 +344,7 @@ func TestRenderPromptRequiresCoveredSection(t *testing.T) {
 func TestGoldenEditionOracle(t *testing.T) {
 	res := compileAssembly(t)
 	got := RenderProtocol(res.EIR)
-	want, err := os.ReadFile(repoPath("protocol/legacy/protocol-4.2.md"))
+	want, err := os.ReadFile(repoPath("protocol/legacy/protocol-4.2.1.md"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -1025,8 +1025,8 @@ func TestMigrationAndConformanceCompiles(t *testing.T) {
 		t.Fatalf("ARTIFACT-OWNERSHIP-ROW has %d fields, want 5", counts["ARTIFACT-OWNERSHIP-ROW"])
 	}
 	for _, e := range res.EIR.Declarations.Enums {
-		if e.ID == "CONFORMANCE-CASE" && len(e.Values) != 14 {
-			t.Fatalf("CONFORMANCE-CASE has %d values, want 14", len(e.Values))
+		if e.ID == "CONFORMANCE-CASE" && len(e.Values) != 15 {
+			t.Fatalf("CONFORMANCE-CASE has %d values, want 15", len(e.Values))
 		}
 	}
 }

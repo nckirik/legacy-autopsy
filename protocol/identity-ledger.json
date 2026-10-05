@@ -61,7 +61,7 @@
     },
     {
       "path": "protocol/canonical-hash-profile.cdl",
-      "source-fingerprint": "sha256:d9b7f54ccbd49eabb574b7671145ae5d7787a5c8894c7b2e470e918611797772",
+      "source-fingerprint": "sha256:890a6042260005a3ef477f71977d855ddffbbc48aafb681d89468bf2f3102536",
       "ids": [
         {
           "id": "ARTIFACT-TYPE",
@@ -158,7 +158,7 @@
     },
     {
       "path": "protocol/conformance.cdl",
-      "source-fingerprint": "sha256:c9ef429bb860c43db07528da15fdc01869e6ced98f94ed5f103c629f1feae7b6",
+      "source-fingerprint": "sha256:b57cd21da3687caf83849019b3fee8f7161feba2ee33109432b5f655053ba39e",
       "ids": [
         {
           "id": "ARTIFACT-OWNERSHIP-ROW",
@@ -639,7 +639,7 @@
     },
     {
       "path": "protocol/foundations.cdl",
-      "source-fingerprint": "sha256:76b4df95e7b4c88e321f34352418102644cfc6e5ea47606ca6406e51431d3bda",
+      "source-fingerprint": "sha256:49a628672e3350f1b0a39192d9c6435b333efcb012db8f387cbc6074e0cf0481",
       "ids": [
         {
           "id": "AUTHORITY-CLASS",
@@ -1210,7 +1210,7 @@
     },
     {
       "path": "protocol/packaging.cdl",
-      "source-fingerprint": "sha256:77154c9f02ffbfffe1a85b3136cf7d95c4309d2cba7dc12c504600352b5ef320",
+      "source-fingerprint": "sha256:8f61865ea335adbce89b5a8b1429d382c8066012a5330ab9fb9ceef07e384b78",
       "ids": [
         {
           "id": "APPROVED-DEC-BINDING",
@@ -1562,7 +1562,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "source-fingerprint": "sha256:029a4546d8646a886e15488e70bc737c4c7a81e782b79383ec641f17574a9f6e",
+      "source-fingerprint": "sha256:d1a97daec1a28ae7a742f201bee734ec06968cb500b16c0e3c6f19fbdc910bfc",
       "ids": [
         {
           "id": "DISCOVERY-BUFFER",

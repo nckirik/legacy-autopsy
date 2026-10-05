@@ -1,9 +1,9 @@
 # Protocol: Legacy System Deconstruction, Assurance, and Reconstruction
 
-**Version:** 4.2 (Canonical Reconstruction-Ready Edition)
+**Version:** 4.2.1 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
-**Generated-From:** cdl/0.3.2 (sha256:c82964e48f4980ba9a2eb957494156f882e03cf209b24c952e4242f29e38051b)
+**Generated-From:** cdl/0.3.2 (sha256:7e599c7beb9587e44a3f57a6ebc4be38d0600d2237472b1dc199880d2415a5fe)
 **Language:** cdl/0.3 (eir-format 3)
 **Authority:** generated render of the canonical CDL sources; do not edit.
 
@@ -295,7 +295,11 @@ Partial synthesis MAY run before Exit A for bounded review. It is provisional an
 
 ## 1.5. Non-authoritative sidecars
 
-JSON, SQLite, graph, search, code-generation, or validator sidecars MAY be generated for automation. They MUST carry source fingerprints, schema version, generation time, and a prominent `NON-AUTHORITATIVE-DERIVATIVE` marker. Conflicts are resolved in favor of the canonical Markdown records and original evidence, in that order for semantics.
+Every workspace declares exactly one canonical storage binding in `0A` metadata: a binding identity plus binding schema version, with `markdown/1` as the default. The binding defines the canonical physical form and canonical serialization of protocol records for that workspace; bindings MUST round-trip protocol records losslessly, agree on record identity and canonical payload digests, and keep record payload digests independent of physical storage. A conforming implementation MAY support a subset of bindings, but MUST fail closed when a workspace declares an unsupported binding and MUST NOT silently fall back to another binding.
+
+When the declared binding is `markdown/1`, the Markdown records under `.extracted/` are the canonical operational state. When a non-Markdown binding is declared, the binding's records are the canonical operational state and every generated Markdown record is a projection/export: it MUST carry a prominent `NON-AUTHORITATIVE-DERIVATIVE` marker, conflicts are resolved in favor of the declared binding, and original evidence remains authoritative over both for semantics.
+
+Derived artifacts that are not the declared binding's canonical records - JSON, graph, search, code-generation, or validator outputs - MAY be generated for automation. They MUST carry source fingerprints, schema version, generation time, and a prominent `NON-AUTHORITATIVE-DERIVATIVE` marker. Conflicts are resolved in favor of the canonical records of the declared binding and original evidence, in that order for semantics.
 
 Implementation tooling - runtimes, validators, helper scripts, and caches - is
 non-authoritative, lives outside .extracted/ in operator-local scratch, is never a
@@ -410,7 +414,8 @@ Observed legacy facts and target decisions MUST appear in separate fields and ha
 - **System Namespace:** [stable slug]
 - **Target Repository / Evidence Roots:** [...]
 - **Primary Technology Stack:** [...]
-- **Protocol Version:** 4.2
+- **Protocol Version:** 4.2.1
+- **Canonical Storage Binding:** [binding identity plus binding schema version, for example `markdown/1` or `sqlite/1`; default `markdown/1`]
 - **Current Iteration:** [one canonical token from §10.6: ALFA ... ZULU]
 - **Default Max Traversal Depth:** 3
 - **Included Environments / Snapshots:** [...]
@@ -619,6 +624,8 @@ Unless a schema explicitly requests a raw-source byte fingerprint, all semantic 
 3. serialize fields in the deterministic order declared by the applicable schema; serialize tables with declared column order, normalized delimiter/alignment syntax and insignificant cell-edge whitespace, preserving semantic row order unless the schema declares a deterministic row sort key;
 4. remove insignificant trailing whitespace, AST-separator blank-line variance, and transport-only indentation while preserving whitespace in code spans, fenced blocks, diagrams, and other literal nodes; emit exactly one terminal LF;
 5. include the protocol/schema version, record or artifact identity, and every in-boundary semantic/content node; exclude only the exact carrier and envelope regions authorized by the applicable schema.
+
+This profile defines storage-binding-independent record payload serialization. A non-Markdown canonical storage binding MUST persist each record's canonical payload exactly as this profile (or §4.1.1 for semantic records) defines it, as an immutable value, and MUST define its own canonical serialization and fingerprint for the binding's physical artifacts, such as a relational dump. A binding's physical serialization MUST NOT change any record payload digest, envelope fingerprint, or file-transport semantic binding, and every package manifest MUST declare the canonical storage binding identity and binding schema version.
 
 For a typed record in a multi-record Markdown file, the hash boundary begins at that record's typed-ID heading and ends immediately before the next typed-record heading of the same or higher level, or at end of file. Each record is canonicalized and hashed independently after applying its exact envelope exclusion. The containing file has a separate transport fingerprint over its normalized relative path and ordered sequence of `(record type, record ID, record version where applicable, record payload fingerprint)` bindings. That file fingerprint detects ordering or transport changes but is not a semantic-record identity, is not substituted for a record fingerprint, and MUST NOT be bound by a `CNF`.
 
@@ -1269,7 +1276,7 @@ Predicate: complete
 Every invocation begins with:
 
 ```yaml
-Protocol Version: 4.2
+Protocol Version: 4.2.1
 System Namespace: [slug]
 Current Iteration: [canonical §10.6 token ALFA..ZULU]
 Invocation ID: [globally unique]
@@ -2506,6 +2513,7 @@ The certified package contains:
 - scope certificate;
 - Exit E Candidate Report, candidate payload manifest, Exit E Content-Readiness Report, and signed outer bundle manifest;
 - source, projection, artifact, and semantic fingerprint manifests;
+- declaration of the canonical storage binding identity and binding schema version, and, when the binding is not `markdown/1`, the binding's canonical serialization of protocol records as a package member;
 - Exit A, Exit E Candidate, and content-readiness validation reports;
 - known-gap/risk record, which MUST disclose every approved exclusion and its residual risks even though excluded from the effective denominator; it MUST contain no undisclosed or unapproved gap and MUST NOT claim a gap absent from both the gross discovered population and approved risk record.
 
@@ -2619,6 +2627,7 @@ The result fingerprint covers every preceding field except `Validator Implementa
 - [ ] ID generator, collision extension, aliases, versions, tombstones, and `COV`/`CND`/`MOD`/`PRF`/`HBK` types and canonical coordinates are implemented.
 - [ ] HBK paths and assigned anchors implement §4.1 exactly; renderer-generated heading anchors are never identity inputs.
 - [ ] The §4.1.2 canonical hash profile, per-record and file-transport fingerprints, exact carrier/envelope exclusions, and acyclic package hashes are implemented.
+- [ ] The declared canonical storage binding is parsed, supported, and enforced; an unsupported binding fails closed with no silent fallback; record identity and canonical payload digests are identical across bindings; and a non-Markdown binding persists canonical record payloads unchanged and packages its own canonical serialization.
 - [ ] Packaging hash-domain identity is exactly `(artifact type, normalized path)`; the payload fingerprint is absent from its own preimage, and the artifact-instance binding is constructed only after hashing.
 - [ ] Certification, DEC-approval, and CNF-signature envelopes have identity/version-bound canonical fingerprints; final package-member file fingerprints cover complete finalized files and are distinct from envelope-excluding transport fingerprints.
 - [ ] Every finite enum is dispatched by its complete §5.1 Markdown-AST schema path; label-only dispatch, undeclared paths, wrong-family tokens, and invalid traversal `N/A` coupling fail closed.
@@ -2666,6 +2675,7 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 - **Final envelope and package-member integrity:** positive cases compute identity/version-bound fingerprints for certification, DEC-approval, and CNF-signature envelopes, serialize their exact bindings, and compute external path-bound package-member file fingerprints over complete finalized files while preserving unchanged semantic/decision/CNF payload fingerprints; negative cases remove or mutate only each envelope, signature, timestamp, binding, fingerprint carrier, or finalized file byte after content-readiness and require content-readiness/outer validation to fail, and reject use of the envelope-excluding transport fingerprint as a package-member fingerprint or storage of a package-member fingerprint inside its own member.
 - **Packaging schemas, gate completeness, and deterministic ordering:** positive cases instantiate all five exact §15 schemas, require exact candidate/content-readiness registry sets, reproduce each evidence-set fingerprint from complete authoritative row bindings independent of source order, canonicalize semantically identical rows supplied in different source orders to one hash, serialize empty scalars as `None`, retain header/separator-only empty non-check tables, and verify declared counts/arithmetic; negative cases reject an empty required check table, one missing required check, unknown/duplicate/wrong-stage check, failed check without blocker, fabricated omission/`Not-Applicable`, wrong evidence domain, omitted/duplicate/stale/self/later evidence binding, executor-authored digest mismatch, unknown/duplicate/reordered/missing/extra fields, duplicate sort keys, noncanonical row order after normalization, omitted empty values, malformed empty tables, report-to-manifest back-reference, and any forbidden later-artifact reference.
 - **Acyclic, snapshot-consistent Exit E and final verification:** positive cases execute candidate report -> candidate manifest -> DEC/CNF and confirmation envelopes -> Exit E Content-Readiness Report with Exit E `Pending` -> scope certificate -> outer manifest validation/signature -> exact step-6 transition to `EXIT-E-STATUS: Passed`, bind one direct snapshot identity across the chain, execute every `EXIT-E-FINAL-CHECKS-v1` check, and reproduce a non-authoritative receipt without changing the bundle; negative cases reject `Passed` at steps 1-5, a content-readiness report presented as the pass artifact, a certificate emitted before its content-readiness input, an outer manifest missing the report/certificate/direct identity/registry/input-set field, candidate-readiness-certificate-outer snapshot mismatch, a mixed-snapshot member despite valid individual hashes, payload self-reference, missing/invalid signature, missing/unknown/failed final check, a `Passed` field outside the hashed outer payload, a receipt treated as a package member or authority, and any authoritative post-step-6 completion artifact.
+- **Declared storage binding and binding-independent identity:** positive cases declare `markdown/1` and one non-Markdown binding, round-trip the same records through both, and reproduce identical typed IDs, versions, and canonical payload digests while the non-Markdown package carries the binding's canonical record serialization; negative cases reject an undeclared or unsupported binding, a silent fallback to another binding, a generated Markdown projection conflicting with the declared binding, and any record payload digest, envelope fingerprint, or file-transport semantic binding that changes with physical storage.
 
 ## 17.3. Corpus acceptance
 
@@ -2723,5 +2733,5 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 
 ---
 
-**End of Canonical Deconstruction Protocol, edition 4.2**
+**End of Canonical Deconstruction Protocol, edition 4.2.1**
 

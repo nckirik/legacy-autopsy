@@ -13,6 +13,7 @@ GOAL
 - **Target Repository / Evidence Roots:** [...]
 - **Primary Technology Stack:** [...]
 - **Protocol Version:** {{PROTOCOL-VERSION}}
+- **Canonical Storage Binding:** [binding identity plus binding schema version, for example `markdown/1` or `sqlite/1`; default `markdown/1`]
 - **Current Iteration:** [one canonical token from §10.6: ALFA ... ZULU]
 - **Default Max Traversal Depth:** 3
 - **Included Environments / Snapshots:** [...]
