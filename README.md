@@ -28,6 +28,19 @@ The project is built around the CDL protocol sources under [`protocol/`](protoco
 > and bootstrap fixtures. This repository does **not** execute semantic deconstruction
 > modes, prove Exit A or Exit E for you, or claim Protocol v4.2 conformance.
 
+<!-- TEMP: remove this block once W2/W3 and W5 acceptance metrics pass -->
+
+> [!WARNING]
+> **Temporary: not for real autopsies yet.** The v4.2 normative text is in place, but
+> the execution/certification engine, canonical SQLite store, bounded semantic
+> execution, and handbook substance/readability controls from the
+> [hardening plan](docs/hardening-plan.md) are not implemented. Running it on a real
+> system today will reproduce the first run's gaps - handbook metadata shells and
+> relayed readability (PI-11/PI-12). Use the current edition for development and
+> experiments only until W2/W3 and the W5 acceptance pass; this notice is removed then.
+
+<!-- END TEMP -->
+
 > **Normative authority**
 >
 > The CDL sources under `protocol/` are the sole normative authority; `protocol.md` is their generated edition. Revision oracles are snapshotted per accepted revision: the current-edition oracle is `protocol/legacy/protocol-4.2.md`, and `protocol/legacy/protocol-4.1.3.md` is retained as history. Legacy Autopsy is one non-authoritative implementation that operationalizes it. The protocol does not require this repository, its service, CLI, UI, Atlas, skills, fixtures, or validators. If any implementation or projection conflicts with the normative CDL sources, the protocol wins.
@@ -45,7 +58,9 @@ All three paths use the same standalone protocol. The skill and UI add reliabili
 ### Try it today with your own coding agent
 
 > [!IMPORTANT]
-> This is a manual, agent-driven protocol run - not Legacy Autopsy-managed execution or proof of Protocol v4 conformance.
+> This is a manual, agent-driven protocol run - not Legacy Autopsy-managed execution or
+> proof of Protocol v4 conformance. See the temporary warning above: the v4.2 edition
+> is not yet recommended for real autopsies.
 
 Work on a clean branch in an approved, non-production copy of the legacy repository. Copy the generated standalone edition into that repository's root:
 

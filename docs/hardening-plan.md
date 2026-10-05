@@ -247,6 +247,12 @@ harness, not as one long-lived protocol-execution conversation.
 4. Which semantic result classes require independent review by default versus review
    only on uncertainty/risk. Model identity is deliberately not part of this policy.
 
+## Temporary usage notice
+
+Until W2/W3 land and the W5 acceptance metrics pass, the README carries a temporary
+"not for real autopsies yet" warning (marked `TEMP`). Remove it only when the
+acceptance metrics in this plan pass on the rerun.
+
 ## Immediate next step
 
 Accept or reject PI-1..14 one by one (updating their status), then start W1 with the
