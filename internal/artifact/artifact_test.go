@@ -1,6 +1,7 @@
 package artifact
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -111,5 +112,67 @@ func TestPackageMembersAndVerification(t *testing.T) {
 	stableB, _ := PackageMembers([]Member{members[1], members[0]})
 	if len(stableA) != len(stableB) || stableA[0] != stableB[0] || stableA[1] != stableB[1] {
 		t.Fatal("member manifest depends on input order")
+	}
+}
+
+func outerManifest(members []ManifestEntry, snapshot string) []byte {
+	var b strings.Builder
+	b.WriteString("- **ARTIFACT-TYPE:** OUTER-BUNDLE-MANIFEST\n")
+	b.WriteString("- **ARTIFACT-PATH:** handoff/27-OUTER-BUNDLE-MANIFEST.md\n")
+	b.WriteString("- **PROTOCOL / ARTIFACT-SCHEMA VERSION:** 4.2.1\n")
+	b.WriteString("- **System / Protocol / Snapshot:** " + snapshot + "\n")
+	b.WriteString("- **Final Verification Check Registry / Fingerprint:** EXIT-E-FINAL-CHECKS-v1 sha256:x\n")
+	b.WriteString("- **Pre-Signature Validation Input-Set Fingerprint:** sha256:y\n")
+	b.WriteString("- **Exit E Content-Readiness Report Fingerprint:** sha256:z\n")
+	b.WriteString("- **Scope Certificate Fingerprint:** sha256:w\n")
+	b.WriteString("- **Package Members:**\n")
+	b.WriteString("  | Artifact Type | Normalized Path | Package-Member File Fingerprint |\n")
+	b.WriteString("  | :------------ | :-------------- | :------------------------------ |\n")
+	for _, entry := range members {
+		fmt.Fprintf(&b, "  | OUTER | %s | %s |\n", entry.Path, entry.Fingerprint)
+	}
+	b.WriteString("- **EXIT-E-STATUS:** Passed\n")
+	return []byte(b.String())
+}
+
+func TestVerifyBundle(t *testing.T) {
+	others := []Member{
+		{Path: "handoff/handbook/01.md", Bytes: []byte("- **System / Protocol / Snapshot:** demo | 4.2.1 | dev | snap-1\n")},
+		{Path: "handoff/26-SCOPE-CERTIFICATE.md", Bytes: []byte("- **System / Protocol / Snapshot:** demo | 4.2.1 | dev | snap-1\n")},
+	}
+	manifest, err := PackageMembers(others)
+	if err != nil {
+		t.Fatal(err)
+	}
+	outer := outerManifest(manifest, "demo | 4.2.1 | dev | snap-1")
+	members := append(append([]Member(nil), others...), Member{Path: "handoff/27-OUTER-BUNDLE-MANIFEST.md", Bytes: outer})
+	if err := VerifyBundle("OUTER-BUNDLE-MANIFEST", "handoff/27-OUTER-BUNDLE-MANIFEST.md", outer, members); err != nil {
+		t.Fatalf("valid bundle rejected: %v", err)
+	}
+	tampered := append([]Member(nil), members...)
+	for i := range tampered {
+		if tampered[i].Path == "handoff/handbook/01.md" {
+			tampered[i] = Member{Path: tampered[i].Path, Bytes: append(append([]byte(nil), tampered[i].Bytes...), 'x')}
+		}
+	}
+	if err := VerifyBundle("OUTER-BUNDLE-MANIFEST", "handoff/27-OUTER-BUNDLE-MANIFEST.md", outer, tampered); err == nil {
+		t.Fatal("tampered member accepted")
+	}
+	mixed := append([]Member(nil), members...)
+	for i := range mixed {
+		if mixed[i].Path == "handoff/26-SCOPE-CERTIFICATE.md" {
+			mixed[i] = Member{Path: mixed[i].Path, Bytes: []byte("- **System / Protocol / Snapshot:** other | 4.2.1 | dev | snap-1\n")}
+		}
+	}
+	if err := VerifyBundle("OUTER-BUNDLE-MANIFEST", "handoff/27-OUTER-BUNDLE-MANIFEST.md", outer, mixed); err == nil || !strings.Contains(err.Error(), "snapshot mismatch") {
+		t.Fatalf("mixed snapshot accepted: %v", err)
+	}
+	failedStatus := strings.Replace(string(outer), "**EXIT-E-STATUS:** Passed", "**EXIT-E-STATUS:** Pending", 1)
+	if err := VerifyBundle("OUTER-BUNDLE-MANIFEST", "handoff/27-OUTER-BUNDLE-MANIFEST.md", []byte(failedStatus), members); err == nil || !strings.Contains(err.Error(), "EXIT-E-STATUS") {
+		t.Fatalf("Pending status accepted: %v", err)
+	}
+	extra := append(append([]Member(nil), members...), Member{Path: "handoff/extra.md", Bytes: []byte("x")})
+	if err := VerifyBundle("OUTER-BUNDLE-MANIFEST", "handoff/27-OUTER-BUNDLE-MANIFEST.md", outer, extra); err == nil {
+		t.Fatal("extra member accepted")
 	}
 }

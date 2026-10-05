@@ -1,0 +1,71 @@
+package cli
+
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+
+	"github.com/nckirik/legacy-autopsy/internal/artifact"
+)
+
+func TestSpecArtifactValidateAndVerify(t *testing.T) {
+	dir := t.TempDir()
+	payloadPath := filepath.Join(dir, "envelope.md")
+	if err := os.WriteFile(payloadPath, []byte("- **Required Human Signatories / Signature Timestamps:** Alice\n- **Envelope Audit:** reviewed\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	out, errOut, code := runSpecCLI(t, "spec", "artifact", "validate",
+		"--repo", specRepoRoot, "--field", "OUTER-SIGNATURE-ENVELOPE", "--payload", payloadPath,
+		"--type", "OUTER-BUNDLE-MANIFEST", "--path", "handoff/27.md")
+	if code != 0 {
+		t.Fatalf("validate exit %d: %s", code, errOut)
+	}
+	if !strings.Contains(out, "valid OUTER-SIGNATURE-ENVELOPE payload") || !strings.Contains(out, "payload fingerprint:") {
+		t.Fatalf("validate output: %s", out)
+	}
+
+	bundle := filepath.Join(dir, "bundle")
+	if err := os.MkdirAll(filepath.Join(bundle, "handbook"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	snapshot := "- **System / Protocol / Snapshot:** demo | 4.2.1 | dev | snap-1\n"
+	if err := os.WriteFile(filepath.Join(bundle, "handbook", "01.md"), []byte(snapshot), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	others := []artifact.Member{{Path: "handbook/01.md", Bytes: []byte(snapshot)}}
+	manifest, err := artifact.PackageMembers(others)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var b strings.Builder
+	b.WriteString("- **System / Protocol / Snapshot:** demo | 4.2.1 | dev | snap-1\n")
+	b.WriteString("- **Package Members:**\n")
+	b.WriteString("  | Artifact Type | Normalized Path | Package-Member File Fingerprint |\n")
+	b.WriteString("  | :------------ | :-------------- | :------------------------------ |\n")
+	for _, entry := range manifest {
+		fmt.Fprintf(&b, "  | OUTER | %s | %s |\n", entry.Path, entry.Fingerprint)
+	}
+	b.WriteString("- **EXIT-E-STATUS:** Passed\n")
+	outerPath := filepath.Join(bundle, "27.md")
+	if err := os.WriteFile(outerPath, []byte(b.String()), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	out, errOut, code = runSpecCLI(t, "spec", "artifact", "verify",
+		"--repo", specRepoRoot, "--type", "OUTER-BUNDLE-MANIFEST", "--path", "27.md", "--dir", bundle)
+	if code != 0 {
+		t.Fatalf("verify exit %d: %s", code, errOut)
+	}
+	if !strings.Contains(out, "bundle verified: 2 member(s)") {
+		t.Fatalf("verify output: %s", out)
+	}
+	if err := os.WriteFile(filepath.Join(bundle, "handbook", "01.md"), []byte(snapshot+"x"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	_, _, code = runSpecCLI(t, "spec", "artifact", "verify",
+		"--repo", specRepoRoot, "--type", "OUTER-BUNDLE-MANIFEST", "--path", "27.md", "--dir", bundle)
+	if code == 0 {
+		t.Fatal("tampered bundle verified")
+	}
+}

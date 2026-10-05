@@ -168,10 +168,13 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
   and order validation, canonical payload fingerprints with carrier exclusion and
   path binding, artifact-instance bindings, sorted package-member manifests, and
   fail-closed member verification (tamper, missing, extra, order-independent).
-  Remaining: the full §15.5 final-bundle registry/chain checks, `23`-`27` emit
-  wiring for the human deliverables, and CLI verbs. Architecture (decision 8):
-  payloads are executor-authored Markdown validated through the label-to-column
-  mapping; no label table is introduced.
+  Bundle verification (`artifact.VerifyBundle`, `spec artifact validate|verify`):
+  outer payload validity, declared member set vs actual set, fingerprint
+  recomputation, snapshot equality, tamper/missing/extra rejection. Remaining: the
+  full §15.4 chain references and final check-registry fingerprints, plus assembly of
+  the `23`-`27` human deliverables. Architecture (decision 8): payloads are
+  executor-authored Markdown validated through the label-to-column mapping; no label
+  table is introduced.
 - [x] Append-only runtime post-conditions: `store.LogState` plus
       `store.VerifyMonotonicLogs` fail closed on any disappearing log record; the
       database triggers remain as a second guard. Validator allow-list enforcement
