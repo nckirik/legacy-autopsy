@@ -65,3 +65,19 @@ func TestValidateRecord(t *testing.T) {
 		t.Fatalf("unknown schema accepted: %v", err)
 	}
 }
+
+func TestValidateSemanticsPersonaRegistry(t *testing.T) {
+	valid := map[string]any{"prefix": "BE", "persona-slug": "backend", "persona-directory": "BE-backend"}
+	if err := ValidateSemantics("PERSONA-REGISTRY", valid); err != nil {
+		t.Fatal(err)
+	}
+	for name, values := range map[string]map[string]any{
+		"lowercase prefix": {"prefix": "backend", "persona-slug": "backend", "persona-directory": "backend-backend"},
+		"bad slug":         {"prefix": "BE", "persona-slug": "Backend", "persona-directory": "BE-Backend"},
+		"dir mismatch":     {"prefix": "BE", "persona-slug": "backend", "persona-directory": "BE-other"},
+	} {
+		if err := ValidateSemantics("PERSONA-REGISTRY", values); err == nil {
+			t.Fatalf("%s accepted", name)
+		}
+	}
+}

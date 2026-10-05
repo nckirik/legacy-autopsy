@@ -19,7 +19,7 @@ const (
 
 func specCommand(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec <compile|render|run|schema|store|record|work|artifact> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec <compile|render|run|schema|store|record|work|artifact|preflight> [flags]")
 	}
 	switch args[0] {
 	case "compile":
@@ -38,8 +38,10 @@ func specCommand(args []string, stdout, stderr io.Writer) error {
 		return specWork(args[1:], stdout, stderr)
 	case "artifact":
 		return specArtifact(args[1:], stdout, stderr)
+	case "preflight":
+		return specPreflight(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec operation %q is unsupported; supported operations: compile, render, run, schema, store, record, work, artifact", args[0])
+		return fmt.Errorf("spec operation %q is unsupported; supported operations: compile, render, run, schema, store, record, work, artifact, preflight", args[0])
 	}
 }
 

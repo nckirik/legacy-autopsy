@@ -34,7 +34,7 @@ func fakeModelServer(t *testing.T) *httptest.Server {
 		}
 		content := "OK"
 		if !strings.Contains(system, "connectivity probe") {
-			content = "RESULT: PROPOSAL\nEFFECTS: none\n---PAYLOAD---\n- **Constraint:** model writes\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n---END---\n"
+			content = "RESULT: PROPOSAL\nEFFECTS: none\n---RECORD---\n- **Constraint:** model writes\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n---END---\n"
 		}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{

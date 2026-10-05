@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -13,37 +14,78 @@ import (
 	md "github.com/nckirik/legacy-autopsy/internal/markdown"
 )
 
-// Ingest validates a Markdown record payload against its declared FIELD schema,
-// derives the queryable columns, and inserts one row. The canonical payload bytes
-// are stored verbatim in la_canonical_payload, so record payload digests stay
-// binding-independent; the queryable columns are derived projections and can be
-// rebuilt from the payload. Unknown, duplicate, missing-required, wrongly typed,
-// or noncanonical set values fail closed, as does inserting into a non-table
-// storage class or a duplicate record ID.
+// RecordInput is one record to ingest.
+type RecordInput struct {
+	RecordID string
+	Version  int
+	Payload  []byte
+}
+
+// Ingest validates one Markdown record payload against its declared FIELD
+// schema, derives the queryable columns, and inserts one row.
 func Ingest(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string, version int, payload []byte) error {
-	if recordID == "" {
-		return fmt.Errorf("store: ingest %s: empty record ID", fieldID)
-	}
-	if version < 1 {
-		return fmt.Errorf("store: ingest %s %s: version must be positive", fieldID, recordID)
+	return IngestMany(dbPath, doc, fieldID, []RecordInput{{RecordID: recordID, Version: version, Payload: payload}})
+}
+
+// IngestMany validates and inserts records in one transaction, all or nothing.
+// The canonical payload bytes are stored verbatim in la_canonical_payload, so
+// record payload digests stay binding-independent; queryable columns are derived
+// projections rebuildable from the payload. Unknown, duplicate, missing-required,
+// wrongly typed, or noncanonical values fail closed, as does a non-table storage
+// class, an empty/duplicate record ID, or a non-positive version.
+func IngestMany(dbPath string, doc *cdl.EIRDoc, fieldID string, records []RecordInput) error {
+	if len(records) == 0 {
+		return fmt.Errorf("store: ingest %s: no records", fieldID)
 	}
 	field, err := tableField(doc, fieldID)
 	if err != nil {
 		return err
 	}
-	canonical, err := capabilities.CanonicalMarkdown(payload)
-	if err != nil {
-		return err
+	seen := map[string]bool{}
+	var script strings.Builder
+	script.WriteString("BEGIN;\n")
+	for _, record := range records {
+		if seen[record.RecordID] {
+			return fmt.Errorf("store: ingest %s: duplicate record ID %q", fieldID, record.RecordID)
+		}
+		seen[record.RecordID] = true
+		statement, err := ingestStatement(doc, field, record)
+		if err != nil {
+			return err
+		}
+		script.WriteString(statement)
+		script.WriteString("\n")
 	}
-	values, err := extractValues(fieldID, field.Fields, canonical)
-	if err != nil {
-		return err
+	script.WriteString("COMMIT;\n")
+	if err := execSQL(dbPath, script.String()); err != nil {
+		return fmt.Errorf("store: ingest %s: %w", fieldID, err)
 	}
-	if err := certify.ValidateRecord(doc, fieldID, values); err != nil {
-		return err
+	return nil
+}
+
+func ingestStatement(doc *cdl.EIRDoc, field *cdl.EIRField, record RecordInput) (string, error) {
+	if record.RecordID == "" {
+		return "", fmt.Errorf("store: ingest %s: empty record ID", field.ID)
+	}
+	if record.Version < 1 {
+		return "", fmt.Errorf("store: ingest %s %s: version must be positive", field.ID, record.RecordID)
+	}
+	canonical, err := capabilities.CanonicalMarkdown(record.Payload)
+	if err != nil {
+		return "", err
+	}
+	values, err := extractValues(field.ID, field.Fields, canonical)
+	if err != nil {
+		return "", err
+	}
+	if err := certify.ValidateRecord(doc, field.ID, values); err != nil {
+		return "", fmt.Errorf("%w (parsed declared fields: %s)", err, strings.Join(sortedKeys(values), ", "))
+	}
+	if err := certify.ValidateSemantics(field.ID, values); err != nil {
+		return "", err
 	}
 	columns := []string{"la_record_id", "la_record_version", "la_semantic_fingerprint", "la_canonical_payload"}
-	literals := []string{literal(recordID), literal(int64(version)), literal(capabilities.Hash(canonical)), literal(string(canonical))}
+	literals := []string{literal(record.RecordID), literal(int64(record.Version)), literal(capabilities.Hash(canonical)), literal(string(canonical))}
 	for _, spec := range field.Fields {
 		column := ident(spec.Name)
 		value, present := values[spec.Name]
@@ -55,7 +97,7 @@ func Ingest(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string, version in
 		if items, ok := value.([]any); ok {
 			canonicalSet, err := certify.CanonicalStringSet(items)
 			if err != nil {
-				return fmt.Errorf("store: ingest %s.%s: %w", fieldID, spec.Name, err)
+				return "", fmt.Errorf("store: ingest %s.%s: %w", field.ID, spec.Name, err)
 			}
 			value = strings.Join(canonicalSet, ", ")
 		}
@@ -66,11 +108,7 @@ func Ingest(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string, version in
 	for i, column := range columns {
 		quoted[i] = fmt.Sprintf("%q", column)
 	}
-	sql := fmt.Sprintf("INSERT INTO %q (%s) VALUES (%s);", ident(fieldID), strings.Join(quoted, ", "), strings.Join(literals, ", "))
-	if err := execSQL(dbPath, sql); err != nil {
-		return fmt.Errorf("store: ingest %s %s: %w", fieldID, recordID, err)
-	}
-	return nil
+	return fmt.Sprintf("INSERT INTO %q (%s) VALUES (%s);", ident(field.ID), strings.Join(quoted, ", "), strings.Join(literals, ", ")), nil
 }
 
 func findField(doc *cdl.EIRDoc, fieldID string) (*cdl.EIRField, error) {
@@ -150,4 +188,16 @@ func execSQL(dbPath, sql string) error {
 		return fmt.Errorf("%v: %s", err, strings.TrimSpace(stderr.String()))
 	}
 	return nil
+}
+
+func sortedKeys(values map[string]any) []string {
+	keys := make([]string, 0, len(values))
+	for key := range values {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	if len(keys) == 0 {
+		return []string{"none"}
+	}
+	return keys
 }

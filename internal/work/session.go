@@ -3,17 +3,22 @@ package work
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
+	"github.com/nckirik/legacy-autopsy/internal/certify"
 )
 
 // Invocation is the bounded executor call for one unit: the unit contract, its
 // materialized dependency closure, and the capability surface whose read set
 // will stale-check the commit.
 type Invocation struct {
-	Unit    Unit
-	Context Context
-	Caps    *Caps
+	Unit           Unit
+	Context        Context
+	Caps           *Caps
+	Fields         []string
+	RequiredFields []string
+	Hints          []string
 }
 
 // Executor performs one semantic work unit and returns a proposal. It never
@@ -60,7 +65,11 @@ func NewSession(db string, doc *cdl.EIRDoc, config Config, executor Executor, re
 	if executor == nil {
 		return nil, fmt.Errorf("work: session requires an executor")
 	}
-	return &Session{db: db, doc: doc, config: config, executor: executor, reviewer: reviewer, maxRetries: 2}, nil
+	maxRetries := config.MaxRetries
+	if maxRetries == 0 {
+		maxRetries = 3
+	}
+	return &Session{db: db, doc: doc, config: config, executor: executor, reviewer: reviewer, maxRetries: maxRetries}, nil
 }
 
 // Run processes units sequentially, one work item at a time, and returns the
@@ -83,19 +92,29 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 	if err := unit.Validate(s.doc); err != nil {
 		return stats, err
 	}
+	feedback := ""
 	for attempt := 0; attempt <= s.maxRetries; attempt++ {
 		caps := NewCaps(s.db, s.doc)
 		context, err := BuildContext(caps, unit)
 		if err != nil {
 			return stats, err
 		}
+		if feedback != "" {
+			context.Bytes = append(context.Bytes, []byte("\n## Previous attempt rejected\n\n"+feedback+"\n")...)
+		}
 		stats.ContextBytes = len(context.Bytes)
 		stats.Dependencies = len(unit.Reads)
-		proposal, err := s.executor.Execute(Invocation{Unit: unit, Context: context, Caps: caps})
+		fields, required, err := FieldContract(s.doc, unit.ResultType)
+		if err != nil {
+			return stats, err
+		}
+		proposal, err := s.executor.Execute(Invocation{Unit: unit, Context: context, Caps: caps, Fields: fields, RequiredFields: required, Hints: certify.ValidationHints(unit.ResultType)})
 		if err != nil {
 			var blocker *BlockerError
 			if !errors.As(err, &blocker) {
-				return stats, err
+				stats.Retries++
+				feedback = "executor error: " + err.Error()
+				continue
 			}
 			class := ClassifyBlocker(blocker.Blocker)
 			stats.Blocker = class
@@ -114,6 +133,10 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 			stats.Review = result.Outcome
 			if result.Outcome != ReviewApproved {
 				stats.Retries++
+				feedback = "review " + string(result.Outcome)
+				if len(result.Findings) > 0 {
+					feedback += ": " + strings.Join(result.Findings, "; ")
+				}
 				continue
 			}
 		}
@@ -121,9 +144,12 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 			var stale *StaleError
 			if errors.As(err, &stale) {
 				stats.Retries++
+				feedback = ""
 				continue
 			}
-			return stats, err
+			stats.Retries++
+			feedback = err.Error()
+			continue
 		}
 		stats.Fetches = caps.FetchCount()
 		return stats, nil
@@ -134,11 +160,19 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 // review constructs the reviewer's context independently of the worker
 // context and asks for a verdict.
 func (s *Session) review(unit Unit, proposal Proposal) (ReviewResult, error) {
-	target := Ref{FieldID: proposal.FieldID, RecordID: unit.RecordID}
-	reviewCaps := NewCaps(s.db, s.doc)
-	context, err := BuildReviewContext(reviewCaps, unit, target, proposal.Payload)
+	resolved, err := ResolveRecords(s.doc, unit, proposal)
 	if err != nil {
 		return ReviewResult{}, err
 	}
-	return s.reviewer.Review(ReviewRequest{Unit: unit, Target: target, Payload: proposal.Payload, Context: context})
+	reviewCaps := NewCaps(s.db, s.doc)
+	context, err := BuildReviewContext(reviewCaps, unit, resolved)
+	if err != nil {
+		return ReviewResult{}, err
+	}
+	request := ReviewRequest{Unit: unit, Context: context}
+	for _, record := range resolved {
+		request.Targets = append(request.Targets, Ref{FieldID: proposal.FieldID, RecordID: record.RecordID})
+		request.Payloads = append(request.Payloads, record.Payload)
+	}
+	return s.reviewer.Review(request)
 }

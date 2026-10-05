@@ -37,6 +37,8 @@ func specWork(args []string, stdout, stderr io.Writer) error {
 	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
 	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
 	timeout := set.Duration("llm-timeout", 0, "per-request timeout (default 120s)")
+	showModel := set.Bool("show-model", false, "print raw model responses to stderr (diagnostic, non-authoritative)")
+	maxRetries := set.Int("max-retries", 0, "override the retry budget for rejected proposals")
 	if err := set.Parse(args[1:]); err != nil {
 		return err
 	}
@@ -103,10 +105,22 @@ func specWork(args []string, stdout, stderr io.Writer) error {
 	if *reviewMode != "" {
 		runConfig.ReviewMode = work.ReviewMode(*reviewMode)
 	}
+	if *maxRetries > 0 {
+		runConfig.MaxRetries = *maxRetries
+	}
 	if err := runConfig.Validate(); err != nil {
 		return err
 	}
-	session, err := work.NewSession(*db, res.EIR, runConfig, llm.NewExecutor(client), llm.NewReviewer(client))
+	executor := llm.NewExecutor(client)
+	reviewer := llm.NewReviewer(client)
+	if *llmReasoning != "" {
+		executor.ForceReasoning = llmReasoning
+	}
+	if *showModel {
+		executor.SetDebug(stderr)
+		reviewer.Debug = stderr
+	}
+	session, err := work.NewSession(*db, res.EIR, runConfig, executor, reviewer)
 	if err != nil {
 		return err
 	}

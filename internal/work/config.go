@@ -27,6 +27,7 @@ type OperatorMinimums struct {
 type Config struct {
 	ReviewMode       ReviewMode
 	OperatorMinimums OperatorMinimums
+	MaxRetries       int
 }
 
 // DefaultConfig is the protocol default: independent review for units that
@@ -36,6 +37,7 @@ func DefaultConfig() Config {
 	return Config{
 		ReviewMode:       ReviewCritical,
 		OperatorMinimums: OperatorMinimums{DecisionBatchMinutes: 10, PlainLanguageQuestions: true},
+		MaxRetries:       3,
 	}
 }
 
@@ -48,6 +50,9 @@ func (c Config) Validate() error {
 	}
 	if c.OperatorMinimums.DecisionBatchMinutes <= 0 {
 		return fmt.Errorf("work: decision batch minutes must be positive")
+	}
+	if c.MaxRetries < 0 {
+		return fmt.Errorf("work: max retries must not be negative")
 	}
 	return nil
 }

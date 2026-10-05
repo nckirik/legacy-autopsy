@@ -6,14 +6,19 @@ import (
 	"github.com/nckirik/legacy-autopsy/internal/store"
 )
 
+// Record is one executor-authored record payload.
+type Record struct {
+	Payload []byte
+}
+
 // Proposal is one executor-authored semantic mutation. It is only a proposal:
 // the runtime validates it against the result contract and the invocation's
 // read set before anything commits. Record identity and version are runtime
-// properties (the unit's target record ID, version 1 on create); the executor
-// authors payload content only.
+// properties (single-record target or ID derived from a declared payload field,
+// version 1 on create); the executor authors payload content only.
 type Proposal struct {
 	FieldID string
-	Payload []byte
+	Records []Record
 	Effects []string
 }
 
@@ -35,6 +40,9 @@ func Commit(caps *Caps, unit Unit, p Proposal) error {
 	if p.FieldID != unit.ResultType {
 		return fmt.Errorf("work: unit %s proposal writes %s, result contract is %s", unit.ID, p.FieldID, unit.ResultType)
 	}
+	if len(p.Records) == 0 {
+		return fmt.Errorf("work: unit %s proposal has no records", unit.ID)
+	}
 	for _, effect := range p.Effects {
 		allowed := false
 		for _, candidate := range unit.AllowedEffects {
@@ -47,9 +55,16 @@ func Commit(caps *Caps, unit Unit, p Proposal) error {
 			return fmt.Errorf("work: unit %s effect %q is not allowed", unit.ID, effect)
 		}
 	}
-	target := Ref{FieldID: unit.ResultType, RecordID: unit.RecordID}
+	resolved, err := ResolveRecords(caps.doc, unit, p)
+	if err != nil {
+		return err
+	}
+	targets := map[Ref]bool{}
+	for _, record := range resolved {
+		targets[Ref{FieldID: p.FieldID, RecordID: record.RecordID}] = true
+	}
 	for ref, want := range caps.ReadSet() {
-		if ref == target {
+		if targets[ref] {
 			continue
 		}
 		got, err := store.FingerprintOf(caps.db, caps.doc, ref.FieldID, ref.RecordID)
@@ -57,5 +72,9 @@ func Commit(caps *Caps, unit Unit, p Proposal) error {
 			return &StaleError{Ref: ref}
 		}
 	}
-	return store.Ingest(caps.db, caps.doc, p.FieldID, unit.RecordID, 1, p.Payload)
+	inputs := make([]store.RecordInput, 0, len(resolved))
+	for _, record := range resolved {
+		inputs = append(inputs, store.RecordInput{RecordID: record.RecordID, Version: 1, Payload: record.Payload})
+	}
+	return store.IngestMany(caps.db, caps.doc, p.FieldID, inputs)
 }

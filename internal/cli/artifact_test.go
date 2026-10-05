@@ -69,3 +69,22 @@ func TestSpecArtifactValidateAndVerify(t *testing.T) {
 		t.Fatal("tampered bundle verified")
 	}
 }
+
+func TestSpecPreflightScan(t *testing.T) {
+	dir := t.TempDir()
+	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte("module demo\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "main.go"), []byte("package main\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	out, errOut, code := runSpecCLI(t, "spec", "preflight", "scan", "--repo", specRepoRoot, "--target", dir)
+	if code != 0 {
+		t.Fatalf("scan exit %d: %s", code, errOut)
+	}
+	for _, marker := range []string{"# Repository scan", "- **Languages:** Go", "- **Entry Points:**", "fingerprint: sha256:"} {
+		if !strings.Contains(out, marker) {
+			t.Fatalf("scan output missing %q:\n%s", marker, out)
+		}
+	}
+}

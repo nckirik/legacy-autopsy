@@ -54,7 +54,7 @@ func seedInvariant(t *testing.T, db string, doc *cdl.EIRDoc, id, constraint stri
 func invariantProposal(constraint string) Proposal {
 	return Proposal{
 		FieldID: "INVARIANT",
-		Payload: []byte("- **Constraint:** " + constraint + "\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n"),
+		Records: []Record{{Payload: []byte("- **Constraint:** " + constraint + "\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n")}},
 	}
 }
 
@@ -127,8 +127,8 @@ func TestCommitRejectsStaleDependency(t *testing.T) {
 	if err == nil {
 		t.Fatal("stale commit accepted")
 	}
-	if report.Units[0].Retries != 3 {
-		t.Fatalf("retries = %d, want 3", report.Units[0].Retries)
+	if report.Units[0].Retries != 4 {
+		t.Fatalf("retries = %d, want 4", report.Units[0].Retries)
 	}
 	if _, err := store.Get(db, doc, "INVARIANT", "INV-STALE"); err == nil {
 		t.Fatal("stale proposal was committed")
@@ -164,8 +164,8 @@ func TestReviewPolicyAndRetry(t *testing.T) {
 		if !strings.Contains(string(request.Context.Bytes), "Proposed record") {
 			t.Error("review context lacks the proposed record")
 		}
-		if request.Target != (Ref{FieldID: "INVARIANT", RecordID: "INV-REVIEW"}) {
-			t.Errorf("review target = %v", request.Target)
+		if len(request.Targets) != 1 || request.Targets[0] != (Ref{FieldID: "INVARIANT", RecordID: "INV-REVIEW"}) {
+			t.Errorf("review targets = %v", request.Targets)
 		}
 		if reviews == 1 {
 			return ReviewResult{Outcome: ReviewRejected, Findings: []string{"unsupported"}}, nil
@@ -288,5 +288,64 @@ func TestAskConfig(t *testing.T) {
 		return answers[q.Prompt], nil
 	}); err == nil {
 		t.Fatal("invalid review mode accepted")
+	}
+}
+
+func TestBatchProposalDerivesIDs(t *testing.T) {
+	db, doc := testDoc(t)
+	unit := Unit{ID: "U-BATCH", Mode: "Preflight", IDFromField: "constraint", ResultType: "INVARIANT"}
+	proposal := Proposal{FieldID: "INVARIANT", Records: []Record{
+		{Payload: []byte("- **Constraint:** ROW-1\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n")},
+		{Payload: []byte("- **Constraint:** ROW-2\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n")},
+	}}
+	if err := Commit(NewCaps(db, doc), unit, proposal); err != nil {
+		t.Fatal(err)
+	}
+	ids, err := store.List(db, doc, "INVARIANT")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Join(ids, ",") != "ROW-1,ROW-2" {
+		t.Fatalf("ids = %v", ids)
+	}
+	duplicate := Proposal{FieldID: "INVARIANT", Records: []Record{
+		{Payload: []byte("- **Constraint:** ROW-3\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n")},
+		{Payload: []byte("- **Constraint:** ROW-3\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n")},
+	}}
+	if err := Commit(NewCaps(db, doc), unit, duplicate); err == nil || !strings.Contains(err.Error(), "duplicate") {
+		t.Fatalf("duplicate batch accepted: %v", err)
+	}
+	if _, err := store.Get(db, doc, "INVARIANT", "ROW-3"); err == nil {
+		t.Fatal("partial batch committed")
+	}
+}
+
+func TestValidationFailureRetriesWithFeedback(t *testing.T) {
+	db, doc := testDoc(t)
+	unit := Unit{ID: "U-FEEDBACK", Mode: "Discovery", RecordID: "INV-FEEDBACK", ResultType: "INVARIANT"}
+	attempts := 0
+	executor := funcExecutor(func(inv Invocation) (Proposal, error) {
+		attempts++
+		if attempts == 1 {
+			if err := Commit(NewCaps(db, doc), unit, Proposal{FieldID: "INVARIANT", Records: []Record{{Payload: []byte("- **Constraint:** c\n- **Unknown:** x\n- **Discovered In:** SRC-1\n")}}}); err == nil {
+				t.Fatal("invalid payload committed")
+			}
+			return Proposal{FieldID: "INVARIANT", Records: []Record{{Payload: []byte("- **Constraint:** c\n- **Unknown:** x\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n")}}}, nil
+		}
+		if !strings.Contains(string(inv.Context.Bytes), "Previous attempt rejected") {
+			t.Fatal("retry context lacks rejection feedback")
+		}
+		return invariantProposal("corrected"), nil
+	})
+	session, err := NewSession(db, doc, DefaultConfig(), executor, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	report, err := session.Run([]Unit{unit})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Units[0].Retries != 1 || attempts != 2 {
+		t.Fatalf("stats = %+v attempts = %d", report.Units[0], attempts)
 	}
 }

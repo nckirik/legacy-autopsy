@@ -120,7 +120,7 @@ func TestConfigFromEnv(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if config.Model != "model-x" || config.Reasoning != "xhigh" || config.MaxTokens != 4096 {
+	if config.Model != "model-x" || config.Reasoning != "xhigh" || config.MaxTokens != 16384 {
 		t.Fatalf("config = %+v", config)
 	}
 	t.Setenv(EnvReasoning, "bad\nvalue")
@@ -136,7 +136,7 @@ func TestConfigFromEnv(t *testing.T) {
 func TestParseProposal(t *testing.T) {
 	text := `RESULT: PROPOSAL
 EFFECTS: none
----PAYLOAD---
+---RECORD---
 - **Constraint:** totals match
 - **Verification Vectors:** v1
 - **Discovered In:** SRC-1
@@ -146,11 +146,11 @@ EFFECTS: none
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(proposal.Effects) != 0 || proposal.FieldID != "" {
+	if len(proposal.Effects) != 0 || proposal.FieldID != "" || len(proposal.Records) != 1 {
 		t.Fatalf("proposal = %+v", proposal)
 	}
-	if !strings.Contains(string(proposal.Payload), "**Constraint:**") {
-		t.Fatalf("payload = %q", proposal.Payload)
+	if !strings.Contains(string(proposal.Records[0].Payload), "**Constraint:**") {
+		t.Fatalf("payload = %q", proposal.Records[0].Payload)
 	}
 	blocker, err := ParseProposal("RESULT: BLOCKER\nKIND: uncertainty\nMESSAGE: not enough evidence\n")
 	if err == nil {
@@ -163,8 +163,9 @@ EFFECTS: none
 	_ = blocker
 	for _, bad := range []string{
 		"no markers at all",
-		"RESULT: PROPOSAL\nno payload block\n",
-		"RESULT: SOMETHING\n---PAYLOAD---\n- **A:** b\n---END---\n",
+		"RESULT: PROPOSAL\nno record block\n",
+		"RESULT: SOMETHING\n---RECORD---\n- **A:** b\n---END---\n",
+		"RESULT: PROPOSAL\n---RECORD---\n- **A:** b\n",
 	} {
 		if _, err := ParseProposal(bad); err == nil {
 			t.Fatalf("invalid response accepted: %q", bad)
@@ -202,7 +203,7 @@ func TestExecutorAndReviewerThroughFakeModel(t *testing.T) {
 		if strings.Contains(system, "independent reviewer") {
 			return "OUTCOME: approved\nFINDINGS:\n- none\n"
 		}
-		return "RESULT: PROPOSAL\nEFFECTS: none\n---PAYLOAD---\n- **Constraint:** model writes\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n---END---\n"
+		return "RESULT: PROPOSAL\nEFFECTS: none\n---RECORD---\n- **Constraint:** model writes\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n---END---\n"
 	})
 	client := testClient(t, server.URL)
 	executor := NewExecutor(client)
@@ -223,13 +224,62 @@ func TestExecutorAndReviewerThroughFakeModel(t *testing.T) {
 		t.Fatalf("executor system prompt missing: %q", last(recorded.systems))
 	}
 	result, err := reviewer.Review(work.ReviewRequest{
-		Unit: work.Unit{ID: "U", ResultType: "INVARIANT"}, Target: work.Ref{FieldID: "INVARIANT", RecordID: "INV-LLM"},
-		Payload: proposal.Payload, Context: context,
+		Unit:     work.Unit{ID: "U", ResultType: "INVARIANT"},
+		Targets:  []work.Ref{{FieldID: "INVARIANT", RecordID: "INV-LLM"}},
+		Payloads: [][]byte{proposal.Records[0].Payload}, Context: context,
 	})
 	if err != nil || result.Outcome != work.ReviewApproved {
 		t.Fatalf("review = %+v err = %v", result, err)
 	}
 	if !strings.Contains(last(recorded.systems), "independent reviewer") {
 		t.Fatalf("reviewer system prompt missing: %q", last(recorded.systems))
+	}
+}
+
+func TestClientRetriesEmptyContent(t *testing.T) {
+	attempts := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		attempts++
+		content := ""
+		if attempts >= 3 {
+			content = "OK"
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"choices": []map[string]any{{"message": map[string]string{"role": "assistant", "content": content}, "finish_reason": "length"}},
+		})
+	}))
+	defer server.Close()
+	client := testClient(t, server.URL)
+	text, err := client.Complete(t.Context(), "s", "u")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if text != "OK" || attempts != 3 {
+		t.Fatalf("text=%q attempts=%d", text, attempts)
+	}
+}
+
+func TestEffortResolution(t *testing.T) {
+	client := &Client{config: Config{Reasoning: "xhigh"}}
+	executor := &Executor{client: client}
+	if got := executor.effortFor(work.Unit{}); got != "xhigh" {
+		t.Fatalf("default = %q", got)
+	}
+	if got := executor.effortFor(work.Unit{ReasoningEffort: "off"}); got != "" {
+		t.Fatalf("unit off = %q", got)
+	}
+	if got := executor.effortFor(work.Unit{ReasoningEffort: "medium"}); got != "medium" {
+		t.Fatalf("unit medium = %q", got)
+	}
+	force := "high"
+	executor.ForceReasoning = &force
+	if got := executor.effortFor(work.Unit{ReasoningEffort: "off"}); got != "high" {
+		t.Fatalf("force = %q", got)
+	}
+	off := "none"
+	executor.ForceReasoning = &off
+	if got := executor.effortFor(work.Unit{ReasoningEffort: "high"}); got != "" {
+		t.Fatalf("force off = %q", got)
 	}
 }

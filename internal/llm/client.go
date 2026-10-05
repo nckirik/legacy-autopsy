@@ -11,6 +11,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -18,9 +19,10 @@ import (
 // Environment variable names for connection details. Secrets are never taken
 // from command-line flags or committed files.
 const (
-	EnvURL   = "LEGACY_AUTOPSY_LLM_URL"
-	EnvKey   = "LEGACY_AUTOPSY_LLM_KEY"
-	EnvModel = "LEGACY_AUTOPSY_LLM_MODEL"
+	EnvURL       = "LEGACY_AUTOPSY_LLM_URL"
+	EnvKey       = "LEGACY_AUTOPSY_LLM_KEY"
+	EnvModel     = "LEGACY_AUTOPSY_LLM_MODEL"
+	EnvMaxTokens = "LEGACY_AUTOPSY_LLM_MAX_TOKENS"
 	// EnvReasoning optionally sets the OpenAI-compatible reasoning_effort side
 	// parameter (for example "low", "medium", "high", "xhigh").
 	EnvReasoning = "LEGACY_AUTOPSY_LLM_REASONING"
@@ -45,7 +47,14 @@ func ConfigFromEnv() (Config, error) {
 		Model:     strings.TrimSpace(os.Getenv(EnvModel)),
 		Reasoning: strings.TrimSpace(os.Getenv(EnvReasoning)),
 		Timeout:   120 * time.Second,
-		MaxTokens: 4096,
+		MaxTokens: 16384,
+	}
+	if raw := strings.TrimSpace(os.Getenv(EnvMaxTokens)); raw != "" {
+		parsed, err := strconv.Atoi(raw)
+		if err != nil || parsed <= 0 {
+			return Config{}, fmt.Errorf("llm: %s %q is not a positive integer", EnvMaxTokens, raw)
+		}
+		cfg.MaxTokens = parsed
 	}
 	if err := cfg.Validate(); err != nil {
 		return Config{}, err
@@ -78,6 +87,7 @@ func (c Config) Validate() error {
 type Client struct {
 	config Config
 	http   *http.Client
+	Debug  io.Writer
 }
 
 // NewClient builds a client from validated configuration.
@@ -107,16 +117,22 @@ type chatRequest struct {
 
 type chatResponse struct {
 	Choices []struct {
-		Message chatMessage `json:"message"`
+		Message      chatMessage `json:"message"`
+		FinishReason string      `json:"finish_reason"`
 	} `json:"choices"`
 	Error *struct {
 		Message string `json:"message"`
 	} `json:"error"`
 }
 
-// Complete sends one system/user exchange and returns the assistant text. Error
-// messages never include the API key or request body.
+// Complete sends one system/user exchange with the configured reasoning effort.
 func (c *Client) Complete(ctx context.Context, system, user string) (string, error) {
+	return c.CompleteEffort(ctx, system, user, c.config.Reasoning)
+}
+
+// CompleteEffort sends one exchange with an explicit reasoning effort; an empty
+// effort omits the side parameter entirely.
+func (c *Client) CompleteEffort(ctx context.Context, system, user, effort string) (string, error) {
 	maxTokens := c.config.MaxTokens
 	if maxTokens <= 0 {
 		maxTokens = 4096
@@ -126,39 +142,54 @@ func (c *Client) Complete(ctx context.Context, system, user string) (string, err
 		Messages:        []chatMessage{{Role: "system", Content: system}, {Role: "user", Content: user}},
 		Temperature:     0,
 		MaxTokens:       maxTokens,
-		ReasoningEffort: c.config.Reasoning,
+		ReasoningEffort: effort,
 	})
 	if err != nil {
 		return "", fmt.Errorf("llm: encode request: %w", err)
 	}
 	endpoint := strings.TrimRight(c.config.BaseURL, "/") + "/chat/completions"
-	request, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
-	if err != nil {
-		return "", fmt.Errorf("llm: build request: %w", err)
+	// Some reasoning deployments intermittently return empty content even on
+	// HTTP 200. Retry the identical request a bounded number of times before
+	// failing closed.
+	const maxEmptyRetries = 2
+	var lastFinish string
+	for attempt := 0; attempt <= maxEmptyRetries; attempt++ {
+		request, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
+		if err != nil {
+			return "", fmt.Errorf("llm: build request: %w", err)
+		}
+		request.Header.Set("Content-Type", "application/json")
+		request.Header.Set("Authorization", "Bearer "+c.config.APIKey)
+		response, err := c.http.Do(request)
+		if err != nil {
+			return "", fmt.Errorf("llm: request to %s failed: %w", endpoint, err)
+		}
+		payload, err := io.ReadAll(io.LimitReader(response.Body, 8<<20))
+		response.Body.Close()
+		if err != nil {
+			return "", fmt.Errorf("llm: read response: %w", err)
+		}
+		var decoded chatResponse
+		if err := json.Unmarshal(payload, &decoded); err != nil {
+			return "", fmt.Errorf("llm: decode response: %w", err)
+		}
+		if decoded.Error != nil {
+			return "", fmt.Errorf("llm: provider error: %s", decoded.Error.Message)
+		}
+		if response.StatusCode != http.StatusOK {
+			return "", fmt.Errorf("llm: endpoint returned HTTP %d", response.StatusCode)
+		}
+		if len(decoded.Choices) == 0 {
+			return "", fmt.Errorf("llm: response contained no choices")
+		}
+		content := decoded.Choices[0].Message.Content
+		if strings.TrimSpace(content) != "" {
+			return content, nil
+		}
+		lastFinish = decoded.Choices[0].FinishReason
+		if c.Debug != nil {
+			fmt.Fprintf(c.Debug, "\n--- empty provider response (attempt %d, finish_reason=%q) ---\n", attempt+1, lastFinish)
+		}
 	}
-	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("Authorization", "Bearer "+c.config.APIKey)
-	response, err := c.http.Do(request)
-	if err != nil {
-		return "", fmt.Errorf("llm: request to %s failed: %w", endpoint, err)
-	}
-	defer response.Body.Close()
-	payload, err := io.ReadAll(io.LimitReader(response.Body, 8<<20))
-	if err != nil {
-		return "", fmt.Errorf("llm: read response: %w", err)
-	}
-	var decoded chatResponse
-	if err := json.Unmarshal(payload, &decoded); err != nil {
-		return "", fmt.Errorf("llm: decode response: %w", err)
-	}
-	if decoded.Error != nil {
-		return "", fmt.Errorf("llm: provider error: %s", decoded.Error.Message)
-	}
-	if response.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("llm: endpoint returned HTTP %d", response.StatusCode)
-	}
-	if len(decoded.Choices) == 0 {
-		return "", fmt.Errorf("llm: response contained no choices")
-	}
-	return decoded.Choices[0].Message.Content, nil
+	return "", fmt.Errorf("llm: empty response after retries (finish_reason=%q); raise %s or lower reasoning effort", lastFinish, EnvMaxTokens)
 }
