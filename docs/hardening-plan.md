@@ -291,8 +291,9 @@ acceptance metrics in this plan pass on the rerun.
 
 ## Next up
 
-W3 is complete at the deterministic substrate level (`internal/work`); the remaining
-W3-family integration (LLM adapter wiring for real executors/reviewers, child-table and
-foreign-key projection) lands with W2/W5. Next: W2 evidence-set recomputation and the
-package-artifact emitters (`23`-`27`) plus the §15.5 verifier, then W4 conformance and
-W5 handbook/operator surfaces.
+W3 is complete at the deterministic substrate level (`internal/work`), and the
+OpenAI-compatible adapter (`internal/llm`, `spec work ping|run`) now drives real
+executors/reviewers through it. Remaining W3-family integration: child-table and
+foreign-key projection. Next: W2 evidence-set recomputation and the package-artifact
+emitters (`23`-`27`) plus the §15.5 verifier, then W4 conformance and W5
+handbook/operator surfaces.

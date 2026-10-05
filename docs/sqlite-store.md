@@ -206,7 +206,11 @@ but normal model execution goes through protocol-aware capabilities.
 ingest), `Reviewer` with an independently built context, blocker classification, a
 sequential single-writer `Session`, per-unit instrumentation, and the pre-run
 configuration questions. Real LLM executors and reviewers plug into the `Executor`
-and `Reviewer` interfaces; the mechanics above are runtime-owned.
+and `Reviewer` interfaces; the mechanics above are runtime-owned. `internal/llm`
+provides an OpenAI-compatible adapter (`spec work ping|run`); connection details come
+from `LEGACY_AUTOPSY_LLM_URL`, `LEGACY_AUTOPSY_LLM_KEY`, and `LEGACY_AUTOPSY_LLM_MODEL`
+only, and the key is never committed or logged. The model returns a strict
+proposal/blocker/review format; malformed responses fail closed.
 
 ## Human and machine projections
 
