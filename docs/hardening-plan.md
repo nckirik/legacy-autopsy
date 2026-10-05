@@ -283,8 +283,8 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
 - [x] Preflight: deterministic bounded scan (languages, entries, evidence excerpts),
       `0A` header unit, persona registry batch with runtime-derived IDs, routed
       normative sections, per-unit reasoning policy, retry-with-feedback.
-- [ ] Preflight entry clusters and acquisition registry (needs a declared cluster ID
-      field).
+- [x] Preflight entry clusters (`U-PREFLIGHT-CLUSTERS`, declared `cluster-id`/
+      `cluster-title` fields); acquisition registry lands with the Discovery pipeline.
 - [ ] Discovery: source inventory and traversal frontier unit generation.
 - [ ] Assurance: claims, coverage, reconciliation unit generation.
 - [ ] Synthesis: `90`-`96` semantic records with independent review.

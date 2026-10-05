@@ -16,7 +16,10 @@
    `U-PREFLIGHT-PERSONAS` writes the persona registry with record IDs derived from the
    payload `Prefix` field. Each unit carries routed normative sections
    (`preflight-registry`, `persona-definition`) and the bounded scan as a runtime input.
-3. **Bounded execution** (`work.Session`): one work item at a time, read-set
+3. **Work units** (continued): `U-PREFLIGHT-CLUSTERS` writes entry clusters with
+   IDs derived from the payload `Cluster ID` field; enum-typed fields carry their
+   closed option domains into the prompt.
+4. **Bounded execution** (`work.Session`): one work item at a time, read-set
    provenance, stale-safe commits, retry-with-feedback on rejected proposals,
    per-unit instrumentation.
 
@@ -51,8 +54,12 @@
 
 ## Next steps
 
-- Entry-cluster acquisition (needs a declared cluster identifier field), acquisition
-  registry, then the Discovery pipeline over source inventory/frontier.
+- Acquisition registry (the `0A` registry currently holds header, personas, and
+  clusters; acquisition rows and `SRC` binding come with the Discovery pipeline).
+- Discovery pipeline over source inventory/frontier.
+- Cluster owner references and source IDs are free text at preflight and must be
+  reconciled once personas and the inventory exist; a reconciliation unit is the next
+  quality step.
 - Per-field enum registries for registry-typed columns (`actor-class`,
   `registry-state`) so invalid tokens fail at validation rather than semantics.
 - Persona deduplication/reconciliation unit with independent review.
