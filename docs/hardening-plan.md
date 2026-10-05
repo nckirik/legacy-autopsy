@@ -141,6 +141,10 @@ to the semantic executor.
 
 - Execute the deterministic MACHINE slice from compiled CDL/EIR wherever implemented;
   unsupported mechanics fail explicitly instead of being improvised by the model.
+- Record validation implemented (`internal/certify.ValidateRecord`): declared fields
+  only, required/optional presence, integer and string-set types, and closed enum
+  domains, checked against the compiled EIR before any fingerprint or packaging
+  binding. Emitters, evidence-set recomputation, and the §15.5 verifier follow.
 - Canonical fingerprint substrate for every record class (semantic content, DEC
   content, dependency-set, evidence-set, envelope, package-member, transport), computed
   once and reused by emitter and verifier.

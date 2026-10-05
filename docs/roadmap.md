@@ -600,6 +600,14 @@ readability rules. The revision changed `cdl.ProtocolVersion` to 4.2 and snapsho
 history). W2/W3 are next: the native runtime, certification engine, SQLite store, and
 bounded semantic execution.
 
+## W2 first increment - EIR record validation
+
+`internal/certify.ValidateRecord` validates a record against its compiled FIELD
+schema: unknown fields rejected, required fields enforced, integer and string-set
+types checked, and enum-typed values constrained to the EIR enum domains. This is the
+validator the packaging emitters and the §15.5 verifier build on; evidence-set
+recomputation and the artifact emitters are next.
+
 ## Post-run hardening plan
 
 The first full standalone run (small project, 2026-09-28/10-05) produced PI-1..12 and
