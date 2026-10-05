@@ -78,7 +78,7 @@ This matches the target ownership already described in
 [skill-runtime.md](skill-runtime.md): Legacy Autopsy owns orchestration and bounded
 context construction; executors own one semantic work unit at a time.
 
-## Acceptance metrics for W5
+## Acceptance metrics for W6
 
 - no nudges: operator interaction only at declared human gates;
 - each reconstruction-affecting decision reviewed in a readable batch - no wholesale
@@ -128,14 +128,21 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
       blocker classification, operator presentation.
 - [x] Quality-gate batch 2: handbook substance and readability rules, CNF readability
       field and relay ban, static-only Exit E eligibility.
-- [x] PI-4 single generated version literal; `ProtocolVersion` 4.1.3 → 4.2; renderer,
-      0A template, and §8.1 literals aligned.
+- [x] PI-4 single generated version literal: one `{{PROTOCOL-VERSION}}` render token
+      substituted from `ProtocolVersion` at EIR build; renderer, 0A template, §8.1
+      example, and footer share the one `4.2` form (no `v` prefix, no duplicate footer).
 - [x] Current-edition oracle snapshot `protocol/legacy/protocol-4.2.md` with freshness
       test; 4.1.3 kept as history.
 - [x] Revision-marker guard test keeps accepted clarifications in the generated edition.
 - [x] Routing/skill manifest aligned to 4.2; parity report regenerated.
 - [ ] Harness-side enforcement of the PI-11 substance lint and PI-12 CNF schema
       (lands with W2/W5).
+- [ ] Storage-binding abstraction (declared canonical binding, per-binding canonical
+      serialization/fingerprint/package rules): proposed PI-15, candidate v4.3; the
+      SQLite store stays a development artifact until then.
+- [ ] Relational declaration semantics in CDL/EIR (`STORAGE`, `PARENT`, `KEY`, `REF`;
+      language `cdl/0.4`, EIR format 4) per [relational-mapping.md](relational-mapping.md);
+      table-per-`FIELD` remains explicitly provisional until this lands.
 
 ### W2 - Native runtime and certification engine
 
@@ -157,12 +164,18 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
 
 ### W3 - SQLite canonical store, semantic work units, context builder, review
 
-- [x] Schema generation from EIR (`internal/store.Schema`): one table per FIELD block,
-      enum `CHECK`s, provenance, append-only `0G` triggers.
+- [~] Schema generation from EIR (`internal/store.Schema`): one table per FIELD block,
+  enum `CHECK`s, provenance, append-only `0G` triggers. Provisional bootstrap: the
+  FIELD-to-table semantics item in W1 blocks treating this as normative.
 - [x] Apply without Go dependencies (`store.Apply`, `spec schema --apply`) and
-      `spec schema --out`.
-- [x] Canonical dump and fingerprint (`store.CanonicalDump`, `spec store`), table/row
-      ordering fixed and insertion-order independent.
+      `spec schema --out`; atomic: DDL runs in one transaction and a mid-script failure
+      leaves zero tables (negative test).
+- [x] Canonical dump and fingerprint (`store.CanonicalDump`, `spec store`): carries the
+      generated schema plus rows, verifies the live schema against EIR before emitting,
+      content-only fingerprint (provenance excluded), restorable and drift-rejecting
+      tests.
+- [x] `set<string>` canonical form: ascending unique; duplicates and non-string
+      elements rejected (`certify.CanonicalStringSet`), order owned by the runtime.
 - [ ] Import/export between Markdown records and the store (pilot one record class,
       then generalize; round-trip fixtures).
 - [ ] Semantic capability surface for workers (ID lookup, search, relation/evidence
@@ -238,15 +251,24 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
 3. [x] Invocation-ID grammar: `ITERATION-PERSONA-POV-SEQUENCE`.
 4. [x] Review policy and operator-presentation minimums: asked as a runtime
        configuration question before each run (implementation in W3).
+5. [x] `set<string>` canonical form: ascending unique; duplicates rejected, order
+       runtime-owned. `list<string>` preserves order; structured collections use owned
+       child rows, not list columns.
+6. [~] Canonical state versus physical form: declare a canonical storage binding rather
+   than mandating SQLite or fixing Markdown (`markdown/1` stays the default). The
+   normative revision is PI-15; the store remains provisional until PI-15 and the
+   relational declaration semantics land (W1).
 
 ## Temporary usage notice
 
-Until W2/W3 land and the W5 acceptance metrics pass, the README carries a temporary
+Until W2/W3 land and the W6 acceptance metrics pass, the README carries a temporary
 "not for real autopsies yet" warning (marked `TEMP`). Remove it only when the
 acceptance metrics in this plan pass on the rerun.
 
 ## Next up
 
-W3 import/export (Markdown ↔ store pilot) and W2 evidence-set recomputation plus the
-package-artifact emitters; then the semantic capability surface and the runtime
-configuration question.
+First settle the W1 language/normative items that unblock mechanical storage: the
+relational declaration semantics (`STORAGE`/`PARENT`/`KEY`/`REF`) and the PI-15 storage
+binding. Then W3 import/export (Markdown ↔ store pilot, frozen until the binding
+question is answered) and W2 evidence-set recomputation plus the package-artifact
+emitters; then the semantic capability surface and the runtime configuration question.

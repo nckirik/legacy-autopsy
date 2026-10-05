@@ -17,10 +17,19 @@
   IDs are unique per type; scope tuples (`COV`, cluster cells) are unique; references
   are keys; `0G` is append-only. Illegal tokens and dangling references fail at the
   storage/runtime boundary rather than becoming model cleanup work.
-- **Canonical serialization:** a deterministic SQL dump (schema plus rows in declared
-  order). Fingerprints and package bindings are computed over canonical bytes; the
+  The current table-per-`FIELD` generator is a provisional bootstrap: record versus
+  owned child versus singleton versus artifact schema must be declared in CDL before
+  this mapping is normative (see [relational-mapping.md](relational-mapping.md)).
+- **Canonical serialization:** a deterministic, restorable SQL dump carrying the
+  generated relational schema plus rows in declared order. Before emitting, the dump
+  verifies the live database schema against the EIR-derived expected schema, and its
+  fingerprint covers the content block (schema plus rows) rather than the provenance
+  header. Fingerprints and package bindings are computed over canonical bytes; the
   binary database file is rebuildable. A text dump keeps certified state auditable,
   diffable, and hashable without introducing a second semantic authority.
+- **Set semantics:** `set<string>` has exactly one stored form - ascending lexical
+  order, no duplicates. Validation rejects duplicates and non-string elements; the
+  runtime sorts on write. Input element order is never meaningful and never persisted.
 - **Fingerprints unchanged:** each record keeps the canonical payload bytes the
   protocol already hashes next to its queryable columns. Dump-level hashes replace
   per-file transport fingerprints for packaging/manifests only where the new binding
@@ -181,8 +190,32 @@ multiple views from the same committed state:
 A projection may be discarded and regenerated. It never becomes an independent source
 of truth merely because a human or model consumed it.
 
+## Normative direction: declared storage bindings
+
+The v4.2 protocol fixes Markdown as the canonical record form and treats any database
+as a non-authoritative derivative (§1.5), which contradicts making SQLite the canonical
+operational state. Making SQLite itself a universal protocol requirement is the wrong
+fix. The cleaner abstraction:
+
+- the protocol defines records, identities, semantics, and canonical payloads
+  independently of physical storage;
+- each run declares exactly one **canonical storage binding** (identity plus binding
+  schema version), for example `markdown/1` or `sqlite/1`;
+- canonical serialization, fingerprint, and package-member rules are defined per
+  binding; bindings must round-trip losslessly and agree on record identity and
+  payload digests;
+- non-binding representations are projections: when a non-Markdown binding is declared,
+  Markdown files are human/audit exports and conflicts resolve to the declared binding;
+- package verification uses the declared binding's serialization rules.
+
+This is a normative revision (see PI-15 in [protocol-issues.md](protocol-issues.md)),
+not a harness detail. Until it lands, the SQLite store is a development artifact and
+the Markdown edition remains the only declared binding.
+
 ## Owner sign-off needed
 
-1. Minor-version number and timing for the canonical-storage flip.
+1. Minor-version number and timing for the storage-binding revision and the
+   canonical-storage flip (current candidate: v4.3).
 2. Whether Markdown remains the official human-review export or another rendered view
-   becomes primary. Either way, Markdown is no longer the working database.
+   becomes primary. Either way, Markdown stops being the working database once a
+   non-Markdown binding is declared.

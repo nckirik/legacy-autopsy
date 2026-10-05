@@ -6,8 +6,9 @@
 > and regenerated artifacts. Protocol sources are never edited while a standalone run
 > is in progress.
 >
-> **Revision v4.2 implemented 2026-10-05:** all fourteen issues below are implemented in
+> **Revision v4.2 implemented 2026-10-05:** PI-1 through PI-14 are implemented in
 > the v4.2 edition (normative text; the harness-side lints/validators follow in W2/W5).
+> PI-15 is proposed for the next revision and is not part of v4.2.
 > Accepted for a single minor revision. Decisions recorded with acceptance: snapshot each accepted
 > revision as the new frozen oracle (old oracles kept; drift and coverage tests target
 > the current one); handbook substance floor = required sections plus a minimum
@@ -394,3 +395,33 @@ oracle snapshot is an open process decision.
 - **Impact:** no reduction in evidence or read-set obligations. It separates protocol
   dependency correctness from prompt rendering and makes native/runtime, skill, and
   prompt backends capable of equivalent semantics without equivalent context size.
+
+## PI-15: Canonical form is fixed to Markdown, contradicting a declared relational binding
+
+- **Status:** proposed for the next revision (candidate v4.3); not yet accepted
+- **Source:** storage-binding design review 2026-10-05; [sqlite-store.md](sqlite-store.md)
+- **Affected sections:** §1.5 authority and non-authoritative derivatives, §4.1.2 record
+  serialization, §15/17 package members and fingerprints, §0.1 authority
+- **Observed text:** §1.5 makes Markdown records canonical and any generated database a
+  `NON-AUTHORITATIVE-DERIVATIVE`; conflicts resolve in favor of the canonical Markdown
+  record.
+- **Issue:** The hardening target makes a SQLite store the canonical operational state
+  and Markdown a projection/export. Under the current normative text that
+  implementation is formally nonconformant, or every read/write must keep Markdown as
+  the real authority, which defeats the bounded-execution design. Making SQLite itself a
+  universal protocol requirement would over-fix the problem: the protocol should not
+  mandate one physical store.
+- **Proposed direction:**
+  - define canonical protocol state/records independently of physical form;
+  - require each run to declare exactly one canonical storage binding (identity plus
+    binding schema version), for example `markdown/1` or `sqlite/1`;
+  - define canonical serialization, record/package fingerprint, and package-member rules
+    per binding, with lossless round-trip and binding-independent record digests across
+    bindings;
+  - when a non-Markdown binding is declared, Markdown records are projections and
+    conflict resolution, sidecar rules, and stale checks follow the declared binding;
+  - keep the existing Markdown binding as the default so authors of the protocol remain
+    independent of Legacy Autopsy and of SQLite.
+- **Impact:** normative change limited to authority/serialization/packaging clauses; no
+  per-record semantic change and no new mandatory technology. Implementation follows in
+  the W3/W4 store work and the next protocol revision.

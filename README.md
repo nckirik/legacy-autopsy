@@ -28,7 +28,7 @@ The project is built around the CDL protocol sources under [`protocol/`](protoco
 > and bootstrap fixtures. This repository does **not** execute semantic deconstruction
 > modes, prove Exit A or Exit E for you, or claim Protocol v4.2 conformance.
 
-<!-- TEMP: remove this block once W2/W3 and W5 acceptance metrics pass -->
+<!-- TEMP: remove this block once W2/W3 and W6 acceptance metrics pass -->
 
 > [!WARNING]
 > **Temporary: not for real autopsies yet.** The v4.2 normative text is in place, but
@@ -37,7 +37,7 @@ The project is built around the CDL protocol sources under [`protocol/`](protoco
 > [hardening plan](docs/hardening-plan.md) are not implemented. Running it on a real
 > system today will reproduce the first run's gaps - handbook metadata shells and
 > relayed readability (PI-11/PI-12). Use the current edition for development and
-> experiments only until W2/W3 and the W5 acceptance pass; this notice is removed then.
+> experiments only until W2/W3 and the W6 acceptance pass; this notice is removed then.
 
 <!-- END TEMP -->
 
