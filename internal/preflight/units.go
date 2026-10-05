@@ -36,7 +36,7 @@ func (d Directives) Input(scan Scan) work.Input {
 	content += "\n## Persona discovery guidance\n\n"
 	content += "- Identify distinct actors by entry path and visibility, not by business title: for example web UI, HTTP/API routes, background jobs, database/admin surfaces, operators, external systems.\n"
 	content += "- One row per materially distinct actor; never a single catch-all row when the scan shows multiple entry surfaces.\n"
-	content += "- Prefix must match [A-Z][A-Z0-9]{1,7}; slug is lowercase words joined by hyphens; directory must equal prefix-slug; Actor Class is human, service, or external; Registry State is Registered.\n"
+	content += "- Prefix must match [A-Z][A-Z0-9]{1,7}; slug is lowercase words joined by hyphens; directory must equal prefix-slug; Actor Class is human, service, or external; Registry State is one of Active, Conditional, Disabled, Historical, Retired.\n"
 	return work.Input{Name: "preflight-context.md", Bytes: []byte(content)}
 }
 

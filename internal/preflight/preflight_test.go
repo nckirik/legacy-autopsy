@@ -128,8 +128,8 @@ func TestPreflightPlanRunsToStore(t *testing.T) {
 					"- **Explicit Scope Policy:** full tree\n")}}}, nil
 		case "U-PREFLIGHT-PERSONAS":
 			return work.Proposal{FieldID: "PERSONA-REGISTRY", Records: []work.Record{
-				{Payload: []byte("- **Persona:** Backend\n- **Prefix:** BE\n- **Persona Slug:** backend\n- **Persona Directory:** BE-backend\n- **Actor Class:** human\n- **Canonical Entry IDs:** cmd/server\n- **Scope Paths:** internal/\n- **Registry State:** Registered\n")},
-				{Payload: []byte("- **Persona:** Web\n- **Prefix:** WEB\n- **Persona Slug:** web\n- **Persona Directory:** WEB-web\n- **Actor Class:** human\n- **Canonical Entry IDs:** web/index.js\n- **Scope Paths:** web/\n- **Registry State:** Registered\n")},
+				{Payload: []byte("- **Persona:** Backend\n- **Prefix:** BE\n- **Persona Slug:** backend\n- **Persona Directory:** BE-backend\n- **Actor Class:** human\n- **Canonical Entry IDs:** cmd/server\n- **Scope Paths:** internal/\n- **Registry State:** Active\n")},
+				{Payload: []byte("- **Persona:** Web\n- **Prefix:** WEB\n- **Persona Slug:** web\n- **Persona Directory:** WEB-web\n- **Actor Class:** human\n- **Canonical Entry IDs:** web/index.js\n- **Scope Paths:** web/\n- **Registry State:** Active\n")},
 			}}, nil
 		default:
 			t.Fatalf("unexpected unit %s", inv.Unit.ID)

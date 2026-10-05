@@ -79,9 +79,14 @@ func SectionText(doc *cdl.EIRDoc, reference string) (string, error) {
 	return "", fmt.Errorf("unknown section %q", reference)
 }
 
-// FieldContract returns the declared field names in order plus the required
-// subset, so executors can be given the exact payload contract.
-func FieldContract(doc *cdl.EIRDoc, fieldID string) (names []string, required []string, err error) {
+// FieldContract returns the declared field names in order, the required subset,
+// and the closed option domain for every enum-typed field, so executors can be
+// given the exact payload contract without guessing.
+func FieldContract(doc *cdl.EIRDoc, fieldID string) (names []string, required []string, options map[string][]string, err error) {
+	enums := map[string][]string{}
+	for _, enum := range doc.Declarations.Enums {
+		enums[enum.ID] = enum.Values
+	}
 	for i := range doc.Declarations.Fields {
 		field := &doc.Declarations.Fields[i]
 		if field.ID != fieldID {
@@ -92,10 +97,16 @@ func FieldContract(doc *cdl.EIRDoc, fieldID string) (names []string, required []
 			if spec.Required {
 				required = append(required, spec.Name)
 			}
+			if values, ok := enums[spec.Type]; ok {
+				if options == nil {
+					options = map[string][]string{}
+				}
+				options[spec.Name] = values
+			}
 		}
-		return names, required, nil
+		return names, required, options, nil
 	}
-	return nil, nil, fmt.Errorf("unknown FIELD %s", fieldID)
+	return nil, nil, nil, fmt.Errorf("unknown FIELD %s", fieldID)
 }
 
 func requireTableField(doc *cdl.EIRDoc, fieldID string) error {

@@ -23,8 +23,8 @@ const preflightFixture = `# 0A-PREFLIGHT: Demo
 
 | Persona | Prefix | Persona Slug | Persona Directory | Actor Class | Canonical Entry IDs | Scope Paths | Registry State |
 | :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
-| Backend | BE | backend | BE-backend | human | SRC-1 | src/ | Registered |
-| Operator | OP | operator | OP-operator | external | SRC-2 | ops/ | Registered |
+| Backend | BE | backend | BE-backend | human | SRC-1 | src/ | Active |
+| Operator | OP | operator | OP-operator | external | SRC-2 | ops/ | Active |
 
 ## 3. Entry-Point Clusters
 
@@ -117,8 +117,8 @@ func TestBootstrapRoundTripDeterministic(t *testing.T) {
 		t.Fatal(err)
 	}
 	reversed := strings.Replace(preflightFixture,
-		"| Backend | BE | backend | BE-backend | human | SRC-1 | src/ | Registered |\n| Operator | OP | operator | OP-operator | external | SRC-2 | ops/ | Registered |",
-		"| Operator | OP | operator | OP-operator | external | SRC-2 | ops/ | Registered |\n| Backend | BE | backend | BE-backend | human | SRC-1 | src/ | Registered |", 1)
+		"| Backend | BE | backend | BE-backend | human | SRC-1 | src/ | Active |\n| Operator | OP | operator | OP-operator | external | SRC-2 | ops/ | Active |",
+		"| Operator | OP | operator | OP-operator | external | SRC-2 | ops/ | Active |\n| Backend | BE | backend | BE-backend | human | SRC-1 | src/ | Active |", 1)
 	if reversed == preflightFixture {
 		t.Fatal("fixture rows were not reversed")
 	}

@@ -83,14 +83,14 @@ END
 
 FIELD PERSONA-REGISTRY
   STORAGE registry
-  persona             -> string required
-  prefix              -> string required
-  persona-slug        -> string required
-  persona-directory   -> string required
-  actor-class         -> string required
-  canonical-entry-ids -> string required
-  scope-paths         -> string required
-  registry-state      -> string required
+  persona             -> string                                  required
+  prefix              -> string                                  required
+  persona-slug        -> string                                  required
+  persona-directory   -> string                                  required
+  actor-class         -> string                                  required
+  canonical-entry-ids -> string                                  required
+  scope-paths         -> string                                  required
+  registry-state      -> REGISTRY-PERSONAREGISTRY-REGISTRY-STATE required
 END
 
 FIELD REQUIRED-TRAVERSAL-MATRIX

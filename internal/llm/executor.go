@@ -145,6 +145,9 @@ func executorUserPrompt(invocation work.Invocation) string {
 		if required[name] {
 			mark = "required"
 		}
+		if values := invocation.FieldOptions[name]; len(values) > 0 {
+			mark += "; one of: " + strings.Join(values, ", ")
+		}
 		fmt.Fprintf(&b, "- %s (%s)\n", name, mark)
 	}
 	if len(invocation.Hints) > 0 {

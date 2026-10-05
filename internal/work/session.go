@@ -18,6 +18,7 @@ type Invocation struct {
 	Caps           *Caps
 	Fields         []string
 	RequiredFields []string
+	FieldOptions   map[string][]string
 	Hints          []string
 }
 
@@ -104,11 +105,11 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 		}
 		stats.ContextBytes = len(context.Bytes)
 		stats.Dependencies = len(unit.Reads)
-		fields, required, err := FieldContract(s.doc, unit.ResultType)
+		fields, required, options, err := FieldContract(s.doc, unit.ResultType)
 		if err != nil {
 			return stats, err
 		}
-		proposal, err := s.executor.Execute(Invocation{Unit: unit, Context: context, Caps: caps, Fields: fields, RequiredFields: required, Hints: certify.ValidationHints(unit.ResultType)})
+		proposal, err := s.executor.Execute(Invocation{Unit: unit, Context: context, Caps: caps, Fields: fields, RequiredFields: required, FieldOptions: options, Hints: certify.ValidationHints(unit.ResultType)})
 		if err != nil {
 			var blocker *BlockerError
 			if !errors.As(err, &blocker) {
