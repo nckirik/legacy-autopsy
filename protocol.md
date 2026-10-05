@@ -3,8 +3,8 @@
 **Version:** 4.2.1 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
-**Generated-From:** cdl/0.3.2 (sha256:7e599c7beb9587e44a3f57a6ebc4be38d0600d2237472b1dc199880d2415a5fe)
-**Language:** cdl/0.3 (eir-format 3)
+**Generated-From:** cdl/0.4.0 (sha256:110e6b1e707291a6ce3688ab5d1ad2cbebb130f847f5fd36575e7728557e56d4)
+**Language:** cdl/0.4 (eir-format 4)
 **Authority:** generated render of the canonical CDL sources; do not edit.
 
 ---
