@@ -12,8 +12,8 @@ import (
 
 // Ref identifies one stored record dependency.
 type Ref struct {
-	FieldID  string
-	RecordID string
+	FieldID  string `json:"field_id"`
+	RecordID string `json:"record_id"`
 }
 
 func (r Ref) String() string { return r.FieldID + "/" + r.RecordID }
@@ -21,13 +21,13 @@ func (r Ref) String() string { return r.FieldID + "/" + r.RecordID }
 // Unit is one bounded semantic work item with an explicit read closure and a
 // single result contract. It never carries conversational history.
 type Unit struct {
-	ID             string
-	Mode           string
-	Scope          string
-	Reads          []Ref
-	ResultType     string
-	AllowedEffects []string
-	RequiresReview bool
+	ID             string   `json:"id"`
+	Mode           string   `json:"mode"`
+	Scope          string   `json:"scope,omitempty"`
+	Reads          []Ref    `json:"reads,omitempty"`
+	ResultType     string   `json:"result_type"`
+	AllowedEffects []string `json:"allowed_effects,omitempty"`
+	RequiresReview bool     `json:"requires_review,omitempty"`
 }
 
 // Validate checks the unit against the compiled schema: every declared read and
