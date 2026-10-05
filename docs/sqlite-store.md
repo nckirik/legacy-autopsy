@@ -9,9 +9,21 @@
 - **Canonical operational store:** `.extracted/legacy-autopsy.db` (SQLite), single
   writer, never hand-edited. Protocol records are persisted here; there is no parallel
   authoritative Markdown state.
-- **Markdown is a projection/export:** human review, handbook material, audit bundles,
-  and compatibility views may render Markdown on demand, but semantic executors do not
-  maintain Markdown record files.
+- **Markdown is a render target, never working state:** no operational Markdown file is
+  maintained during a `sqlite/1` run. Markdown carries only human-readable semantic
+  output, rendered on demand: handbook chapters, decision batches, synthesis review
+  views, gate/coverage reports, traceability/audit views, and operator questions.
+  Mechanical protocol records (inventory, frontier, claims, confirmations, statuses,
+  fingerprints, envelopes, coverage arithmetic, FSM transitions, logs, POV buffers)
+  exist only in the store and are rendered to Markdown only by an explicit debug mode,
+  marked debug/non-authoritative.
+- **Clean human renders:** rendered human Markdown omits mechanical carriers
+  (`SEMANTIC-CONTENT-FINGERPRINT`, envelope regions, status tokens, record versions).
+  Record identity and integrity remain store/package concerns and are never inferred
+  from render text.
+- **Bootstrap exception:** `0A-PREFLIGHT.md` must exist as Markdown before the store
+  can exist because it declares the canonical storage binding. It is imported at
+  initialization and rendered on demand thereafter.
 - **Relational semantics:** one table per record class with the existing declared
   fields; status/enum columns are `CHECK`-constrained from the §5.1 registries; typed
   IDs are unique per type; scope tuples (`COV`, cluster cells) are unique; references
@@ -164,10 +176,11 @@ debugging. It is not the semantic model API.
 
 ```text
 la init                     create/pin the schema and snapshot
-la import <workspace>       deterministic 4.x Markdown -> SQLite conversion
+la import <workspace>       deterministic bootstrap Markdown -> SQLite conversion
 la inspect ...              bounded administrative inspection
+la inspect --markdown ...   debug-only render of mechanical records, marked debug
 la validate                 constraints plus deterministic recomputation
-la render <view>            Markdown/report projections for humans
+la render <view>            human semantic renders (handbook, batches, reports)
 la dump                     canonical SQL dump for hashing and packaging
 ```
 
