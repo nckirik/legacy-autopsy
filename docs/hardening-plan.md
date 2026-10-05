@@ -253,15 +253,19 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
 
 ### W5 - Handbook and human surfaces
 
-- [ ] Narrative handbook renderer from `90`-`96` synthesis (audience purpose, observed
-      legacy vs target decisions, examples/diagrams, navigation, volume tied to records).
+- [x] Narrative handbook assembler (`internal/handbook.Assemble`): required-section
+      layout (audience purpose, observed legacy behavior, target decisions, navigation)
+      with embedded synthesis records; narrative prose stays model-authored and the
+      assembler never invents content. Volume is tied to bound records.
 - [x] PI-11 substance lint (`internal/handbook.LintChapter`): required sections plus
       at least eight claim-backed assertions per chapter, reason-bearing
       `Not-Applicable` allowed; PI-12 CNF schema validator
       (`ValidateReadabilityReview`) requires scope, limitations, timestamp, and exact
       HBK bindings for Pass/Fail.
-- [ ] Real readability workflow with complete CNF fields per PI-12 (no relay-only
-      attestation).
+- [x] Readability workflow (`internal/handbook.VerifyReadabilityCoverage`): combined
+      Pass/Fail reviews must bind every candidate chapter exactly once with matching
+      candidate fingerprints; schema requires scope, limitations, timestamp, and exact
+      HBK bindings, so relay-only attestation fails closed.
 - [x] Operator renderer (`internal/render`): decision batches with a
       changed/blocked/needed first screen and one-line-per-item index, plus
       plain-language questions with options and consequences. Runtime supplies

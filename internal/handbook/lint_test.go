@@ -71,3 +71,47 @@ func TestValidateReadabilityReview(t *testing.T) {
 		t.Fatalf("valid Not-Applicable rejected: %v", findings)
 	}
 }
+
+func TestVerifyReadabilityCoverage(t *testing.T) {
+	chapters := []Binding{{HBKID: "HBK-A", Fingerprint: "sha256:a"}, {HBKID: "HBK-B", Fingerprint: "sha256:b"}}
+	valid := Review{ReadabilityReview: ReadabilityReview{Value: "Pass", Scope: "all", Limitations: "static-only", Timestamp: "2026-10-05T00:00:00Z"}, Bindings: []Binding{{HBKID: "HBK-A", Fingerprint: "sha256:a"}, {HBKID: "HBK-B", Fingerprint: "sha256:b"}}}
+	if findings := VerifyReadabilityCoverage("hbk", chapters, []Review{valid}); len(findings) != 0 {
+		t.Fatalf("valid coverage rejected: %v", findings)
+	}
+	missing := Review{ReadabilityReview: valid.ReadabilityReview, Bindings: valid.Bindings[:1]}
+	if findings := VerifyReadabilityCoverage("hbk", chapters, []Review{missing}); len(findings) != 1 {
+		t.Fatalf("uncovered chapter accepted: %v", findings)
+	}
+	drift := Review{ReadabilityReview: valid.ReadabilityReview, Bindings: []Binding{{HBKID: "HBK-A", Fingerprint: "sha256:old"}, {HBKID: "HBK-B", Fingerprint: "sha256:b"}}}
+	if findings := VerifyReadabilityCoverage("hbk", chapters, []Review{drift}); len(findings) != 2 {
+		t.Fatalf("fingerprint drift accepted: %v", findings)
+	}
+	unknown := Review{ReadabilityReview: valid.ReadabilityReview, Bindings: []Binding{{HBKID: "HBK-Z", Fingerprint: "sha256:z"}}}
+	if findings := VerifyReadabilityCoverage("hbk", chapters, []Review{unknown}); len(findings) < 3 {
+		t.Fatalf("unknown binding accepted: %v", findings)
+	}
+	if findings := VerifyReadabilityCoverage("hbk", chapters, []Review{{ReadabilityReview: ReadabilityReview{Value: "Not-Applicable", Scope: "no handbook"}}}); len(findings) != 2 {
+		t.Fatalf("N/A review covered chapters: %v", findings)
+	}
+}
+
+func TestAssemblePassesSubstanceLint(t *testing.T) {
+	var observed []Record
+	for i := 1; i <= 8; i++ {
+		observed = append(observed, Record{ID: fmt.Sprintf("MOD-%04d", i), Payload: []byte(fmt.Sprintf("The scheduler retries jobs (CLM-%04d).", i))})
+	}
+	out := Assemble([]Chapter{{
+		Number: "01", Title: "System Overview",
+		AudiencePurpose: "For maintainers who need the system shape.",
+		Observed:        observed,
+		TargetDecisions: "Keep bounded retries.",
+		Navigation:      []string{"next: 02-ARCHITECTURE.md"},
+	}})
+	if findings := LintChapter("01", string(out)); len(findings) != 0 {
+		t.Fatalf("assembled chapter fails lint: %v\n%s", findings, out)
+	}
+	sparse := Assemble([]Chapter{{Number: "02", Title: "Sparse", AudiencePurpose: "x", TargetDecisions: "y"}})
+	if findings := LintChapter("02", string(sparse)); len(findings) != 1 {
+		t.Fatalf("sparse chapter passed: %v", findings)
+	}
+}
