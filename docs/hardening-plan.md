@@ -155,10 +155,11 @@ to the semantic executor.
   arithmetic, transitions, packaging, and certification envelopes are runtime-owned
   effects and cannot be hand-stamped by a model.
 
-### W3 - Semantic work units, context builder, and independent review
+### W3 - SQLite canonical store, semantic work units, context builder, and independent review
 
 Turn the existing bounded-invocation target architecture into the primary execution
-path before another acceptance run.
+path over the canonical SQLite store before another acceptance run. Markdown is a
+projection/export, not working state.
 
 - Scheduler claims exactly one semantic work item at a time. A work item declares mode,
   semantic scope, source/evidence dependencies, expected result contract, and allowed
@@ -167,6 +168,13 @@ path before another acceptance run.
   model context**. The runtime fingerprints the full required closure while rendering
   only the smallest complete projection needed for the task, plus deterministic
   on-demand access to omitted evidence.
+- Semantic workers never edit Markdown records or use unrestricted SQL. They receive a
+  protocol-aware capability surface for ID lookup, search, relation/evidence traversal,
+  semantic proposals, and control actions; the runtime translates these into relational
+  reads and atomic transactions.
+- Every read tool call automatically extends the invocation's exact fingerprinted
+  dependency set, so exploratory lookup remains stale-safe without burdening the model
+  with read-ledger bookkeeping.
 - Every invocation is cold-replayable from committed state. Run age, prior chat turns,
   compaction summaries, and model memory are not inputs.
 - Add a reviewer/adjudicator invocation for uncertain or high-impact semantic results.
@@ -181,12 +189,12 @@ path before another acceptance run.
   outcomes, and operator escalations per work item so context pathologies are visible
   rather than inferred after a week-long run.
 
-### W4 - Records and storage binding
+### W4 - Storage conformance and projections
 
-Reduce read/write friction with the SQLite binding from [sqlite-store.md](sqlite-store.md):
-one table per record class, constraints from the registries, append-only `0G`,
-canonical dump for hashing/packaging, and `la` helpers. Markdown remains an export for
-review, generated, never hand-edited.
+Harden the SQLite binding from [sqlite-store.md](sqlite-store.md): one table per record
+class, registry constraints, append-only `0G`, canonical dump/hash/package rules,
+round-trip migration fixtures, and generated human/audit projections. Administrative
+`la` helpers remain outside the semantic model contract.
 
 ### W5 - Handbook and human surfaces
 
@@ -221,10 +229,10 @@ harness, not as one long-lived protocol-execution conversation.
 
 1. Owner decisions below; then W1 changes accepted PI-by-PI with fixtures.
 2. W2 and W3 are the critical path and may start against accepted W1 semantics in
-   parallel: native mechanics plus bounded semantic execution must exist before W6.
-3. W4 storage binding may follow the runtime interfaces. The first bounded-context
-   acceptance pass does not need to wait for SQLite if the harness already owns
-   canonical reads/writes and can prove the same contracts over Markdown.
+   parallel: native mechanics, the canonical SQLite store, and bounded semantic
+   execution must exist before W6.
+3. W4 hardens migration/conformance/projections after the core SQLite/runtime contract
+   exists; the next real acceptance rerun does not use Markdown as working state.
 4. W5 must land before W6 so the rerun measures both execution quality and handoff
    quality.
 5. W6 produces the comparative metrics against the exported first-run baseline.
