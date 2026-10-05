@@ -115,148 +115,129 @@ context construction; executors own one semantic work unit at a time.
 
 ## Workstreams
 
-### W1 - Protocol text revision (v4.2, minor)
+Status markers: `[x]` done, `[~]` started, `[ ]` todo.
 
-Turn accepted PIs into CDL changes with fixtures, drift tests, a fresh oracle snapshot,
-and a regenerated edition.
+Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
 
-- **Clarifications:** PI-1 commented-out/dormant units are in-scope Disabled evidence;
-  PI-2 Preflight bootstrap read set; PI-3 invocation-ID grammar or explicit delegation;
-  PI-4 single generated version literal; PI-5 static-only eligibility through both
-  gates; PI-7 cold-read scope (`0H` + cited `0G` range); PI-8 tooling location and
-  non-membership; PI-9 fail-inclusive stops at absent authority; PI-10 Exit E inherits
-  the disclosed scope and test doubles are scaffolding only.
-- **Quality gates:** PI-11 handbook substance criteria; PI-12 readability confirmation
-  schema and relay ban; PI-6 minimum operator-presentation rules for questions and
-  reports (projections only, no schema change).
-- **Execution/authority boundaries:** PI-13 Human Hatch may carry only genuine
-  human-authority/domain uncertainty, never executor/protocol uncertainty; PI-14
-  mandatory read/dependency closure is distinct from prompt materialization so bounded
-  semantic invocations remain conforming.
+### W1 - Protocol text revision (v4.2, minor) - done
+
+- [x] PI-1..PI-14 accepted and recorded with decisions.
+- [x] Clarifications batch 1: dormant/commented-out units, bootstrap read set,
+      cold-read scope, closure vs prompt materialization, invocation-ID grammar,
+      fail-inclusive boundary, tooling location, static-only eligibility, Human Hatch
+      blocker classification, operator presentation.
+- [x] Quality-gate batch 2: handbook substance and readability rules, CNF readability
+      field and relay ban, static-only Exit E eligibility.
+- [x] PI-4 single generated version literal; `ProtocolVersion` 4.1.3 → 4.2; renderer,
+      0A template, and §8.1 literals aligned.
+- [x] Current-edition oracle snapshot `protocol/legacy/protocol-4.2.md` with freshness
+      test; 4.1.3 kept as history.
+- [x] Revision-marker guard test keeps accepted clarifications in the generated edition.
+- [x] Routing/skill manifest aligned to 4.2; parity report regenerated.
+- [ ] Harness-side enforcement of the PI-11 substance lint and PI-12 CNF schema
+      (lands with W2/W5).
 
 ### W2 - Native runtime and certification engine
 
-Make the run's ad-hoc mechanics native DSL/runtime behavior rather than work delegated
-to the semantic executor.
+- [ ] Execute the deterministic MACHINE slice from compiled CDL/EIR wherever
+      implemented; unsupported mechanics fail explicitly instead of being improvised by
+      the model.
+- [x] Record validation: `internal/certify.ValidateRecord` (declared fields only,
+      required presence, integer and string-set types, closed enum domains).
+- [~] Canonical fingerprint substrate: content, envelope, evidence-set,
+  package-member, and transport fingerprints exist in `internal/capabilities`; not yet
+  unified into one emitter/verifier authority.
+- [ ] Registry-driven validity at write time and verify time (enums, statuses, kinds).
+- [ ] Schema-conformant emitters for `23`/`24`/`25`/`26`/`27` and the §15.5 verifier;
+      golden tests for emit-twice byte equality, tamper detection, fail-closed results.
+- [ ] Validator allow-lists (for example `.extracted/probes/[TICKET-*].log`) and
+      append-only post-conditions.
+- [ ] Typed semantic deltas: IDs, canonical serialization, fingerprints, coverage
+      arithmetic, transitions, packaging, and envelopes are runtime-owned.
 
-- Execute the deterministic MACHINE slice from compiled CDL/EIR wherever implemented;
-  unsupported mechanics fail explicitly instead of being improvised by the model.
-- Record validation implemented (`internal/certify.ValidateRecord`): declared fields
-  only, required/optional presence, integer and string-set types, and closed enum
-  domains, checked against the compiled EIR before any fingerprint or packaging
-  binding. Emitters, evidence-set recomputation, and the §15.5 verifier follow.
-- Canonical fingerprint substrate for every record class (semantic content, DEC
-  content, dependency-set, evidence-set, envelope, package-member, transport), computed
-  once and reused by emitter and verifier.
-- Registry-driven validity: enums/statuses/kinds from the §5.1 registry and `§4.1`
-  type grammar, checked at write time and rechecked at verify time.
-- Schema-conformant emitters for `23`/`24`/`25`/`26`/`27` and the §15.5 verifier;
-  golden tests for emit-twice byte equality, tamper detection, and fail-closed results.
-- Validator allow-lists (for example `.extracted/probes/[TICKET-*].log`) and explicit
-  post-conditions for append-only logs.
-- The semantic executor returns a typed semantic delta plus evidence/rationale. IDs,
-  canonical serialization, fingerprints, dependency/evidence-set hashes, coverage
-  arithmetic, transitions, packaging, and certification envelopes are runtime-owned
-  effects and cannot be hand-stamped by a model.
+### W3 - SQLite canonical store, semantic work units, context builder, review
 
-### W3 - SQLite canonical store, semantic work units, context builder, and independent review
-
-Turn the existing bounded-invocation target architecture into the primary execution
-path over the canonical SQLite store before another acceptance run. Markdown is a
-projection/export, not working state.
-
-- Scheduler claims exactly one semantic work item at a time. A work item declares mode,
-  semantic scope, source/evidence dependencies, expected result contract, and allowed
-  effects; it never silently rolls into another cluster/POV/mode.
-- Context construction separates **validated dependency closure** from **materialized
-  model context**. The runtime fingerprints the full required closure while rendering
-  only the smallest complete projection needed for the task, plus deterministic
-  on-demand access to omitted evidence.
-- Semantic workers never edit Markdown records or use unrestricted SQL. They receive a
-  protocol-aware capability surface for ID lookup, search, relation/evidence traversal,
-  semantic proposals, and control actions; the runtime translates these into relational
-  reads and atomic transactions.
-- Every read tool call automatically extends the invocation's exact fingerprinted
-  dependency set, so exploratory lookup remains stale-safe without burdening the model
-  with read-ledger bookkeeping.
-- Every invocation is cold-replayable from committed state. Run age, prior chat turns,
-  compaction summaries, and model memory are not inputs.
-- Add a reviewer/adjudicator invocation for uncertain or high-impact semantic results.
-  The reviewer receives committed evidence and the worker result in a fresh,
-  independently constructed context. The same model MAY fill both roles; context
-  independence is the required separation.
-- Before Human Hatch escalation, classify the blocker as human authority/domain fact,
-  unresolved source semantics, protocol mechanics, harness defect, or executor
-  uncertainty. Only the first category, and genuine external/domain facts where the
-  protocol requires a human, reach the operator.
-- Instrument context bytes/tokens, dependency count, fetch expansion, retries, review
-  outcomes, and operator escalations per work item so context pathologies are visible
-  rather than inferred after a week-long run.
-
-The first W3 storage increments are implemented: `internal/store.Schema` renders the
-DDL from compiled EIR (tables, enum CHECKs, provenance, append-only `0G` triggers) and
-`store.Apply` plus `spec schema --apply` instantiate it through the operator's
-`sqlite3` CLI, so the toolchain keeps zero Go dependencies, and
-`store.CanonicalDump`/`spec store` produce the deterministic SQL dump and fingerprint
-used for packaging. Import/export and the semantic capability surface follow.
+- [x] Schema generation from EIR (`internal/store.Schema`): one table per FIELD block,
+      enum `CHECK`s, provenance, append-only `0G` triggers.
+- [x] Apply without Go dependencies (`store.Apply`, `spec schema --apply`) and
+      `spec schema --out`.
+- [x] Canonical dump and fingerprint (`store.CanonicalDump`, `spec store`), table/row
+      ordering fixed and insertion-order independent.
+- [ ] Import/export between Markdown records and the store (pilot one record class,
+      then generalize; round-trip fixtures).
+- [ ] Semantic capability surface for workers (ID lookup, search, relation/evidence
+      traversal, semantic proposals, control actions) over relational transactions.
+- [ ] Automatic read-set provenance: every read extends the invocation's exact
+      fingerprinted dependency set; commit stale-checks it.
+- [ ] One-work-item scheduler/claim with mode, scope, dependency, result-contract, and
+      allowed-effect declarations.
+- [ ] Context builder separating validated dependency closure from materialized model
+      projection (smallest complete projection plus deterministic fetches).
+- [ ] Cold replayability of every invocation from committed state; no chat-history
+      prerequisites.
+- [ ] Reviewer/adjudicator invocation with an independently constructed context (same
+      model allowed).
+- [ ] Blocker classification before Human Hatch (only genuine human/domain questions
+      reach the operator).
+- [ ] Per-work-item instrumentation: context bytes/tokens, dependency count, fetch
+      expansion, retries, review outcomes, operator escalations.
+- [ ] Runtime question before each run: review policy (which classes require
+      independent review) and operator-presentation minimums.
 
 ### W4 - Storage conformance and projections
 
-Harden the SQLite binding from [sqlite-store.md](sqlite-store.md): one table per record
-class, registry constraints, append-only `0G`, canonical dump/hash/package rules,
-round-trip migration fixtures, and generated human/audit projections. Administrative
-`la` helpers remain outside the semantic model contract.
+- [ ] Registry constraints beyond enums: unique scope tuples, references as keys,
+      canonical registry iteration order.
+- [ ] Append-only `0G` enforced as a runtime post-condition, not only a trigger.
+- [ ] Canonical dump/hash/package rules wired into the packaging emitters.
+- [ ] Round-trip migration fixtures (Markdown → store → canonical dump → compare).
+- [ ] Generated human/audit projections from the store.
+- [ ] Administrative `la` helpers kept outside the semantic model contract.
 
 ### W5 - Handbook and human surfaces
 
-- A handbook renderer that produces narrative chapters from `90`-`96` synthesis:
-  audience purpose, observed legacy versus target decisions, representative
-  examples/diagrams, navigation, and volume tied to the underlying records.
-- A deterministic substance lint per PI-11, plus a real human readability workflow with
-  complete CNF fields per PI-12.
-- An operator renderer per PI-6: plain-language questions with options and
-  consequences; one-line-per-decision indexes; reports whose first screen answers what
-  changed, what is blocked, and what is needed.
+- [ ] Narrative handbook renderer from `90`-`96` synthesis (audience purpose, observed
+      legacy vs target decisions, examples/diagrams, navigation, volume tied to records).
+- [ ] PI-11 substance lint: required sections plus at least eight claim-backed
+      assertions per chapter, reason-bearing `Not-Applicable` allowed.
+- [ ] Real readability workflow with complete CNF fields per PI-12 (no relay-only
+      attestation).
+- [ ] Operator renderer per PI-6: plain-language questions with options and
+      consequences; one-line-per-decision indexes; first screen says what changed, what is
+      blocked, and what is needed.
 
 ### W6 - Acceptance rerun
 
-Run the same small project again with v4.2 through the bounded semantic-work
-harness, not as one long-lived protocol-execution conversation.
-
-- Acceptance criteria: zero illegal tokens by construction; every fingerprint
-  recomputed (no decorative values); handbook chapters meet the substance floor and a
-  human actually reviews them; a decision batch is reviewable in the target time; a
-  static-only run reaches both gates with disclosed residuals and no runtime
-  requirement; the §15.5 verifier passes on the signed bundle and fails on tamper.
-- Compare against the exported baseline: token/context growth, compactions, tool calls,
-  semantic retries, reviewer catches, Human Hatch questions, operator nudges, and wall
-  clock. A run that produces a better handbook but still needs full-run contexts and
-  repeated human protocol debugging is not accepted.
-- Sample reconstruction claims independently for evidence fidelity, and perform a
-  separate developer-usefulness review of the handbook. Structural certification,
-  evidence correctness, and reconstruction usefulness are distinct acceptance layers.
+- [ ] Rerun the same small project on v4.2 through the bounded semantic-work harness.
+- [ ] Acceptance criteria: zero illegal tokens by construction; every fingerprint
+      recomputed; handbook meets the substance floor and is actually read; decision batch
+      reviewable in the target time; static-only run reaches both gates with disclosed
+      residuals; §15.5 verifier passes on the signed bundle and fails on tamper.
+- [ ] Comparative metrics against the exported baseline: token/context growth,
+      compactions, tool calls, semantic retries, reviewer catches, Human Hatch questions,
+      operator nudges, wall clock.
+- [ ] Independent evidence sampling plus a separate developer-usefulness review.
+- [ ] Remove the README `TEMP` notice only when these metrics pass.
 
 ## Sequencing and gates
 
-1. Owner decisions below; then W1 changes accepted PI-by-PI with fixtures.
-2. W2 and W3 are the critical path and may start against accepted W1 semantics in
-   parallel: native mechanics, the canonical SQLite store, and bounded semantic
-   execution must exist before W6.
+1. W1 done; W1 semantics feed W2/W3.
+2. W2 and W3 are the critical path and run in parallel: native mechanics, the
+   canonical store, and bounded semantic execution must exist before W6.
 3. W4 hardens migration/conformance/projections after the core SQLite/runtime contract
-   exists; the next real acceptance rerun does not use Markdown as working state.
-4. W5 must land before W6 so the rerun measures both execution quality and handoff
-   quality.
+   exists; the rerun does not use Markdown as working state.
+4. W5 must land before W6 so the rerun measures execution quality and handoff quality.
 5. W6 produces the comparative metrics against the exported first-run baseline.
 
-## Decisions needed from the owner
+## Decisions
 
-1. Revision mechanics: bump to **v4.2**, and snapshot each accepted revision as a new
-   frozen oracle (keeping previous oracles; drift tests target the current one).
-2. Handbook substance floor baseline (for example: required chapter sections plus a
-   minimum claim-backed assertion count per chapter, with reason-bearing N/A allowed).
-3. Operator-surface minimums and a target review time for a 50-decision batch.
-4. Which semantic result classes require independent review by default versus review
-   only on uncertainty/risk. Model identity is deliberately not part of this policy.
+1. [x] Revision mechanics: v4.2, snapshot each accepted revision as the current oracle
+       (old oracles kept).
+2. [x] Handbook substance floor: required sections plus at least eight claim-backed
+       assertions per chapter, reason-bearing `N/A` allowed.
+3. [x] Invocation-ID grammar: `ITERATION-PERSONA-POV-SEQUENCE`.
+4. [x] Review policy and operator-presentation minimums: asked as a runtime
+       configuration question before each run (implementation in W3).
 
 ## Temporary usage notice
 
@@ -264,8 +245,8 @@ Until W2/W3 land and the W5 acceptance metrics pass, the README carries a tempor
 "not for real autopsies yet" warning (marked `TEMP`). Remove it only when the
 acceptance metrics in this plan pass on the rerun.
 
-## Immediate next step
+## Next up
 
-Accept or reject PI-1..14 one by one (updating their status), then start W1 with the
-accepted set. The storage and handbook workstreams are already sketched in
-[sqlite-store.md](sqlite-store.md) and roadmap M3.5.
+W3 import/export (Markdown ↔ store pilot) and W2 evidence-set recomputation plus the
+package-artifact emitters; then the semantic capability surface and the runtime
+configuration question.
