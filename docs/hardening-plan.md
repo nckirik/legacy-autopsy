@@ -181,8 +181,10 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
       tests.
 - [x] `set<string>` canonical form: ascending unique; duplicates and non-string
       elements rejected (`certify.CanonicalStringSet`), order owned by the runtime.
-- [ ] Import/export between Markdown records and the store (pilot one record class,
-      then generalize; round-trip fixtures).
+- [ ] Bootstrap import (`0A` and any starter Markdown) and the renderer set: human
+      semantic renders on demand, debug-only renders for mechanical records; no
+      operational Markdown is maintained. Round-trip fixtures exercise the bootstrap
+      import path.
 - [ ] Semantic capability surface for workers (ID lookup, search, relation/evidence
       traversal, semantic proposals, control actions) over relational transactions.
 - [ ] Automatic read-set provenance: every read extends the invocation's exact
@@ -263,6 +265,12 @@ Overall: **W1 done; W2/W3 in progress; W4-W6 pending.**
        canonical storage binding (`markdown/1` stays the default), bindings agree on
        identity/payload digests, unsupported bindings fail closed. The store remains
        provisional until the relational declaration semantics land (W1).
+7. [x] Markdown surface: under a non-Markdown binding, no operational Markdown is
+       maintained; Markdown is only human-readable semantic output rendered on demand
+       (handbook, decision batches, review/gate/audit views, operator questions).
+       Mechanical records are store-only and render to Markdown only in debug mode with
+       a non-authoritative marker. `0A` is the bootstrap exception because it declares
+       the binding.
 
 ## Temporary usage notice
 
