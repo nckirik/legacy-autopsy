@@ -183,7 +183,7 @@ these files, not a required monolithic edit.
     "eir-format": 3,
     "language": "cdl/0.1",
     "stdlib": "cdl-stdlib/0.1",
-    "protocol": "canonical-deconstruction/4.1.3",
+    "protocol": "canonical-deconstruction/4.2",
     "source-fingerprint": "sha256:...",
     "generator": "cdl/0.1.0",
     "eir-sha256": "sha256:..."

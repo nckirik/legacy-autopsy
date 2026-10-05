@@ -87,7 +87,7 @@ func Build(repoRoot string) (Report, error) {
 		EIRFormat:        cdl.EIRFormat,
 	}
 
-	model, err := protocol.Load(protocol.OraclePath(repoRoot))
+	model, err := protocol.Load(protocol.EditionOraclePath(repoRoot))
 	if err != nil {
 		return Report{}, err
 	}

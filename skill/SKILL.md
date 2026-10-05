@@ -2,7 +2,7 @@
 
 > **NON-AUTHORITATIVE OPERATIONAL PROJECTION**
 
-The CDL sources under [`protocol/`](../protocol/) are the sole normative authority; `protocol.md` is their generated edition. This skill routes one Protocol v4.1.3 invocation for an agent/harness; it does not define protocol behavior. If this file, `modes.json`, or a mode projection conflicts with the normative protocol sources, follow those sources.
+The CDL sources under [`protocol/`](../protocol/) are the sole normative authority; `protocol.md` is their generated edition. This skill routes one Protocol v4.2 invocation for an agent/harness; it does not define protocol behavior. If this file, `modes.json`, or a mode projection conflicts with the normative protocol sources, follow those sources.
 
 **M0 support boundary:** the current CLI validates routing and assembles bounded context packets. It does not discover or start a service, attach to an autopsy, claim scheduled work, execute semantic mode effects, authorize mutations, append `0G`, enforce complete cold resume/staleness, or run protocol gates.
 

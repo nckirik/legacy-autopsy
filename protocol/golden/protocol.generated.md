@@ -1,9 +1,9 @@
 # Protocol: Legacy System Deconstruction, Assurance, and Reconstruction
 
-**Version:** 4.1.3 (Canonical Reconstruction-Ready Edition)
+**Version:** 4.2 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
-**Generated-From:** cdl/0.3.1 (sha256:d497e7a273f6491ac5d58dcd0360a836c04e3e263a16b268420ce3846e203b1f)
+**Generated-From:** cdl/0.3.1 (sha256:568537d80f0176cb52dfa3fed2bd8e523c9f5a93614d6e88b30164c7a8081dd4)
 **Language:** cdl/0.3 (eir-format 3)
 **Authority:** generated render of the canonical CDL sources; do not edit.
 
@@ -410,7 +410,7 @@ Observed legacy facts and target decisions MUST appear in separate fields and ha
 - **System Namespace:** [stable slug]
 - **Target Repository / Evidence Roots:** [...]
 - **Primary Technology Stack:** [...]
-- **Protocol Version:** 4.1
+- **Protocol Version:** 4.2
 - **Current Iteration:** [one canonical token from §10.6: ALFA ... ZULU]
 - **Default Max Traversal Depth:** 3
 - **Included Environments / Snapshots:** [...]
@@ -1269,7 +1269,7 @@ Predicate: complete
 Every invocation begins with:
 
 ```yaml
-Protocol Version: v4.1.3
+Protocol Version: v4.2
 System Namespace: [slug]
 Current Iteration: [canonical §10.6 token ALFA..ZULU]
 Invocation ID: [globally unique]
@@ -2723,8 +2723,8 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 
 ---
 
-**End of Canonical Deconstruction Protocol v4.1.3**
+**End of Canonical Deconstruction Protocol v4.2**
 
 ---
 
-**End of Canonical Deconstruction Protocol v4.1.3**
+**End of Canonical Deconstruction Protocol v4.2**

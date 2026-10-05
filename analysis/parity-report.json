@@ -3,8 +3,8 @@
   "generator": "parityreport",
   "generator-version": "parityreport/0.1",
   "generated-at": "2026-09-25T00:00:00Z",
-  "protocol-version": "4.1.3",
-  "protocol-fingerprint": "sha256:49ee766a3aa0d20b401120dac6cbc04577a6a7494d22afa16431a065ebacb094",
+  "protocol-version": "4.2",
+  "protocol-fingerprint": "sha256:df2dc25d6e4d53ff5f52499a4de7ec304bc6f4f1dc5dfdf95b4b8d41146bd2c5",
   "language-version": "cdl/0.3",
   "eir-format": 3,
   "sources": [
@@ -51,7 +51,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "fingerprint": "sha256:71c0ace2c0f23e2240d3ebd98f1544ece4240f2d6739b5106c2d6c05039769b6",
+      "fingerprint": "sha256:63fa8c2ca7c92ca2ac5a79816fa651182c8f1423ea2b5d8300d2cd7fed686ee0",
       "sections": [
         "3.1"
       ],
@@ -171,7 +171,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "fingerprint": "sha256:ddfb55666012a7c74809a66d974f76e6a46570876ce7faec5537d592595c100b",
+      "fingerprint": "sha256:51765cdf7838056a01fea17e7ece04d8463e841d8a2da48b2ce64bac3716ba23",
       "sections": [
         "8.1",
         "8.2",
@@ -291,7 +291,7 @@
     },
     {
       "path": "protocol/conformance.cdl",
-      "fingerprint": "sha256:14882787524de2bda14ea850fc79e515ea8dc15744abb0bd09c7a609750da297",
+      "fingerprint": "sha256:32a4dce4eba05215927825cb90ee0e3eb0f2a36f8b4f6d806865a2b3b46fd81d",
       "sections": [
         "16.1",
         "17.1",
@@ -304,10 +304,28 @@
   ],
   "sections": [
     {
-      "number": "0",
-      "heading": "Purpose, Guarantees, and Conceptual Flow",
-      "cdl-source": "",
-      "status": "wrapper"
+      "number": "0.1",
+      "heading": "Normative language",
+      "cdl-source": "protocol/foundations.cdl",
+      "status": "implemented"
+    },
+    {
+      "number": "0.2",
+      "heading": "Guarantees",
+      "cdl-source": "protocol/foundations.cdl",
+      "status": "implemented"
+    },
+    {
+      "number": "0.3",
+      "heading": "Non-guarantees",
+      "cdl-source": "protocol/foundations.cdl",
+      "status": "implemented"
+    },
+    {
+      "number": "0.4",
+      "heading": "Conceptual flow",
+      "cdl-source": "protocol/foundations.cdl",
+      "status": "implemented"
     },
     {
       "number": "1.1",
@@ -892,6 +910,12 @@
       "status": "implemented"
     },
     {
+      "number": "16.1",
+      "heading": "Security, Privacy, and Operational Guardrails",
+      "cdl-source": "protocol/conformance.cdl",
+      "status": "implemented"
+    },
+    {
       "number": "17.1",
       "heading": "Conforming implementation capabilities",
       "cdl-source": "protocol/conformance.cdl",
@@ -906,6 +930,12 @@
     {
       "number": "17.3",
       "heading": "Corpus acceptance",
+      "cdl-source": "protocol/conformance.cdl",
+      "status": "implemented"
+    },
+    {
+      "number": "18.1",
+      "heading": "Compact Artifact Ownership Matrix",
       "cdl-source": "protocol/conformance.cdl",
       "status": "implemented"
     }
@@ -924,17 +954,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:09569efbd06d83ff856a7d589c46c3eae66cd02170a1fbcae5804833d587f89b"
+      "detail": "sha256:df2dc25d6e4d53ff5f52499a4de7ec304bc6f4f1dc5dfdf95b4b8d41146bd2c5"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:f0ccf1a2f43bf48c656e19e71be4548cf2332dade66fccb970c3bcc11f9e58cf"
+      "detail": "sha256:e57a44053e238fa61ff9f328e2c60c66db23ea34ae4a2be21206784454b78940"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:7b8da7d38e28c32dd9dc2f36c07faa1468c078bb701273e0e6883ed096cc21fd"
+      "detail": "sha256:fa0fd3a1645f6d8764a355ed0c6b90fbde5bf7ff503cb09f0e1d834f0c82295d"
     },
     {
       "name": "fixture-oracle",

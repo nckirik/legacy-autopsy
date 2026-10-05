@@ -20,7 +20,7 @@ var (
 // oracle. Comparison is content-normalized so formatting markers may differ.
 func TestGeneratedProtocolCoversOracle(t *testing.T) {
 	root := root(t)
-	oracleBytes, err := os.ReadFile(protocol.OraclePath(root))
+	oracleBytes, err := os.ReadFile(protocol.EditionOraclePath(root))
 	if err != nil {
 		t.Fatal(err)
 	}

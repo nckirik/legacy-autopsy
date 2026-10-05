@@ -220,6 +220,9 @@ func TestUpdateAssets(t *testing.T) {
 	if err := os.WriteFile(repoPath("protocol.md"), rendered, 0o644); err != nil {
 		t.Fatal(err)
 	}
+	if err := os.WriteFile(repoPath("protocol/legacy/protocol-4.2.md"), rendered, 0o644); err != nil {
+		t.Fatal(err)
+	}
 }
 
 // BuildEIRFromAssembly parses and resolves the ordered sources, then builds EIR.
@@ -296,7 +299,7 @@ func TestGoldenProtocolRender(t *testing.T) {
 			t.Fatalf("%s is stale (run: go test ./cdl -run TestUpdateAssets -update)", path)
 		}
 	}
-	for _, marker := range []string{"**Version:** 4.1.3", "## 8.3. Invocation-mode enum and explicit multi-file modes", "Preflight | Export Acquisition"} {
+	for _, marker := range []string{"**Version:** 4.2", "## 8.3. Invocation-mode enum and explicit multi-file modes", "Preflight | Export Acquisition"} {
 		if !strings.Contains(string(got), marker) {
 			t.Fatalf("generated protocol missing %q", marker)
 		}
@@ -309,6 +312,18 @@ func TestRenderPromptRequiresCoveredSection(t *testing.T) {
 	doc.Projections = append([]EIRProjection{{ID: "UNSCOPED", Channels: []string{"prompt"}}}, doc.Projections...)
 	if _, err := RenderPrompt(&doc, "UNSCOPED", "prompt", Provenance{}); err == nil {
 		t.Fatal("projection without COVERS SECTION rendered successfully")
+	}
+}
+
+func TestGoldenEditionOracle(t *testing.T) {
+	res := compileAssembly(t)
+	got := RenderProtocol(res.EIR)
+	want, err := os.ReadFile(repoPath("protocol/legacy/protocol-4.2.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != string(want) {
+		t.Fatal("current-edition oracle snapshot is stale (run: go test ./cdl -run TestUpdateAssets -update)")
 	}
 }
 

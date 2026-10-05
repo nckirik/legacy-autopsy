@@ -1,8 +1,8 @@
 # SQLite canonical record store and semantic capability surface
 
 > Non-authoritative proposal for the next protocol version's storage binding. The
-> protocol semantics and record schemas remain normative; the current 4.1.3 Markdown
-> workspace remains valid until the version flips.
+> protocol semantics and record schemas remain normative; the current 4.2 Markdown edition remains valid alongside the legacy
+> 4.1.3 record.
 
 ## Decision summary
 
@@ -40,8 +40,8 @@
   validators, and tests may use lower-level SQLite operations. They are not the normal
   semantic-executor contract and must not become a way to bypass protocol transitions.
 - **Versioning:** the binding becomes canonical at a minor protocol version (candidate
-  v4.2 or v4.5), not a major bump on its own. 4.1.3 remains the Markdown reference with
-  its frozen oracle and 24 fixtures; conversion must round-trip and the binding needs
+  v4.2 or v4.5), not a major bump on its own. The current edition is 4.2 with its
+  frozen oracle; 4.1.3 remains as historical reference with the 24 fixtures; conversion must round-trip and the binding needs
   its own conformance corpus before any conformance claim.
 
 ## Semantic executor capability surface
@@ -155,7 +155,7 @@ debugging. It is not the semantic model API.
 
 ```text
 la init                     create/pin the schema and snapshot
-la import <workspace>       deterministic 4.1.3 Markdown -> SQLite conversion
+la import <workspace>       deterministic 4.x Markdown -> SQLite conversion
 la inspect ...              bounded administrative inspection
 la validate                 constraints plus deterministic recomputation
 la render <view>            Markdown/report projections for humans

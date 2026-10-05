@@ -158,7 +158,7 @@
     },
     {
       "path": "protocol/conformance.cdl",
-      "source-fingerprint": "sha256:8bf43223a0641cdbf2c90fdf83bb71df751af1e29bc17fb069565dee3ff605d1",
+      "source-fingerprint": "sha256:9addefdfb44f17139d59c74d560c13365b520ef7b5e9019e82294f3b22484365",
       "ids": [
         {
           "id": "ARTIFACT-OWNERSHIP-ROW",
@@ -1042,7 +1042,7 @@
     },
     {
       "path": "protocol/invocation-context.cdl",
-      "source-fingerprint": "sha256:8e2fdcb873e65c380863df3ab0ddc174d24027ddb414b74070d720bd2e182e5f",
+      "source-fingerprint": "sha256:c173bd2b61e75459ee9e43e3936b8bef79f74f6c72594875f2df92e5f83ee523",
       "ids": [
         {
           "id": "INVOCATION-HEADER",
@@ -1562,7 +1562,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "source-fingerprint": "sha256:545d2fcee496fca22c010e81c271a60db1209485ee7d7c62c09cea06d5add472",
+      "source-fingerprint": "sha256:a518dc47347d460a96a65b9fd348956c78a400f26957cf9a26f93408d079e160",
       "ids": [
         {
           "id": "DISCOVERY-BUFFER",

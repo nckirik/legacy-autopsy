@@ -394,7 +394,7 @@ agents never hand-edit record files and semantic workers never need to serialize
 - **Human surfaces:** `la render` produces Markdown/report views; operator questions and
   reports are plain-language first (PI-6).
 - **Versioning:** the binding becomes canonical at a minor version (proposed v4.2 or v4.5);
-  4.1.3 Markdown stays the reference with its oracle and fixtures, and the binding needs
+  the current 4.2 edition has its own oracle snapshot, 4.1.3 is historical, and the binding needs
   its own conformance corpus before any claim.
 
 ### M4 - Local autopsy runtime foundation - harness (depends S1/S3)

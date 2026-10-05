@@ -18,9 +18,17 @@ const InvocationModeHeading = "8.3. Invocation-mode enum and explicit multi-file
 // parity oracle after crown. The generated root protocol.md is not an oracle.
 const LegacyOracleRelPath = "protocol/legacy/protocol-4.1.3.md"
 
+// EditionOracleRelPath is the frozen snapshot of the current generated edition.
+const EditionOracleRelPath = "protocol/legacy/protocol-4.2.md"
+
 // OraclePath returns the frozen legacy protocol text path for a repository root.
 func OraclePath(repoRoot string) string {
 	return filepath.Join(repoRoot, filepath.FromSlash(LegacyOracleRelPath))
+}
+
+// EditionOraclePath returns the current-edition oracle snapshot path.
+func EditionOraclePath(repoRoot string) string {
+	return filepath.Join(repoRoot, filepath.FromSlash(EditionOracleRelPath))
 }
 
 type Model struct {
