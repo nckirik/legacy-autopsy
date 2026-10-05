@@ -3,7 +3,6 @@ package llm
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/internal/work"
@@ -21,10 +20,8 @@ Rules:
   scope-approval, confirmation, domain-question.
 - Never ask the operator directly; the runtime routes blockers.
 
-Response format for a proposal:
+Response format for a proposal (record identity and version are runtime-owned; do not emit them):
 RESULT: PROPOSAL
-RECORD-ID: <record id>
-VERSION: <positive integer>
 EFFECTS: none
 ---PAYLOAD---
 - **<Field Label>:** <value>
@@ -142,18 +139,6 @@ func ParseProposal(text string) (work.Proposal, error) {
 	if !payloadStarted {
 		return work.Proposal{}, fmt.Errorf("llm: proposal response has no payload block")
 	}
-	recordID := fields["RECORD-ID"]
-	if recordID == "" {
-		return work.Proposal{}, fmt.Errorf("llm: proposal response has no RECORD-ID")
-	}
-	rawVersion := fields["VERSION"]
-	if rawVersion == "" {
-		return work.Proposal{}, fmt.Errorf("llm: proposal response has no VERSION")
-	}
-	version, err := strconv.Atoi(rawVersion)
-	if err != nil || version < 1 {
-		return work.Proposal{}, fmt.Errorf("llm: VERSION %q is not a positive integer", rawVersion)
-	}
 	var effects []string
 	if raw := fields["EFFECTS"]; raw != "" && !strings.EqualFold(raw, "none") {
 		for _, effect := range strings.Split(raw, ",") {
@@ -164,11 +149,9 @@ func ParseProposal(text string) (work.Proposal, error) {
 		}
 	}
 	return work.Proposal{
-		FieldID:  fields["FIELD"],
-		RecordID: recordID,
-		Version:  version,
-		Payload:  []byte(strings.Join(payload, "\n") + "\n"),
-		Effects:  effects,
+		FieldID: fields["FIELD"],
+		Payload: []byte(strings.Join(payload, "\n") + "\n"),
+		Effects: effects,
 	}, nil
 }
 

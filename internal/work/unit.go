@@ -24,6 +24,7 @@ type Unit struct {
 	ID             string   `json:"id"`
 	Mode           string   `json:"mode"`
 	Scope          string   `json:"scope,omitempty"`
+	RecordID       string   `json:"record_id"`
 	Reads          []Ref    `json:"reads,omitempty"`
 	ResultType     string   `json:"result_type"`
 	AllowedEffects []string `json:"allowed_effects,omitempty"`
@@ -33,8 +34,8 @@ type Unit struct {
 // Validate checks the unit against the compiled schema: every declared read and
 // the result type must be a table-class FIELD.
 func (u Unit) Validate(doc *cdl.EIRDoc) error {
-	if u.ID == "" || u.Mode == "" || u.ResultType == "" {
-		return fmt.Errorf("work: unit requires ID, mode, and result type")
+	if u.ID == "" || u.Mode == "" || u.ResultType == "" || u.RecordID == "" {
+		return fmt.Errorf("work: unit requires ID, mode, result type, and target record ID")
 	}
 	if err := requireTableField(doc, u.ResultType); err != nil {
 		return fmt.Errorf("work: unit %s result: %w", u.ID, err)

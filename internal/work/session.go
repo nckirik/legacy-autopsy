@@ -134,7 +134,7 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 // review constructs the reviewer's context independently of the worker
 // context and asks for a verdict.
 func (s *Session) review(unit Unit, proposal Proposal) (ReviewResult, error) {
-	target := Ref{FieldID: proposal.FieldID, RecordID: proposal.RecordID}
+	target := Ref{FieldID: proposal.FieldID, RecordID: unit.RecordID}
 	reviewCaps := NewCaps(s.db, s.doc)
 	context, err := BuildReviewContext(reviewCaps, unit, target, proposal.Payload)
 	if err != nil {

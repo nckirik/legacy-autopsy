@@ -34,7 +34,7 @@ func fakeModelServer(t *testing.T) *httptest.Server {
 		}
 		content := "OK"
 		if !strings.Contains(system, "connectivity probe") {
-			content = "RESULT: PROPOSAL\nRECORD-ID: INV-CLI-LLM\nVERSION: 1\nEFFECTS: none\n---PAYLOAD---\n- **Constraint:** model writes\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n---END---\n"
+			content = "RESULT: PROPOSAL\nEFFECTS: none\n---PAYLOAD---\n- **Constraint:** model writes\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n---END---\n"
 		}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
@@ -78,7 +78,7 @@ func TestSpecWorkRunWithFakeModel(t *testing.T) {
 	dir := t.TempDir()
 	db := filepath.Join(dir, "store.db")
 	unitsPath := filepath.Join(dir, "units.json")
-	units := `[{"id":"U-1","mode":"Discovery","scope":"demo","result_type":"INVARIANT"}]`
+	units := `[{"id":"U-1","mode":"Discovery","scope":"demo","record_id":"INV-CLI-LLM","result_type":"INVARIANT"}]`
 	if err := os.WriteFile(unitsPath, []byte(units), 0o644); err != nil {
 		t.Fatal(err)
 	}

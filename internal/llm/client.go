@@ -21,6 +21,9 @@ const (
 	EnvURL   = "LEGACY_AUTOPSY_LLM_URL"
 	EnvKey   = "LEGACY_AUTOPSY_LLM_KEY"
 	EnvModel = "LEGACY_AUTOPSY_LLM_MODEL"
+	// EnvReasoning optionally sets the OpenAI-compatible reasoning_effort side
+	// parameter (for example "low", "medium", "high", "xhigh").
+	EnvReasoning = "LEGACY_AUTOPSY_LLM_REASONING"
 )
 
 // Config describes one OpenAI-compatible endpoint.
@@ -28,6 +31,7 @@ type Config struct {
 	BaseURL   string
 	APIKey    string
 	Model     string
+	Reasoning string
 	Timeout   time.Duration
 	MaxTokens int
 }
@@ -39,6 +43,7 @@ func ConfigFromEnv() (Config, error) {
 		BaseURL:   strings.TrimSpace(os.Getenv(EnvURL)),
 		APIKey:    strings.TrimSpace(os.Getenv(EnvKey)),
 		Model:     strings.TrimSpace(os.Getenv(EnvModel)),
+		Reasoning: strings.TrimSpace(os.Getenv(EnvReasoning)),
 		Timeout:   120 * time.Second,
 		MaxTokens: 4096,
 	}
@@ -59,6 +64,9 @@ func (c Config) Validate() error {
 	}
 	if c.Model == "" {
 		missing = append(missing, EnvModel)
+	}
+	if strings.ContainsAny(c.Reasoning, "\r\n") {
+		return fmt.Errorf("llm: reasoning effort contains line breaks")
 	}
 	if len(missing) > 0 {
 		return fmt.Errorf("llm: missing configuration: %s", strings.Join(missing, ", "))
@@ -90,10 +98,11 @@ type chatMessage struct {
 }
 
 type chatRequest struct {
-	Model       string        `json:"model"`
-	Messages    []chatMessage `json:"messages"`
-	Temperature float64       `json:"temperature"`
-	MaxTokens   int           `json:"max_tokens,omitempty"`
+	Model           string        `json:"model"`
+	Messages        []chatMessage `json:"messages"`
+	Temperature     float64       `json:"temperature"`
+	MaxTokens       int           `json:"max_tokens,omitempty"`
+	ReasoningEffort string        `json:"reasoning_effort,omitempty"`
 }
 
 type chatResponse struct {
@@ -113,10 +122,11 @@ func (c *Client) Complete(ctx context.Context, system, user string) (string, err
 		maxTokens = 4096
 	}
 	body, err := json.Marshal(chatRequest{
-		Model:       c.config.Model,
-		Messages:    []chatMessage{{Role: "system", Content: system}, {Role: "user", Content: user}},
-		Temperature: 0,
-		MaxTokens:   maxTokens,
+		Model:           c.config.Model,
+		Messages:        []chatMessage{{Role: "system", Content: system}, {Role: "user", Content: user}},
+		Temperature:     0,
+		MaxTokens:       maxTokens,
+		ReasoningEffort: c.config.Reasoning,
 	})
 	if err != nil {
 		return "", fmt.Errorf("llm: encode request: %w", err)

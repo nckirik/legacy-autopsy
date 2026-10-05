@@ -51,12 +51,10 @@ func seedInvariant(t *testing.T, db string, doc *cdl.EIRDoc, id, constraint stri
 	}
 }
 
-func invariantProposal(id, constraint string) Proposal {
+func invariantProposal(constraint string) Proposal {
 	return Proposal{
-		FieldID:  "INVARIANT",
-		RecordID: id,
-		Version:  1,
-		Payload:  []byte("- **Constraint:** " + constraint + "\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n"),
+		FieldID: "INVARIANT",
+		Payload: []byte("- **Constraint:** " + constraint + "\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n"),
 	}
 }
 
@@ -73,7 +71,7 @@ func TestSessionCommitsBoundedUnit(t *testing.T) {
 	seedInvariant(t, db, doc, "INV-DEP", "dependency")
 	seedInvariant(t, db, doc, "INV-OTHER", "unrelated record")
 	unit := Unit{
-		ID: "U-1", Mode: "Discovery", Scope: "demo", ResultType: "INVARIANT",
+		ID: "U-1", Mode: "Discovery", Scope: "demo", RecordID: "INV-NEW", ResultType: "INVARIANT",
 		Reads: []Ref{{FieldID: "INVARIANT", RecordID: "INV-DEP"}},
 	}
 	var sawContext bool
@@ -83,7 +81,7 @@ func TestSessionCommitsBoundedUnit(t *testing.T) {
 		if len(inv.Context.Closure) != 1 {
 			t.Errorf("closure = %v", inv.Context.Closure)
 		}
-		return invariantProposal("INV-NEW", "proposed"), nil
+		return invariantProposal("proposed"), nil
 	})
 	session, err := NewSession(db, doc, Config{ReviewMode: ReviewCritical, OperatorMinimums: OperatorMinimums{DecisionBatchMinutes: 10}}, executor, nil)
 	if err != nil {
@@ -112,14 +110,14 @@ func TestCommitRejectsStaleDependency(t *testing.T) {
 	db, doc := testDoc(t)
 	seedInvariant(t, db, doc, "INV-DEP", "original")
 	unit := Unit{
-		ID: "U-STALE", Mode: "Discovery", ResultType: "INVARIANT",
+		ID: "U-STALE", Mode: "Discovery", RecordID: "INV-STALE", ResultType: "INVARIANT",
 		Reads: []Ref{{FieldID: "INVARIANT", RecordID: "INV-DEP"}},
 	}
 	attempt := 0
 	executor := funcExecutor(func(inv Invocation) (Proposal, error) {
 		attempt++
 		mutateInvariant(t, db, "INV-DEP", fmt.Sprintf("changed-%d", attempt))
-		return invariantProposal("INV-STALE", "proposed"), nil
+		return invariantProposal("proposed"), nil
 	})
 	session, err := NewSession(db, doc, DefaultConfig(), executor, nil)
 	if err != nil {
@@ -145,7 +143,7 @@ func TestStaleErrorType(t *testing.T) {
 		t.Fatal(err)
 	}
 	mutateInvariant(t, db, "INV-DEP", "changed after read")
-	err := Commit(caps, Unit{ID: "U", Mode: "M", ResultType: "INVARIANT"}, invariantProposal("INV-NEW2", "p"))
+	err := Commit(caps, Unit{ID: "U", Mode: "M", RecordID: "INV-NEW2", ResultType: "INVARIANT"}, invariantProposal("p"))
 	var stale *StaleError
 	if !errors.As(err, &stale) {
 		t.Fatalf("err = %v, want StaleError", err)
@@ -154,11 +152,11 @@ func TestStaleErrorType(t *testing.T) {
 
 func TestReviewPolicyAndRetry(t *testing.T) {
 	db, doc := testDoc(t)
-	unit := Unit{ID: "U-REVIEW", Mode: "Synthesis", ResultType: "INVARIANT", RequiresReview: true}
+	unit := Unit{ID: "U-REVIEW", Mode: "Synthesis", RecordID: "INV-REVIEW", ResultType: "INVARIANT", RequiresReview: true}
 	executions := 0
 	executor := funcExecutor(func(inv Invocation) (Proposal, error) {
 		executions++
-		return invariantProposal("INV-REVIEW", "proposed"), nil
+		return invariantProposal("proposed"), nil
 	})
 	reviews := 0
 	reviewer := funcReviewer(func(request ReviewRequest) (ReviewResult, error) {
@@ -217,13 +215,13 @@ func TestBlockerRouting(t *testing.T) {
 		if attempts <= 2 {
 			return Proposal{}, &BlockerError{Blocker: Blocker{Kind: "uncertainty", Message: "not sure"}}
 		}
-		return invariantProposal("INV-BLOCK", "resolved"), nil
+		return invariantProposal("resolved"), nil
 	})
 	session, err := NewSession(db, doc, DefaultConfig(), executor, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	report, err := session.Run([]Unit{{ID: "U-BLOCK", Mode: "Discovery", ResultType: "INVARIANT"}})
+	report, err := session.Run([]Unit{{ID: "U-BLOCK", Mode: "Discovery", RecordID: "INV-BLOCK", ResultType: "INVARIANT"}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -237,7 +235,7 @@ func TestBlockerRouting(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	report, err = session.Run([]Unit{{ID: "U-HUMAN", Mode: "Discovery", ResultType: "INVARIANT"}})
+	report, err = session.Run([]Unit{{ID: "U-HUMAN", Mode: "Discovery", RecordID: "INV-HUMAN", ResultType: "INVARIANT"}})
 	if err == nil {
 		t.Fatal("human-authority blocker did not stop the run")
 	}
@@ -248,14 +246,17 @@ func TestBlockerRouting(t *testing.T) {
 
 func TestUnitValidation(t *testing.T) {
 	_, doc := testDoc(t)
-	if err := (Unit{ID: "U", Mode: "M", ResultType: "NOPE"}).Validate(doc); err == nil {
+	if err := (Unit{ID: "U", Mode: "M", RecordID: "R", ResultType: "NOPE"}).Validate(doc); err == nil {
 		t.Fatal("unknown result type accepted")
 	}
-	if err := (Unit{ID: "U", Mode: "M", ResultType: "ENTITY-COLUMN"}).Validate(doc); err == nil {
+	if err := (Unit{ID: "U", Mode: "M", RecordID: "R", ResultType: "ENTITY-COLUMN"}).Validate(doc); err == nil {
 		t.Fatal("non-table result type accepted")
 	}
-	if err := (Unit{ID: "U", Mode: "M", ResultType: "INVARIANT"}).Validate(doc); err != nil {
+	if err := (Unit{ID: "U", Mode: "M", RecordID: "R", ResultType: "INVARIANT"}).Validate(doc); err != nil {
 		t.Fatal(err)
+	}
+	if err := (Unit{ID: "U", Mode: "M", ResultType: "INVARIANT"}).Validate(doc); err == nil {
+		t.Fatal("unit without a target record ID accepted")
 	}
 }
 

@@ -35,6 +35,7 @@ func specWork(args []string, stdout, stderr io.Writer) error {
 	reviewMode := set.String("review-mode", "", "override review policy: all|critical|uncertainty")
 	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
 	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
+	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
 	timeout := set.Duration("llm-timeout", 0, "per-request timeout (default 120s)")
 	if err := set.Parse(args[1:]); err != nil {
 		return err
@@ -52,6 +53,9 @@ func specWork(args []string, stdout, stderr io.Writer) error {
 	}
 	if *llmModel != "" {
 		config.Model = *llmModel
+	}
+	if *llmReasoning != "" {
+		config.Reasoning = *llmReasoning
 	}
 	if *timeout > 0 {
 		config.Timeout = *timeout

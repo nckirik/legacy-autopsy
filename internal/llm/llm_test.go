@@ -12,12 +12,13 @@ import (
 )
 
 type captured struct {
-	path    string
-	auth    string
-	model   string
-	temp    float64
-	systems []string
-	users   []string
+	path      string
+	auth      string
+	model     string
+	reasoning string
+	temp      float64
+	systems   []string
+	users     []string
 }
 
 func fakeServer(t *testing.T, reply func(system, user string) string) (*httptest.Server, *captured) {
@@ -33,6 +34,7 @@ func fakeServer(t *testing.T, reply func(system, user string) string) (*httptest
 			return
 		}
 		recorded.model = request.Model
+		recorded.reasoning = request.ReasoningEffort
 		recorded.temp = request.Temperature
 		for _, message := range request.Messages {
 			if message.Role == "system" {
@@ -60,7 +62,7 @@ func last(values []string) string {
 
 func testClient(t *testing.T, baseURL string) *Client {
 	t.Helper()
-	client, err := NewClient(Config{BaseURL: baseURL + "/v1", APIKey: "test-key", Model: "test-model", Timeout: 5 * time.Second, MaxTokens: 128})
+	client, err := NewClient(Config{BaseURL: baseURL + "/v1", APIKey: "test-key", Model: "test-model", Reasoning: "high", Timeout: 5 * time.Second, MaxTokens: 128})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -83,8 +85,8 @@ func TestClientComplete(t *testing.T) {
 	if recorded.auth != "Bearer test-key" {
 		t.Fatalf("auth = %q", recorded.auth)
 	}
-	if recorded.model != "test-model" || recorded.temp != 0 {
-		t.Fatalf("model=%q temp=%v", recorded.model, recorded.temp)
+	if recorded.model != "test-model" || recorded.temp != 0 || recorded.reasoning != "high" {
+		t.Fatalf("model=%q temp=%v reasoning=%q", recorded.model, recorded.temp, recorded.reasoning)
 	}
 }
 
@@ -113,13 +115,19 @@ func TestConfigFromEnv(t *testing.T) {
 	t.Setenv(EnvURL, "https://example.test/v1")
 	t.Setenv(EnvKey, "secret-value")
 	t.Setenv(EnvModel, "model-x")
+	t.Setenv(EnvReasoning, "xhigh")
 	config, err := ConfigFromEnv()
 	if err != nil {
 		t.Fatal(err)
 	}
-	if config.Model != "model-x" || config.MaxTokens != 4096 {
+	if config.Model != "model-x" || config.Reasoning != "xhigh" || config.MaxTokens != 4096 {
 		t.Fatalf("config = %+v", config)
 	}
+	t.Setenv(EnvReasoning, "bad\nvalue")
+	if _, err := ConfigFromEnv(); err == nil {
+		t.Fatal("line break in reasoning accepted")
+	}
+	t.Setenv(EnvReasoning, "")
 	if err := (Config{BaseURL: "x", APIKey: "super-secret"}).Validate(); err == nil || strings.Contains(err.Error(), "super-secret") {
 		t.Fatalf("validation error leaks or misses: %v", err)
 	}
@@ -127,8 +135,6 @@ func TestConfigFromEnv(t *testing.T) {
 
 func TestParseProposal(t *testing.T) {
 	text := `RESULT: PROPOSAL
-RECORD-ID: INV-0001
-VERSION: 2
 EFFECTS: none
 ---PAYLOAD---
 - **Constraint:** totals match
@@ -140,7 +146,7 @@ EFFECTS: none
 	if err != nil {
 		t.Fatal(err)
 	}
-	if proposal.RecordID != "INV-0001" || proposal.Version != 2 || len(proposal.Effects) != 0 {
+	if len(proposal.Effects) != 0 || proposal.FieldID != "" {
 		t.Fatalf("proposal = %+v", proposal)
 	}
 	if !strings.Contains(string(proposal.Payload), "**Constraint:**") {
@@ -157,8 +163,8 @@ EFFECTS: none
 	_ = blocker
 	for _, bad := range []string{
 		"no markers at all",
-		"RESULT: PROPOSAL\nRECORD-ID: X\n---PAYLOAD---\n- **A:** b\n---END---\n",
-		"RESULT: PROPOSAL\nRECORD-ID: X\nVERSION: zero\n---PAYLOAD---\n- **A:** b\n---END---\n",
+		"RESULT: PROPOSAL\nno payload block\n",
+		"RESULT: SOMETHING\n---PAYLOAD---\n- **A:** b\n---END---\n",
 	} {
 		if _, err := ParseProposal(bad); err == nil {
 			t.Fatalf("invalid response accepted: %q", bad)
@@ -196,7 +202,7 @@ func TestExecutorAndReviewerThroughFakeModel(t *testing.T) {
 		if strings.Contains(system, "independent reviewer") {
 			return "OUTCOME: approved\nFINDINGS:\n- none\n"
 		}
-		return "RESULT: PROPOSAL\nRECORD-ID: INV-LLM\nVERSION: 1\nEFFECTS: none\n---PAYLOAD---\n- **Constraint:** model writes\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n---END---\n"
+		return "RESULT: PROPOSAL\nEFFECTS: none\n---PAYLOAD---\n- **Constraint:** model writes\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n---END---\n"
 	})
 	client := testClient(t, server.URL)
 	executor := NewExecutor(client)
@@ -210,7 +216,7 @@ func TestExecutorAndReviewerThroughFakeModel(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if proposal.FieldID != "INVARIANT" || proposal.RecordID != "INV-LLM" {
+	if proposal.FieldID != "INVARIANT" {
 		t.Fatalf("proposal = %+v", proposal)
 	}
 	if !strings.Contains(last(recorded.systems), "bounded semantic executor") {

@@ -19,7 +19,7 @@ type Context struct {
 func BuildContext(caps *Caps, unit Unit) (Context, error) {
 	var b strings.Builder
 	fmt.Fprintf(&b, "# Work unit %s\n\n", unit.ID)
-	fmt.Fprintf(&b, "- **Mode:** %s\n- **Scope:** %s\n- **Result contract:** %s\n\n", unit.Mode, unit.Scope, unit.ResultType)
+	fmt.Fprintf(&b, "- **Mode:** %s\n- **Scope:** %s\n- **Result contract:** %s\n- **Target record ID:** %s\n\n", unit.Mode, unit.Scope, unit.ResultType, unit.RecordID)
 	fmt.Fprintf(&b, "## Declared dependency closure\n\n")
 	for _, ref := range unit.Reads {
 		payload, err := caps.Get(ref)

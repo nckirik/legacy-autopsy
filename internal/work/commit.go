@@ -8,13 +8,13 @@ import (
 
 // Proposal is one executor-authored semantic mutation. It is only a proposal:
 // the runtime validates it against the result contract and the invocation's
-// read set before anything commits.
+// read set before anything commits. Record identity and version are runtime
+// properties (the unit's target record ID, version 1 on create); the executor
+// authors payload content only.
 type Proposal struct {
-	FieldID  string
-	RecordID string
-	Version  int
-	Payload  []byte
-	Effects  []string
+	FieldID string
+	Payload []byte
+	Effects []string
 }
 
 // StaleError reports a dependency whose committed fingerprint changed or
@@ -47,8 +47,9 @@ func Commit(caps *Caps, unit Unit, p Proposal) error {
 			return fmt.Errorf("work: unit %s effect %q is not allowed", unit.ID, effect)
 		}
 	}
+	target := Ref{FieldID: unit.ResultType, RecordID: unit.RecordID}
 	for ref, want := range caps.ReadSet() {
-		if ref.FieldID == p.FieldID && ref.RecordID == p.RecordID {
+		if ref == target {
 			continue
 		}
 		got, err := store.FingerprintOf(caps.db, caps.doc, ref.FieldID, ref.RecordID)
@@ -56,5 +57,5 @@ func Commit(caps *Caps, unit Unit, p Proposal) error {
 			return &StaleError{Ref: ref}
 		}
 	}
-	return store.Ingest(caps.db, caps.doc, p.FieldID, p.RecordID, p.Version, p.Payload)
+	return store.Ingest(caps.db, caps.doc, p.FieldID, unit.RecordID, 1, p.Payload)
 }
