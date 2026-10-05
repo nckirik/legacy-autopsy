@@ -17,7 +17,7 @@ Execution channels arrive in a strict user-facing order: first a generic skill t
 | Layer                                                   | Role                                                                                                 | Authority                                         |
 | :------------------------------------------------------ | :--------------------------------------------------------------------------------------------------- | :------------------------------------------------ |
 | `protocol/` CDL sources                                 | Normative rules, modes, invariants, records, and gates                                               | Sole normative source; `protocol.md` generated    |
-| Committed `.extracted/` records                         | Persistent forensic, assurance, synthesis, and handbook state within their protocol-defined concerns | Authoritative protocol state                      |
+| Canonical `.extracted/legacy-autopsy.db` store (next binding) | Persistent forensic, assurance, synthesis, and handbook state within their protocol-defined concerns | Authoritative protocol state                      |
 | Source snapshots and approved projections               | Evidence inputs cited by records                                                                     | Evidence authority as defined by the protocol     |
 | Service registry, scheduler, leases, and event delivery | Operational coordination                                                                             | Not semantic or gate authority                    |
 | Per-project `.legacy-autopsy/` configuration/state      | Adapter selection, limits, and local runtime coordination                                            | Non-authoritative operational state               |
@@ -99,9 +99,28 @@ This signature is illustrative, not an implemented API. Execution support should
 
 Human-required actions remain protocol-governed UI/operator transactions, not a general semantic executor channel.
 
-An invocation must remain bound to one autopsy and the complete applicable protocol identity, scope, read set, write set, snapshot, and input fingerprints. A result is a semantic proposal until the service validates it. Executors classify behavior, formulate claims, identify ambiguity, and propose prose or other semantic content with provenance. The service computes or independently reproduces protocol-defined IDs, canonical forms, fingerprints, scope/stale checks, FSM transitions, counts, completeness, gates, and package verification before commit; an executor-supplied deterministic value never becomes authoritative merely because it is present. Executors do not own scheduling, stale checks, workspace commits, gate state, or the protocol state machine.
+An invocation must remain bound to one autopsy and the complete applicable protocol identity, scope, authoritative dependency/read closure, allowed semantic effects, snapshot, and input fingerprints. A result is a semantic proposal until the service validates it. Executors classify behavior, formulate claims, identify ambiguity, and propose semantic content with provenance through protocol-aware capabilities. They do not edit Markdown records or issue unrestricted SQL. The service computes or independently reproduces protocol-defined IDs, canonical forms, fingerprints, scope/stale checks, FSM transitions, counts, completeness, gates, and package verification before commit; an executor-supplied deterministic value never becomes authoritative merely because it is present. Executors do not own scheduling, stale checks, workspace commits, gate state, or the protocol state machine.
 
 The common result envelope must carry the Protocol §8.5 semantic cold-resume assessment. Before every commit, the service adds its deterministic identity/scope/write-right/stale validation, recomputes the cold-resume fingerprint, and binds the pass/fail result to the mandatory `0G` entry. Failed or missing checks reject semantic mutation while preserving the exact no-mutation audit outcome.
+
+### Semantic capability surface
+
+Model-facing execution is capability-based rather than file-edit or SQL based. A
+worker receives bounded tools such as record lookup, filtered search, relation
+traversal, evidence/source retrieval, semantic proposal operations, review/escalation,
+and submit/abandon controls. Tool names are illustrative and may be generated from the
+protocol/EIR; the invariant is that they express semantic intent rather than physical
+storage operations.
+
+Every successful read tool call automatically appends the exact committed
+record/version/fingerprint set it observed to the invocation read set. At commit time
+the service rechecks those dependencies. If any changed, semantic mutation is rejected
+as stale. The model never authors or maintains this ledger itself.
+
+The same tool surface supports independent review. A reviewer receives the committed
+worker result plus a separately constructed evidence projection, not the worker's chat
+history or hidden reasoning. The same underlying model MAY be used for both roles;
+independence comes from context and role separation.
 
 ## Per-project operational configuration
 
@@ -115,7 +134,7 @@ The exact JSON, YAML, SQLite, or mixed layout remains undecided. The design must
 flowchart TD
     schedule["Scheduler identifies permitted work"]
     claim["Worker claims one bounded invocation and lease"]
-    context["Service assembles fingerprinted normative context"]
+    context["Service derives dependency closure<br/>and bounded semantic projection"]
     execute["Executor performs semantic work"]
     submit["Executor submits a structured result"]
     validate["Service revalidates scope, ownership,<br/>fingerprints, and implemented rules"]
@@ -136,9 +155,9 @@ Speculative model thoughts, streamed tokens, and uncommitted result drafts may a
 
 ## Workspace update channels
 
-Service-owned writes are the primary update channel. The workspace transaction manager already knows the `autopsy_id`, invocation, changed records, and committed workspace revision, so a post-commit hook should immediately publish that revision to Activity/Inspector and enqueue lower-priority Atlas regeneration.
+Service-owned transactions against the canonical SQLite store are the primary update channel. The workspace transaction manager already knows the `autopsy_id`, invocation, bound read set, semantic proposal, changed records, and committed revision, so a post-commit hook should immediately publish that revision to Activity/Inspector and enqueue lower-priority Atlas regeneration.
 
-An optional filesystem watcher is a fallback for out-of-band `.extracted/` changes, not the normal commit path. A watcher event proves only that bytes may have changed. It must bind the event to one autopsy/root, debounce and deduplicate it, re-read and fingerprint affected records, mark the workspace externally changed, and require applicable validation before later mutation. It must not manufacture an invocation, evidence, or a valid protocol transition.
+An optional filesystem watcher is a fallback for out-of-band canonical-store or approved import/export changes, not the normal commit path. A watcher event proves only that bytes may have changed. It must bind the event to one autopsy/root, debounce and deduplicate it, re-read and fingerprint affected records, mark the workspace externally changed, and require applicable validation before later mutation. It must not manufacture an invocation, evidence, or a valid protocol transition.
 
 Watchers may miss, duplicate, or reorder events. Service startup and watcher overflow therefore require a full disk reconciliation. Service-originated commit revisions should suppress duplicate watcher notifications without suppressing genuinely different external changes.
 
