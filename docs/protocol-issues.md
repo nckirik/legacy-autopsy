@@ -6,8 +6,9 @@
 > and regenerated artifacts. Protocol sources are never edited while a standalone run
 > is in progress.
 >
-> **Revision v4.2 accepted 2026-10-05:** all fourteen issues below are accepted for a
-> single minor revision. Decisions recorded with acceptance: snapshot each accepted
+> **Revision v4.2 implemented 2026-10-05:** all fourteen issues below are implemented in
+> the v4.2 edition (normative text; the harness-side lints/validators follow in W2/W5).
+> Accepted for a single minor revision. Decisions recorded with acceptance: snapshot each accepted
 > revision as the new frozen oracle (old oracles kept; drift and coverage tests target
 > the current one); handbook substance floor = required sections plus a minimum
 > claim-backed assertion count per chapter with reason-bearing N/A allowed; operator
@@ -25,7 +26,7 @@ oracle snapshot is an open process decision.
 
 ## PI-1: Commented-out code and dormant units are not named as in-scope evidence
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-09-28 (three loaded `Q_*.sql` units whose
   only call sites are commented out were left without inventory/coverage rows and
   parked as pending-mirror discoveries)
@@ -54,7 +55,7 @@ oracle snapshot is an open process decision.
 
 ## PI-2: Bootstrap read set is unsatisfiable before `0A` exists
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-09-28 (bootstrap ambiguity report)
 - **Affected sections:** §8.4 mandatory read sets, §3.1 `0A-PREFLIGHT.md`
 - **Observed text:** "All modes load protocol constants/statuses, `0A`, `0D`, `0E`,
@@ -69,7 +70,7 @@ oracle snapshot is an open process decision.
 
 ## PI-3: Invocation ID grammar is undefined
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-09-28 (convention adopted and documented by
   the harness)
 - **Affected sections:** §8.1 resume identity header
@@ -83,7 +84,7 @@ oracle snapshot is an open process decision.
 
 ## PI-4: Protocol version literal differs between the 0A template and §8.1
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-09-28 (version contradiction report)
 - **Affected sections:** §3.1 `0A-PREFLIGHT.md` template, §8.1 resume identity header
 - **Observed text:** "`- **Protocol Version:** 4.1`" (§3.1) versus
@@ -96,7 +97,7 @@ oracle snapshot is an open process decision.
 
 ## PI-5: Live/sandbox access must stay optional; static-only disposal is implicit
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-09-28, gate `GATE-A-001` (NO-SANDBOX reported
   as the dominant irreducible blocker; runtime/deployed units stayed `[C-PARTIAL]` /
   `Unknown` and Exit A was NOT MET)
@@ -142,7 +143,7 @@ oracle snapshot is an open process decision.
 
 ## PI-6: Operator-facing interaction surface is unspecified and tag-dense
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-09-28/30 (operator feedback: tags, aliases,
   and status tokens are hard to decode; questions and reports arrive as protocol
   objects rather than human requests; the 85-decision Exit E approval digest rendered
@@ -167,7 +168,7 @@ oracle snapshot is an open process decision.
 
 ## PI-7: Cold-read scope is undefined between `0G` and `0H`
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-09-28 (ambiguity report; the run loaded the
   full append-only `0G` history because "0G or 0H" does not say which)
 - **Affected sections:** §8.4 mandatory read sets, §8.5 cold resume, §8.7 stale
@@ -187,7 +188,7 @@ oracle snapshot is an open process decision.
 
 ## PI-8: Harness tooling location and package membership are unspecified
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-09-28 (ambiguity report; tooling written to
   `.tmp/` and described as non-canonical, with no rule to cite)
 - **Affected sections:** §0.1 authority classes, §1.1 forensic-plane layout, §1.5
@@ -210,7 +211,7 @@ oracle snapshot is an open process decision.
 
 ## PI-9: Fail-inclusive stops at absent authority, not at recoverable artifact defects
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-09-28 (sandbox probe pass; `grafana` schema
   recreated and a foreign table materialized from delivered columns instead of being
   parked as Unknown; the earlier classification had over-applied fail-inclusive)
@@ -241,7 +242,7 @@ oracle snapshot is an open process decision.
 
 ## PI-10: Exit E scope and test doubles for external dependencies
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone run follow-up 2026-09-30 (Exit E was modelled as
   sandbox-blocked; operator directed local mock SAML/IdP and SMTP to continue)
 - **Affected sections:** §9.5 no-mock integrity, §14.5 equivalence suite, §15.1 Exit E
@@ -267,7 +268,7 @@ oracle snapshot is an open process decision.
 
 ## PI-11: Handbook quality gate admits metadata shells
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run, Exit E verification 2026-10-05 (the run passed the
   handbook checks with a 17-file handbook whose chapters are roughly 29 lines each,
   mostly HBK envelope metadata plus one summary bullet)
@@ -295,7 +296,7 @@ oracle snapshot is an open process decision.
 
 ## PI-12: Human readability confirmation can be relay-only
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-10-05 (90 HBK CNFs record readability "Pass"
   while stating "no independent line-by-line human read attested"; envelope audit
   fields are `None`)
@@ -319,7 +320,7 @@ oracle snapshot is an open process decision.
 
 ## PI-13: Human Hatch conflates human authority with executor uncertainty
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-09-28/10-05 and session export review
   2026-10-05 (operator was repeatedly asked to resolve protocol mechanics and executor
   uncertainty; recommended options were accepted as human choices, including one bulk
@@ -358,7 +359,7 @@ oracle snapshot is an open process decision.
 
 ## PI-14: Mandatory read closure is conflated with model-context materialization
 
-- **Status:** accepted for v4.2
+- **Status:** implemented in v4.2
 - **Source:** standalone protocol run 2026-09-28/10-05 and session export review
   2026-10-05 (1,026 assistant steps, 14 compactions, 136.4M reported input tokens;
   hundreds of invocations carried 100k+ token contexts while the run repeatedly loaded

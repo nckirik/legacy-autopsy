@@ -580,6 +580,18 @@ criteria, readability confirmations that cannot be relay-only, Human Hatch scope
 executor/harness uncertainty, and validated closure versus prompt materialization. They are evaluated after the standalone run; the CDL sources are not edited
 while a run is in progress.
 
+## W1 implemented - protocol v4.2
+
+The fourteen accepted issues (PI-1..14) are implemented in the v4.2 edition: dormant and
+commented-out units, bootstrap and cold-read scope, closure versus materialization,
+fail-inclusive boundaries, tooling location, invocation-ID grammar, the single version
+literal, static-only eligibility through both gates, Exit E scope and test doubles,
+Human Hatch blocker classification, operator presentation, handbook substance and
+readability rules. The revision changed `cdl.ProtocolVersion` to 4.2 and snapshotted
+`protocol/legacy/protocol-4.2.md` as the current-edition oracle (4.1.3 kept as
+history). W2/W3 are next: the native runtime, certification engine, SQLite store, and
+bounded semantic execution.
+
 ## Post-run hardening plan
 
 The first full standalone run (small project, 2026-09-28/10-05) produced PI-1..12 and
