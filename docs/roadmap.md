@@ -376,7 +376,7 @@ See [sqlite-store.md](sqlite-store.md). The protocol and its record schemas do n
 change; only the storage does. The canonical store becomes
 `.extracted/legacy-autopsy.db`, serialized for hashing and packaging as a deterministic
 SQL dump, and an optional `legacy-autopsy-light/` package provides the `la` helpers so
-agents never hand-edit record files.
+agents never hand-edit record files and semantic workers never need to serialize protocol records themselves.
 
 - **Records are tables:** one table per record class with the declared fields;
   status/enum columns `CHECK`-constrained from the §5.1 registries; unique typed IDs and
@@ -384,9 +384,13 @@ agents never hand-edit record files.
 - **Fingerprints unchanged:** records keep the canonical payload bytes the protocol
   already hashes; dump-level hashes replace per-file transport fingerprints in packaging
   and manifests (the only new binding definition).
-- **Light harness:** schema DDL plus named helpers (`init`, `import`, `write`, `read`,
-  `update`, `log`, `checkpoint`, `validate`, `render`, `dump`); optional and
-  non-authoritative. Prompt-only runs create the schema first with ordinary `sqlite3`.
+- **Semantic capability surface:** protocol-aware lookup/search/traversal/evidence and
+  semantic proposal/control operations hide the physical tables from model workers.
+  Every read automatically extends the invocation's fingerprinted dependency set;
+  writes are validated semantic transactions, not table mutations.
+- **Administrative helpers:** schema/import/inspect/validate/render/dump helpers remain
+  available to operators, migrations, tests, and debugging. Raw SQL/table helpers are
+  not the normal executor contract.
 - **Human surfaces:** `la render` produces Markdown/report views; operator questions and
   reports are plain-language first (PI-6).
 - **Versioning:** the binding becomes canonical at a minor version (proposed v4.2 or v4.5);
@@ -429,12 +433,13 @@ afterward.
 
 ### M6 - Invocation context, cold resume, and executor rollout - harness (depends S2/S3)
 
-Implement mode routing, §8.1 identity headers, mandatory read sets, minimum-sufficient
-authoritative section packets, strict-scope verification, stale-checkpoint guards,
+Implement mode routing, §8.1 identity headers, authoritative dependency/read closures, minimum-sufficient bounded semantic projections, strict-scope verification, stale-checkpoint guards,
 §8.5 structured cold-resume checks, and append-only invocation history. Context
 assembly must resolve from EIR `EVIDENCE`/`USES`; the S2 leakage audit is a
-prerequisite and remaining procedural logic is a defect. The executor proposes
-semantic resume/actions; the runtime recomputes identity, scope, fingerprints, write
+prerequisite and remaining procedural logic is a defect. Dependency closure is not
+synonymous with prompt materialization: workers receive only task-complete projections
+and expand them through protocol-aware tools whose reads are automatically fingerprinted.
+The executor proposes semantic resume/actions; the runtime recomputes identity, scope, fingerprints, write
 rights, staleness, and the cold-resume fingerprint before commit.
 
 Execution channels in order:
