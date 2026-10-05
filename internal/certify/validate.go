@@ -56,6 +56,36 @@ func ValidateRecord(doc *cdl.EIRDoc, fieldID string, values map[string]any) erro
 	return nil
 }
 
+// CanonicalStringSet converts a declared set<string> value to its one canonical
+// representation: ascending lexical order with no duplicates. Non-string
+// elements and duplicates are rejected. Callers persist the returned slice;
+// element order in input carries no meaning, while multiplicity is an error.
+func CanonicalStringSet(value any) ([]string, error) {
+	var items []string
+	switch v := value.(type) {
+	case []any:
+		items = make([]string, 0, len(v))
+		for _, item := range v {
+			text, ok := item.(string)
+			if !ok {
+				return nil, fmt.Errorf("string set contains non-string %T", item)
+			}
+			items = append(items, text)
+		}
+	case []string:
+		items = append([]string(nil), v...)
+	default:
+		return nil, fmt.Errorf("string set required, got %T", value)
+	}
+	sort.Strings(items)
+	for i := 1; i < len(items); i++ {
+		if items[i] == items[i-1] {
+			return nil, fmt.Errorf("string set contains duplicate %q", items[i])
+		}
+	}
+	return items, nil
+}
+
 func checkValue(spec cdl.EIRFieldSpec, value any, enums map[string][]string) error {
 	if values, ok := enums[spec.Type]; ok {
 		text, ok := value.(string)
@@ -85,19 +115,8 @@ func checkValue(spec cdl.EIRFieldSpec, value any, enums map[string][]string) err
 			return fmt.Errorf("integer required, got %T", value)
 		}
 	case "set<string>":
-		items, ok := value.([]any)
-		if !ok {
-			if _, ok := value.([]string); ok {
-				return nil
-			}
-			return fmt.Errorf("string set required, got %T", value)
-		}
-		for _, item := range items {
-			if _, ok := item.(string); !ok {
-				return fmt.Errorf("string set contains non-string %T", item)
-			}
-		}
-		return nil
+		_, err := CanonicalStringSet(value)
+		return err
 	default:
 		if _, ok := value.(string); !ok {
 			return fmt.Errorf("string required, got %T", value)

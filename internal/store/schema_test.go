@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/spec"
 )
 
@@ -30,6 +31,24 @@ func TestSchemaDeterministic(t *testing.T) {
 	second := schema(t)
 	if first != second {
 		t.Fatal("schema generation is not deterministic")
+	}
+}
+
+func TestSchemaRejectsUnusableIdentifiers(t *testing.T) {
+	doc := &cdl.EIRDoc{}
+	doc.Declarations.Fields = []cdl.EIRField{{
+		ID:     "!!!",
+		Fields: []cdl.EIRFieldSpec{{Name: "ok", Type: "string"}},
+	}}
+	if _, err := Schema(doc, Provenance{Generator: "store/test"}); err == nil {
+		t.Fatal("field without a usable table name accepted")
+	}
+	doc.Declarations.Fields = []cdl.EIRField{{
+		ID:     "VALID",
+		Fields: []cdl.EIRFieldSpec{{Name: "...", Type: "string"}},
+	}}
+	if _, err := Schema(doc, Provenance{Generator: "store/test"}); err == nil {
+		t.Fatal("column without a usable name accepted")
 	}
 }
 

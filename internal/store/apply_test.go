@@ -39,6 +39,24 @@ func TestApplySchema(t *testing.T) {
 	}
 }
 
+func TestApplyIsAtomic(t *testing.T) {
+	if _, err := exec.LookPath("sqlite3"); err != nil {
+		t.Skip("sqlite3 CLI not available")
+	}
+	db := filepath.Join(t.TempDir(), "store.db")
+	broken := schema(t) + "\nCREATE TABLE \"zz_broken\" ("
+	if err := Apply(db, broken); err == nil {
+		t.Fatal("broken schema applied successfully")
+	}
+	out, err := sqlite(t, db, "select count(*) from sqlite_master where type='table';")
+	if err != nil {
+		t.Fatal(err, out)
+	}
+	if out != "0" {
+		t.Fatalf("failed apply left %s tables committed", out)
+	}
+}
+
 func TestApplyEnforcesEnums(t *testing.T) {
 	if _, err := exec.LookPath("sqlite3"); err != nil {
 		t.Skip("sqlite3 CLI not available")
