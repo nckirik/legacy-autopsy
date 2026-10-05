@@ -192,8 +192,9 @@ projection/export, not working state.
 The first W3 storage increments are implemented: `internal/store.Schema` renders the
 DDL from compiled EIR (tables, enum CHECKs, provenance, append-only `0G` triggers) and
 `store.Apply` plus `spec schema --apply` instantiate it through the operator's
-`sqlite3` CLI, so the toolchain keeps zero Go dependencies. Import/export, the
-canonical dump, and the semantic capability surface follow.
+`sqlite3` CLI, so the toolchain keeps zero Go dependencies, and
+`store.CanonicalDump`/`spec store` produce the deterministic SQL dump and fingerprint
+used for packaging. Import/export and the semantic capability surface follow.
 
 ### W4 - Storage conformance and projections
 

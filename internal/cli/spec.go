@@ -30,8 +30,10 @@ func specCommand(args []string, stdout, stderr io.Writer) error {
 		return specRun(args[1:], stdout, stderr)
 	case "schema":
 		return specSchema(args[1:], stdout, stderr)
+	case "store":
+		return specStore(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec operation %q is unsupported; supported operations: compile, render, run, schema", args[0])
+		return fmt.Errorf("spec operation %q is unsupported; supported operations: compile, render, run, schema, store", args[0])
 	}
 }
 
@@ -168,6 +170,52 @@ func specSchema(args []string, stdout, stderr io.Writer) error {
 		_, err := io.WriteString(stdout, ddl)
 		return err
 	}
+	return nil
+}
+
+func specStore(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec store", stderr)
+	repo := set.String("repo", ".", "repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path")
+	out := set.String("out", "", "write the canonical dump to this path")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec store requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	dump, fingerprint, err := store.CanonicalDump(*db, res.EIR, store.Provenance{
+		Generator:         cdl.GeneratorVersion,
+		SourceFingerprint: res.SourceFingerprint,
+	})
+	if err != nil {
+		return err
+	}
+	if *out != "" {
+		path := *out
+		if !filepath.IsAbs(path) {
+			path = filepath.Join(*repo, filepath.FromSlash(path))
+		}
+		if err := os.WriteFile(path, dump, 0o644); err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "wrote canonical dump to %s\nfingerprint: %s\n", *out, fingerprint)
+		return nil
+	}
+	if _, err := stdout.Write(dump); err != nil {
+		return err
+	}
+	fmt.Fprintf(stderr, "fingerprint: %s\n", fingerprint)
 	return nil
 }
 
