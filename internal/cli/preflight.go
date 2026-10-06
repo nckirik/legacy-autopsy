@@ -100,6 +100,7 @@ func specPreflight(args []string, stdout, stderr io.Writer) error {
 	}
 	switch strings.ToLower(*showModel) {
 	case "", "off", "none":
+		wireActivity(&runConfig, executor, stdout)
 	case "stderr":
 		executor.SetDebug(stderr)
 		reviewer.Debug = stderr

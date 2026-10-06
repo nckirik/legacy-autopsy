@@ -349,3 +349,40 @@ func TestValidationFailureRetriesWithFeedback(t *testing.T) {
 		t.Fatalf("stats = %+v attempts = %d", report.Units[0], attempts)
 	}
 }
+
+func TestObserverLifecycleEvents(t *testing.T) {
+	db, doc := testDoc(t)
+	unit := Unit{ID: "U-OBS", Mode: "Discovery", RecordID: "INV-OBS", ResultType: "INVARIANT", RequiresReview: true}
+	attempts := 0
+	executor := funcExecutor(func(inv Invocation) (Proposal, error) {
+		attempts++
+		if attempts == 1 {
+			return Proposal{FieldID: "INVARIANT", Records: []Record{{Payload: []byte("- **Constraint:** c\n- **Unknown:** x\n- **Discovered In:** SRC-1\n")}}}, nil
+		}
+		return invariantProposal("observed"), nil
+	})
+	reviewer := funcReviewer(func(request ReviewRequest) (ReviewResult, error) {
+		return ReviewResult{Outcome: ReviewApproved}, nil
+	})
+	config := DefaultConfig()
+	var events []string
+	config.Observer = &Observer{
+		UnitStarted: func(work Unit) { events = append(events, "start:"+work.ID) },
+		Reviewing:   func(Unit) { events = append(events, "review") },
+		Retrying:    func(Unit, string) { events = append(events, "retry") },
+		UnitDone: func(stats UnitStats) {
+			events = append(events, fmt.Sprintf("done:%s:%v", stats.UnitID, stats.Committed))
+		},
+	}
+	session, err := NewSession(db, doc, config, executor, reviewer)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := session.Run([]Unit{unit}); err != nil {
+		t.Fatal(err)
+	}
+	want := []string{"start:U-OBS", "review", "retry", "review", "done:U-OBS:true"}
+	if strings.Join(events, ",") != strings.Join(want, ",") {
+		t.Fatalf("events = %v, want %v", events, want)
+	}
+}

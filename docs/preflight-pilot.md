@@ -53,6 +53,11 @@
 
 - `--show-model off|stderr|stdout`: streams raw model output (default off; diagnostic
   and never an artifact); stderr keeps stdout clean for data piping.
+- With model output off, a stdout activity indicator follows the stream: on a
+  terminal it redraws one line with a spinner, unit ID, reasoning/content counters,
+  review state, and elapsed time, prints retry notices, and closes with a per-unit
+  summary; on a non-terminal it stays quiet during the call and prints one completion
+  line per unit. The same `work.Observer` events feed a future TUI.
 - Ingest validation failures report the parsed declared fields, and retries receive
   the rejection reason inline (`## Previous attempt rejected`).
 

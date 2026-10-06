@@ -38,6 +38,7 @@ type UnitStats struct {
 	Review       ReviewOutcome
 	Escalated    bool
 	Blocker      BlockerClass
+	Committed    bool
 }
 
 // Report aggregates instrumentation for a session.
@@ -90,6 +91,14 @@ func (s *Session) Run(units []Unit) (Report, error) {
 
 func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 	stats := UnitStats{UnitID: unit.ID}
+	if s.config.Observer != nil && s.config.Observer.UnitStarted != nil {
+		s.config.Observer.UnitStarted(unit)
+	}
+	defer func() {
+		if s.config.Observer != nil && s.config.Observer.UnitDone != nil {
+			s.config.Observer.UnitDone(stats)
+		}
+	}()
 	if err := unit.Validate(s.doc); err != nil {
 		return stats, err
 	}
@@ -115,18 +124,23 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 			if !errors.As(err, &blocker) {
 				stats.Retries++
 				feedback = "executor error: " + err.Error()
+				s.notifyRetry(unit, feedback)
 				continue
 			}
 			class := ClassifyBlocker(blocker.Blocker)
 			stats.Blocker = class
 			if class == BlockerUncertainty {
 				stats.Retries++
+				s.notifyRetry(unit, "blocker: "+blocker.Blocker.Message)
 				continue
 			}
 			stats.Escalated = ReachesOperator(class)
 			return stats, err
 		}
 		if s.config.NeedsReview(unit, false) && s.reviewer != nil {
+			if s.config.Observer != nil && s.config.Observer.Reviewing != nil {
+				s.config.Observer.Reviewing(unit)
+			}
 			result, err := s.review(unit, proposal)
 			if err != nil {
 				return stats, err
@@ -138,6 +152,7 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 				if len(result.Findings) > 0 {
 					feedback += ": " + strings.Join(result.Findings, "; ")
 				}
+				s.notifyRetry(unit, feedback)
 				continue
 			}
 		}
@@ -146,16 +161,25 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 			if errors.As(err, &stale) {
 				stats.Retries++
 				feedback = ""
+				s.notifyRetry(unit, "stale dependency "+stale.Ref.String())
 				continue
 			}
 			stats.Retries++
 			feedback = err.Error()
+			s.notifyRetry(unit, feedback)
 			continue
 		}
 		stats.Fetches = caps.FetchCount()
+		stats.Committed = true
 		return stats, nil
 	}
 	return stats, fmt.Errorf("work: unit %s was not committed within %d attempts", unit.ID, s.maxRetries+1)
+}
+
+func (s *Session) notifyRetry(unit Unit, reason string) {
+	if s.config.Observer != nil && s.config.Observer.Retrying != nil {
+		s.config.Observer.Retrying(unit, reason)
+	}
 }
 
 // review constructs the reviewer's context independently of the worker

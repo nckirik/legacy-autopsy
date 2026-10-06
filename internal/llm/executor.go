@@ -58,6 +58,9 @@ FINDINGS:
 type Executor struct {
 	client *Client
 	Debug  io.Writer
+	// OnDelta receives every streamed fragment with its unit ID, for progress
+	// surfaces; it never changes the parsed result.
+	OnDelta func(unitID string, delta Delta)
 	// ForceReasoning, when non-nil, overrides every unit's reasoning effort
 	// (empty string omits the side parameter). Set by the CLI --llm-reasoning.
 	ForceReasoning *string
@@ -88,7 +91,16 @@ func NewExecutorFromEnv() (*Executor, error) {
 // Execute runs one work unit through the model and parses the bounded response.
 func (e *Executor) Execute(invocation work.Invocation) (work.Proposal, error) {
 	sink, done := e.debugSink(invocation.Unit.ID)
-	text, err := e.client.CompleteEffortStream(context.Background(), executorSystemPrompt, executorUserPrompt(invocation), e.effortFor(invocation.Unit), sink)
+	combined := sink
+	if e.OnDelta != nil {
+		combined = func(delta Delta) {
+			e.OnDelta(invocation.Unit.ID, delta)
+			if sink != nil {
+				sink(delta)
+			}
+		}
+	}
+	text, err := e.client.CompleteEffortStream(context.Background(), executorSystemPrompt, executorUserPrompt(invocation), e.effortFor(invocation.Unit), combined)
 	done()
 	if err != nil {
 		return work.Proposal{}, err

@@ -28,6 +28,9 @@ type Config struct {
 	ReviewMode       ReviewMode
 	OperatorMinimums OperatorMinimums
 	MaxRetries       int
+	// Observer receives lifecycle events for progress surfaces; it never
+	// affects execution outcome.
+	Observer *Observer
 }
 
 // DefaultConfig is the protocol default: independent review for units that
