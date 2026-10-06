@@ -33,6 +33,7 @@ func specWork(args []string, stdout, stderr io.Writer) error {
 	db := set.String("db", "", "SQLite database path (run)")
 	unitsPath := set.String("units", "", "JSON work-unit list (run)")
 	reviewMode := set.String("review-mode", "", "override review policy: all|critical|uncertainty")
+	iteration := set.String("iteration", "ALFA", "canonical §10.6 iteration token for invocation IDs")
 	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
 	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
 	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
@@ -104,6 +105,9 @@ func specWork(args []string, stdout, stderr io.Writer) error {
 	runConfig := work.DefaultConfig()
 	if *reviewMode != "" {
 		runConfig.ReviewMode = work.ReviewMode(*reviewMode)
+	}
+	if *iteration != "" {
+		runConfig.Iteration = *iteration
 	}
 	if *maxRetries > 0 {
 		runConfig.MaxRetries = *maxRetries

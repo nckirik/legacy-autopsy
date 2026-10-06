@@ -38,11 +38,17 @@ func (e *StaleError) Error() string {
 // effects, stale-checks every observed dependency except the proposal's own
 // target, and only then ingests it.
 func Commit(caps *Caps, unit Unit, p Proposal) error {
+	_, err := CommitWithIDs(caps, unit, p)
+	return err
+}
+
+// CommitWithIDs is Commit returning the runtime-assigned record IDs.
+func CommitWithIDs(caps *Caps, unit Unit, p Proposal) ([]string, error) {
 	if p.FieldID != unit.ResultType {
-		return fmt.Errorf("work: unit %s proposal writes %s, result contract is %s", unit.ID, p.FieldID, unit.ResultType)
+		return nil, fmt.Errorf("work: unit %s proposal writes %s, result contract is %s", unit.ID, p.FieldID, unit.ResultType)
 	}
 	if len(p.Records) == 0 {
-		return fmt.Errorf("work: unit %s proposal has no records", unit.ID)
+		return nil, fmt.Errorf("work: unit %s proposal has no records", unit.ID)
 	}
 	for _, effect := range p.Effects {
 		allowed := false
@@ -53,16 +59,16 @@ func Commit(caps *Caps, unit Unit, p Proposal) error {
 			}
 		}
 		if !allowed {
-			return fmt.Errorf("work: unit %s effect %q is not allowed", unit.ID, effect)
+			return nil, fmt.Errorf("work: unit %s effect %q is not allowed", unit.ID, effect)
 		}
 	}
 	resolved, err := ResolveRecords(caps.doc, unit, p)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	names, _, _, err := FieldContract(caps.doc, p.FieldID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	lookup := func(fieldID, recordID string) (bool, error) {
 		return store.Exists(caps.db, caps.doc, fieldID, recordID)
@@ -81,13 +87,13 @@ func Commit(caps *Caps, unit Unit, p Proposal) error {
 	for _, record := range resolved {
 		values, err := PayloadText(names, record.Payload)
 		if err != nil {
-			return fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
+			return nil, fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
 		}
 		if err := certify.ValidateReferences(p.FieldID, values, lookup); err != nil {
-			return fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
+			return nil, fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
 		}
 		if err := certify.ValidateCrossReferences(p.FieldID, values, reader); err != nil {
-			return fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
+			return nil, fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
 		}
 	}
 	targets := map[Ref]bool{}
@@ -100,12 +106,19 @@ func Commit(caps *Caps, unit Unit, p Proposal) error {
 		}
 		got, err := store.FingerprintOf(caps.db, caps.doc, ref.FieldID, ref.RecordID)
 		if err != nil || got != want {
-			return &StaleError{Ref: ref}
+			return nil, &StaleError{Ref: ref}
 		}
 	}
 	inputs := make([]store.RecordInput, 0, len(resolved))
 	for _, record := range resolved {
 		inputs = append(inputs, store.RecordInput{RecordID: record.RecordID, Version: 1, Payload: record.Payload})
 	}
-	return store.IngestMany(caps.db, caps.doc, p.FieldID, inputs)
+	if err := store.IngestMany(caps.db, caps.doc, p.FieldID, inputs); err != nil {
+		return nil, err
+	}
+	ids := make([]string, 0, len(resolved))
+	for _, record := range resolved {
+		ids = append(ids, record.RecordID)
+	}
+	return ids, nil
 }

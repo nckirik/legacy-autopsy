@@ -419,3 +419,46 @@ func TestClusterReferenceValidation(t *testing.T) {
 		t.Fatal("bad source token accepted")
 	}
 }
+
+func TestInvocationIdentityAndLog(t *testing.T) {
+	db, doc := testDoc(t)
+	executor := funcExecutor(func(inv Invocation) (Proposal, error) {
+		return invariantProposal("logged"), nil
+	})
+	run := func(id, recordID string) UnitStats {
+		session, err := NewSession(db, doc, DefaultConfig(), executor, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		report, err := session.Run([]Unit{{ID: id, Mode: "Discovery", RecordID: recordID, ResultType: "INVARIANT"}})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return report.Units[0]
+	}
+	first := run("U-I1", "INV-I1")
+	second := run("U-I2", "INV-I2")
+	if first.InvocationID != "ALFA-NONE-NONE-001" || second.InvocationID != "ALFA-NONE-NONE-002" {
+		t.Fatalf("invocation IDs = %q %q", first.InvocationID, second.InvocationID)
+	}
+	logIDs, err := store.List(db, doc, "INVOCATION-LOG")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Join(logIDs, ",") != "ALFA-NONE-NONE-001,ALFA-NONE-NONE-002" {
+		t.Fatalf("log IDs = %v", logIDs)
+	}
+	payload, err := store.Get(db, doc, "INVOCATION-LOG", "ALFA-NONE-NONE-001")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, marker := range []string{"- **src-cmp-clm-ids-updated:** INV-I1", "- **mutation-summary:** committed 1 record(s)", "mode=Discovery"} {
+		if !strings.Contains(string(payload), marker) {
+			t.Fatalf("log payload missing %q:\n%s", marker, payload)
+		}
+	}
+	third := run("U-I3", "INV-I3")
+	if third.InvocationID != "ALFA-NONE-NONE-003" {
+		t.Fatalf("sequence not continued: %q", third.InvocationID)
+	}
+}

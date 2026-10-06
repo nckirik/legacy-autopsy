@@ -147,6 +147,9 @@ func specAssuranceClaims(args []string, stdout, stderr io.Writer) error {
 	if *maxRetries > 0 {
 		runConfig.MaxRetries = *maxRetries
 	}
+	if iteration := header["current-iteration"]; iteration != "" {
+		runConfig.Iteration = iteration
+	}
 	if err := runConfig.Validate(); err != nil {
 		return err
 	}

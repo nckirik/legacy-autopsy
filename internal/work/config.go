@@ -28,6 +28,8 @@ type Config struct {
 	ReviewMode       ReviewMode
 	OperatorMinimums OperatorMinimums
 	MaxRetries       int
+	// Iteration is the canonical §10.6 token used for invocation IDs.
+	Iteration string
 	// Observer receives lifecycle events for progress surfaces; it never
 	// affects execution outcome.
 	Observer *Observer
@@ -41,6 +43,7 @@ func DefaultConfig() Config {
 		ReviewMode:       ReviewCritical,
 		OperatorMinimums: OperatorMinimums{DecisionBatchMinutes: 10, PlainLanguageQuestions: true},
 		MaxRetries:       3,
+		Iteration:        "ALFA",
 	}
 }
 

@@ -3,6 +3,7 @@ package work
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
@@ -40,6 +41,10 @@ type UnitStats struct {
 	Blocker      BlockerClass
 	Committed    bool
 	LastError    string
+	// InvocationID is the protocol invocation identity ITERATION-PERSONA-POV-SEQUENCE.
+	InvocationID       string
+	LoadedFingerprints []string
+	MutationIDs        []string
 }
 
 // Report aggregates instrumentation for a session.
@@ -90,19 +95,27 @@ func (s *Session) Run(units []Unit) (Report, error) {
 	return report, nil
 }
 
-func (s *Session) runUnit(unit Unit) (UnitStats, error) {
-	stats := UnitStats{UnitID: unit.ID}
+func (s *Session) runUnit(unit Unit) (stats UnitStats, err error) {
+	stats = UnitStats{UnitID: unit.ID}
+	if err := unit.Validate(s.doc); err != nil {
+		return stats, err
+	}
+	invocationID, err := s.invocationID(unit)
+	if err != nil {
+		return stats, err
+	}
+	stats.InvocationID = invocationID
 	if s.config.Observer != nil && s.config.Observer.UnitStarted != nil {
 		s.config.Observer.UnitStarted(unit)
 	}
 	defer func() {
+		if logErr := s.appendInvocationLog(unit, invocationID, stats); logErr != nil && err == nil {
+			err = logErr
+		}
 		if s.config.Observer != nil && s.config.Observer.UnitDone != nil {
 			s.config.Observer.UnitDone(stats)
 		}
 	}()
-	if err := unit.Validate(s.doc); err != nil {
-		return stats, err
-	}
 	feedback := ""
 	for attempt := 0; attempt <= s.maxRetries; attempt++ {
 		caps := NewCaps(s.db, s.doc)
@@ -157,7 +170,8 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 				continue
 			}
 		}
-		if err := Commit(caps, unit, proposal); err != nil {
+		committedIDs, commitErr := CommitWithIDs(caps, unit, proposal)
+		if err := commitErr; err != nil {
 			var stale *StaleError
 			if errors.As(err, &stale) {
 				stats.Retries++
@@ -172,6 +186,18 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 		}
 		stats.Fetches = caps.FetchCount()
 		stats.Committed = true
+		stats.MutationIDs = committedIDs
+		var loaded []string
+		reads := caps.ReadSet()
+		refs := make([]Ref, 0, len(reads))
+		for ref := range reads {
+			refs = append(refs, ref)
+		}
+		sort.Slice(refs, func(i, j int) bool { return refs[i].String() < refs[j].String() })
+		for _, ref := range refs {
+			loaded = append(loaded, ref.String()+"@"+reads[ref])
+		}
+		stats.LoadedFingerprints = loaded
 		return stats, nil
 	}
 	stats.LastError = feedback

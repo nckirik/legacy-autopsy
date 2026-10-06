@@ -187,9 +187,11 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
 - [~] Typed semantic deltas: IDs (runtime-assigned from unit target, payload field,
   coordinate, or typed owner/discriminator fields), canonical payload serialization,
   fingerprints, artifact member bindings, envelope mechanics (`internal/envelope`),
-  and the coverage-arithmetic substrate (`assurance.CoverageSummary`) are
-  runtime-owned. FSM transitions and gate arithmetic remain with the ticket/gate
-  wiring.
+  the coverage-arithmetic substrate (`assurance.CoverageSummary`), protocol
+  invocation identities (`ITERATION-PERSONA-POV-SEQUENCE`, sequenced from the
+  committed log so they are never reused), and the mandatory `0G` append per
+  invocation are runtime-owned. FSM transitions and gate arithmetic remain with the
+  ticket/gate wiring.
 
 ### W3 - SQLite canonical store, semantic work units, context builder, review
 

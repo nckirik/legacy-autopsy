@@ -54,6 +54,10 @@ func specDiscovery(args []string, stdout, stderr io.Writer) error {
 	if err != nil {
 		return err
 	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
 	scopePaths := []string{}
 	for _, cluster := range clusters {
 		scopePaths = append(scopePaths, cluster.ScopePaths...)
@@ -89,6 +93,9 @@ func specDiscovery(args []string, stdout, stderr io.Writer) error {
 	}
 	if *maxRetries > 0 {
 		runConfig.MaxRetries = *maxRetries
+	}
+	if iteration := header["current-iteration"]; iteration != "" {
+		runConfig.Iteration = iteration
 	}
 	if err := runConfig.Validate(); err != nil {
 		return err

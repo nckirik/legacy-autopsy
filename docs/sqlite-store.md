@@ -199,7 +199,10 @@ but normal model execution goes through protocol-aware capabilities.
 
 ## Semantic work substrate (implemented)
 
-`internal/work` implements the deterministic side of bounded semantic execution:
+Every session invocation mints its protocol identity
+(`ITERATION-PERSONA-POV-SEQUENCE`, continued from the committed invocation log so it
+is never reused) and appends the mandatory `0G` row itself; executors never write the
+log. `internal/work` implements the deterministic side of bounded semantic execution:
 `Unit` (mode, scope, declared reads, result contract, allowed effects, review flag),
 `Caps` (payload get, list, search with automatic read-set binding), `BuildContext`
 (declared closure only), `Commit` (result-contract, effect, and stale checks before

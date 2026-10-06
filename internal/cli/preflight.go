@@ -114,7 +114,9 @@ func specPreflight(args []string, stdout, stderr io.Writer) error {
 	if err != nil {
 		return err
 	}
-	units := preflight.Plan(scan, preflight.DefaultDirectives())
+	directives := preflight.DefaultDirectives()
+	runConfig.Iteration = directives.Iteration
+	units := preflight.Plan(scan, directives)
 	report, runErr := session.Run(units)
 	fmt.Fprintf(stdout, "%-24s %8s %5s %6s %7s %-12s %s\n", "unit", "context", "deps", "fetch", "retries", "review", "escalated")
 	for _, stats := range report.Units {

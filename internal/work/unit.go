@@ -33,6 +33,8 @@ type Unit struct {
 	ID                   string   `json:"id"`
 	Mode                 string   `json:"mode"`
 	Scope                string   `json:"scope,omitempty"`
+	Persona              string   `json:"persona,omitempty"`
+	POV                  string   `json:"pov,omitempty"`
 	RecordID             string   `json:"record_id,omitempty"`
 	IDFromField          string   `json:"id_from_field,omitempty"`
 	IDFromCoordinate     string   `json:"id_from_coordinate,omitempty"`
