@@ -39,6 +39,7 @@ type UnitStats struct {
 	Escalated    bool
 	Blocker      BlockerClass
 	Committed    bool
+	LastError    string
 }
 
 // Report aggregates instrumentation for a session.
@@ -173,7 +174,8 @@ func (s *Session) runUnit(unit Unit) (UnitStats, error) {
 		stats.Committed = true
 		return stats, nil
 	}
-	return stats, fmt.Errorf("work: unit %s was not committed within %d attempts", unit.ID, s.maxRetries+1)
+	stats.LastError = feedback
+	return stats, fmt.Errorf("work: unit %s was not committed within %d attempts; last rejection: %s", unit.ID, s.maxRetries+1, feedback)
 }
 
 func (s *Session) notifyRetry(unit Unit, reason string) {
