@@ -1562,7 +1562,7 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "source-fingerprint": "sha256:bd2f52ca1b6d6c61dd2838e7e68249e4593a6c61633afb8cbe331d5178abe867",
+      "source-fingerprint": "sha256:3b8ba2707275c956dd447fed05629c5078c365fccc9e1d4aa3e4d892dc0a0274",
       "ids": [
         {
           "id": "DISCOVERY-BUFFER",
@@ -1586,6 +1586,11 @@
         },
         {
           "id": "REQUIRED-TRAVERSAL-MATRIX",
+          "kind": "FIELD",
+          "status": "active"
+        },
+        {
+          "id": "REQUIRED-TRAVERSAL-MATRIX-ROW",
           "kind": "FIELD",
           "status": "active"
         },
@@ -2220,7 +2225,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "source-fingerprint": "sha256:1399748eb05b73f2c1285b4a897390f6ade227acf92054874b89bcbed1c1779e",
+      "source-fingerprint": "sha256:95d0dd389a888086030099bef2818e27052ca8fa11f7d9fc3f967049a18be143",
       "ids": [
         {
           "id": "ARCHITECTURE-MODULE",
@@ -2743,7 +2748,7 @@
     },
     {
       "path": "protocol/typed-id.cdl",
-      "source-fingerprint": "sha256:33441964b794948bb7b5ddfd0f8b102f9b8fcec4716af4e945addcab390a6aae",
+      "source-fingerprint": "sha256:f5deaacb73fda95b4aa7aa9ac18b919d33e10453973e4a283201b66acde7ba50",
       "ids": [
         {
           "id": "ID-ITERATION",

@@ -315,12 +315,16 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
   per-condition Pass/Fail/Unsupported - the live pilot currently fails Exit A with
   `0/40 mapped or excluded` and two Unsupported conditions. Remaining: export
   reconciliation.
-- [ ] Synthesis: `90`-`96` semantic records with independent review. **Blocked
-      (PI-16):** synthesis catalog records have no declared semantic identity fields, so
-      runtime IDs cannot be derived without a volatile proxy.
+- [~] Synthesis: identity modeling unblocked by v4.3 (PI-16): the 14 catalog records
+  declare `block-id`, `record-title`, and `domain-path`, so runtime IDs derive from
+  the normalized domain path and title. The authoring pipeline and independent
+  review follow.
 - [ ] Handoff: artifact authoring, packaging, and the §15.5 verifier chain.
       **Gated** on a passing Exit A (which needs Synthesis coverage mapped) and on
       model-driven stage assembly.
+- [x] Traversal closure modeling (PI-17, v4.3): `REQUIRED-TRAVERSAL-MATRIX-ROW` records
+      keyed by cluster/persona/POV/track/environment/snapshot; `spec preflight matrix`
+      mechanically expands cells; the gate evaluates real closure (live pilot 0/25).
 
 ### W6 - Acceptance rerun
 

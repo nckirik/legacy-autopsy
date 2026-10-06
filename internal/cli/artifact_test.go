@@ -79,7 +79,7 @@ func TestSpecPreflightScan(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "main.go"), []byte("package main\n"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	out, errOut, code := runSpecCLI(t, "spec", "preflight", "scan", "--repo", specRepoRoot, "--target", dir)
+	out, errOut, code := runSpecCLI(t, "spec", "preflight", "scan", "--target", dir)
 	if code != 0 {
 		t.Fatalf("scan exit %d: %s", code, errOut)
 	}

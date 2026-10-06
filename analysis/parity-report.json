@@ -3,8 +3,8 @@
   "generator": "parityreport",
   "generator-version": "parityreport/0.1",
   "generated-at": "2026-09-25T00:00:00Z",
-  "protocol-version": "4.2.1",
-  "protocol-fingerprint": "sha256:5b31f52793cb31b5a7470347c420eaa812caa346d7d510fb7e37b0d4708d59d2",
+  "protocol-version": "4.3",
+  "protocol-fingerprint": "sha256:7c7bef4ce76b0c37af02cde011a8aba36cb21ec615a4ee9ccce1ff22162a7486",
   "language-version": "cdl/0.4",
   "eir-format": 4,
   "sources": [
@@ -51,11 +51,11 @@
     },
     {
       "path": "protocol/preflight-registry.cdl",
-      "fingerprint": "sha256:2a50f2d3ff1eefae412bbf67e909b690d1ba86173f65857abefc1f43aa954aed",
+      "fingerprint": "sha256:d78f70d6ad354fff975002ea63813eae6cfc9eba3453989dab79458cce69d86e",
       "sections": [
         "3.1"
       ],
-      "identities": 9
+      "identities": 10
     },
     {
       "path": "protocol/workspace-registries.cdl",
@@ -67,7 +67,7 @@
     },
     {
       "path": "protocol/typed-id.cdl",
-      "fingerprint": "sha256:cc2efdcefb008626001bba599c2202b6606fa64db5e1c85ecb4b8706cd93fb65",
+      "fingerprint": "sha256:62ce9cc64c8bca9be04aa5f9755d34bf95d23ed1141ce81191b051afafc37a78",
       "sections": [
         "4.1"
       ],
@@ -226,7 +226,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "fingerprint": "sha256:57f7d469e4dd1eabe8cd0122a55cfe042cba64231f0acb6c82a2796953fb666d",
+      "fingerprint": "sha256:18efa21aadfe257f6d680106989453bcfba55d85f99b02487ce4209557ad234d",
       "sections": [
         "11.1",
         "11.2",
@@ -954,17 +954,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:5b31f52793cb31b5a7470347c420eaa812caa346d7d510fb7e37b0d4708d59d2"
+      "detail": "sha256:7c7bef4ce76b0c37af02cde011a8aba36cb21ec615a4ee9ccce1ff22162a7486"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:82b435ffa5ee94274cd5a47a729786bcfd6768d628f5647d62122012b9241c8b"
+      "detail": "sha256:3821176b088e60787cad3b228539a6b0f3c495989e736e0d8537078a4ee8929d"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:7dd46f5860093797082869c7c40b343924616b50d5fc4fb927eb09185c3ed9a4"
+      "detail": "sha256:7d4b432969f0dc02eaf81264cc34d6564b5dcc8dbff7dfb2114043e55e12fbd7"
     },
     {
       "name": "fixture-oracle",
@@ -974,7 +974,7 @@
     {
       "name": "identity-ledger",
       "status": "pass",
-      "detail": "536 identities across 27 sources"
+      "detail": "537 identities across 27 sources"
     }
   ],
   "fixtures": {

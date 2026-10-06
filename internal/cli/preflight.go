@@ -17,11 +17,87 @@ func specPreflight(args []string, stdout, stderr io.Writer) error {
 	}
 	op := args[0]
 	switch op {
-	case "scan", "run":
+	case "scan":
+		return specPreflightScan(args[1:], stdout, stderr)
+	case "run":
+		return specPreflightRun(args[1:], stdout, stderr)
+	case "matrix":
+		return specPreflightMatrix(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec preflight operation %q is unsupported; supported operations: scan, run", op)
+		return fmt.Errorf("spec preflight operation %q is unsupported; supported operations: scan, run, matrix", op)
 	}
-	set := flags("spec preflight "+op, stderr)
+}
+
+// specPreflightScan prints the bounded deterministic repository scan.
+func specPreflightScan(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec preflight scan", stderr)
+	target := set.String("target", "", "target legacy repository (required)")
+	maxFiles := set.Int("max-files", 5000, "bounded scan file count")
+	maxDepth := set.Int("max-depth", 6, "bounded scan depth")
+	maxEntries := set.Int("max-entry-points", 50, "bounded entry-point list")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *target == "" {
+		return fmt.Errorf("spec preflight scan requires --target")
+	}
+	scan, err := preflight.ScanRepo(*target, *maxFiles, *maxEntries, *maxDepth)
+	if err != nil {
+		return err
+	}
+	stdout.Write(scan.Markdown())
+	fmt.Fprintf(stdout, "\nfingerprint: %s\n", scan.Fingerprint)
+	return nil
+}
+
+// specPreflightMatrix mechanically expands required traversal-matrix rows.
+func specPreflightMatrix(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec preflight matrix", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	environment := set.String("environment", "", "environment label (default: preflight header)")
+	snapshot := set.String("snapshot", "", "snapshot label (default: preflight header)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec preflight matrix requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	env := *environment
+	if env == "" {
+		env = header["included-environments-snapshots"]
+	}
+	snap := *snapshot
+	if snap == "" {
+		snap = header["included-environments-snapshots"]
+	}
+	created, err := preflight.ExpandMatrix(*db, res.EIR, preflight.MatrixDirectives{Environment: env, Snapshot: snap})
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "matrix rows created: %d\n", created)
+	return nil
+}
+
+func specPreflightRun(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec preflight run", stderr)
 	repo := set.String("repo", ".", "protocol repository root")
 	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
 	source := set.String("source", "", "single CDL source (default: full assembly)")
@@ -45,16 +121,11 @@ func specPreflight(args []string, stdout, stderr io.Writer) error {
 		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
 	}
 	if *target == "" {
-		return fmt.Errorf("spec preflight %s requires --target", op)
+		return fmt.Errorf("spec preflight run requires --target")
 	}
 	scan, err := preflight.ScanRepo(*target, *maxFiles, *maxEntries, *maxDepth)
 	if err != nil {
 		return err
-	}
-	if op == "scan" {
-		stdout.Write(scan.Markdown())
-		fmt.Fprintf(stdout, "\nfingerprint: %s\n", scan.Fingerprint)
-		return nil
 	}
 	if *db == "" {
 		return fmt.Errorf("spec preflight run requires --db")

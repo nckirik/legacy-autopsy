@@ -25,6 +25,8 @@ GOAL
 
 ## 3. Entry-Point Clusters
 
+Each Required Traversal Matrix cell is also a declared `REQUIRED-TRAVERSAL-MATRIX-ROW` record keyed by cluster, persona, POV, track, environment, and snapshot; the table above is its canonical rendering.
+
 ### [CLUSTER-ID] [Title]
 
 - **Concrete Entry Coordinates:** [no unexpanded wildcard at closure]
@@ -119,6 +121,23 @@ FIELD PREFLIGHT-HEADER
   default-max-traversal-depth      -> int                                  required
   included-environments-snapshots  -> string                               required
   explicit-scope-policy            -> string                               required
+END
+
+FIELD REQUIRED-TRAVERSAL-MATRIX-ROW
+  STORAGE record
+  KEY cluster-id, persona-owner, pov, track, environment, snapshot
+  REF cluster-id -> ENTRY-CLUSTER.cluster-id
+  cluster-id     -> string                                                        required
+  persona-owner  -> string                                                        required
+  concrete-entry -> string                                                        required
+  track          -> REGISTRY-ENTRYCLUSTER-REQUIRED-TRAVERSAL-MATRIX-TRACK         required
+  environment    -> string                                                        required
+  snapshot       -> string                                                        required
+  pov            -> REGISTRY-ENTRYCLUSTER-REQUIRED-TRAVERSAL-MATRIX-POV           required
+  applicability  -> REGISTRY-ENTRYCLUSTER-REQUIRED-TRAVERSAL-MATRIX-APPLICABILITY required
+  status         -> REGISTRY-ENTRYCLUSTER-REQUIRED-TRAVERSAL-MATRIX-STATUS        required
+  swp-id         -> string                                                        required
+  claims         -> string                                                        required
 END
 
 FIELD ENTRY-CLUSTER

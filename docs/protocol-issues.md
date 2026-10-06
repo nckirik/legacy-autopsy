@@ -10,6 +10,9 @@
 > the v4.2 edition (normative text; the harness-side lints/validators follow in W2/W5).
 > **Revision v4.2.1 patch:** PI-15 is implemented in the v4.2.1 edition with the current
 > edition oracle snapshotted as `protocol/legacy/protocol-4.2.1.md`.
+> **Revision v4.3:** PI-16 (declared synthesis identity carriers) and PI-17 (required
+> traversal-matrix rows as keyed records) are implemented; the current-edition oracle
+> snapshot is `protocol/legacy/protocol-4.3.md`.
 > Accepted for a single minor revision. Decisions recorded with acceptance: snapshot each accepted
 > revision as the new frozen oracle (old oracles kept; drift and coverage tests target
 > the current one); handbook substance floor = required sections plus a minimum

@@ -184,6 +184,9 @@ END
 
 FIELD ARCHITECTURE-MODULE
   STORAGE record
+  block-id                        -> string required
+  record-title                    -> string required
+  domain-path                     -> string required
   responsibility-domain-boundary  -> string required
   public-interfaces               -> string required
   encapsulated-state-entities     -> string required
@@ -257,6 +260,9 @@ END
 
 FIELD ENTITY-RECORD
   STORAGE record
+  block-id                           -> string       required
+  record-title                       -> string       required
+  domain-path                        -> string       required
   domain-context-purpose             -> string       required
   storage                            -> STORAGE-KIND required
   physical-src-ids                   -> string       required
@@ -314,6 +320,9 @@ END
 
 FIELD RELATIONSHIP-RECORD
   STORAGE record
+  block-id                     -> string                   required
+  record-title                 -> string                   required
+  domain-path                  -> string                   required
   cardinality                  -> RELATIONSHIP-CARDINALITY required
   enforcement                  -> RELATIONSHIP-ENFORCEMENT required
   delete-update-semantics      -> DELETE-UPDATE-SEMANTICS  required
@@ -360,6 +369,9 @@ END
 
 FIELD STATE-MACHINE
   STORAGE record
+  block-id                        -> string required
+  record-title                    -> string required
+  domain-path                     -> string required
   scope-owner-entity-or-aggregate -> string required
   state-fields                    -> string required
   states-meaning                  -> string required
@@ -424,6 +436,9 @@ END
 
 FIELD DATABASE-ROUTINE
   STORAGE record
+  block-id                        -> string             required
+  record-title                    -> string             required
+  domain-path                     -> string             required
   kind                            -> DB-ROUTINE-KIND    required
   owner-table-entity              -> string             required
   firing-event-timing-granularity -> string             required
@@ -487,6 +502,9 @@ END
 
 FIELD BUSINESS-RULE-RECORD
   STORAGE record
+  block-id                            -> string                         required
+  record-title                        -> string                         required
+  domain-path                         -> string                         required
   authoritative-rule-owner            -> string                         required
   defense-in-depth-mirrors            -> string                         required
   applies-when                        -> string                         required
@@ -578,6 +596,9 @@ END
 
 FIELD USE-CASE
   STORAGE record
+  block-id                               -> string                             required
+  record-title                           -> string                             required
+  domain-path                            -> string                             required
   primary-persona-secondary-actors       -> string                             required
   goal                                   -> string                             required
   trigger-entry                          -> string                             required
@@ -652,6 +673,9 @@ END
 
 FIELD INTERFACE-RECORD
   STORAGE record
+  block-id                            -> string required
+  record-title                        -> string required
+  domain-path                         -> string required
   channel-transport-direction         -> string required
   actor-persona-auth                  -> string required
   protocol-content-type               -> string required
@@ -727,6 +751,9 @@ END
 
 FIELD DEPLOYMENT-ELEMENT
   STORAGE record
+  block-id                        -> string required
+  record-title                    -> string required
+  domain-path                     -> string required
   component-placement-replication -> string required
   connections                     -> string required
   single-point-of-failure         -> string required
@@ -735,6 +762,9 @@ END
 
 FIELD CONFIGURATION-RECORD
   STORAGE record
+  block-id                                        -> string        required
+  record-title                                    -> string        required
+  domain-path                                     -> string        required
   medium                                          -> CONFIG-MEDIUM required
   exact-key                                       -> string        required
   type-default-allowed-values                     -> string        required
@@ -746,6 +776,9 @@ END
 
 FIELD SCHEDULE-RECORD
   STORAGE record
+  block-id                              -> string                                 required
+  record-title                          -> string                                 required
+  domain-path                           -> string                                 required
   type-trigger-frequency-window         -> string                                 required
   owner-persona                         -> string                                 required
   actions                               -> string                                 required
@@ -837,6 +870,9 @@ END
 
 FIELD NFR-RECORD
   STORAGE record
+  block-id                -> string        required
+  record-title            -> string        required
+  domain-path             -> string        required
   attribute               -> NFR-ATTRIBUTE required
   observed-inferred-value -> string        required
   scope-environment       -> string        required
@@ -846,6 +882,9 @@ END
 
 FIELD SECURITY-FINDING
   STORAGE record
+  block-id                       -> string            required
+  record-title                   -> string            required
+  domain-path                    -> string            required
   category                       -> SECURITY-CATEGORY required
   finding-data-classification    -> string            required
   risk-level                     -> RISK-LEVEL        required
@@ -856,6 +895,9 @@ END
 
 FIELD FAULT-RECORD
   STORAGE record
+  block-id                                   -> string required
+  record-title                               -> string required
+  domain-path                                -> string required
   failure-class-trigger-detection-point      -> string required
   propagation-path                           -> string required
   retry-backoff-timeout-circuit-behavior     -> string required

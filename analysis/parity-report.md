@@ -3,7 +3,7 @@
 - Schema version: 1
 - Generator: parityreport parityreport/0.1
 - Generated at: 2026-09-25T00:00:00Z
-- Protocol: 4.2.1 (sha256:5b31f52793cb31b5a7470347c420eaa812caa346d7d510fb7e37b0d4708d59d2)
+- Protocol: 4.3 (sha256:7c7bef4ce76b0c37af02cde011a8aba36cb21ec615a4ee9ccce1ff22162a7486)
 - Language: cdl/0.4 (EIR format 4)
 
 ## Section coverage
@@ -123,11 +123,11 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 27 sources |
 | drift-tests | pass | 24 tests in 24 files |
-| generated-protocol | pass | sha256:5b31f52793cb31b5a7470347c420eaa812caa346d7d510fb7e37b0d4708d59d2 |
-| golden-eir | pass | sha256:82b435ffa5ee94274cd5a47a729786bcfd6768d628f5647d62122012b9241c8b |
-| golden-prompt | pass | sha256:7dd46f5860093797082869c7c40b343924616b50d5fc4fb927eb09185c3ed9a4 |
+| generated-protocol | pass | sha256:7c7bef4ce76b0c37af02cde011a8aba36cb21ec615a4ee9ccce1ff22162a7486 |
+| golden-eir | pass | sha256:3821176b088e60787cad3b228539a6b0f3c495989e736e0d8537078a4ee8929d |
+| golden-prompt | pass | sha256:7d4b432969f0dc02eaf81264cc34d6564b5dcc8dbff7dfb2114043e55e12fbd7 |
 | fixture-oracle | pass | 24/24 passed |
-| identity-ledger | pass | 536 identities across 27 sources |
+| identity-ledger | pass | 537 identities across 27 sources |
 
 ## Fixtures
 
@@ -141,9 +141,9 @@
 | protocol/invocation-modes.cdl | 0 | 0 | sha256:4a8970adcf98246d33bc61684d6ca954b3a9e1f2d1c5e4df62788095f5cd7f5b |
 | protocol/foundations.cdl | 9 | 30 | sha256:e872677e91ed6a42be4037037497cc097f9875529e6e2e19492f7b83774c1e0c |
 | protocol/personas-povs.cdl | 6 | 18 | sha256:3c2ddd4f7664e2b9e032dfa4c06b3e8043ff94b28a6e6ebc0e5fedfe7982dd5a |
-| protocol/preflight-registry.cdl | 1 | 9 | sha256:2a50f2d3ff1eefae412bbf67e909b690d1ba86173f65857abefc1f43aa954aed |
+| protocol/preflight-registry.cdl | 1 | 10 | sha256:d78f70d6ad354fff975002ea63813eae6cfc9eba3453989dab79458cce69d86e |
 | protocol/workspace-registries.cdl | 1 | 9 | sha256:c01cfabc67f97647d593f37897c9f5e39df3eab585207c2b2440feb67ea70436 |
-| protocol/typed-id.cdl | 1 | 9 | sha256:cc2efdcefb008626001bba599c2202b6606fa64db5e1c85ecb4b8706cd93fb65 |
+| protocol/typed-id.cdl | 1 | 9 | sha256:62ce9cc64c8bca9be04aa5f9755d34bf95d23ed1141ce81191b051afafc37a78 |
 | protocol/semantic-payload-identity.cdl | 1 | 7 | sha256:76fabcee6b8afcf3c37907f03c65aad9929badd62c8a3a27420c41a64f6f99d9 |
 | protocol/canonical-hash-profile.cdl | 1 | 13 | sha256:b9f59a77a8c0c0e5e5c649c2e8792193746fdb079cdaadc599ff0ab119e8686d |
 | protocol/inventory-and-frontier.cdl | 5 | 23 | sha256:7aed82c1b17e2c06d0d4b7c849fecf73facfa36d3063607cafa31e17c6a32824 |
@@ -159,7 +159,7 @@
 | protocol/invocation-lifecycle.cdl | 3 | 8 | sha256:3e04a6cb7e01e352e10c58411b427893abf41dc810684228acfb18a6062227ed |
 | protocol/ticket-fsm.cdl | 6 | 20 | sha256:33e51665b071fedafb359fd074b95b64ce76296f26502b01fae3cd281f035125 |
 | protocol/coverage-and-exits.cdl | 6 | 19 | sha256:ab4c7c59b85afa3f085b495dd516733a3724b45771e3a7e3c983e48b361cd402 |
-| protocol/synthesis-catalogs.cdl | 13 | 66 | sha256:57f7d469e4dd1eabe8cd0122a55cfe042cba64231f0acb6c82a2796953fb666d |
+| protocol/synthesis-catalogs.cdl | 13 | 66 | sha256:18efa21aadfe257f6d680106989453bcfba55d85f99b02487ce4209557ad234d |
 | protocol/traceability.cdl | 5 | 15 | sha256:2b888630ef79d80f6a6dacdcddae453f56572997162c6c2970643794ed713e80 |
 | protocol/handbook-and-decisions.cdl | 10 | 23 | sha256:56c6ad208fbc054697e2cd51b3b8c15e3b4872407ac456328c5c2b175273c066 |
 | protocol/packaging.cdl | 9 | 50 | sha256:36493cd62b0d502d2b2c5455ae648b6e6e9d461d31c4d73a6e7558b9c1e15fd0 |

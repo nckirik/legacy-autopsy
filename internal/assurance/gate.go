@@ -107,7 +107,35 @@ func EvaluateExitA(db string, doc *cdl.EIRDoc) (GateResult, error) {
 		add(GateCheck{ID: "ACTIVE-TICKETS", Result: "Fail", Detail: fmt.Sprintf("%d ticket records outstanding", active)})
 	}
 
-	add(GateCheck{ID: "TRAVERSAL-MATRIX-CLOSURE", Result: "Unsupported", Detail: "required traversal-matrix rows are not modeled as records yet"})
+	matrixNames, _, _, err := work.FieldContract(doc, "REQUIRED-TRAVERSAL-MATRIX-ROW")
+	if err != nil {
+		return result, err
+	}
+	matrixIDs, err := store.List(db, doc, "REQUIRED-TRAVERSAL-MATRIX-ROW")
+	if err != nil {
+		return result, err
+	}
+	closed := 0
+	for _, id := range matrixIDs {
+		payload, err := store.Get(db, doc, "REQUIRED-TRAVERSAL-MATRIX-ROW", id)
+		if err != nil {
+			return result, err
+		}
+		values, err := work.PayloadText(matrixNames, payload)
+		if err != nil {
+			return result, err
+		}
+		if values["status"] == "[R-SWEPT]" || (values["applicability"] == "Not-Applicable" && values["status"] == "N/A") {
+			closed++
+		}
+	}
+	if len(matrixIDs) == 0 {
+		add(GateCheck{ID: "TRAVERSAL-MATRIX-CLOSURE", Result: "Fail", Detail: "no required traversal-matrix rows exist"})
+	} else if closed == len(matrixIDs) {
+		add(GateCheck{ID: "TRAVERSAL-MATRIX-CLOSURE", Result: "Pass", Detail: fmt.Sprintf("%d/%d matrix cells closed", closed, len(matrixIDs))})
+	} else {
+		add(GateCheck{ID: "TRAVERSAL-MATRIX-CLOSURE", Result: "Fail", Detail: fmt.Sprintf("%d/%d matrix cells closed", closed, len(matrixIDs))})
+	}
 	add(GateCheck{ID: "SYNTHESIS-COVERAGE", Result: "Unsupported", Detail: "synthesis records and coverage are not generated yet"})
 
 	sort.Slice(result.Checks, func(i, j int) bool { return result.Checks[i].ID < result.Checks[j].ID })

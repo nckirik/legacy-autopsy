@@ -93,9 +93,16 @@ source unit (state `Traversed`, discovery-method `other`, runtime `FRT` IDs) bou
 the real invocation `ALFA-NONE-NONE-001`; the runtime also appended its first `0G`
 entry to `INVOCATION-LOG`.
 
+## Required traversal matrix (same target)
+
+After the v4.3 revision, `spec preflight matrix` expanded 25 keyed
+`REQUIRED-TRAVERSAL-MATRIX-ROW` cells (1 cluster × 5 personas × 5 POVs,
+fail-inclusive `Required`/`[R-UNSWEPT]`), and `spec assurance gate` now evaluates
+real closure (`TRAVERSAL-MATRIX-CLOSURE Fail 0/25`).
+
 ## Next steps
 
-- Sweep rows and export reconciliation; symbol/route/AST discovery kinds.
+- Synthesis authoring from claims; export reconciliation; symbol/route/AST kinds.
 - Traversal-frontier generation for Discovery.
 - Discovery pipeline over source inventory/frontier.
 - Cluster owner references and source IDs are free text at preflight and must be

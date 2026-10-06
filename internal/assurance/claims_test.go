@@ -273,7 +273,7 @@ func TestSweepsAndExitAGate(t *testing.T) {
 	for _, check := range gate.Checks {
 		results[check.ID] = check.Result
 	}
-	if results["COVERAGE-DENOMINATOR"] != "Fail" || results["FRONTIER-CLOSURE"] != "Pass" || results["TRAVERSAL-MATRIX-CLOSURE"] != "Unsupported" {
+	if results["COVERAGE-DENOMINATOR"] != "Fail" || results["FRONTIER-CLOSURE"] != "Pass" || results["TRAVERSAL-MATRIX-CLOSURE"] != "Fail" {
 		t.Fatalf("gate checks = %+v", gate.Checks)
 	}
 	_ = second
