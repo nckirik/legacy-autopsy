@@ -493,3 +493,21 @@ oracle snapshot is an open process decision.
   dispositions, and gate closure deterministically.
 - **Impact:** enables `Mapped` coverage, Exit A denominator closure, and
   traceability projections; no change to synthesis semantics.
+
+## PI-19: Sweep records lack structured scope keys, so matrix cells cannot be matched
+
+- **Status:** proposed; not yet accepted. Blocks `TRAVERSAL-MATRIX-CLOSURE`.
+- **Source:** Autonomous pipeline work 2026-10-06; live pilot gate reports
+  `TRAVERSAL-MATRIX-CLOSURE: Fail 0/25` with 40 closed frontiers and 2 sweeps.
+- **Affected:** `SWEEP-RECORD` schema, `REQUIRED-TRAVERSAL-MATRIX-ROW` closure,
+  Exit A condition 4 / §16 traversal closure.
+- **Observed:** `SWEEP-RECORD.persona-cluster-pov-track` and
+  `snapshot-environment` are free strings, so a runtime cannot match a sweep to the
+  matrix cells it covers or prove a cell was traversed. Closure would require
+  parsing model prose (unreliable) or self-attestation (fake compliance).
+- **Proposed direction:** declare structured scope keys on `SWEEP-RECORD` -
+  persona-owner, cluster-id (`REF` to `ENTRY-CLUSTER`), POV, track, environment,
+  snapshot - mirroring `REQUIRED-TRAVERSAL-MATRIX-ROW`; then a runtime sweep unit
+  per key tuple produces the evidence, and closure is computed by matching tuples and
+  verifying the covered frontiers are terminal.
+- **Impact:** deterministic per-cell closure and an honest Exit A condition 4.
