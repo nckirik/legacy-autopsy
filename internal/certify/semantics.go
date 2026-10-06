@@ -16,9 +16,15 @@ func ValidationHints(fieldID string) []string {
 	switch fieldID {
 	case "PERSONA-REGISTRY":
 		return []string{
-			`prefix must match [A-Z][A-Z0-9]{1,7} (for example BE, WEB, OPS)`,
+			`prefix must match [A-Z][A-Z0-9]{1,7} (for example BE, WEB, OPS) and is the record ID`,
 			`persona-slug must be lowercase words joined by hyphens`,
 			`persona-directory must equal prefix + "-" + persona-slug`,
+		}
+	case "ENTRY-CLUSTER":
+		return []string{
+			`cluster-id must match [A-Z][A-Z0-9-]{1,15} and is the record ID`,
+			`canonical-owner-persona must start with a committed persona prefix (or SHARED)`,
+			`source-ids tokens must be None or SRC-* IDs`,
 		}
 	}
 	return nil

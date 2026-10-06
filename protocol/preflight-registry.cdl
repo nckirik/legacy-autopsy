@@ -83,6 +83,7 @@ END
 
 FIELD PERSONA-REGISTRY
   STORAGE registry
+  KEY prefix
   persona             -> string                                  required
   prefix              -> string                                  required
   persona-slug        -> string                                  required

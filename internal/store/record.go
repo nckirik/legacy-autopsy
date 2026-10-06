@@ -83,6 +83,18 @@ func FingerprintOf(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string) (st
 	return fingerprint, nil
 }
 
+// Exists reports whether a record ID is present in a table-class FIELD.
+func Exists(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string) (bool, error) {
+	if _, err := tableField(doc, fieldID); err != nil {
+		return false, err
+	}
+	rows, err := queryRows(dbPath, fmt.Sprintf("select 1 as present from %q where la_record_id = %s limit 1;", ident(fieldID), literal(recordID)))
+	if err != nil {
+		return false, err
+	}
+	return len(rows) == 1, nil
+}
+
 // Search returns the sorted record IDs of a table whose canonical payload
 // contains the exact needle.
 func Search(dbPath string, doc *cdl.EIRDoc, fieldID, needle string) ([]string, error) {

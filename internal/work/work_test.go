@@ -386,3 +386,36 @@ func TestObserverLifecycleEvents(t *testing.T) {
 		t.Fatalf("events = %v, want %v", events, want)
 	}
 }
+
+func TestClusterReferenceValidation(t *testing.T) {
+	db, doc := testDoc(t)
+	clusterPayload := func(owner string) []byte {
+		return []byte("- **cluster-id:** WEB\n" +
+			"- **cluster-title:** Web UI\n" +
+			"- **concrete-entry-coordinates:** web/index.js\n" +
+			"- **canonical-owner-persona:** " + owner + "\n" +
+			"- **primary-pov:** POV-1\n" +
+			"- **traversal-track:** Normal\n" +
+			"- **capability-state:** Active\n" +
+			"- **environment-snapshot:** dev\n" +
+			"- **source-ids:** None\n" +
+			"- **max-depth:** 3\n" +
+			"- **traversal-status:** [R-UNSWEPT]\n" +
+			"- **required-traversal-matrix:** view\n")
+	}
+	unit := Unit{ID: "U-CL", Mode: "Preflight", RecordID: "WEB", ResultType: "ENTRY-CLUSTER"}
+	err := Commit(NewCaps(db, doc), unit, Proposal{FieldID: "ENTRY-CLUSTER", Records: []Record{{Payload: clusterPayload("NOPE")}}})
+	if err == nil || !strings.Contains(err.Error(), "does not reference a committed persona") {
+		t.Fatalf("unknown owner accepted: %v", err)
+	}
+	persona := []byte("- **persona:** Web UI\n- **prefix:** WEB\n- **persona-slug:** web-ui\n- **persona-directory:** WEB-web-ui\n- **actor-class:** human\n- **canonical-entry-ids:** web/index.js\n- **scope-paths:** web/\n- **registry-state:** Active\n")
+	if err := store.Ingest(db, doc, "PERSONA-REGISTRY", "WEB", 1, persona); err != nil {
+		t.Fatal(err)
+	}
+	if err := Commit(NewCaps(db, doc), unit, Proposal{FieldID: "ENTRY-CLUSTER", Records: []Record{{Payload: clusterPayload("WEB")}}}); err != nil {
+		t.Fatalf("committed owner rejected: %v", err)
+	}
+	if err := Commit(NewCaps(db, doc), unit, Proposal{FieldID: "ENTRY-CLUSTER", Records: []Record{{Payload: []byte(strings.Replace(string(clusterPayload("WEB")), "- **source-ids:** None", "- **source-ids:** passport/index.js", 1))}}}); err == nil {
+		t.Fatal("bad source token accepted")
+	}
+}

@@ -40,6 +40,8 @@ func (d Directives) Input(scan Scan) work.Input {
 	content += "\n## Entry-cluster guidance\n\n"
 	content += "- One cluster per distinct concrete entry surface (web routes, API routes, auth/SAML, DB/admin, scheduled jobs); cluster-id is a short uppercase token (for example WEB, API, AUTH, DB); cluster-title is human-readable.\n"
 	content += "- Concrete Entry Coordinates must be exact paths or coordinates present in the scan, never wildcards.\n"
+	content += "- canonical-owner-persona must start with a committed persona prefix from the registry context, or SHARED for a shared entry surface.\n"
+	content += "- source-ids must be `None` at preflight unless inventory SRC IDs already exist; never invent file paths as IDs.\n"
 	content += "- Enum fields must use one of the listed options.\n"
 	return work.Input{Name: "preflight-context.md", Bytes: []byte(content)}
 }

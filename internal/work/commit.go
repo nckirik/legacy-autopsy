@@ -3,6 +3,7 @@ package work
 import (
 	"fmt"
 
+	"github.com/nckirik/legacy-autopsy/internal/certify"
 	"github.com/nckirik/legacy-autopsy/internal/store"
 )
 
@@ -58,6 +59,22 @@ func Commit(caps *Caps, unit Unit, p Proposal) error {
 	resolved, err := ResolveRecords(caps.doc, unit, p)
 	if err != nil {
 		return err
+	}
+	names, _, _, err := FieldContract(caps.doc, p.FieldID)
+	if err != nil {
+		return err
+	}
+	lookup := func(fieldID, recordID string) (bool, error) {
+		return store.Exists(caps.db, caps.doc, fieldID, recordID)
+	}
+	for _, record := range resolved {
+		values, err := PayloadText(names, record.Payload)
+		if err != nil {
+			return fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
+		}
+		if err := certify.ValidateReferences(p.FieldID, values, lookup); err != nil {
+			return fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
+		}
 	}
 	targets := map[Ref]bool{}
 	for _, record := range resolved {
