@@ -184,10 +184,12 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
       database triggers remain as a second guard. Validator allow-list enforcement
       (for example `.extracted/probes/[TICKET-*].log`) follows with the probe workflow
       validator.
-- [~] Typed semantic deltas: IDs (runtime-assigned from the unit target), canonical
-  payload serialization, fingerprints, and artifact member bindings are
-  runtime-owned. Coverage arithmetic, FSM transitions, and envelope emission follow
-  with the gate/verifier wiring.
+- [~] Typed semantic deltas: IDs (runtime-assigned from unit target, payload field,
+  coordinate), canonical payload serialization, fingerprints, artifact member
+  bindings, and envelope mechanics (`internal/envelope`: canonical emit/parse/verify
+  for certification, decision-approval, and CNF digest/signature regions) are
+  runtime-owned. Coverage arithmetic and FSM transitions remain with the gate
+  wiring.
 
 ### W3 - SQLite canonical store, semantic work units, context builder, review
 
