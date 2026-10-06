@@ -309,8 +309,12 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
   Live pilot committed 40 claims plus 40 mechanical domain coverage rows
   (`assurance.ExpandCoverage`, idempotent, fail-inclusive `Unmapped`/`In-Scope`,
   claims bound by subject) and deterministic coverage arithmetic
-  (`assurance.CoverageSummary`, `spec assurance coverage`). Remaining: sweep rows and
-  export reconciliation.
+  (`assurance.CoverageSummary`, `spec assurance coverage`), mechanical sweep rows per
+  owner scope (`assurance.SweepPlan`, `spec assurance sweep`), and the deterministic
+  Exit A gate evaluator (`assurance.EvaluateExitA`, `spec assurance gate`) reporting
+  per-condition Pass/Fail/Unsupported - the live pilot currently fails Exit A with
+  `0/40 mapped or excluded` and two Unsupported conditions. Remaining: export
+  reconciliation.
 - [ ] Synthesis: `90`-`96` semantic records with independent review.
 - [ ] Handoff: artifact authoring, packaging, and the §15.5 verifier chain.
 

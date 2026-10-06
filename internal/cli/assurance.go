@@ -22,9 +22,111 @@ func specAssurance(args []string, stdout, stderr io.Writer) error {
 		return specAssuranceClaims(args[1:], stdout, stderr)
 	case "coverage":
 		return specAssuranceCoverage(args[1:], stdout, stderr)
+	case "sweep":
+		return specAssuranceSweep(args[1:], stdout, stderr)
+	case "gate":
+		return specAssuranceGate(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims, coverage", args[0])
+		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims, coverage, sweep, gate", args[0])
 	}
+}
+
+// specAssuranceSweep mechanically records one sweep per owner scope.
+func specAssuranceSweep(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec assurance sweep", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	environment := set.String("environment", "", "environment label (default: preflight header)")
+	snapshot := set.String("snapshot", "", "snapshot label (default: preflight header)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec assurance sweep requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	scopes, err := assurance.LoadSweepScopes(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	if len(scopes) == 0 {
+		return fmt.Errorf("assurance sweep: no committed source inventory")
+	}
+	env := *environment
+	if env == "" {
+		env = header["included-environments-snapshots"]
+	}
+	snap := *snapshot
+	if snap == "" {
+		snap = header["included-environments-snapshots"]
+	}
+	directives := assurance.CoverageDirectives{Namespace: header["system-namespace"], Environment: env, Snapshot: snap}
+	runConfig := work.DefaultConfig()
+	if iteration := header["current-iteration"]; iteration != "" {
+		runConfig.Iteration = iteration
+	}
+	session, err := work.NewSession(*db, res.EIR, runConfig, assurance.MechanicalSweepExecutor{Scopes: scopes, Directives: directives}, nil)
+	if err != nil {
+		return err
+	}
+	report, err := session.Run([]work.Unit{assurance.SweepPlan(scopes, directives)})
+	if err != nil {
+		return err
+	}
+	for _, stats := range report.Units {
+		fmt.Fprintf(stdout, "%s: invocation %s committed=%v\n", stats.UnitID, stats.InvocationID, stats.Committed)
+	}
+	fmt.Fprintf(stdout, "sweeps recorded: %d\n", len(scopes))
+	return nil
+}
+
+// specAssuranceGate evaluates the deterministic Exit A conditions.
+func specAssuranceGate(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec assurance gate", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec assurance gate requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	gate, err := assurance.EvaluateExitA(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	for _, check := range gate.Checks {
+		fmt.Fprintf(stdout, "%-32s %-11s %s\n", check.ID, check.Result, check.Detail)
+	}
+	if gate.Passed {
+		fmt.Fprintln(stdout, "Exit A: Pass")
+		return nil
+	}
+	fmt.Fprintln(stdout, "Exit A: Fail")
+	return fmt.Errorf("Exit A conditions are not met")
 }
 
 // specAssuranceCoverage mechanically expands coverage rows and prints the

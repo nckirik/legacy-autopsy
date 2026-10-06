@@ -221,3 +221,60 @@ func TestExpandCoverageAndSummary(t *testing.T) {
 	}
 	_ = second
 }
+
+func TestSweepsAndExitAGate(t *testing.T) {
+	doc, db := testDocDB(t)
+	first := seedInventory(t, db, doc, "FILE", "api.js", "sha256:aaa")
+	second := seedInventory(t, db, doc, "FILE", "web.js", "sha256:bbb")
+	_ = first
+	scopes, err := LoadSweepScopes(db, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(scopes) != 1 || scopes[0].Owner != "WEB" || len(scopes[0].SourceIDs) != 2 {
+		t.Fatalf("scopes = %+v", scopes)
+	}
+	directives := CoverageDirectives{Namespace: "demo", Environment: "dev", Snapshot: "snap-1"}
+	session, err := work.NewSession(db, doc, work.DefaultConfig(), MechanicalSweepExecutor{Scopes: scopes, Directives: directives}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	report, err := session.Run([]work.Unit{SweepPlan(scopes, directives)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !report.Units[0].Committed {
+		t.Fatalf("sweep not committed: %+v", report.Units[0])
+	}
+	sweeps, err := store.List(db, doc, "SWEEP-RECORD")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(sweeps) != 1 {
+		t.Fatalf("sweeps = %v", sweeps)
+	}
+	payload, err := store.Get(db, doc, "SWEEP-RECORD", sweeps[0])
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, marker := range []string{"- **source-denominator:** 2", "FILE: 2 expected / 0 mapped / 0 excluded", "- **coverage-result:** C-GAP", "closing-invocation:** " + report.Units[0].InvocationID} {
+		if !strings.Contains(string(payload), marker) {
+			t.Fatalf("sweep payload missing %q:\n%s", marker, payload)
+		}
+	}
+	gate, err := EvaluateExitA(db, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if gate.Passed {
+		t.Fatal("Exit A passed with unmapped coverage")
+	}
+	results := map[string]string{}
+	for _, check := range gate.Checks {
+		results[check.ID] = check.Result
+	}
+	if results["COVERAGE-DENOMINATOR"] != "Fail" || results["FRONTIER-CLOSURE"] != "Pass" || results["TRAVERSAL-MATRIX-CLOSURE"] != "Unsupported" {
+		t.Fatalf("gate checks = %+v", gate.Checks)
+	}
+	_ = second
+}
