@@ -222,59 +222,57 @@ func TestExpandCoverageAndSummary(t *testing.T) {
 	_ = second
 }
 
-func TestSweepsAndExitAGate(t *testing.T) {
+func TestCellSweepsAndExitAGate(t *testing.T) {
 	doc, db := testDocDB(t)
-	first := seedInventory(t, db, doc, "FILE", "api.js", "sha256:aaa")
-	second := seedInventory(t, db, doc, "FILE", "web.js", "sha256:bbb")
-	_ = first
-	scopes, err := LoadSweepScopes(db, doc)
+	seedInventory(t, db, doc, "FILE", "api.js", "sha256:aaa")
+	seedInventory(t, db, doc, "FILE", "web.js", "sha256:bbb")
+	if _, err := ExpandCoverage(db, doc, CoverageDirectives{Namespace: "demo", Environment: "dev", Snapshot: "snap-1"}); err != nil {
+		t.Fatal(err)
+	}
+	matrixRow := "- **cluster-id:** CL-1\n- **persona-owner:** WEB\n- **concrete-entry:** api.js\n- **track:** Normal\n- **environment:** dev\n- **snapshot:** snap-1\n- **pov:** POV-1\n- **applicability:** Required\n- **status:** [R-UNSWEPT]\n- **swp-id:** None\n- **claims:** None\n"
+	if err := store.Ingest(db, doc, "REQUIRED-TRAVERSAL-MATRIX-ROW", "CL-1|WEB|POV-1|Normal|dev|snap-1", 1, []byte(matrixRow)); err != nil {
+		t.Fatal(err)
+	}
+	scopes, err := LoadCellScopes(db, doc)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(scopes) != 1 || scopes[0].Owner != "WEB" || len(scopes[0].SourceIDs) != 2 {
+	if len(scopes) != 1 || len(scopes[0].SourceIDs) != 2 || scopes[0].MappedAll {
 		t.Fatalf("scopes = %+v", scopes)
 	}
-	directives := CoverageDirectives{Namespace: "demo", Environment: "dev", Snapshot: "snap-1"}
-	session, err := work.NewSession(db, doc, work.DefaultConfig(), MechanicalSweepExecutor{Scopes: scopes, Directives: directives}, nil)
+	session, err := work.NewSession(db, doc, work.DefaultConfig(), MechanicalCellSweepExecutor{Scopes: scopes}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	report, err := session.Run([]work.Unit{SweepPlan(scopes, directives)})
+	report, err := session.Run([]work.Unit{CellSweepPlan(scopes)})
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !report.Units[0].Committed {
-		t.Fatalf("sweep not committed: %+v", report.Units[0])
+		t.Fatalf("cell sweep not committed: %+v", report.Units[0])
 	}
-	sweeps, err := store.List(db, doc, "SWEEP-RECORD")
+	payload, err := store.Get(db, doc, "SWEEP-RECORD", report.Units[0].MutationIDs[0])
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(sweeps) != 1 {
-		t.Fatalf("sweeps = %v", sweeps)
-	}
-	payload, err := store.Get(db, doc, "SWEEP-RECORD", sweeps[0])
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, marker := range []string{"- **source-denominator:** 2", "FILE: 2 expected / 0 mapped / 0 excluded", "- **coverage-result:** C-GAP", "closing-invocation:** " + report.Units[0].InvocationID} {
+	for _, marker := range []string{"- **cluster-id:** CL-1", "- **pov:** POV-1", "- **source-denominator:** 2", "- **coverage-result:** C-PARTIAL"} {
 		if !strings.Contains(string(payload), marker) {
 			t.Fatalf("sweep payload missing %q:\n%s", marker, payload)
 		}
+	}
+	closed, err := AdvanceMatrix(db, doc)
+	if err != nil || closed != 0 {
+		t.Fatalf("closed = %d err = %v", closed, err)
 	}
 	gate, err := EvaluateExitA(db, doc)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if gate.Passed {
-		t.Fatal("Exit A passed with unmapped coverage")
-	}
 	results := map[string]string{}
 	for _, check := range gate.Checks {
 		results[check.ID] = check.Result
 	}
-	if results["COVERAGE-DENOMINATOR"] != "Fail" || results["FRONTIER-CLOSURE"] != "Pass" || results["TRAVERSAL-MATRIX-CLOSURE"] != "Fail" {
+	if results["COVERAGE-DENOMINATOR"] != "Fail" || results["TRAVERSAL-MATRIX-CLOSURE"] != "Fail" || results["SYNTHESIS-COVERAGE"] != "Fail" {
 		t.Fatalf("gate checks = %+v", gate.Checks)
 	}
-	_ = second
 }

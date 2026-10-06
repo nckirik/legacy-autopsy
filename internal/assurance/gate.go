@@ -136,7 +136,56 @@ func EvaluateExitA(db string, doc *cdl.EIRDoc) (GateResult, error) {
 	} else {
 		add(GateCheck{ID: "TRAVERSAL-MATRIX-CLOSURE", Result: "Fail", Detail: fmt.Sprintf("%d/%d matrix cells closed", closed, len(matrixIDs))})
 	}
-	add(GateCheck{ID: "SYNTHESIS-COVERAGE", Result: "Unsupported", Detail: "synthesis records and coverage are not generated yet"})
+	edgeNames, _, _, err := work.FieldContract(doc, "DERIVED-FROM-EDGE")
+	if err != nil {
+		return result, err
+	}
+	edgeIDs, err := store.List(db, doc, "DERIVED-FROM-EDGE")
+	if err != nil {
+		return result, err
+	}
+	bound := map[string]bool{}
+	for _, id := range edgeIDs {
+		payload, err := store.Get(db, doc, "DERIVED-FROM-EDGE", id)
+		if err != nil {
+			return result, err
+		}
+		values, err := work.PayloadText(edgeNames, payload)
+		if err != nil {
+			return result, err
+		}
+		bound[firstTokenField(values["source-record-id"])] = true
+	}
+	coverageNames, _, _, err := work.FieldContract(doc, "SOURCE-COVERAGE-ROW")
+	if err != nil {
+		return result, err
+	}
+	mappedUnits := 0
+	unboundUnits := 0
+	for _, id := range coverageIDs {
+		payload, err := store.Get(db, doc, "SOURCE-COVERAGE-ROW", id)
+		if err != nil {
+			return result, err
+		}
+		values, err := work.PayloadText(coverageNames, payload)
+		if err != nil {
+			return result, err
+		}
+		if values["disposition"] != "Mapped" {
+			continue
+		}
+		mappedUnits++
+		if !bound[firstTokenField(values["src-version"])] {
+			unboundUnits++
+		}
+	}
+	if mappedUnits == 0 {
+		add(GateCheck{ID: "SYNTHESIS-COVERAGE", Result: "Fail", Detail: "no mapped source units"})
+	} else if unboundUnits == 0 {
+		add(GateCheck{ID: "SYNTHESIS-COVERAGE", Result: "Pass", Detail: fmt.Sprintf("%d/%d mapped units have synthesis provenance", mappedUnits, mappedUnits)})
+	} else {
+		add(GateCheck{ID: "SYNTHESIS-COVERAGE", Result: "Fail", Detail: fmt.Sprintf("%d mapped units lack synthesis provenance", unboundUnits)})
+	}
 
 	sort.Slice(result.Checks, func(i, j int) bool { return result.Checks[i].ID < result.Checks[j].ID })
 	return result, nil

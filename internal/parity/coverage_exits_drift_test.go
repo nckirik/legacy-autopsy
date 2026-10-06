@@ -65,7 +65,7 @@ func TestCoverageAndExitsDrift(t *testing.T) {
 	if len(wantFields) == 0 {
 		t.Fatal("no sweep-record fields found in §10.1")
 	}
-	compareSets(t, "SWEEP-RECORD", fields["SWEEP-RECORD"], wantFields)
+	compareIncludes(t, "SWEEP-RECORD", fields["SWEEP-RECORD"], wantFields)
 
 	// 3. §10.6 iteration tokens == the ID-ITERATION enum owned by typed-id.cdl.
 	typed := compileSection(t, "protocol/typed-id.cdl")

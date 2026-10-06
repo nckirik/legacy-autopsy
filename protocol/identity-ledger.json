@@ -214,7 +214,7 @@
     },
     {
       "path": "protocol/coverage-and-exits.cdl",
-      "source-fingerprint": "sha256:50197350f8c720c61bf6a06afc0216a32f1d89212c0642498984ec895a005b62",
+      "source-fingerprint": "sha256:1099fc7b9728b43edacd4e25b218b1c06ec69b2a1f354e5af992e4ddb2e3aa0f",
       "ids": [
         {
           "id": "COVERAGE-STATUS",

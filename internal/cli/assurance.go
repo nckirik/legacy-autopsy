@@ -60,12 +60,12 @@ func specAssuranceSweep(args []string, stdout, stderr io.Writer) error {
 	if err != nil {
 		return err
 	}
-	scopes, err := assurance.LoadSweepScopes(*db, res.EIR)
+	scopes, err := assurance.LoadCellScopes(*db, res.EIR)
 	if err != nil {
 		return err
 	}
 	if len(scopes) == 0 {
-		return fmt.Errorf("assurance sweep: no committed source inventory")
+		return fmt.Errorf("assurance sweep: no open required matrix cells (run spec preflight matrix first)")
 	}
 	env := *environment
 	if env == "" {
@@ -75,23 +75,28 @@ func specAssuranceSweep(args []string, stdout, stderr io.Writer) error {
 	if snap == "" {
 		snap = header["included-environments-snapshots"]
 	}
-	directives := assurance.CoverageDirectives{Namespace: header["system-namespace"], Environment: env, Snapshot: snap}
+	_ = env
+	_ = snap
 	runConfig := work.DefaultConfig()
 	if iteration := header["current-iteration"]; iteration != "" {
 		runConfig.Iteration = iteration
 	}
-	session, err := work.NewSession(*db, res.EIR, runConfig, assurance.MechanicalSweepExecutor{Scopes: scopes, Directives: directives}, nil)
+	session, err := work.NewSession(*db, res.EIR, runConfig, assurance.MechanicalCellSweepExecutor{Scopes: scopes}, nil)
 	if err != nil {
 		return err
 	}
-	report, err := session.Run([]work.Unit{assurance.SweepPlan(scopes, directives)})
+	report, err := session.Run([]work.Unit{assurance.CellSweepPlan(scopes)})
 	if err != nil {
 		return err
 	}
 	for _, stats := range report.Units {
 		fmt.Fprintf(stdout, "%s: invocation %s committed=%v\n", stats.UnitID, stats.InvocationID, stats.Committed)
 	}
-	fmt.Fprintf(stdout, "sweeps recorded: %d\n", len(scopes))
+	closed, err := assurance.AdvanceMatrix(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "cell sweeps recorded: %d, matrix cells closed: %d\n", len(scopes), closed)
 	return nil
 }
 

@@ -3,7 +3,7 @@
 - Schema version: 1
 - Generator: parityreport parityreport/0.1
 - Generated at: 2026-09-25T00:00:00Z
-- Protocol: 4.4 (sha256:5940b76478df6edbfa3f2e89452b96842a74a586958003d749faa13603147d34)
+- Protocol: 4.5 (sha256:478c8614e9d2945f99a6ce1b8ac7848848af1bcee2a7fd3da7298169d7242517)
 - Language: cdl/0.4 (EIR format 4)
 
 ## Section coverage
@@ -123,9 +123,9 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 27 sources |
 | drift-tests | pass | 24 tests in 24 files |
-| generated-protocol | pass | sha256:5940b76478df6edbfa3f2e89452b96842a74a586958003d749faa13603147d34 |
-| golden-eir | pass | sha256:227e120e1ddbae0adc635cfa8ffdd168db8e7949d26c8c38c7b2746946238822 |
-| golden-prompt | pass | sha256:1909a1555d3555d50b6f054430b478d1b75d26abd4c993e26a9baede409cdec0 |
+| generated-protocol | pass | sha256:478c8614e9d2945f99a6ce1b8ac7848848af1bcee2a7fd3da7298169d7242517 |
+| golden-eir | pass | sha256:c3ee012c12009b99d2818f1b7854bd946065ed4fdb738ab5fb4ac4ed531f1203 |
+| golden-prompt | pass | sha256:bb8beb2ca27b8e4d3dfbc5594dbd6c5e750c8dbfe020c1f069897053629bab3f |
 | fixture-oracle | pass | 24/24 passed |
 | identity-ledger | pass | 538 identities across 27 sources |
 
@@ -158,7 +158,7 @@
 | protocol/cold-resume.cdl | 1 | 4 | sha256:cbf8a049d18abe287b4163f2a47e856912463f132dfa9b1e899609fa666faa0c |
 | protocol/invocation-lifecycle.cdl | 3 | 8 | sha256:3e04a6cb7e01e352e10c58411b427893abf41dc810684228acfb18a6062227ed |
 | protocol/ticket-fsm.cdl | 6 | 20 | sha256:33e51665b071fedafb359fd074b95b64ce76296f26502b01fae3cd281f035125 |
-| protocol/coverage-and-exits.cdl | 6 | 19 | sha256:ab4c7c59b85afa3f085b495dd516733a3724b45771e3a7e3c983e48b361cd402 |
+| protocol/coverage-and-exits.cdl | 6 | 19 | sha256:4e7136c0fba1851cca37d53c063bd9685ab4430d38f4c31a0bef2804eca8cdcb |
 | protocol/synthesis-catalogs.cdl | 13 | 66 | sha256:669904f04afc4ce496c6a6602bbaad7e2e8369852c5f0749e5f66464e6d0ab6d |
 | protocol/traceability.cdl | 5 | 16 | sha256:bc51566c5f4f0d9ae025b898f7b16501ee44e8d7be56801073aa060549029cab |
 | protocol/handbook-and-decisions.cdl | 10 | 23 | sha256:56c6ad208fbc054697e2cd51b3b8c15e3b4872407ac456328c5c2b175273c066 |

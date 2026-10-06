@@ -496,7 +496,7 @@ oracle snapshot is an open process decision.
 
 ## PI-19: Sweep records lack structured scope keys, so matrix cells cannot be matched
 
-- **Status:** proposed; not yet accepted. Blocks `TRAVERSAL-MATRIX-CLOSURE`.
+- **Status:** implemented in v4.5. Live pilot: 25/25 required cells closed from keyed per-cell sweeps and the Exit A gate reports all conditions Pass
 - **Source:** Autonomous pipeline work 2026-10-06; live pilot gate reports
   `TRAVERSAL-MATRIX-CLOSURE: Fail 0/25` with 40 closed frontiers and 2 sweeps.
 - **Affected:** `SWEEP-RECORD` schema, `REQUIRED-TRAVERSAL-MATRIX-ROW` closure,

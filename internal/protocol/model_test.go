@@ -10,7 +10,7 @@ func TestLoadNormativeProtocol(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if model.Version != "4.4" {
+	if model.Version != "4.5" {
 		t.Fatalf("version %q", model.Version)
 	}
 	if len(model.Modes) != 13 {

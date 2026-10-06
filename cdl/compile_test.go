@@ -220,7 +220,7 @@ func TestUpdateAssets(t *testing.T) {
 	if err := os.WriteFile(repoPath("protocol.md"), rendered, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(repoPath("protocol/legacy/protocol-4.4.md"), rendered, 0o644); err != nil {
+	if err := os.WriteFile(repoPath("protocol/legacy/protocol-4.5.md"), rendered, 0o644); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -300,10 +300,10 @@ func TestGoldenProtocolRender(t *testing.T) {
 		}
 	}
 	for _, marker := range []string{
-		"**Version:** 4.4",
-		"**Protocol Version:** 4.4",
-		"Protocol Version: 4.4",
-		"End of Canonical Deconstruction Protocol, edition 4.4",
+		"**Version:** 4.5",
+		"**Protocol Version:** 4.5",
+		"Protocol Version: 4.5",
+		"End of Canonical Deconstruction Protocol, edition 4.5",
 		"## 8.3. Invocation-mode enum and explicit multi-file modes",
 		"Preflight | Export Acquisition",
 	} {
@@ -311,7 +311,7 @@ func TestGoldenProtocolRender(t *testing.T) {
 			t.Fatalf("generated protocol missing %q", marker)
 		}
 	}
-	for _, forbidden := range []string{"{{PROTOCOL-VERSION}}", "v4.4", "**Protocol Version:** 4.1"} {
+	for _, forbidden := range []string{"{{PROTOCOL-VERSION}}", "v4.5", "**Protocol Version:** 4.1"} {
 		if strings.Contains(string(got), forbidden) {
 			t.Fatalf("generated protocol contains stale version literal %q", forbidden)
 		}
@@ -344,7 +344,7 @@ func TestRenderPromptRequiresCoveredSection(t *testing.T) {
 func TestGoldenEditionOracle(t *testing.T) {
 	res := compileAssembly(t)
 	got := RenderProtocol(res.EIR)
-	want, err := os.ReadFile(repoPath("protocol/legacy/protocol-4.4.md"))
+	want, err := os.ReadFile(repoPath("protocol/legacy/protocol-4.5.md"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -606,8 +606,8 @@ func TestCoverageAndExitsCompile(t *testing.T) {
 			fieldCount = len(f.Fields)
 		}
 	}
-	if fieldCount != 11 {
-		t.Fatalf("SWEEP-RECORD has %d fields, want 11", fieldCount)
+	if fieldCount != 17 {
+		t.Fatalf("SWEEP-RECORD has %d fields, want 17", fieldCount)
 	}
 }
 
@@ -1192,6 +1192,35 @@ func TestDependencyBoundary(t *testing.T) {
 		}
 		if strings.Contains(string(b), "legacy-autopsy/internal") {
 			t.Fatalf("%s imports an internal runtime package", f)
+		}
+	}
+}
+
+func TestAssemblyReferencesResolve(t *testing.T) {
+	res := compileAssembly(t)
+	fields := map[string]EIRField{}
+	for _, field := range res.EIR.Declarations.Fields {
+		fields[field.ID] = field
+	}
+	for _, field := range res.EIR.Declarations.Fields {
+		for _, ref := range field.Refs {
+			target, ok := fields[strings.SplitN(ref.Target, ".", 2)[0]]
+			if !ok {
+				t.Fatalf("field %s REF target %q is unknown in the full assembly", field.ID, ref.Target)
+			}
+			parts := strings.SplitN(ref.Target, ".", 2)
+			if len(parts) != 2 {
+				t.Fatalf("field %s REF target %q has no column", field.ID, ref.Target)
+			}
+			declared := false
+			for _, spec := range target.Fields {
+				if spec.Name == parts[1] {
+					declared = true
+				}
+			}
+			if !declared {
+				t.Fatalf("field %s REF target column %q is not declared on %s", field.ID, parts[1], parts[0])
+			}
 		}
 	}
 }
