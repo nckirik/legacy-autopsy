@@ -315,10 +315,12 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
   per-condition Pass/Fail/Unsupported - the live pilot currently fails Exit A with
   `0/40 mapped or excluded` and two Unsupported conditions. Remaining: export
   reconciliation.
-- [~] Synthesis: identity modeling unblocked by v4.3 (PI-16): the 14 catalog records
-  declare `block-id`, `record-title`, and `domain-path`, so runtime IDs derive from
-  the normalized domain path and title. The authoring pipeline and independent
-  review follow.
+- [~] Synthesis: v4.3 declares `block-id`/`record-title`/`domain-path` on all 14
+  catalog records; `synthesis.Plan` + `spec synthesis run --catalog` author records
+  with runtime `TYPE|namespace|domain-path|title` IDs, runtime-injected `block-id`,
+  and independent review enabled. Live MOD run committed **16 architecture modules**
+  grounded in claims. **Blocked for coverage closure (PI-18):** synthesis-to-source
+  mappings are not declared, so coverage cannot move to `Mapped` deterministically.
 - [ ] Handoff: artifact authoring, packaging, and the §15.5 verifier chain.
       **Gated** on a passing Exit A (which needs Synthesis coverage mapped) and on
       model-driven stage assembly.
