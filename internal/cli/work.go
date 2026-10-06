@@ -137,6 +137,9 @@ func specWork(args []string, stdout, stderr io.Writer) error {
 	for _, stats := range report.Units {
 		fmt.Fprintf(stdout, "%-20s %8d %5d %6d %7d %-12s %v\n",
 			stats.UnitID, stats.ContextBytes, stats.Dependencies, stats.Fetches, stats.Retries, stats.Review, stats.Escalated)
+		if stats.LastError != "" {
+			fmt.Fprintf(stdout, "  last rejection: %s\n", stats.LastError)
+		}
 	}
 	if runErr != nil {
 		fmt.Fprintf(stderr, "run stopped: %s\n", runErr)
