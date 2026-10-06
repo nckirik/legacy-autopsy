@@ -67,12 +67,26 @@ func Commit(caps *Caps, unit Unit, p Proposal) error {
 	lookup := func(fieldID, recordID string) (bool, error) {
 		return store.Exists(caps.db, caps.doc, fieldID, recordID)
 	}
+	reader := func(fieldID, recordID string) (map[string]string, error) {
+		payload, err := store.Get(caps.db, caps.doc, fieldID, recordID)
+		if err != nil {
+			return nil, err
+		}
+		names, _, _, err := FieldContract(caps.doc, fieldID)
+		if err != nil {
+			return nil, err
+		}
+		return PayloadText(names, payload)
+	}
 	for _, record := range resolved {
 		values, err := PayloadText(names, record.Payload)
 		if err != nil {
 			return fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
 		}
 		if err := certify.ValidateReferences(p.FieldID, values, lookup); err != nil {
+			return fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
+		}
+		if err := certify.ValidateCrossReferences(p.FieldID, values, reader); err != nil {
 			return fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
 		}
 	}

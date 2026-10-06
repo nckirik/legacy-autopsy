@@ -22,7 +22,7 @@ func ResolveRecords(doc *cdl.EIRDoc, unit Unit, p Proposal) ([]ResolvedRecord, e
 	if len(p.Records) == 0 {
 		return nil, fmt.Errorf("work: unit %s proposal has no records", unit.ID)
 	}
-	if unit.IDFromField == "" && unit.IDFromCoordinate == "" {
+	if unit.IDFromField == "" && unit.IDFromCoordinate == "" && unit.IDOwnerField == "" {
 		if len(p.Records) != 1 {
 			return nil, fmt.Errorf("work: unit %s targets a single record but proposed %d", unit.ID, len(p.Records))
 		}
@@ -33,6 +33,9 @@ func ResolveRecords(doc *cdl.EIRDoc, unit Unit, p Proposal) ([]ResolvedRecord, e
 	}
 	if unit.IDFromCoordinate != "" {
 		return resolveCoordinateIDs(unit, p)
+	}
+	if unit.IDOwnerField != "" {
+		return resolveTypedFieldIDs(unit, p)
 	}
 	seen := map[string]bool{}
 	resolved := make([]ResolvedRecord, 0, len(p.Records))
@@ -75,6 +78,42 @@ func PayloadText(names []string, payload []byte) (map[string]string, error) {
 		}
 	}
 	return values, nil
+}
+
+// resolveTypedFieldIDs computes runtime-owned IDs from a declared owner field
+// and a semantic discriminator field (for example CLM|namespace|subject|claim).
+func resolveTypedFieldIDs(unit Unit, p Proposal) ([]ResolvedRecord, error) {
+	seen := map[string]bool{}
+	resolved := make([]ResolvedRecord, 0, len(p.Records))
+	for i, record := range p.Records {
+		owner, err := extractFieldValue(unit.IDOwnerField, record.Payload)
+		if err != nil {
+			return nil, fmt.Errorf("work: unit %s record %d: %w", unit.ID, i+1, err)
+		}
+		discriminator, err := extractFieldValue(unit.IDDiscriminatorField, record.Payload)
+		if err != nil {
+			return nil, fmt.Errorf("work: unit %s record %d: %w", unit.ID, i+1, err)
+		}
+		discriminator = strings.Join(strings.Fields(discriminator), " ")
+		id, err := capabilities.TypedID(unit.IDType, unit.Namespace, firstToken(owner), discriminator)
+		if err != nil {
+			return nil, err
+		}
+		if seen[id] {
+			return nil, fmt.Errorf("work: unit %s duplicate resolved record ID %q", unit.ID, id)
+		}
+		seen[id] = true
+		resolved = append(resolved, ResolvedRecord{RecordID: id, Payload: record.Payload})
+	}
+	return resolved, nil
+}
+
+func firstToken(value string) string {
+	fields := strings.Fields(value)
+	if len(fields) == 0 {
+		return ""
+	}
+	return strings.TrimSuffix(fields[0], "/")
 }
 
 // resolveCoordinateIDs computes runtime-owned IDs from the payload's declared

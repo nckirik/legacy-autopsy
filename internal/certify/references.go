@@ -60,3 +60,59 @@ func validateEntryCluster(values map[string]string, lookup ReferenceLookup) erro
 	}
 	return nil
 }
+
+// RecordReader returns the declared field values of one stored record.
+type RecordReader func(fieldID, recordID string) (map[string]string, error)
+
+// ValidateCrossReferences enforces cross-record evidence bindings: a claim must
+// reference a committed source-inventory record whose fingerprint and
+// coordinate match the claim's anchor and source fingerprint.
+func ValidateCrossReferences(fieldID string, values map[string]string, read RecordReader) error {
+	switch fieldID {
+	case "CLAIM":
+		return validateClaim(values, read)
+	default:
+		return nil
+	}
+}
+
+func validateClaim(values map[string]string, read RecordReader) error {
+	subject := firstToken(values["subject-id-record-version"])
+	if subject == "" {
+		return fmt.Errorf("CLAIM.subject-id-record-version is empty")
+	}
+	inventory, err := read("SOURCE-INVENTORY-RECORD", subject)
+	if err != nil {
+		return fmt.Errorf("CLAIM.subject-id-record-version %q does not reference a committed source unit: %w", subject, err)
+	}
+	fingerprint := strings.TrimSpace(values["source-fingerprint-snapshot"])
+	inventoryVersion := strings.TrimSpace(inventory["source-fingerprint-snapshot-src-version"])
+	inventoryFingerprint := firstTokenField(inventoryVersion)
+	if fingerprint != "" && inventoryFingerprint != "" && !strings.HasPrefix(inventoryFingerprint, fingerprint) && !strings.HasPrefix(fingerprint, inventoryFingerprint) {
+		return fmt.Errorf("CLAIM.source-fingerprint-snapshot %q does not match source unit %s fingerprint %q", fingerprint, subject, inventoryFingerprint)
+	}
+	coordinate := strings.TrimSpace(inventory["concrete-coordinate"])
+	anchor := strings.TrimSpace(values["anchor"])
+	if coordinate != "" && anchor != "" {
+		if anchor != coordinate && !strings.HasPrefix(anchor, coordinate+":") && !strings.HasPrefix(anchor, coordinate+"#") {
+			return fmt.Errorf("CLAIM.anchor %q must start at the source unit coordinate %q", anchor, coordinate)
+		}
+	}
+	return nil
+}
+
+func firstToken(value string) string {
+	fields := strings.Fields(value)
+	if len(fields) == 0 {
+		return ""
+	}
+	return strings.TrimSuffix(fields[0], "/")
+}
+
+func firstTokenField(value string) string {
+	fields := strings.Fields(value)
+	if len(fields) == 0 {
+		return ""
+	}
+	return fields[0]
+}

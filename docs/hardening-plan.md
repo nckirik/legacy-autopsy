@@ -297,7 +297,12 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
   `SRC-KIND-HASH` IDs from the payload kind+coordinate, exact expected-record
   counts). Live pilot committed 40 SRC records. Remaining: traversal-frontier
   generation, coverage rows, symbol/route/AST kinds.
-- [ ] Assurance: claims, coverage, reconciliation unit generation.
+- [~] Assurance: evidence-bound claims (`assurance.Plan`, `spec assurance claims`):
+  one CLAIM per committed source unit with bounded file excerpts, runtime
+  `CLM|namespace|subject|claim` IDs, and deterministic cross-record validation
+  (subject must be a committed source unit; fingerprint and anchor must match it).
+  Live pilot committed 40 claims. Remaining: domain coverage rows, sweep rows, and
+  export reconciliation.
 - [ ] Synthesis: `90`-`96` semantic records with independent review.
 - [ ] Handoff: artifact authoring, packaging, and the §15.5 verifier chain.
 

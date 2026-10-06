@@ -70,9 +70,19 @@ model authored 40 `SOURCE-INVENTORY-RECORD` rows with runtime-computed
 frontier records and coverage rows are not yet generated; `coverage-summary` is
 `C-GAP` until swept.
 
+## Assurance claims (same target)
+
+`spec assurance claims --batch-size 20 --max-excerpt 800` read the 40 committed
+source units, materialized bounded file excerpts, and the model authored 40
+`CLAIM` records with runtime IDs (`CLM|namespace|subject|claim`) and evidence-bound
+anchors. Cross-record validation rejects any claim whose subject is not a committed
+source unit, whose source fingerprint does not match the inventory row, or whose
+anchor does not start at the unit coordinate.
+
 ## Next steps
 
-- Traversal-frontier generation and coverage rows for Discovery.
+- Coverage rows (COV) and sweep rows, then export reconciliation.
+- Traversal-frontier generation for Discovery.
 - Discovery pipeline over source inventory/frontier.
 - Cluster owner references and source IDs are free text at preflight and must be
   reconciled once personas and the inventory exist; a reconciliation unit is the next
