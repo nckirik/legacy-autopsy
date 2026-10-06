@@ -185,10 +185,10 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
       (for example `.extracted/probes/[TICKET-*].log`) follows with the probe workflow
       validator.
 - [~] Typed semantic deltas: IDs (runtime-assigned from unit target, payload field,
-  coordinate), canonical payload serialization, fingerprints, artifact member
-  bindings, and envelope mechanics (`internal/envelope`: canonical emit/parse/verify
-  for certification, decision-approval, and CNF digest/signature regions) are
-  runtime-owned. Coverage arithmetic and FSM transitions remain with the gate
+  coordinate, or typed owner/discriminator fields), canonical payload serialization,
+  fingerprints, artifact member bindings, envelope mechanics (`internal/envelope`),
+  and the coverage-arithmetic substrate (`assurance.CoverageSummary`) are
+  runtime-owned. FSM transitions and gate arithmetic remain with the ticket/gate
   wiring.
 
 ### W3 - SQLite canonical store, semantic work units, context builder, review
@@ -301,7 +301,10 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
   one CLAIM per committed source unit with bounded file excerpts, runtime
   `CLM|namespace|subject|claim` IDs, and deterministic cross-record validation
   (subject must be a committed source unit; fingerprint and anchor must match it).
-  Live pilot committed 40 claims. Remaining: domain coverage rows, sweep rows, and
+  Live pilot committed 40 claims plus 40 mechanical domain coverage rows
+  (`assurance.ExpandCoverage`, idempotent, fail-inclusive `Unmapped`/`In-Scope`,
+  claims bound by subject) and deterministic coverage arithmetic
+  (`assurance.CoverageSummary`, `spec assurance coverage`). Remaining: sweep rows and
   export reconciliation.
 - [ ] Synthesis: `90`-`96` semantic records with independent review.
 - [ ] Handoff: artifact authoring, packaging, and the §15.5 verifier chain.

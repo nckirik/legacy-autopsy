@@ -17,9 +17,73 @@ func specAssurance(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
 		return fmt.Errorf("usage: legacy-autopsy spec assurance <claims> [flags]")
 	}
-	if args[0] != "claims" {
-		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims", args[0])
+	switch args[0] {
+	case "claims":
+		return specAssuranceClaims(args[1:], stdout, stderr)
+	case "coverage":
+		return specAssuranceCoverage(args[1:], stdout, stderr)
+	default:
+		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims, coverage", args[0])
 	}
+}
+
+// specAssuranceCoverage mechanically expands coverage rows and prints the
+// deterministic coverage arithmetic.
+func specAssuranceCoverage(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec assurance coverage", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	environment := set.String("environment", "", "environment label (default: preflight header)")
+	snapshot := set.String("snapshot", "", "snapshot label (default: preflight header)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec assurance coverage requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	env := *environment
+	if env == "" {
+		env = header["included-environments-snapshots"]
+	}
+	snap := *snapshot
+	if snap == "" {
+		snap = header["included-environments-snapshots"]
+	}
+	created, err := assurance.ExpandCoverage(*db, res.EIR, assurance.CoverageDirectives{
+		Namespace: header["system-namespace"], Environment: env, Snapshot: snap,
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "coverage rows created: %d\n", created)
+	summary, err := assurance.CoverageSummary(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	for _, kind := range assurance.SortedKeys(summary.SourcesByKind) {
+		fmt.Fprintf(stdout, "sources[%s]: %d\n", kind, summary.SourcesByKind[kind])
+	}
+	for _, disposition := range assurance.SortedKeys(summary.CoverageByDisposition) {
+		fmt.Fprintf(stdout, "coverage[%s]: %d\n", disposition, summary.CoverageByDisposition[disposition])
+	}
+	return nil
+}
+
+func specAssuranceClaims(args []string, stdout, stderr io.Writer) error {
 	set := flags("spec assurance claims", stderr)
 	repo := set.String("repo", ".", "protocol repository root")
 	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
@@ -35,7 +99,7 @@ func specAssurance(args []string, stdout, stderr io.Writer) error {
 	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
 	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
 	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
-	if err := set.Parse(args[1:]); err != nil {
+	if err := set.Parse(args); err != nil {
 		return err
 	}
 	if len(set.Args()) != 0 {

@@ -165,3 +165,59 @@ func TestClaimCrossReferenceValidation(t *testing.T) {
 		t.Fatalf("valid claim rejected: %v", err)
 	}
 }
+
+func TestExpandCoverageAndSummary(t *testing.T) {
+	doc, db := testDocDB(t)
+	first := seedInventory(t, db, doc, "FILE", "api.js", "sha256:aaa")
+	second := seedInventory(t, db, doc, "FILE", "web.js", "sha256:bbb")
+	claimPayload := "- **subject-id-record-version:** " + first + "\n- **field-step:** file\n- **claim:** api exposes a route\n- **materiality:** Material\n- **evidence-level:** [E-DIRECT]\n- **anchor:** api.js:1\n- **source-fingerprint-snapshot:** sha256:aaa\n- **evidence-route-lineage-id:** static-filesystem\n- **projection-classification:** raw-visible\n- **independent-supporting-claims:** None\n- **independence-basis:** None\n- **contradiction-ids:** None\n- **created-last-revalidated-by:** None\n"
+	claimID, err := capabilities.TypedID("CLM", "demo", first, "api exposes a route")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := store.Ingest(db, doc, "CLAIM", claimID, 1, []byte(claimPayload)); err != nil {
+		t.Fatal(err)
+	}
+	created, err := ExpandCoverage(db, doc, CoverageDirectives{Namespace: "demo", Environment: "dev", Snapshot: "snap-1"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if created != 2 {
+		t.Fatalf("created = %d, want 2", created)
+	}
+	again, err := ExpandCoverage(db, doc, CoverageDirectives{Namespace: "demo", Environment: "dev", Snapshot: "snap-1"})
+	if err != nil || again != 0 {
+		t.Fatalf("second expand = %d err = %v", again, err)
+	}
+	covIDs, err := store.List(db, doc, "SOURCE-COVERAGE-ROW")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(covIDs) != 2 {
+		t.Fatalf("coverage rows = %v", covIDs)
+	}
+	found := false
+	for _, id := range covIDs {
+		payload, err := store.Get(db, doc, "SOURCE-COVERAGE-ROW", id)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if strings.Contains(string(payload), claimID) {
+			found = true
+			if !strings.Contains(string(payload), "- **disposition:** Unmapped") {
+				t.Fatalf("row not fail-inclusive: %s", payload)
+			}
+		}
+	}
+	if !found {
+		t.Fatal("claim not bound into any coverage row")
+	}
+	summary, err := CoverageSummary(db, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if summary.SourcesByKind["FILE"] != 2 || summary.CoverageByDisposition["Unmapped"] != 2 {
+		t.Fatalf("summary = %+v", summary)
+	}
+	_ = second
+}

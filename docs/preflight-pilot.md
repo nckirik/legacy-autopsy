@@ -79,9 +79,16 @@ anchors. Cross-record validation rejects any claim whose subject is not a commit
 source unit, whose source fingerprint does not match the inventory row, or whose
 anchor does not start at the unit coordinate.
 
+## Coverage rows (same target)
+
+`spec assurance coverage` mechanically expanded the immutable
+`src-version | persona | track | environment | snapshot` tuple into 40 idempotent
+`SOURCE-COVERAGE-ROW` records (fail-inclusive `Unmapped`, `In-Scope`, claims bound by
+subject) and printed the arithmetic: `sources[FILE]: 40`, `coverage[Unmapped]: 40`.
+
 ## Next steps
 
-- Coverage rows (COV) and sweep rows, then export reconciliation.
+- Sweep rows and export reconciliation.
 - Traversal-frontier generation for Discovery.
 - Discovery pipeline over source inventory/frontier.
 - Cluster owner references and source IDs are free text at preflight and must be
