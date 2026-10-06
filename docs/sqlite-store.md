@@ -207,10 +207,14 @@ ingest), `Reviewer` with an independently built context, blocker classification,
 sequential single-writer `Session`, per-unit instrumentation, and the pre-run
 configuration questions. Real LLM executors and reviewers plug into the `Executor`
 and `Reviewer` interfaces; the mechanics above are runtime-owned. `internal/llm`
-provides an OpenAI-compatible adapter (`spec work ping|run`); connection details come
-from `LEGACY_AUTOPSY_LLM_URL`, `LEGACY_AUTOPSY_LLM_KEY`, `LEGACY_AUTOPSY_LLM_MODEL`,
-and the optional `LEGACY_AUTOPSY_LLM_REASONING` (`reasoning_effort`, e.g. `xhigh`)
-only, and the key is never committed or logged. The model returns a strict
+provides an OpenAI-compatible streaming adapter (`spec work ping|run`, `spec preflight
+run`); connection details come from `LEGACY_AUTOPSY_LLM_URL`,
+`LEGACY_AUTOPSY_LLM_KEY`, `LEGACY_AUTOPSY_LLM_MODEL`, the optional
+`LEGACY_AUTOPSY_LLM_REASONING` (`reasoning_effort`, e.g. `xhigh`),
+`LEGACY_AUTOPSY_LLM_MAX_TOKENS`, and `LEGACY_AUTOPSY_LLM_STREAM_TIMEOUT` only, and the
+key is never committed or logged. Responses stream over SSE with `--show-model`
+rendering content live and reasoning as progress dots; `LEGACY_AUTOPSY_LLM_STREAM=0`
+falls back to non-streaming. The model returns a strict
 proposal/blocker/review format; malformed responses fail closed. Record identity and
 version are runtime-owned: the unit declares the target record ID, the runtime assigns
 it and the version, and executor responses carry payload content only.
