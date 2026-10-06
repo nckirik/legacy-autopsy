@@ -61,10 +61,18 @@
 - Ingest validation failures report the parsed declared fields, and retries receive
   the rejection reason inline (`## Previous attempt rejected`).
 
+## Discovery inventory (same target)
+
+`spec discovery run --target veri-yonetimi --max-files 40` enumerated candidates
+deterministically (paths + streamed SHA-256), planned two inventory units, and the
+model authored 40 `SOURCE-INVENTORY-RECORD` rows with runtime-computed
+`SRC-FILE-<hash>` IDs (kind + normalized coordinate in the canonical key). Known gap:
+frontier records and coverage rows are not yet generated; `coverage-summary` is
+`C-GAP` until swept.
+
 ## Next steps
 
-- Acquisition registry (the `0A` registry currently holds header, personas, and
-  clusters; acquisition rows and `SRC` binding come with the Discovery pipeline).
+- Traversal-frontier generation and coverage rows for Discovery.
 - Discovery pipeline over source inventory/frontier.
 - Cluster owner references and source IDs are free text at preflight and must be
   reconciled once personas and the inventory exist; a reconciliation unit is the next

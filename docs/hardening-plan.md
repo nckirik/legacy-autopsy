@@ -168,13 +168,15 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
   and order validation, canonical payload fingerprints with carrier exclusion and
   path binding, artifact-instance bindings, sorted package-member manifests, and
   fail-closed member verification (tamper, missing, extra, order-independent).
-  Bundle verification (`artifact.VerifyBundle`, `spec artifact validate|verify`):
-  outer payload validity, declared member set vs actual set, fingerprint
-  recomputation, snapshot equality, tamper/missing/extra rejection. Remaining: the
-  full §15.4 chain references and final check-registry fingerprints, plus assembly of
-  the `23`-`27` human deliverables. Architecture (decision 8): payloads are
-  executor-authored Markdown validated through the label-to-column mapping; no label
-  table is introduced.
+  Bundle verification (`artifact.VerifyBundle`, `spec artifact validate|verify`) and
+  chain verification (`artifact.VerifyChain`, `spec artifact chain`): ordered §15.4
+  stage sequence, per-stage schema validation, check-set equality against the declared
+  candidate/readiness registries, recomputed final check-registry fingerprint, chain
+  references, snapshot equality, and Pending/Passed ordering. Remaining: requirement
+  prose in the registry preimage, pre-signature input-set recomputation over members,
+  and assembly of the `23`-`27` human deliverables. Architecture (decision 8):
+  payloads are executor-authored Markdown validated through the label-to-column
+  mapping; no label table is introduced.
 - [x] Append-only runtime post-conditions: `store.LogState` plus
       `store.VerifyMonotonicLogs` fail closed on any disappearing log record; the
       database triggers remain as a second guard. Validator allow-list enforcement
@@ -236,10 +238,11 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
 
 ### W4 - Storage conformance and projections
 
-- [~] Registry constraints: canonical registry iteration order is deterministic
-  (tables sorted by name, rows by record ID) and declared `KEY`s become `UNIQUE`
-  natural keys; scope-tuple uniqueness and reference-as-key constraints land when
-  the scope-tuple fields are modeled as declared keys.
+- [x] Registry constraints: deterministic iteration order, declared `KEY`s as
+      `UNIQUE` natural keys (persona `prefix` is the runtime record ID), and runtime
+      reference validation (`work.Commit` via `certify.ValidateReferences`): cluster
+      owner personas must exist, cluster IDs and source-ID tokens are grammar-checked.
+      Scope-tuple uniqueness lands with the coverage-row model.
 - [x] Append-only `0G` as a runtime post-condition: `store.LogState` snapshots log
       record IDs and `store.VerifyMonotonicLogs` fails closed on any disappearance, in
       addition to the database triggers.
@@ -285,7 +288,11 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
       normative sections, per-unit reasoning policy, retry-with-feedback.
 - [x] Preflight entry clusters (`U-PREFLIGHT-CLUSTERS`, declared `cluster-id`/
       `cluster-title` fields); acquisition registry lands with the Discovery pipeline.
-- [ ] Discovery: source inventory and traversal frontier unit generation.
+- [~] Discovery: deterministic bounded enumeration (`discovery.Enumerate`) plus
+  `spec discovery run` inventory units (`SOURCE-INVENTORY-RECORD`, runtime
+  `SRC-KIND-HASH` IDs from the payload kind+coordinate, exact expected-record
+  counts). Live pilot committed 40 SRC records. Remaining: traversal-frontier
+  generation, coverage rows, symbol/route/AST kinds.
 - [ ] Assurance: claims, coverage, reconciliation unit generation.
 - [ ] Synthesis: `90`-`96` semantic records with independent review.
 - [ ] Handoff: artifact authoring, packaging, and the §15.5 verifier chain.
