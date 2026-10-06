@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -86,5 +87,21 @@ func TestSpecPreflightScan(t *testing.T) {
 		if !strings.Contains(out, marker) {
 			t.Fatalf("scan output missing %q:\n%s", marker, out)
 		}
+	}
+}
+
+func TestSpecDiscoveryRequiresPreflight(t *testing.T) {
+	if _, err := exec.LookPath("sqlite3"); err != nil {
+		t.Skip("sqlite3 CLI not available")
+	}
+	dir := t.TempDir()
+	db := filepath.Join(dir, "store.db")
+	if _, errOut, code := runSpecCLI(t, "spec", "schema", "--repo", specRepoRoot, "--apply", db); code != 0 {
+		t.Fatalf("schema apply exit %d: %s", code, errOut)
+	}
+	_, errOut, code := runSpecCLI(t, "spec", "discovery", "run",
+		"--repo", specRepoRoot, "--target", dir, "--db", db)
+	if code == 0 || !strings.Contains(errOut, "requires a completed preflight") {
+		t.Fatalf("exit %d err %s", code, errOut)
 	}
 }

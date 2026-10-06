@@ -30,6 +30,11 @@ type Evidence struct {
 	Excerpt string
 }
 
+// SkipDirectory reports whether a directory name is excluded from scans.
+func SkipDirectory(name string) bool {
+	return skipDirs[name] || strings.HasPrefix(name, ".")
+}
+
 var skipDirs = map[string]bool{
 	".git": true, "node_modules": true, "vendor": true, ".extracted": true,
 	".tmp": true, ".idea": true, ".vscode": true, "dist": true, "build": true,
@@ -94,7 +99,7 @@ func ScanRepo(root string, maxFiles, maxEntryPoints, maxDepth int) (Scan, error)
 		depth := len(strings.Split(filepath.ToSlash(relative), "/"))
 		if info.IsDir() {
 			base := info.Name()
-			if skipDirs[base] || strings.HasPrefix(base, ".") {
+			if SkipDirectory(base) {
 				return filepath.SkipDir
 			}
 			if depth == 1 {

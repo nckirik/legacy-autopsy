@@ -63,3 +63,24 @@ func TestTypedIDRejectsInvalidInputs(t *testing.T) {
 		}
 	}
 }
+
+func TestSourceID(t *testing.T) {
+	first, err := SourceID("veri-yonetimi", "FILE", "routes/api.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.HasPrefix(first, "SRC-FILE-") || len(first) != len("SRC-FILE-")+12 {
+		t.Fatalf("id = %q", first)
+	}
+	second, _ := SourceID("veri-yonetimi", "FILE", "routes/api.js")
+	if first != second {
+		t.Fatal("SourceID is not deterministic")
+	}
+	other, _ := SourceID("veri-yonetimi", "FILE", "routes/auth.js")
+	if other == first {
+		t.Fatal("different coordinates collide")
+	}
+	if _, err := SourceID("", "FILE", "a"); err == nil {
+		t.Fatal("empty namespace accepted")
+	}
+}

@@ -22,11 +22,17 @@ func ResolveRecords(doc *cdl.EIRDoc, unit Unit, p Proposal) ([]ResolvedRecord, e
 	if len(p.Records) == 0 {
 		return nil, fmt.Errorf("work: unit %s proposal has no records", unit.ID)
 	}
-	if unit.IDFromField == "" {
+	if unit.IDFromField == "" && unit.IDFromCoordinate == "" {
 		if len(p.Records) != 1 {
 			return nil, fmt.Errorf("work: unit %s targets a single record but proposed %d", unit.ID, len(p.Records))
 		}
 		return []ResolvedRecord{{RecordID: unit.RecordID, Payload: p.Records[0].Payload}}, nil
+	}
+	if unit.ExpectedRecords > 0 && len(p.Records) != unit.ExpectedRecords {
+		return nil, fmt.Errorf("work: unit %s expects %d records, proposed %d", unit.ID, unit.ExpectedRecords, len(p.Records))
+	}
+	if unit.IDFromCoordinate != "" {
+		return resolveCoordinateIDs(unit, p)
 	}
 	seen := map[string]bool{}
 	resolved := make([]ResolvedRecord, 0, len(p.Records))
@@ -69,6 +75,45 @@ func PayloadText(names []string, payload []byte) (map[string]string, error) {
 		}
 	}
 	return values, nil
+}
+
+// resolveCoordinateIDs computes runtime-owned IDs from the payload's declared
+// coordinate field. SRC records include the payload kind in the canonical key.
+func resolveCoordinateIDs(unit Unit, p Proposal) ([]ResolvedRecord, error) {
+	seen := map[string]bool{}
+	resolved := make([]ResolvedRecord, 0, len(p.Records))
+	for i, record := range p.Records {
+		coordinate, err := extractFieldValue(unit.IDFromCoordinate, record.Payload)
+		if err != nil {
+			return nil, fmt.Errorf("work: unit %s record %d: %w", unit.ID, i+1, err)
+		}
+		normalized, err := capabilities.NormalizeRelativePath(coordinate)
+		if err != nil {
+			return nil, fmt.Errorf("work: unit %s record %d coordinate: %w", unit.ID, i+1, err)
+		}
+		var id string
+		if strings.EqualFold(unit.IDType, "SRC") {
+			kind, err := extractFieldValue("kind", record.Payload)
+			if err != nil {
+				return nil, fmt.Errorf("work: unit %s record %d: %w", unit.ID, i+1, err)
+			}
+			id, err = capabilities.SourceID(unit.Namespace, strings.ToUpper(kind), normalized)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			id, err = capabilities.TypedID(unit.IDType, unit.Namespace, normalized, unit.IDType)
+			if err != nil {
+				return nil, err
+			}
+		}
+		if seen[id] {
+			return nil, fmt.Errorf("work: unit %s duplicate resolved record ID %q", unit.ID, id)
+		}
+		seen[id] = true
+		resolved = append(resolved, ResolvedRecord{RecordID: id, Payload: record.Payload})
+	}
+	return resolved, nil
 }
 
 func extractFieldValue(fieldName string, payload []byte) (string, error) {

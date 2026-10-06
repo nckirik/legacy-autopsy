@@ -29,3 +29,23 @@ func TypedID(idType, namespace, owner, discriminator string) (string, error) {
 	hash := strings.ToUpper(hex.EncodeToString(sum[:]))[:12]
 	return idType + "-" + hash, nil
 }
+
+// SourceID computes the deterministic SRC identity for one source-inventory
+// unit. The canonical key is `SRC|namespace|normalized-owner-coordinate|KIND`
+// and the id is `SRC-KIND-<first 12 uppercase hex of SHA-256(key)>`, matching
+// the §4.1 SRC-KIND-HASH form with kind included in the preimage.
+func SourceID(namespace, kind, coordinate string) (string, error) {
+	if namespace == "" {
+		return "", fmt.Errorf("typed-id: empty system namespace")
+	}
+	if kind == "" {
+		return "", fmt.Errorf("typed-id: empty SRC kind")
+	}
+	if coordinate == "" {
+		return "", fmt.Errorf("typed-id: empty normalized owner coordinate")
+	}
+	key := strings.Join([]string{"SRC", namespace, coordinate, strings.ToUpper(kind)}, "|")
+	sum := sha256.Sum256([]byte(key))
+	hash := strings.ToUpper(hex.EncodeToString(sum[:]))[:12]
+	return "SRC-" + strings.ToUpper(kind) + "-" + hash, nil
+}

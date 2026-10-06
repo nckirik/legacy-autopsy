@@ -30,18 +30,22 @@ type Input struct {
 }
 
 type Unit struct {
-	ID              string   `json:"id"`
-	Mode            string   `json:"mode"`
-	Scope           string   `json:"scope,omitempty"`
-	RecordID        string   `json:"record_id,omitempty"`
-	IDFromField     string   `json:"id_from_field,omitempty"`
-	Reads           []Ref    `json:"reads,omitempty"`
-	ResultType      string   `json:"result_type"`
-	AllowedEffects  []string `json:"allowed_effects,omitempty"`
-	RequiresReview  bool     `json:"requires_review,omitempty"`
-	Inputs          []Input  `json:"inputs,omitempty"`
-	Sections        []string `json:"sections,omitempty"`
-	ReasoningEffort string   `json:"reasoning_effort,omitempty"`
+	ID               string   `json:"id"`
+	Mode             string   `json:"mode"`
+	Scope            string   `json:"scope,omitempty"`
+	RecordID         string   `json:"record_id,omitempty"`
+	IDFromField      string   `json:"id_from_field,omitempty"`
+	IDFromCoordinate string   `json:"id_from_coordinate,omitempty"`
+	IDType           string   `json:"id_type,omitempty"`
+	Namespace        string   `json:"namespace,omitempty"`
+	ExpectedRecords  int      `json:"expected_records,omitempty"`
+	Reads            []Ref    `json:"reads,omitempty"`
+	ResultType       string   `json:"result_type"`
+	AllowedEffects   []string `json:"allowed_effects,omitempty"`
+	RequiresReview   bool     `json:"requires_review,omitempty"`
+	Inputs           []Input  `json:"inputs,omitempty"`
+	Sections         []string `json:"sections,omitempty"`
+	ReasoningEffort  string   `json:"reasoning_effort,omitempty"`
 }
 
 // Validate checks the unit against the compiled schema: every declared read and
@@ -50,8 +54,17 @@ func (u Unit) Validate(doc *cdl.EIRDoc) error {
 	if u.ID == "" || u.Mode == "" || u.ResultType == "" {
 		return fmt.Errorf("work: unit requires ID, mode, and result type")
 	}
-	if (u.RecordID == "") == (u.IDFromField == "") {
-		return fmt.Errorf("work: unit %s requires exactly one of record ID or ID-from-field", u.ID)
+	modes := 0
+	for _, set := range []bool{u.RecordID != "", u.IDFromField != "", u.IDFromCoordinate != ""} {
+		if set {
+			modes++
+		}
+	}
+	if modes != 1 {
+		return fmt.Errorf("work: unit %s requires exactly one of record ID, ID-from-field, or ID-from-coordinate", u.ID)
+	}
+	if u.IDFromCoordinate != "" && (u.IDType == "" || u.Namespace == "") {
+		return fmt.Errorf("work: unit %s coordinate IDs require an ID type and namespace", u.ID)
 	}
 	if err := requireTableField(doc, u.ResultType); err != nil {
 		return fmt.Errorf("work: unit %s result: %w", u.ID, err)

@@ -19,9 +19,9 @@ func specArtifact(args []string, stdout, stderr io.Writer) error {
 	}
 	op := args[0]
 	switch op {
-	case "validate", "verify":
+	case "validate", "verify", "chain":
 	default:
-		return fmt.Errorf("spec artifact operation %q is unsupported; supported operations: validate, verify", op)
+		return fmt.Errorf("spec artifact operation %q is unsupported; supported operations: validate, verify, chain", op)
 	}
 	set := flags("spec artifact "+op, stderr)
 	repo := set.String("repo", ".", "repository root")
@@ -33,6 +33,11 @@ func specArtifact(args []string, stdout, stderr io.Writer) error {
 	artifactType := set.String("type", "", "artifact type, e.g. OUTER-BUNDLE-MANIFEST")
 	artifactPath := set.String("path", "", "normalized artifact path")
 	dir := set.String("dir", "", "bundle directory (verify)")
+	candidate := set.String("candidate", "", "EXIT-E-CANDIDATE-REPORT payload (chain)")
+	manifest := set.String("manifest", "", "CANDIDATE-PAYLOAD-MANIFEST payload (chain)")
+	readiness := set.String("readiness", "", "EXIT-E-CONTENT-READINESS-REPORT payload (chain)")
+	certificate := set.String("certificate", "", "SCOPE-CERTIFICATE payload (chain)")
+	outer := set.String("outer", "", "OUTER-BUNDLE-MANIFEST payload (chain)")
 	if err := set.Parse(args[1:]); err != nil {
 		return err
 	}
@@ -63,6 +68,34 @@ func specArtifact(args []string, stdout, stderr io.Writer) error {
 			}
 			fmt.Fprintf(stdout, "payload fingerprint: %s\n", fingerprint)
 		}
+		return nil
+	case "chain":
+		paths := []struct {
+			flag, artifactType, path string
+		}{
+			{"candidate", "EXIT-E-CANDIDATE-REPORT", "23-EXIT-E-CANDIDATE-REPORT.md"},
+			{"manifest", "CANDIDATE-PAYLOAD-MANIFEST", "24-CANDIDATE-PAYLOAD-MANIFEST.md"},
+			{"readiness", "EXIT-E-CONTENT-READINESS-REPORT", "25-EXIT-E-CONTENT-READINESS-REPORT.md"},
+			{"certificate", "SCOPE-CERTIFICATE", "26-SCOPE-CERTIFICATE.md"},
+			{"outer", "OUTER-BUNDLE-MANIFEST", "27-OUTER-BUNDLE-MANIFEST.md"},
+		}
+		values := map[string]string{"candidate": *candidate, "manifest": *manifest, "readiness": *readiness, "certificate": *certificate, "outer": *outer}
+		var stages []artifact.ChainStage
+		for _, entry := range paths {
+			file := values[entry.flag]
+			if file == "" {
+				return fmt.Errorf("spec artifact chain requires --%s", entry.flag)
+			}
+			payload, err := os.ReadFile(file)
+			if err != nil {
+				return err
+			}
+			stages = append(stages, artifact.ChainStage{Type: entry.artifactType, Path: entry.path, Payload: payload})
+		}
+		if err := artifact.VerifyChain(res.EIR, stages); err != nil {
+			return err
+		}
+		fmt.Fprintln(stdout, "chain verified: candidate -> manifest -> readiness -> certificate -> outer")
 		return nil
 	case "verify":
 		if *artifactType == "" || *artifactPath == "" || *dir == "" {
