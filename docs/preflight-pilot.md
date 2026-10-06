@@ -100,14 +100,15 @@ After the v4.3 revision, `spec preflight matrix` expanded 25 keyed
 fail-inclusive `Required`/`[R-UNSWEPT]`), and `spec assurance gate` now evaluates
 real closure (`TRAVERSAL-MATRIX-CLOSURE Fail 0/25`).
 
+## Synthesis (same target)
+
+After v4.3, `spec synthesis run --catalog MOD` authored **16 `ARCHITECTURE-MODULE`
+records** from the 40 claims: runtime IDs from `domain-path`+`record-title`, injected
+`block-id`, responsibility boundaries grounded in claim text. Known blocker:
+synthesis-to-source mappings are not declared (PI-18), so coverage cannot reach
+`Mapped` yet.
+
 ## Next steps
 
-- Synthesis authoring from claims; export reconciliation; symbol/route/AST kinds.
-- Traversal-frontier generation for Discovery.
-- Discovery pipeline over source inventory/frontier.
-- Cluster owner references and source IDs are free text at preflight and must be
-  reconciled once personas and the inventory exist; a reconciliation unit is the next
-  quality step.
-- Per-field enum registries for registry-typed columns (`actor-class`,
-  `registry-state`) so invalid tokens fail at validation rather than semantics.
-- Persona deduplication/reconciliation unit with independent review.
+- PI-18 mapping bindings, then the remaining catalogs; export reconciliation;
+  symbol/route/AST kinds.
