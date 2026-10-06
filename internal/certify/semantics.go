@@ -20,6 +20,13 @@ func ValidationHints(fieldID string) []string {
 			`persona-slug must be lowercase words joined by hyphens`,
 			`persona-directory must equal prefix + "-" + persona-slug`,
 		}
+	case "FRONTIER-RECORD":
+		return []string{
+			`from-src-cmp and target-src must reference committed source units (or None/root)`,
+			`target-concrete-coordinate-or-resolution-rule must match the target source unit coordinate`,
+			`discovery-method is one of call, import, route, graph edge, query reference, DB firing, config gate, runtime, other`,
+			`state is one of Open, Traversed, Terminal-Mapped, Terminal-Excluded, Terminal-Duplicate, Terminal-Human-Blocked, Superseded`,
+		}
 	case "ENTRY-CLUSTER":
 		return []string{
 			`cluster-id must match [A-Z][A-Z0-9-]{1,15} and is the record ID`,

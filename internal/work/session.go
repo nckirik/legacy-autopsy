@@ -15,6 +15,7 @@ import (
 // will stale-check the commit.
 type Invocation struct {
 	Unit           Unit
+	InvocationID   string
 	Context        Context
 	Caps           *Caps
 	Fields         []string
@@ -132,7 +133,7 @@ func (s *Session) runUnit(unit Unit) (stats UnitStats, err error) {
 		if err != nil {
 			return stats, err
 		}
-		proposal, err := s.executor.Execute(Invocation{Unit: unit, Context: context, Caps: caps, Fields: fields, RequiredFields: required, FieldOptions: options, Hints: certify.ValidationHints(unit.ResultType)})
+		proposal, err := s.executor.Execute(Invocation{Unit: unit, InvocationID: invocationID, Context: context, Caps: caps, Fields: fields, RequiredFields: required, FieldOptions: options, Hints: certify.ValidationHints(unit.ResultType)})
 		if err != nil {
 			var blocker *BlockerError
 			if !errors.As(err, &blocker) {

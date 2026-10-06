@@ -121,3 +121,18 @@ func TestSpecAssuranceRequiresInventory(t *testing.T) {
 		t.Fatalf("exit %d err %s", code, errOut)
 	}
 }
+
+func TestSpecDiscoveryFrontierRequiresInventory(t *testing.T) {
+	if _, err := exec.LookPath("sqlite3"); err != nil {
+		t.Skip("sqlite3 CLI not available")
+	}
+	dir := t.TempDir()
+	db := filepath.Join(dir, "store.db")
+	if _, errOut, code := runSpecCLI(t, "spec", "schema", "--repo", specRepoRoot, "--apply", db); code != 0 {
+		t.Fatalf("schema apply exit %d: %s", code, errOut)
+	}
+	_, errOut, code := runSpecCLI(t, "spec", "discovery", "frontier", "--repo", specRepoRoot, "--db", db)
+	if code == 0 || !strings.Contains(errOut, "requires a completed preflight") {
+		t.Fatalf("exit %d err %s", code, errOut)
+	}
+}

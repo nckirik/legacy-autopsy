@@ -154,3 +154,77 @@ func TestPlanCommitsInventoryWithRuntimeIDs(t *testing.T) {
 		t.Fatalf("expected runtime SRC id %s in %v", want, ids)
 	}
 }
+
+func TestMechanicalTerminalFrontiers(t *testing.T) {
+	doc, db := testDocAndDB(t)
+	header := []byte("- **system-namespace:** demo\n- **target-repository-evidence-roots:** app, routes\n- **primary-technology-stack:** JavaScript\n- **protocol-version:** 4.2.1\n- **canonical-storage-binding:** sqlite/1\n- **current-iteration:** ALFA\n- **default-max-traversal-depth:** 3\n- **included-environments-snapshots:** dev\n- **explicit-scope-policy:** repo\n")
+	if err := store.Ingest(db, doc, "PREFLIGHT-HEADER", "0A", 1, header); err != nil {
+		t.Fatal(err)
+	}
+	inventory := []SourceUnit{
+		{ID: "SRC-FILE-AAAAAAAAAAAA", Coordinate: "app/a.js", Fingerprint: "sha256:aaa"},
+		{ID: "SRC-FILE-BBBBBBBBBBBB", Coordinate: "routes/api.js", Fingerprint: "sha256:bbb"},
+	}
+	for _, item := range inventory {
+		payload := "- **kind:** FILE\n- **concrete-coordinate:** " + item.Coordinate + "\n- **parent-container-src:** None\n- **source-fingerprint-snapshot-src-version:** " + item.Fingerprint + " version 1\n- **discovery-method:** filesystem\n- **scope-summary:** WEB\n- **environment-runtime-state:** dev\n- **traversal-tracks:** Normal\n- **canonical-owner:** WEB\n- **disposition-summary:** Unknown\n- **mappings:** None\n- **frontier-references:** None\n- **coverage-rows:** None\n- **coverage-summary:** C-GAP\n- **claims:** None\n"
+		if err := store.Ingest(db, doc, "SOURCE-INVENTORY-RECORD", item.ID, 1, []byte(payload)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	unit := FrontierPlan(inventory, "demo")
+	session, err := work.NewSession(db, doc, work.DefaultConfig(), MechanicalFrontierExecutor{Inventory: inventory}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	report, err := session.Run([]work.Unit{unit})
+	if err != nil {
+		t.Fatal(err)
+	}
+	stats := report.Units[0]
+	if !stats.Committed || stats.InvocationID != "ALFA-NONE-NONE-001" {
+		t.Fatalf("stats = %+v", stats)
+	}
+	frontiers, err := store.List(db, doc, "FRONTIER-RECORD")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(frontiers) != 2 {
+		t.Fatalf("frontiers = %v", frontiers)
+	}
+	payload, err := store.Get(db, doc, "FRONTIER-RECORD", frontiers[0])
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, marker := range []string{"- **state:** Traversed", "- **closing-invocation:** ALFA-NONE-NONE-001", "- **from-src-cmp:** SRC-FILE-"} {
+		if !strings.Contains(string(payload), marker) {
+			t.Fatalf("frontier payload missing %q:\n%s", marker, payload)
+		}
+	}
+	logIDs, err := store.List(db, doc, "INVOCATION-LOG")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(logIDs) != 1 {
+		t.Fatalf("log IDs = %v", logIDs)
+	}
+}
+
+func TestFrontierReferenceValidation(t *testing.T) {
+	doc, db := testDocAndDB(t)
+	unit := work.Unit{ID: "U-FRT", Mode: "Discovery", IDType: "FRT", Namespace: "demo", IDFromCoordinate: "target-concrete-coordinate-or-resolution-rule", ResultType: "FRONTIER-RECORD"}
+	payload := "- **origin-invocation-cluster-pov-track:** ALFA-NONE-NONE-001 | None | None | Normal\n" +
+		"- **from-src-cmp:** SRC-FILE-MISSING00000\n" +
+		"- **target-concrete-coordinate-or-resolution-rule:** app/a.js\n" +
+		"- **target-src:** SRC-FILE-MISSING00000\n" +
+		"- **discovery-method:** other\n" +
+		"- **depth:** 2\n" +
+		"- **snapshot-fingerprint:** sha256:aaa\n" +
+		"- **state:** Traversed\n" +
+		"- **disposition-evidence:** terminal\n" +
+		"- **child-frontier-ids:** None\n" +
+		"- **closing-invocation:** ALFA-NONE-NONE-001\n"
+	err := work.Commit(work.NewCaps(db, doc), unit, work.Proposal{FieldID: "FRONTIER-RECORD", Records: []work.Record{{Payload: []byte(payload)}}})
+	if err == nil || !strings.Contains(err.Error(), "does not reference a committed source unit") {
+		t.Fatalf("missing source accepted: %v", err)
+	}
+}

@@ -297,8 +297,11 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
 - [~] Discovery: deterministic bounded enumeration (`discovery.Enumerate`) plus
   `spec discovery run` inventory units (`SOURCE-INVENTORY-RECORD`, runtime
   `SRC-KIND-HASH` IDs from the payload kind+coordinate, exact expected-record
-  counts). Live pilot committed 40 SRC records. Remaining: traversal-frontier
-  generation, coverage rows, symbol/route/AST kinds.
+  counts) and mechanical terminal frontier records (`spec discovery frontier`:
+  one `FRONTIER-RECORD` per source unit, runtime `FRT` IDs, real invocation binding
+  and `0G` append, reference/coordinate validation). Live pilot committed 40 SRC
+  records and 40 terminal frontiers. Remaining: symbol/route/AST kinds and semantic
+  traversal policies beyond terminal file boundaries.
 - [~] Assurance: evidence-bound claims (`assurance.Plan`, `spec assurance claims`):
   one CLAIM per committed source unit with bounded file excerpts, runtime
   `CLM|namespace|subject|claim` IDs, and deterministic cross-record validation

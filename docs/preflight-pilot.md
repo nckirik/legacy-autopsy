@@ -86,9 +86,16 @@ anchor does not start at the unit coordinate.
 `SOURCE-COVERAGE-ROW` records (fail-inclusive `Unmapped`, `In-Scope`, claims bound by
 subject) and printed the arithmetic: `sources[FILE]: 40`, `coverage[Unmapped]: 40`.
 
+## Terminal frontiers (same target)
+
+`spec discovery frontier` mechanically recorded one terminal `FRONTIER-RECORD` per
+source unit (state `Traversed`, discovery-method `other`, runtime `FRT` IDs) bound to
+the real invocation `ALFA-NONE-NONE-001`; the runtime also appended its first `0G`
+entry to `INVOCATION-LOG`.
+
 ## Next steps
 
-- Sweep rows and export reconciliation.
+- Sweep rows and export reconciliation; symbol/route/AST discovery kinds.
 - Traversal-frontier generation for Discovery.
 - Discovery pipeline over source inventory/frontier.
 - Cluster owner references and source IDs are free text at preflight and must be

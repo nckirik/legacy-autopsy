@@ -22,9 +22,28 @@ func ValidateReferences(fieldID string, values map[string]string, lookup Referen
 	switch fieldID {
 	case "ENTRY-CLUSTER":
 		return validateEntryCluster(values, lookup)
+	case "FRONTIER-RECORD":
+		return validateFrontier(values, lookup)
 	default:
 		return nil
 	}
+}
+
+func validateFrontier(values map[string]string, lookup ReferenceLookup) error {
+	for _, name := range []string{"from-src-cmp", "target-src"} {
+		value := strings.TrimSpace(values[name])
+		if value == "" || value == "None" || value == "root" {
+			continue
+		}
+		exists, err := lookup("SOURCE-INVENTORY-RECORD", value)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			return fmt.Errorf("FRONTIER-RECORD.%s %q does not reference a committed source unit", name, value)
+		}
+	}
+	return nil
 }
 
 func validateEntryCluster(values map[string]string, lookup ReferenceLookup) error {
@@ -71,9 +90,28 @@ func ValidateCrossReferences(fieldID string, values map[string]string, read Reco
 	switch fieldID {
 	case "CLAIM":
 		return validateClaim(values, read)
+	case "FRONTIER-RECORD":
+		return validateFrontierCoordinates(values, read)
 	default:
 		return nil
 	}
+}
+
+func validateFrontierCoordinates(values map[string]string, read RecordReader) error {
+	target := strings.TrimSpace(values["target-src"])
+	if target == "" || target == "None" {
+		return nil
+	}
+	inventory, err := read("SOURCE-INVENTORY-RECORD", target)
+	if err != nil {
+		return nil // existence is enforced by the reference validator
+	}
+	coordinate := strings.TrimSpace(values["target-concrete-coordinate-or-resolution-rule"])
+	sourceCoordinate := strings.TrimSpace(inventory["concrete-coordinate"])
+	if coordinate != "" && sourceCoordinate != "" && coordinate != sourceCoordinate {
+		return fmt.Errorf("FRONTIER-RECORD.target-concrete-coordinate %q does not match source unit %s coordinate %q", coordinate, target, sourceCoordinate)
+	}
+	return nil
 }
 
 func validateClaim(values map[string]string, read RecordReader) error {

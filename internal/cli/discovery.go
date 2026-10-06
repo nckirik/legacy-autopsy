@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
+	"github.com/nckirik/legacy-autopsy/internal/assurance"
 	"github.com/nckirik/legacy-autopsy/internal/discovery"
 	"github.com/nckirik/legacy-autopsy/internal/llm"
 	"github.com/nckirik/legacy-autopsy/internal/store"
@@ -16,12 +17,80 @@ import (
 // inventory pipeline against the canonical store.
 func specDiscovery(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec discovery <run> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec discovery <run|frontier> [flags]")
 	}
 	op := args[0]
-	if op != "run" {
-		return fmt.Errorf("spec discovery operation %q is unsupported; supported operations: run", op)
+	switch op {
+	case "run":
+		return specDiscoveryRun(args[1:], stdout, stderr)
+	case "frontier":
+		return specDiscoveryFrontier(args[1:], stdout, stderr)
+	default:
+		return fmt.Errorf("spec discovery operation %q is unsupported; supported operations: run, frontier", op)
 	}
+}
+
+// specDiscoveryFrontier records one mechanical terminal frontier per committed
+// source unit. It needs no model; the runtime authors the rows and the 0G entry.
+func specDiscoveryFrontier(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec discovery frontier", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	iteration := set.String("iteration", "", "override the §10.6 iteration token")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec discovery frontier requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	inventory, err := assurance.LoadInventory(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	if len(inventory) == 0 {
+		return fmt.Errorf("discovery frontier: no committed source inventory (run spec discovery run first)")
+	}
+	units := make([]discovery.SourceUnit, 0, len(inventory))
+	for _, item := range inventory {
+		units = append(units, discovery.SourceUnit{ID: item.ID, Coordinate: item.Coordinate, Fingerprint: item.Fingerprint})
+	}
+	runConfig := work.DefaultConfig()
+	if iteration := header["current-iteration"]; iteration != "" {
+		runConfig.Iteration = iteration
+	}
+	if *iteration != "" {
+		runConfig.Iteration = *iteration
+	}
+	session, err := work.NewSession(*db, res.EIR, runConfig, discovery.MechanicalFrontierExecutor{Inventory: units}, nil)
+	if err != nil {
+		return err
+	}
+	report, err := session.Run([]work.Unit{discovery.FrontierPlan(units, header["system-namespace"])})
+	if err != nil {
+		return err
+	}
+	for _, stats := range report.Units {
+		fmt.Fprintf(stdout, "%s: invocation %s committed=%v\n", stats.UnitID, stats.InvocationID, stats.Committed)
+	}
+	fmt.Fprintf(stdout, "terminal frontiers recorded: %d\n", len(inventory))
+	return nil
+}
+
+func specDiscoveryRun(args []string, stdout, stderr io.Writer) error {
 	set := flags("spec discovery run", stderr)
 	repo := set.String("repo", ".", "protocol repository root")
 	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
@@ -37,7 +106,7 @@ func specDiscovery(args []string, stdout, stderr io.Writer) error {
 	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
 	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
 	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
-	if err := set.Parse(args[1:]); err != nil {
+	if err := set.Parse(args); err != nil {
 		return err
 	}
 	if len(set.Args()) != 0 {
