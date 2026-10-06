@@ -63,7 +63,10 @@ func TestVerifyChain(t *testing.T) {
 	finalRegistry := RegistryFingerprint("EXIT-E-FINAL-CHECKS-v1", RegistryCheckIDs(d, "FINAL-CHECK"))
 
 	candidate := stage(t, d, "EXIT-E-CANDIDATE-REPORT",
-		map[string]string{"system-protocol-snapshot": snapshot, "candidate-result": "Ready-For-Human-Review"},
+		map[string]string{
+			"system-protocol-snapshot": snapshot, "candidate-result": "Ready-For-Human-Review",
+			"required-check-registry-fingerprint": RegistryFingerprint("EXIT-E-CHECKS-v1", RegistryCheckIDs(d, "EXIT-E-CANDIDATE-CHECKS")),
+		},
 		RegistryCheckIDs(d, "EXIT-E-CANDIDATE-CHECKS"))
 	candidateFingerprint, err := PayloadFingerprint("EXIT-E-CANDIDATE-REPORT", "23-candidate.md", candidate)
 	if err != nil {
@@ -73,7 +76,12 @@ func TestVerifyChain(t *testing.T) {
 		map[string]string{"system-protocol-snapshot": snapshot, "exit-e-candidate-report-fingerprint": candidateFingerprint}, nil)
 	manifestFingerprint, _ := PayloadFingerprint("CANDIDATE-PAYLOAD-MANIFEST", "24-manifest.md", manifest)
 	readiness := stage(t, d, "EXIT-E-CONTENT-READINESS-REPORT",
-		map[string]string{"system-protocol-snapshot": snapshot, "exit-e-candidate-report-fingerprint": candidateFingerprint, "candidate-payload-manifest-fingerprint": manifestFingerprint, "content-readiness-result": "Ready-For-Certificate", "exit-e-prepackage-state": "Pending"},
+		map[string]string{
+			"system-protocol-snapshot": snapshot, "exit-e-candidate-report-fingerprint": candidateFingerprint,
+			"candidate-payload-manifest-fingerprint": manifestFingerprint, "content-readiness-result": "Ready-For-Certificate",
+			"exit-e-prepackage-state":             "Pending",
+			"required-check-registry-fingerprint": RegistryFingerprint("EXIT-E-CHECKS-v1", RegistryCheckIDs(d, "EXIT-E-CONTENT-READINESS-CHECKS")),
+		},
 		RegistryCheckIDs(d, "EXIT-E-CONTENT-READINESS-CHECKS"))
 	readinessFingerprint, _ := PayloadFingerprint("EXIT-E-CONTENT-READINESS-REPORT", "25-readiness.md", readiness)
 	certificate := stage(t, d, "SCOPE-CERTIFICATE",
