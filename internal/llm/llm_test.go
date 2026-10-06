@@ -2,6 +2,7 @@ package llm
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -17,6 +18,7 @@ type captured struct {
 	model     string
 	reasoning string
 	temp      float64
+	stream    bool
 	systems   []string
 	users     []string
 }
@@ -36,6 +38,7 @@ func fakeServer(t *testing.T, reply func(system, user string) string) (*httptest
 		recorded.model = request.Model
 		recorded.reasoning = request.ReasoningEffort
 		recorded.temp = request.Temperature
+		recorded.stream = request.Stream
 		for _, message := range request.Messages {
 			if message.Role == "system" {
 				recorded.systems = append(recorded.systems, message.Content)
@@ -44,6 +47,15 @@ func fakeServer(t *testing.T, reply func(system, user string) string) (*httptest
 			}
 		}
 		content := reply(last(recorded.systems), last(recorded.users))
+		if request.Stream {
+			w.Header().Set("Content-Type", "text/event-stream")
+			writeSSE(w, map[string]any{"choices": []map[string]any{{"delta": map[string]string{"reasoning_content": "think "}}}})
+			half := len(content) / 2
+			writeSSE(w, map[string]any{"choices": []map[string]any{{"delta": map[string]string{"content": content[:half]}}}})
+			writeSSE(w, map[string]any{"choices": []map[string]any{{"delta": map[string]string{"content": content[half:]}, "finish_reason": "stop"}}})
+			fmt.Fprint(w, "data: [DONE]\n\n")
+			return
+		}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"choices": []map[string]any{{"message": map[string]string{"role": "assistant", "content": content}}},
@@ -51,6 +63,11 @@ func fakeServer(t *testing.T, reply func(system, user string) string) (*httptest
 	}))
 	t.Cleanup(server.Close)
 	return server, recorded
+}
+
+func writeSSE(w http.ResponseWriter, chunk map[string]any) {
+	payload, _ := json.Marshal(chunk)
+	fmt.Fprintf(w, "data: %s\n\n", payload)
 }
 
 func last(values []string) string {
@@ -240,14 +257,11 @@ func TestClientRetriesEmptyContent(t *testing.T) {
 	attempts := 0
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		attempts++
-		content := ""
+		w.Header().Set("Content-Type", "text/event-stream")
 		if attempts >= 3 {
-			content = "OK"
+			writeSSE(w, map[string]any{"choices": []map[string]any{{"delta": map[string]string{"content": "OK"}, "finish_reason": "stop"}}})
 		}
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(map[string]any{
-			"choices": []map[string]any{{"message": map[string]string{"role": "assistant", "content": content}, "finish_reason": "length"}},
-		})
+		fmt.Fprint(w, "data: [DONE]\n\n")
 	}))
 	defer server.Close()
 	client := testClient(t, server.URL)
@@ -257,6 +271,28 @@ func TestClientRetriesEmptyContent(t *testing.T) {
 	}
 	if text != "OK" || attempts != 3 {
 		t.Fatalf("text=%q attempts=%d", text, attempts)
+	}
+}
+
+func TestClientStreamsDeltas(t *testing.T) {
+	server, recorded := fakeServer(t, func(system, user string) string { return "streamed reply" })
+	client := testClient(t, server.URL)
+	var content, reasoning strings.Builder
+	text, err := client.CompleteEffortStream(t.Context(), "s", "u", "xhigh", func(delta Delta) {
+		content.WriteString(delta.Content)
+		reasoning.WriteString(delta.Reasoning)
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if text != "streamed reply" || content.String() != "streamed reply" {
+		t.Fatalf("text=%q deltas=%q", text, content.String())
+	}
+	if !strings.Contains(reasoning.String(), "think") {
+		t.Fatalf("reasoning deltas = %q", reasoning.String())
+	}
+	if !recorded.stream {
+		t.Fatal("client did not request streaming")
 	}
 }
 

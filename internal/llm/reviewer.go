@@ -34,9 +34,18 @@ func NewReviewerFromEnv() (*Reviewer, error) {
 // Review asks the model to judge the proposed record from its independently
 // constructed context.
 func (r *Reviewer) Review(request work.ReviewRequest) (work.ReviewResult, error) {
-	text, err := r.client.Complete(context.Background(), reviewerSystemPrompt, string(request.Context.Bytes))
+	var sink func(Delta)
 	if r.Debug != nil {
-		fmt.Fprintf(r.Debug, "\n===== review response for %s =====\n%s\n===== end review %s =====\n", request.Unit.ID, text, request.Unit.ID)
+		fmt.Fprintf(r.Debug, "\n===== review response for %s =====\n", request.Unit.ID)
+		sink = func(delta Delta) {
+			if delta.Content != "" {
+				fmt.Fprint(r.Debug, delta.Content)
+			}
+		}
+	}
+	text, err := r.client.CompleteEffortStream(context.Background(), reviewerSystemPrompt, string(request.Context.Bytes), r.client.config.Reasoning, sink)
+	if r.Debug != nil {
+		fmt.Fprintf(r.Debug, "\n===== end review %s =====\n", request.Unit.ID)
 	}
 	if err != nil {
 		return work.ReviewResult{}, err

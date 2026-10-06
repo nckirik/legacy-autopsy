@@ -87,10 +87,9 @@ func NewExecutorFromEnv() (*Executor, error) {
 
 // Execute runs one work unit through the model and parses the bounded response.
 func (e *Executor) Execute(invocation work.Invocation) (work.Proposal, error) {
-	text, err := e.client.CompleteEffort(context.Background(), executorSystemPrompt, executorUserPrompt(invocation), e.effortFor(invocation.Unit))
-	if e.Debug != nil {
-		fmt.Fprintf(e.Debug, "\n===== model response for %s =====\n%s\n===== end %s =====\n", invocation.Unit.ID, text, invocation.Unit.ID)
-	}
+	sink, done := e.debugSink(invocation.Unit.ID)
+	text, err := e.client.CompleteEffortStream(context.Background(), executorSystemPrompt, executorUserPrompt(invocation), e.effortFor(invocation.Unit), sink)
+	done()
 	if err != nil {
 		return work.Proposal{}, err
 	}
@@ -105,6 +104,30 @@ func (e *Executor) Execute(invocation work.Invocation) (work.Proposal, error) {
 		return work.Proposal{}, fmt.Errorf("llm: proposal writes %s, result contract is %s", proposal.FieldID, invocation.Unit.ResultType)
 	}
 	return proposal, nil
+}
+
+// debugSink streams live model output to the debug writer: content verbatim so
+// a watcher sees the answer forming, reasoning as periodic dots so hidden
+// deliberation stays compact. The returned done closes the block.
+func (e *Executor) debugSink(unitID string) (func(Delta), func()) {
+	if e.Debug == nil {
+		return nil, func() {}
+	}
+	fmt.Fprintf(e.Debug, "\n===== model response for %s =====\n", unitID)
+	reasoningChars := 0
+	sink := func(delta Delta) {
+		if delta.Reasoning != "" {
+			reasoningChars += len(delta.Reasoning)
+			for reasoningChars >= 512 {
+				fmt.Fprint(e.Debug, "·")
+				reasoningChars -= 512
+			}
+		}
+		if delta.Content != "" {
+			fmt.Fprint(e.Debug, delta.Content)
+		}
+	}
+	return sink, func() { fmt.Fprintf(e.Debug, "\n===== end %s =====\n", unitID) }
 }
 
 func (e *Executor) effortFor(unit work.Unit) string {

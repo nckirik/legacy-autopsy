@@ -36,14 +36,18 @@
 
 ## Provider behavior found (important)
 
-- With `reasoning_effort` at `high`/`xhigh`, long prompts intermittently return HTTP
-  200 with empty `content` (reasoning consumed the output budget, `finish_reason`
-  often `length`). The client now retries empty responses twice and reports
-  `finish_reason`; empty-after-retry fails closed.
-- Mechanical extraction units therefore declare `ReasoningEffort: "off"`
-  (`--llm-reasoning` still forces an override). This made the pilot deterministic in
-  practice while leaving reasoning available for synthesis-class units.
-- `LEGACY_AUTOPSY_LLM_MAX_TOKENS` bounds completion tokens (default 16384).
+- The apparent "empty response" flakiness was our own request model: a 120s whole-
+  request HTTP timeout killed long `xhigh` reasoning runs (non-streaming) or aborted
+  mid-stream. Opencode, by contrast, streams with no such total cap.
+- The client now streams by default (SSE) and splits timeouts: a 120s
+  time-to-first-byte guard plus a 45-minute whole-stream deadline
+  (`LEGACY_AUTOPSY_LLM_STREAM_TIMEOUT`), so long reasoning completes. Verified with
+  `--llm-reasoning xhigh` forced on all three units: committed in ~12m24s.
+- Empty-content responses are still retried twice and reported with `finish_reason`.
+- `LEGACY_AUTOPSY_LLM_MAX_TOKENS` bounds completion tokens (default 16384; 32768 for
+  `xhigh` runs). Mechanical units may declare `ReasoningEffort: "off"`;
+  `--llm-reasoning` forces an override. `LEGACY_AUTOPSY_LLM_STREAM=0` falls back to
+  non-streaming.
 
 ## Diagnostics added for this pilot
 

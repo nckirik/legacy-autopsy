@@ -2,6 +2,7 @@ package cli
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -17,6 +18,7 @@ func fakeModelServer(t *testing.T) *httptest.Server {
 	t.Helper()
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var request struct {
+			Stream   bool `json:"stream"`
 			Messages []struct {
 				Role    string `json:"role"`
 				Content string `json:"content"`
@@ -35,6 +37,16 @@ func fakeModelServer(t *testing.T) *httptest.Server {
 		content := "OK"
 		if !strings.Contains(system, "connectivity probe") {
 			content = "RESULT: PROPOSAL\nEFFECTS: none\n---RECORD---\n- **Constraint:** model writes\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n---END---\n"
+		}
+		if request.Stream {
+			w.Header().Set("Content-Type", "text/event-stream")
+			half := len(content) / 2
+			for _, piece := range []string{content[:half], content[half:]} {
+				payload, _ := json.Marshal(map[string]any{"choices": []map[string]any{{"delta": map[string]string{"content": piece}, "finish_reason": "stop"}}})
+				fmt.Fprintf(w, "data: %s\n\n", payload)
+			}
+			fmt.Fprint(w, "data: [DONE]\n\n")
+			return
 		}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
