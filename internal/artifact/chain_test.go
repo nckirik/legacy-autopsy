@@ -65,7 +65,7 @@ func TestVerifyChain(t *testing.T) {
 	candidate := stage(t, d, "EXIT-E-CANDIDATE-REPORT",
 		map[string]string{
 			"system-protocol-snapshot": snapshot, "candidate-result": "Ready-For-Human-Review",
-			"required-check-registry-fingerprint": RegistryFingerprint("EXIT-E-CHECKS-v1", RegistryCheckIDs(d, "EXIT-E-CANDIDATE-CHECKS")),
+			"required-check-registry-fingerprint": CheckRegistryFingerprint(d),
 		},
 		RegistryCheckIDs(d, "EXIT-E-CANDIDATE-CHECKS"))
 	candidateFingerprint, err := PayloadFingerprint("EXIT-E-CANDIDATE-REPORT", "23-candidate.md", candidate)
@@ -80,26 +80,34 @@ func TestVerifyChain(t *testing.T) {
 			"system-protocol-snapshot": snapshot, "exit-e-candidate-report-fingerprint": candidateFingerprint,
 			"candidate-payload-manifest-fingerprint": manifestFingerprint, "content-readiness-result": "Ready-For-Certificate",
 			"exit-e-prepackage-state":             "Pending",
-			"required-check-registry-fingerprint": RegistryFingerprint("EXIT-E-CHECKS-v1", RegistryCheckIDs(d, "EXIT-E-CONTENT-READINESS-CHECKS")),
+			"required-check-registry-fingerprint": CheckRegistryFingerprint(d),
 		},
 		RegistryCheckIDs(d, "EXIT-E-CONTENT-READINESS-CHECKS"))
 	readinessFingerprint, _ := PayloadFingerprint("EXIT-E-CONTENT-READINESS-REPORT", "25-readiness.md", readiness)
 	certificate := stage(t, d, "SCOPE-CERTIFICATE",
 		map[string]string{"system-protocol-snapshot": snapshot, "exit-e-content-readiness-report-fingerprint": readinessFingerprint}, nil)
 	certificateFingerprint, _ := PayloadFingerprint("SCOPE-CERTIFICATE", "26-certificate.md", certificate)
-	outer := stage(t, d, "OUTER-BUNDLE-MANIFEST",
-		map[string]string{
-			"system-protocol-snapshot":                      snapshot,
-			"final-verification-check-registry-fingerprint": finalRegistry,
-			"exit-e-content-readiness-report-fingerprint":   readinessFingerprint,
-			"scope-certificate-fingerprint":                 certificateFingerprint,
-			"exit-e-status":                                 "Passed",
-		}, nil)
+	outerOverrides := map[string]string{
+		"system-protocol-snapshot":                      snapshot,
+		"final-verification-check-registry-fingerprint": finalRegistry,
+		"exit-e-content-readiness-report-fingerprint":   readinessFingerprint,
+		"scope-certificate-fingerprint":                 certificateFingerprint,
+		"exit-e-status":                                 "Passed",
+	}
+	outer := stage(t, d, "OUTER-BUNDLE-MANIFEST", outerOverrides, nil)
+	readinessStage := ChainStage{Type: "EXIT-E-CONTENT-READINESS-REPORT", Path: "25-readiness.md", Payload: readiness}
+	certificateStage := ChainStage{Type: "SCOPE-CERTIFICATE", Path: "26-certificate.md", Payload: certificate}
+	preSignature, err := PreSignatureInputs(d, outer, readinessStage, certificateStage)
+	if err != nil {
+		t.Fatal(err)
+	}
+	outerOverrides["pre-signature-validation-input-set-fingerprint"] = preSignature
+	outer = stage(t, d, "OUTER-BUNDLE-MANIFEST", outerOverrides, nil)
 	stages := []ChainStage{
 		{Type: "EXIT-E-CANDIDATE-REPORT", Path: "23-candidate.md", Payload: candidate},
 		{Type: "CANDIDATE-PAYLOAD-MANIFEST", Path: "24-manifest.md", Payload: manifest},
-		{Type: "EXIT-E-CONTENT-READINESS-REPORT", Path: "25-readiness.md", Payload: readiness},
-		{Type: "SCOPE-CERTIFICATE", Path: "26-certificate.md", Payload: certificate},
+		readinessStage,
+		certificateStage,
 		{Type: "OUTER-BUNDLE-MANIFEST", Path: "27-outer.md", Payload: outer},
 	}
 	if err := VerifyChain(d, stages); err != nil {
@@ -125,5 +133,10 @@ func TestVerifyChain(t *testing.T) {
 	missingChecks[0] = ChainStage{Type: "EXIT-E-CANDIDATE-REPORT", Path: "23-candidate.md", Payload: []byte(strings.ReplaceAll(string(candidate), "CANDIDATE-01-EXIT-A", "CANDIDATE-99-UNKNOWN"))}
 	if err := VerifyChain(d, missingChecks); err == nil {
 		t.Fatal("unknown check accepted")
+	}
+	badPreSignature := append([]ChainStage(nil), stages...)
+	badPreSignature[4] = ChainStage{Type: "OUTER-BUNDLE-MANIFEST", Path: "27-outer.md", Payload: []byte(strings.Replace(string(outer), preSignature, "sha256:tampered", 1))}
+	if err := VerifyChain(d, badPreSignature); err == nil || !strings.Contains(err.Error(), "pre-signature") {
+		t.Fatalf("bad pre-signature accepted: %v", err)
 	}
 }

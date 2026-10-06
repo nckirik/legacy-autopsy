@@ -26,16 +26,49 @@ var chainSequence = []string{
 
 // RegistryFingerprint computes the canonical check-registry fingerprint from
 // the ordered check IDs. The preimage is `EXIT-E-CHECK-REGISTRY|<id>` plus LF
-// and the canonical one-column table of check IDs. (The requirement prose is
-// not yet part of the preimage; this is the pilot realization.)
+// and the canonical two-column table of check IDs and scopes. (The requirement
+// prose is not yet part of the preimage; this is the pilot realization.)
 func RegistryFingerprint(registryID string, checks []string) string {
+	return RegistryFingerprintScoped(registryID, checks, nil)
+}
+
+// RegistryFingerprintScoped is RegistryFingerprint with an optional per-check
+// scope column, preserving the source table's CANDIDATE/CONTENT-READINESS
+// ordering.
+func RegistryFingerprintScoped(registryID string, checks, scopes []string) string {
 	var b strings.Builder
-	b.WriteString("| Check ID |\n| --- |\n")
-	for _, check := range checks {
-		fmt.Fprintf(&b, "| %s |\n", check)
+	b.WriteString("| Check Scope | Check ID |\n| --- | --- |\n")
+	for i, check := range checks {
+		scope := ""
+		if i < len(scopes) {
+			scope = scopes[i]
+		}
+		fmt.Fprintf(&b, "| %s | %s |\n", scope, check)
 	}
 	canonical, _ := capabilities.CanonicalMarkdown([]byte(b.String()))
 	return capabilities.Hash([]byte("EXIT-E-CHECK-REGISTRY|" + registryID + "\n" + string(canonical)))
+}
+
+// CheckRegistry computes the one `EXIT-E-CHECKS-v1` registry identity: the
+// candidate checks followed by the content-readiness checks, in declared order.
+func CheckRegistry(doc *cdl.EIRDoc) ([]string, []string) {
+	candidates := RegistryCheckIDs(doc, "EXIT-E-CANDIDATE-CHECKS")
+	readiness := RegistryCheckIDs(doc, "EXIT-E-CONTENT-READINESS-CHECKS")
+	checks := append(append([]string(nil), candidates...), readiness...)
+	scopes := make([]string, 0, len(checks))
+	for range candidates {
+		scopes = append(scopes, "CANDIDATE")
+	}
+	for range readiness {
+		scopes = append(scopes, "CONTENT-READINESS")
+	}
+	return checks, scopes
+}
+
+// CheckRegistryFingerprint is the canonical `EXIT-E-CHECKS-v1` fingerprint.
+func CheckRegistryFingerprint(doc *cdl.EIRDoc) string {
+	checks, scopes := CheckRegistry(doc)
+	return RegistryFingerprintScoped("EXIT-E-CHECKS-v1", checks, scopes)
 }
 
 // CandidateCheckIDs and ReadinessCheckIDs return the ordered registry values
@@ -104,6 +137,9 @@ func VerifyChain(doc *cdl.EIRDoc, stages []ChainStage) error {
 			if !strings.Contains(string(stage.Payload), expected) {
 				failures = append(failures, "outer manifest does not carry the recomputed final check-registry fingerprint")
 			}
+			if err := verifyPreSignature(doc, stage, stages); err != nil {
+				failures = append(failures, err.Error())
+			}
 		}
 	}
 	if len(failures) > 0 {
@@ -139,9 +175,8 @@ func verifyCheckSet(doc *cdl.EIRDoc, stage ChainStage) error {
 			return fmt.Errorf("%s check set does not match %s (missing or duplicated %s)", stage.Type, registry, id)
 		}
 	}
-	expected := RegistryFingerprint("EXIT-E-CHECKS-v1", declared)
-	if observed := payloadField(stage.Payload, "required-check-registry-fingerprint"); observed != expected {
-		return fmt.Errorf("%s does not carry the recomputed %s fingerprint", stage.Type, registry)
+	if observed := payloadField(stage.Payload, "required-check-registry-fingerprint"); observed != CheckRegistryFingerprint(doc) {
+		return fmt.Errorf("%s does not carry the recomputed EXIT-E-CHECKS-v1 fingerprint", stage.Type)
 	}
 	for id := range present {
 		found := false

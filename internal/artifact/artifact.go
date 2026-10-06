@@ -161,6 +161,12 @@ func PackageMembers(members []Member) ([]ManifestEntry, error) {
 	return entries, nil
 }
 
+// DumpMember wraps a canonical store dump as the binding's canonical
+// serialization package member.
+func DumpMember(dump []byte) Member {
+	return Member{Path: "store/legacy-autopsy.sql", Bytes: dump}
+}
+
 // VerifyMembers recomputes every member fingerprint and fails closed on a
 // missing member, an extra member, a duplicate binding, or any byte change.
 func VerifyMembers(members []Member, manifest []ManifestEntry) error {

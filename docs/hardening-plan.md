@@ -172,9 +172,11 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
   chain verification (`artifact.VerifyChain`, `spec artifact chain`): ordered §15.4
   stage sequence, per-stage schema validation, check-set equality against the declared
   candidate/readiness registries, recomputed final check-registry fingerprint, chain
-  references, snapshot equality, and Pending/Passed ordering. Remaining: requirement
-  prose in the registry preimage, pre-signature input-set recomputation over members,
-  and assembly of the `23`-`27` human deliverables. Architecture (decision 8):
+  references, snapshot equality, Pending/Passed ordering, the single `EXIT-E-CHECKS-v1`
+  registry identity in both reports, and recomputed pre-signature input-set
+  fingerprints. Remaining: requirement prose in the registry preimage, model-driven
+  authoring/assembly of the `23`-`27` deliverables, and the final-bundle final-check
+  registry execution. Architecture (decision 8):
   payloads are executor-authored Markdown validated through the label-to-column
   mapping; no label table is introduced.
 - [x] Append-only runtime post-conditions: `store.LogState` plus
@@ -246,9 +248,9 @@ Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
 - [x] Append-only `0G` as a runtime post-condition: `store.LogState` snapshots log
       record IDs and `store.VerifyMonotonicLogs` fails closed on any disappearance, in
       addition to the database triggers.
-- [~] Canonical dump and package-member fingerprints exist and are verified against
-  EIR-derived schemas; wiring the dump into the handoff bundle and outer-manifest
-  chain follows with the §15.5 verifier.
+- [x] Canonical dump and package-member fingerprints are verified against EIR-derived
+      schemas, and `artifact.DumpMember` binds the canonical store dump (`store/legacy-autopsy.sql`)
+      into package-member manifests with tamper rejection.
 - [x] Round-trip fixture: bootstrap `0A` import → canonical dump is identical for
       different import orders (`TestBootstrapRoundTripDeterministic`).
 - [x] Generated human projections (`store.Render`) and diagnostic renders

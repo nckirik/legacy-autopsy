@@ -176,3 +176,25 @@ func TestVerifyBundle(t *testing.T) {
 		t.Fatal("extra member accepted")
 	}
 }
+
+func TestDumpMemberInBundle(t *testing.T) {
+	dump := []byte("-- GENERATED canonical store dump\nBEGIN;\nCREATE TABLE \"x\" (\"y\" TEXT);\nCOMMIT;\n")
+	members := []Member{
+		DumpMember(dump),
+		{Path: "handoff/01.md", Bytes: []byte("# handbook\n")},
+	}
+	manifest, err := PackageMembers(members)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if manifest[0].Path != "handoff/01.md" || manifest[1].Path != "store/legacy-autopsy.sql" {
+		t.Fatalf("manifest = %+v", manifest)
+	}
+	if err := VerifyMembers(members, manifest); err != nil {
+		t.Fatal(err)
+	}
+	tampered := []Member{DumpMember(append(append([]byte(nil), dump...), 'x')), members[1]}
+	if err := VerifyMembers(tampered, manifest); err == nil {
+		t.Fatal("tampered dump accepted")
+	}
+}
