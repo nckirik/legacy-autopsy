@@ -212,8 +212,9 @@ run`); connection details come from `LEGACY_AUTOPSY_LLM_URL`,
 `LEGACY_AUTOPSY_LLM_KEY`, `LEGACY_AUTOPSY_LLM_MODEL`, the optional
 `LEGACY_AUTOPSY_LLM_REASONING` (`reasoning_effort`, e.g. `xhigh`),
 `LEGACY_AUTOPSY_LLM_MAX_TOKENS`, and `LEGACY_AUTOPSY_LLM_STREAM_TIMEOUT` only, and the
-key is never committed or logged. Responses stream over SSE with `--show-model`
-rendering content live and reasoning as progress dots; `LEGACY_AUTOPSY_LLM_STREAM=0`
+key is never committed or logged. Responses stream over SSE with
+`--show-model stderr|stdout` rendering content live and reasoning as progress dots
+(stderr by default keeps stdout clean for piping); `LEGACY_AUTOPSY_LLM_STREAM=0`
 falls back to non-streaming. The model returns a strict
 proposal/blocker/review format; malformed responses fail closed. Record identity and
 version are runtime-owned: the unit declares the target record ID, the runtime assigns

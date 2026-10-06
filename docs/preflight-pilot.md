@@ -51,8 +51,8 @@
 
 ## Diagnostics added for this pilot
 
-- `--show-model`: prints raw model responses and review verdicts to stderr; never an
-  artifact.
+- `--show-model off|stderr|stdout`: streams raw model output (default off; diagnostic
+  and never an artifact); stderr keeps stdout clean for data piping.
 - Ingest validation failures report the parsed declared fields, and retries receive
   the rejection reason inline (`## Previous attempt rejected`).
 

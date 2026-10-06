@@ -37,7 +37,7 @@ func specWork(args []string, stdout, stderr io.Writer) error {
 	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
 	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
 	timeout := set.Duration("llm-timeout", 0, "per-request timeout (default 120s)")
-	showModel := set.Bool("show-model", false, "print raw model responses to stderr (diagnostic, non-authoritative)")
+	showModel := set.String("show-model", "off", "stream raw model output: off|stderr|stdout (diagnostic, non-authoritative)")
 	maxRetries := set.Int("max-retries", 0, "override the retry budget for rejected proposals")
 	if err := set.Parse(args[1:]); err != nil {
 		return err
@@ -116,9 +116,16 @@ func specWork(args []string, stdout, stderr io.Writer) error {
 	if *llmReasoning != "" {
 		executor.ForceReasoning = llmReasoning
 	}
-	if *showModel {
+	switch strings.ToLower(*showModel) {
+	case "", "off", "none":
+	case "stderr":
 		executor.SetDebug(stderr)
 		reviewer.Debug = stderr
+	case "stdout":
+		executor.SetDebug(stdout)
+		reviewer.Debug = stdout
+	default:
+		return fmt.Errorf("--show-model must be off, stderr, or stdout")
 	}
 	session, err := work.NewSession(*db, res.EIR, runConfig, executor, reviewer)
 	if err != nil {
