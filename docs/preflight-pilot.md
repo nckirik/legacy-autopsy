@@ -115,8 +115,19 @@ synthesis-to-source mappings are not declared (PI-18), so coverage cannot reach
 (claim bindings resolved to their subject source units, invocation
 `ALFA-NONE-NONE-006`), and `spec assurance advance` recomputed dispositions:
 **40/40 coverage rows `Mapped`**. The gate now reports `COVERAGE-DENOMINATOR Pass`.
-Remaining honest failures: per-cell traversal closure (0/25) and the
-synthesis-coverage condition.
+**Exit A is now green on the pilot**: v4.5 keyed sweep records and per-cell sweeps
+closed all 25 required cells, and the synthesis-coverage condition passes because all
+40 mapped source units carry `DERIVED-FROM-EDGE` synthesis provenance:
+
+```
+ACTIVE-TICKETS               Pass
+COVERAGE-DENOMINATOR         Pass  40/40 mapped or excluded
+COVERAGE-SOURCE-INVENTORY    Pass  40 source units, 40 coverage rows
+FRONTIER-CLOSURE             Pass  40 frontiers, none open
+SYNTHESIS-COVERAGE           Pass  40/40 mapped units have synthesis provenance
+TRAVERSAL-MATRIX-CLOSURE     Pass  25/25 matrix cells closed
+Exit A: Pass
+```
 
 ## Next steps
 

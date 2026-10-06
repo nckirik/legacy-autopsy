@@ -330,9 +330,10 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
 - [x] Traversal closure modeling (PI-17, v4.3): `REQUIRED-TRAVERSAL-MATRIX-ROW` records
       keyed by cluster/persona/POV/track/environment/snapshot; `spec preflight matrix`
       mechanically expands cells; the gate evaluates real closure (live pilot 0/25).
-      **Blocked on PI-19** for closure: sweep records lack the same structured keys, so
-      cells cannot be matched to traversal evidence; per-POV sweep units follow that
-      revision.
+      PI-19 (v4.5) added the matching structured keys on `SWEEP-RECORD`; per-cell
+      mechanical sweeps (`spec assurance sweep`) record the evidence and
+      `assurance.AdvanceMatrix` closes matching `C-COVERED` cells. Live pilot:
+      **25/25 cells closed** and all Exit A conditions Pass.
 
 ### W6 - Acceptance rerun
 
