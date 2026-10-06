@@ -426,3 +426,44 @@ oracle snapshot is an open process decision.
 - **Impact:** normative change limited to authority/serialization/packaging clauses; no
   per-record semantic change and no new mandatory technology. Implementation follows in
   the W3/W4 store work and the next protocol revision.
+
+## PI-16: Synthesis catalog records have no declared semantic identity fields
+
+- **Status:** proposed; not yet accepted. Blocks the Synthesis pipeline.
+- **Source:** Autonomous pipeline work 2026-10-06; `assurance.EvaluateExitA`
+  reports `SYNTHESIS-COVERAGE: Unsupported`.
+- **Affected:** §4.1 identity rules for `MOD`/`ER`/`REL`/`BR`/`UC`/`IF`/`DEP`/`CFG`/
+  `SCHED`/`NFR`/`SEC`/`FLT`/`DR`, §6 synthesis catalog schemas
+  (`ARCHITECTURE-MODULE`, `ENTITY-RECORD`, ...).
+- **Observed:** §4.1 derives a semantic catalog ID from a stable domain path plus
+  normalized semantic title (`MOD|namespace|owner|discriminator`), but the declared
+  synthesis `FIELD` blocks expose only body content - the title and path exist only
+  as Markdown headings/`SYNTHESIS-BLOCK-HEADER` values, which are not identity inputs.
+  A runtime therefore cannot mint or reproduce `MOD-*` identities without a volatile
+  proxy (an editable body field), violating proven-move identity retention.
+- **Proposed direction:** declare identity carriers on synthesis records (for example
+  a runtime-assigned `block-id` plus explicit `record-title` and `domain-path`
+  fields, or make the block header an owned per-record child so title/path are
+  structured), so IDs are runtime-computed from declared fields and headings stay
+  display-only. Requires the normal language/protocol revision and regeneration.
+- **Impact:** enables Synthesis authoring, coverage mapping, and the Exit A
+  `SYNTHESIS-COVERAGE` condition; no semantic change to catalog content.
+
+## PI-17: Traversal-matrix rows are not addressable records
+
+- **Status:** proposed; not yet accepted. Blocks deterministic traversal closure.
+- **Source:** Autonomous pipeline work 2026-10-06; `assurance.EvaluateExitA` reports
+  `TRAVERSAL-MATRIX-CLOSURE: Unsupported`.
+- **Affected:** §3.1 `0A` `Required Traversal Matrix`, `REQUIRED-TRAVERSAL-MATRIX`
+  schema, §2 traversal tracks, Exit A condition 4 / §16 closure rules.
+- **Observed:** each matrix row is serialized inside the cluster payload as a free
+  string (`required-traversal-matrix`), so required cells cannot be enumerated,
+  keyed, evidence-bound, or closed deterministically; the gate can only report
+  `Unsupported`.
+- **Proposed direction:** model matrix rows as declared rows keyed by
+  persona/cluster/POV/track/environment/snapshot with status and claim/evidence
+  bindings (owned child rows of the cluster), so every required cell is addressable
+  and closure is provable. The parent text field becomes the canonical rendering of
+  those rows.
+- **Impact:** enables the Exit A traversal-closure condition and one-FRT-per-boundary
+  verification at cell granularity.

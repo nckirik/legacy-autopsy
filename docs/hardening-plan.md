@@ -315,8 +315,12 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
   per-condition Pass/Fail/Unsupported - the live pilot currently fails Exit A with
   `0/40 mapped or excluded` and two Unsupported conditions. Remaining: export
   reconciliation.
-- [ ] Synthesis: `90`-`96` semantic records with independent review.
+- [ ] Synthesis: `90`-`96` semantic records with independent review. **Blocked
+      (PI-16):** synthesis catalog records have no declared semantic identity fields, so
+      runtime IDs cannot be derived without a volatile proxy.
 - [ ] Handoff: artifact authoring, packaging, and the §15.5 verifier chain.
+      **Gated** on a passing Exit A (which needs Synthesis coverage mapped) and on
+      model-driven stage assembly.
 
 ### W6 - Acceptance rerun
 
