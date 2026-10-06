@@ -24,9 +24,39 @@ func ValidateReferences(fieldID string, values map[string]string, lookup Referen
 		return validateEntryCluster(values, lookup)
 	case "FRONTIER-RECORD":
 		return validateFrontier(values, lookup)
+	case "DERIVED-FROM-EDGE":
+		return validateDerivedFrom(values, lookup)
 	default:
 		return nil
 	}
+}
+
+func validateDerivedFrom(values map[string]string, lookup ReferenceLookup) error {
+	source := strings.TrimSpace(values["source-record-id"])
+	if source == "" || source == "None" {
+		return fmt.Errorf("DERIVED-FROM-EDGE.source-record-id is empty")
+	}
+	exists, err := lookup("SOURCE-INVENTORY-RECORD", source)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return fmt.Errorf("DERIVED-FROM-EDGE.source-record-id %q does not reference a committed source unit", source)
+	}
+	if strings.EqualFold(strings.TrimSpace(values["binding-kind"]), "CLAIM") {
+		claim := strings.TrimSpace(values["claim-id"])
+		if claim == "" || claim == "None" {
+			return fmt.Errorf("DERIVED-FROM-EDGE claim binding has no claim-id")
+		}
+		exists, err := lookup("CLAIM", claim)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			return fmt.Errorf("DERIVED-FROM-EDGE.claim-id %q does not reference a committed claim", claim)
+		}
+	}
+	return nil
 }
 
 func validateFrontier(values map[string]string, lookup ReferenceLookup) error {

@@ -108,8 +108,8 @@ func TestSchemaTablesAndChecks(t *testing.T) {
 		t.Error("enum CHECK does not list enum values")
 	}
 	tables := strings.Count(ddl, "CREATE TABLE ")
-	if tables != 49 {
-		t.Fatalf("generated %d tables, expected 49 table-class FIELD blocks", tables)
+	if tables != 50 {
+		t.Fatalf("generated %d tables, expected 50 table-class FIELD blocks", tables)
 	}
 	for _, absent := range []string{`CREATE TABLE "decision_content_count"`, `CREATE TABLE "entity_column"`} {
 		if strings.Contains(ddl, absent) {

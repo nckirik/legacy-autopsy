@@ -319,8 +319,11 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
   catalog records; `synthesis.Plan` + `spec synthesis run --catalog` author records
   with runtime `TYPE|namespace|domain-path|title` IDs, runtime-injected `block-id`,
   and independent review enabled. Live MOD run committed **16 architecture modules**
-  grounded in claims. **Blocked for coverage closure (PI-18):** synthesis-to-source
-  mappings are not declared, so coverage cannot move to `Mapped` deterministically.
+  grounded in claims. v4.4 PI-18 tracing: synthesis records declare
+  `source-bindings`; `spec synthesis bindings` materializes keyed
+  `DERIVED-FROM-EDGE` rows (claim bindings resolve to their subject source unit) and
+  `spec assurance advance` recomputes dispositions - live **40/40 mapped**. Remaining:
+  the other catalogs and the synthesis-coverage condition.
 - [ ] Handoff: artifact authoring, packaging, and the §15.5 verifier chain.
       **Gated** on a passing Exit A (which needs Synthesis coverage mapped) and on
       model-driven stage assembly.

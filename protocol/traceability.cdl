@@ -236,6 +236,21 @@ FIELD EVIDENCE-BINDING
   authoritative-fingerprint           -> string required
 END
 
+FIELD DERIVED-FROM-EDGE
+  STORAGE record
+  KEY derived-record-id, source-record-id, source-version, binding-kind
+  derived-record-id         -> string required
+  derived-field             -> string required
+  source-record-id          -> string required
+  source-version            -> string required
+  claim-id                  -> string required
+  binding-kind              -> string required
+  evidence-route-lineage-id -> string required
+  created-by-invocation     -> string required
+  snapshot-fingerprint      -> string required
+  binding-notes             -> string required
+END
+
 RULE evidence-bindings
   GOAL
     Evidence bindings are externally observable in the validation summary with one or

@@ -3,8 +3,8 @@
   "generator": "parityreport",
   "generator-version": "parityreport/0.1",
   "generated-at": "2026-09-25T00:00:00Z",
-  "protocol-version": "4.3",
-  "protocol-fingerprint": "sha256:7c7bef4ce76b0c37af02cde011a8aba36cb21ec615a4ee9ccce1ff22162a7486",
+  "protocol-version": "4.4",
+  "protocol-fingerprint": "sha256:5940b76478df6edbfa3f2e89452b96842a74a586958003d749faa13603147d34",
   "language-version": "cdl/0.4",
   "eir-format": 4,
   "sources": [
@@ -226,7 +226,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "fingerprint": "sha256:18efa21aadfe257f6d680106989453bcfba55d85f99b02487ce4209557ad234d",
+      "fingerprint": "sha256:669904f04afc4ce496c6a6602bbaad7e2e8369852c5f0749e5f66464e6d0ab6d",
       "sections": [
         "11.1",
         "11.2",
@@ -246,7 +246,7 @@
     },
     {
       "path": "protocol/traceability.cdl",
-      "fingerprint": "sha256:2b888630ef79d80f6a6dacdcddae453f56572997162c6c2970643794ed713e80",
+      "fingerprint": "sha256:bc51566c5f4f0d9ae025b898f7b16501ee44e8d7be56801073aa060549029cab",
       "sections": [
         "12.1",
         "12.2",
@@ -254,7 +254,7 @@
         "12.4",
         "12.5"
       ],
-      "identities": 15
+      "identities": 16
     },
     {
       "path": "protocol/handbook-and-decisions.cdl",
@@ -954,17 +954,17 @@
     {
       "name": "generated-protocol",
       "status": "pass",
-      "detail": "sha256:7c7bef4ce76b0c37af02cde011a8aba36cb21ec615a4ee9ccce1ff22162a7486"
+      "detail": "sha256:5940b76478df6edbfa3f2e89452b96842a74a586958003d749faa13603147d34"
     },
     {
       "name": "golden-eir",
       "status": "pass",
-      "detail": "sha256:3821176b088e60787cad3b228539a6b0f3c495989e736e0d8537078a4ee8929d"
+      "detail": "sha256:227e120e1ddbae0adc635cfa8ffdd168db8e7949d26c8c38c7b2746946238822"
     },
     {
       "name": "golden-prompt",
       "status": "pass",
-      "detail": "sha256:7d4b432969f0dc02eaf81264cc34d6564b5dcc8dbff7dfb2114043e55e12fbd7"
+      "detail": "sha256:1909a1555d3555d50b6f054430b478d1b75d26abd4c993e26a9baede409cdec0"
     },
     {
       "name": "fixture-oracle",
@@ -974,7 +974,7 @@
     {
       "name": "identity-ledger",
       "status": "pass",
-      "detail": "537 identities across 27 sources"
+      "detail": "538 identities across 27 sources"
     }
   ],
   "fixtures": {

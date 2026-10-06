@@ -473,7 +473,9 @@ oracle snapshot is an open process decision.
 
 ## PI-18: Synthesis-to-source mapping is not a declared binding
 
-- **Status:** proposed; not yet accepted. Blocks coverage `Mapped` dispositions.
+- **Status:** implemented in v4.4 (hybrid: declared `source-bindings` plus
+  runtime-materialized `DERIVED-FROM-EDGE` records). Live pilot: 41 edges resolved
+  claim subjects to source units and advanced **40/40 coverage rows to `Mapped`**.
 - **Source:** Autonomous pipeline work 2026-10-06; `assurance.EvaluateExitA`
   reports `COVERAGE-DENOMINATOR: Fail 0/40 mapped or excluded` even after 16
   synthesis modules were authored.

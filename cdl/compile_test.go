@@ -220,7 +220,7 @@ func TestUpdateAssets(t *testing.T) {
 	if err := os.WriteFile(repoPath("protocol.md"), rendered, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(repoPath("protocol/legacy/protocol-4.3.md"), rendered, 0o644); err != nil {
+	if err := os.WriteFile(repoPath("protocol/legacy/protocol-4.4.md"), rendered, 0o644); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -300,10 +300,10 @@ func TestGoldenProtocolRender(t *testing.T) {
 		}
 	}
 	for _, marker := range []string{
-		"**Version:** 4.3",
-		"**Protocol Version:** 4.3",
-		"Protocol Version: 4.3",
-		"End of Canonical Deconstruction Protocol, edition 4.3",
+		"**Version:** 4.4",
+		"**Protocol Version:** 4.4",
+		"Protocol Version: 4.4",
+		"End of Canonical Deconstruction Protocol, edition 4.4",
 		"## 8.3. Invocation-mode enum and explicit multi-file modes",
 		"Preflight | Export Acquisition",
 	} {
@@ -311,7 +311,7 @@ func TestGoldenProtocolRender(t *testing.T) {
 			t.Fatalf("generated protocol missing %q", marker)
 		}
 	}
-	for _, forbidden := range []string{"{{PROTOCOL-VERSION}}", "v4.3", "**Protocol Version:** 4.1"} {
+	for _, forbidden := range []string{"{{PROTOCOL-VERSION}}", "v4.4", "**Protocol Version:** 4.1"} {
 		if strings.Contains(string(got), forbidden) {
 			t.Fatalf("generated protocol contains stale version literal %q", forbidden)
 		}
@@ -344,7 +344,7 @@ func TestRenderPromptRequiresCoveredSection(t *testing.T) {
 func TestGoldenEditionOracle(t *testing.T) {
 	res := compileAssembly(t)
 	got := RenderProtocol(res.EIR)
-	want, err := os.ReadFile(repoPath("protocol/legacy/protocol-4.3.md"))
+	want, err := os.ReadFile(repoPath("protocol/legacy/protocol-4.4.md"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -746,7 +746,7 @@ func TestTraceabilityCompiles(t *testing.T) {
 	for _, f := range res.EIR.Declarations.Fields {
 		counts[f.ID] = len(f.Fields)
 	}
-	want := map[string]int{"TRACEABILITY-ROW": 14, "LIFECYCLE-ELIGIBILITY": 6, "EVIDENCE-BINDING": 7}
+	want := map[string]int{"TRACEABILITY-ROW": 14, "LIFECYCLE-ELIGIBILITY": 6, "EVIDENCE-BINDING": 7, "DERIVED-FROM-EDGE": 10}
 	for id, size := range want {
 		if counts[id] != size {
 			t.Fatalf("%s has %d fields, want %d", id, counts[id], size)
@@ -974,12 +974,12 @@ func TestSynthesisCatalogsCompile(t *testing.T) {
 	}
 	want := map[string]int{
 		"SYNTHESIS-GAP": 9, "SYNTHESIS-BLOCK-HEADER": 8, "CERTIFICATION-ENVELOPE": 4,
-		"ARCHITECTURE-MODULE": 13, "ENTITY-RECORD": 18, "ENTITY-COLUMN": 7,
-		"RELATIONSHIP-RECORD": 9, "STATE-MACHINE": 10, "STATE-TRANSITION": 6,
-		"DATABASE-ROUTINE": 15, "BUSINESS-RULE-RECORD": 15, "USE-CASE": 14,
-		"USE-CASE-STEP": 6, "INTERFACE-RECORD": 17, "INTERFACE-REQUEST-FIELD": 6,
-		"INTERFACE-RESPONSE-FIELD": 4, "DEPLOYMENT-ELEMENT": 7, "CONFIGURATION-RECORD": 10,
-		"SCHEDULE-RECORD": 9, "NFR-RECORD": 8, "SECURITY-FINDING": 9, "FAULT-RECORD": 11,
+		"ARCHITECTURE-MODULE": 14, "ENTITY-RECORD": 19, "ENTITY-COLUMN": 7,
+		"RELATIONSHIP-RECORD": 10, "STATE-MACHINE": 11, "STATE-TRANSITION": 6,
+		"DATABASE-ROUTINE": 16, "BUSINESS-RULE-RECORD": 16, "USE-CASE": 15,
+		"USE-CASE-STEP": 6, "INTERFACE-RECORD": 18, "INTERFACE-REQUEST-FIELD": 6,
+		"INTERFACE-RESPONSE-FIELD": 4, "DEPLOYMENT-ELEMENT": 8, "CONFIGURATION-RECORD": 11,
+		"SCHEDULE-RECORD": 10, "NFR-RECORD": 9, "SECURITY-FINDING": 10, "FAULT-RECORD": 12,
 		"PERSONA-PROFILE": 20, "AUTHORIZATION-MATRIX-ROW": 4,
 	}
 	for id, size := range want {

@@ -22,7 +22,7 @@ func ResolveRecords(doc *cdl.EIRDoc, unit Unit, p Proposal) ([]ResolvedRecord, e
 	if len(p.Records) == 0 {
 		return nil, fmt.Errorf("work: unit %s proposal has no records", unit.ID)
 	}
-	if unit.IDFromField == "" && unit.IDFromCoordinate == "" && unit.IDOwnerField == "" {
+	if unit.IDFromField == "" && unit.IDFromCoordinate == "" && unit.IDOwnerField == "" && len(unit.IDFromFields) == 0 {
 		if len(p.Records) != 1 {
 			return nil, fmt.Errorf("work: unit %s targets a single record but proposed %d", unit.ID, len(p.Records))
 		}
@@ -36,6 +36,9 @@ func ResolveRecords(doc *cdl.EIRDoc, unit Unit, p Proposal) ([]ResolvedRecord, e
 	}
 	if unit.IDOwnerField != "" {
 		return resolveTypedFieldIDs(unit, p)
+	}
+	if len(unit.IDFromFields) > 0 {
+		return resolveCompositeIDs(unit, p)
 	}
 	seen := map[string]bool{}
 	resolved := make([]ResolvedRecord, 0, len(p.Records))
@@ -192,6 +195,30 @@ func injectRuntimeFields(payload []byte, fields []string, value string) ([]byte,
 		}
 	}
 	return []byte(strings.Join(lines, "\n")), nil
+}
+
+// resolveCompositeIDs composes a natural key record ID from declared payload
+// fields, for keyed supporting rows (matrix cells, derived-from edges).
+func resolveCompositeIDs(unit Unit, p Proposal) ([]ResolvedRecord, error) {
+	seen := map[string]bool{}
+	resolved := make([]ResolvedRecord, 0, len(p.Records))
+	for i, record := range p.Records {
+		parts := make([]string, 0, len(unit.IDFromFields))
+		for _, field := range unit.IDFromFields {
+			value, err := extractFieldValue(field, record.Payload)
+			if err != nil {
+				return nil, fmt.Errorf("work: unit %s record %d: %w", unit.ID, i+1, err)
+			}
+			parts = append(parts, value)
+		}
+		id := strings.Join(parts, "|")
+		if seen[id] {
+			return nil, fmt.Errorf("work: unit %s duplicate resolved record ID %q", unit.ID, id)
+		}
+		seen[id] = true
+		resolved = append(resolved, ResolvedRecord{RecordID: id, Payload: record.Payload})
+	}
+	return resolved, nil
 }
 
 func extractFieldValue(fieldName string, payload []byte) (string, error) {

@@ -108,7 +108,17 @@ records** from the 40 claims: runtime IDs from `domain-path`+`record-title`, inj
 synthesis-to-source mappings are not declared (PI-18), so coverage cannot reach
 `Mapped` yet.
 
+## Tracing bindings (v4.4, same target)
+
+`spec synthesis run --catalog MOD` re-authored 5 modules declaring `source-bindings`;
+`spec synthesis bindings` materialized 41 keyed `DERIVED-FROM-EDGE` rows
+(claim bindings resolved to their subject source units, invocation
+`ALFA-NONE-NONE-006`), and `spec assurance advance` recomputed dispositions:
+**40/40 coverage rows `Mapped`**. The gate now reports `COVERAGE-DENOMINATOR Pass`.
+Remaining honest failures: per-cell traversal closure (0/25) and the
+synthesis-coverage condition.
+
 ## Next steps
 
-- PI-18 mapping bindings, then the remaining catalogs; export reconciliation;
-  symbol/route/AST kinds.
+- Per-cell traversal closure (real sweep evidence per matrix cell); remaining
+  catalogs; export reconciliation; symbol/route/AST kinds.

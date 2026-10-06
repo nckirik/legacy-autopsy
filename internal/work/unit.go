@@ -40,9 +40,12 @@ type Unit struct {
 	IDFromCoordinate     string `json:"id_from_coordinate,omitempty"`
 	IDOwnerField         string `json:"id_owner_field,omitempty"`
 	IDDiscriminatorField string `json:"id_discriminator_field,omitempty"`
-	IDType               string `json:"id_type,omitempty"`
-	Namespace            string `json:"namespace,omitempty"`
-	ExpectedRecords      int    `json:"expected_records,omitempty"`
+	// IDFromFields composes a natural composite record ID from the named
+	// payload fields joined by "|" (for keyed supporting rows).
+	IDFromFields    []string `json:"id_from_fields,omitempty"`
+	IDType          string   `json:"id_type,omitempty"`
+	Namespace       string   `json:"namespace,omitempty"`
+	ExpectedRecords int      `json:"expected_records,omitempty"`
 	// RuntimeFields are payload fields the runtime fills with the resolved
 	// record ID after identity assignment (for example a declared `block-id`).
 	RuntimeFields   []string `json:"runtime_fields,omitempty"`
@@ -62,13 +65,13 @@ func (u Unit) Validate(doc *cdl.EIRDoc) error {
 		return fmt.Errorf("work: unit requires ID, mode, and result type")
 	}
 	modes := 0
-	for _, set := range []bool{u.RecordID != "", u.IDFromField != "", u.IDFromCoordinate != "", u.IDOwnerField != ""} {
+	for _, set := range []bool{u.RecordID != "", u.IDFromField != "", u.IDFromCoordinate != "", u.IDOwnerField != "", len(u.IDFromFields) > 0} {
 		if set {
 			modes++
 		}
 	}
 	if modes != 1 {
-		return fmt.Errorf("work: unit %s requires exactly one of record ID, ID-from-field, ID-from-coordinate, or ID-from-typed-fields", u.ID)
+		return fmt.Errorf("work: unit %s requires exactly one record-ID mode", u.ID)
 	}
 	if (u.IDFromCoordinate != "" || u.IDOwnerField != "") && (u.IDType == "" || u.Namespace == "") {
 		return fmt.Errorf("work: unit %s runtime IDs require an ID type and namespace", u.ID)

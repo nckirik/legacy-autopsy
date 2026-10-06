@@ -184,19 +184,20 @@ END
 
 FIELD ARCHITECTURE-MODULE
   STORAGE record
-  block-id                        -> string required
-  record-title                    -> string required
-  domain-path                     -> string required
-  responsibility-domain-boundary  -> string required
-  public-interfaces               -> string required
-  encapsulated-state-entities     -> string required
-  dependencies-dependents         -> string required
-  data-and-events-passed          -> string required
-  invariants-rules-owned          -> string required
-  personas-use-cases-capabilities -> string required
-  failure-propagation             -> string required
-  observed-legacy-placement       -> string required
-  target-decision                 -> string required
+  source-bindings                 -> set<string> required
+  block-id                        -> string      required
+  record-title                    -> string      required
+  domain-path                     -> string      required
+  responsibility-domain-boundary  -> string      required
+  public-interfaces               -> string      required
+  encapsulated-state-entities     -> string      required
+  dependencies-dependents         -> string      required
+  data-and-events-passed          -> string      required
+  invariants-rules-owned          -> string      required
+  personas-use-cases-capabilities -> string      required
+  failure-propagation             -> string      required
+  observed-legacy-placement       -> string      required
+  target-decision                 -> string      required
 END
 
 RULE module-requirements
@@ -260,6 +261,7 @@ END
 
 FIELD ENTITY-RECORD
   STORAGE record
+  source-bindings                    -> set<string>  required
   block-id                           -> string       required
   record-title                       -> string       required
   domain-path                        -> string       required
@@ -320,6 +322,7 @@ END
 
 FIELD RELATIONSHIP-RECORD
   STORAGE record
+  source-bindings              -> set<string>              required
   block-id                     -> string                   required
   record-title                 -> string                   required
   domain-path                  -> string                   required
@@ -369,16 +372,17 @@ END
 
 FIELD STATE-MACHINE
   STORAGE record
-  block-id                        -> string required
-  record-title                    -> string required
-  domain-path                     -> string required
-  scope-owner-entity-or-aggregate -> string required
-  state-fields                    -> string required
-  states-meaning                  -> string required
-  initial-terminal-states         -> string required
-  transitions                     -> string required
-  invalid-recovery-transitions    -> string required
-  environment-capability-variants -> string required
+  source-bindings                 -> set<string> required
+  block-id                        -> string      required
+  record-title                    -> string      required
+  domain-path                     -> string      required
+  scope-owner-entity-or-aggregate -> string      required
+  state-fields                    -> string      required
+  states-meaning                  -> string      required
+  initial-terminal-states         -> string      required
+  transitions                     -> string      required
+  invalid-recovery-transitions    -> string      required
+  environment-capability-variants -> string      required
 END
 
 RULE state-machine-eligibility
@@ -436,6 +440,7 @@ END
 
 FIELD DATABASE-ROUTINE
   STORAGE record
+  source-bindings                 -> set<string>        required
   block-id                        -> string             required
   record-title                    -> string             required
   domain-path                     -> string             required
@@ -502,6 +507,7 @@ END
 
 FIELD BUSINESS-RULE-RECORD
   STORAGE record
+  source-bindings                     -> set<string>                    required
   block-id                            -> string                         required
   record-title                        -> string                         required
   domain-path                         -> string                         required
@@ -596,6 +602,7 @@ END
 
 FIELD USE-CASE
   STORAGE record
+  source-bindings                        -> set<string>                        required
   block-id                               -> string                             required
   record-title                           -> string                             required
   domain-path                            -> string                             required
@@ -673,23 +680,24 @@ END
 
 FIELD INTERFACE-RECORD
   STORAGE record
-  block-id                            -> string required
-  record-title                        -> string required
-  domain-path                         -> string required
-  channel-transport-direction         -> string required
-  actor-persona-auth                  -> string required
-  protocol-content-type               -> string required
-  request-schema                      -> string required
-  response-schema                     -> string required
-  error-semantics-retryability        -> string required
-  guarantees                          -> string required
-  authn-authz                         -> string required
-  versioning-compatibility            -> string required
-  rate-limits-backpressure            -> string required
-  bound-uc-er-ids                     -> string required
-  capability-state-environment-matrix -> string required
-  compatibility-baseline              -> string required
-  target-migration-decision           -> string required
+  source-bindings                     -> set<string> required
+  block-id                            -> string      required
+  record-title                        -> string      required
+  domain-path                         -> string      required
+  channel-transport-direction         -> string      required
+  actor-persona-auth                  -> string      required
+  protocol-content-type               -> string      required
+  request-schema                      -> string      required
+  response-schema                     -> string      required
+  error-semantics-retryability        -> string      required
+  guarantees                          -> string      required
+  authn-authz                         -> string      required
+  versioning-compatibility            -> string      required
+  rate-limits-backpressure            -> string      required
+  bound-uc-er-ids                     -> string      required
+  capability-state-environment-matrix -> string      required
+  compatibility-baseline              -> string      required
+  target-migration-decision           -> string      required
 END
 
 RULE interface-compatibility-baseline
@@ -751,17 +759,19 @@ END
 
 FIELD DEPLOYMENT-ELEMENT
   STORAGE record
-  block-id                        -> string required
-  record-title                    -> string required
-  domain-path                     -> string required
-  component-placement-replication -> string required
-  connections                     -> string required
-  single-point-of-failure         -> string required
-  environment-snapshot-matrix     -> string required
+  source-bindings                 -> set<string> required
+  block-id                        -> string      required
+  record-title                    -> string      required
+  domain-path                     -> string      required
+  component-placement-replication -> string      required
+  connections                     -> string      required
+  single-point-of-failure         -> string      required
+  environment-snapshot-matrix     -> string      required
 END
 
 FIELD CONFIGURATION-RECORD
   STORAGE record
+  source-bindings                                 -> set<string>   required
   block-id                                        -> string        required
   record-title                                    -> string        required
   domain-path                                     -> string        required
@@ -776,6 +786,7 @@ END
 
 FIELD SCHEDULE-RECORD
   STORAGE record
+  source-bindings                       -> set<string>                            required
   block-id                              -> string                                 required
   record-title                          -> string                                 required
   domain-path                           -> string                                 required
@@ -870,6 +881,7 @@ END
 
 FIELD NFR-RECORD
   STORAGE record
+  source-bindings         -> set<string>   required
   block-id                -> string        required
   record-title            -> string        required
   domain-path             -> string        required
@@ -882,6 +894,7 @@ END
 
 FIELD SECURITY-FINDING
   STORAGE record
+  source-bindings                -> set<string>       required
   block-id                       -> string            required
   record-title                   -> string            required
   domain-path                    -> string            required
@@ -895,17 +908,18 @@ END
 
 FIELD FAULT-RECORD
   STORAGE record
-  block-id                                   -> string required
-  record-title                               -> string required
-  domain-path                                -> string required
-  failure-class-trigger-detection-point      -> string required
-  propagation-path                           -> string required
-  retry-backoff-timeout-circuit-behavior     -> string required
-  rollback-compensation-transaction-boundary -> string required
-  dead-letter-quarantine-operator-action     -> string required
-  user-system-outcome-observability          -> string required
-  environment-capability-variants            -> string required
-  related-rules-claims                       -> string required
+  source-bindings                            -> set<string> required
+  block-id                                   -> string      required
+  record-title                               -> string      required
+  domain-path                                -> string      required
+  failure-class-trigger-detection-point      -> string      required
+  propagation-path                           -> string      required
+  retry-backoff-timeout-circuit-behavior     -> string      required
+  rollback-compensation-transaction-boundary -> string      required
+  dead-letter-quarantine-operator-action     -> string      required
+  user-system-outcome-observability          -> string      required
+  environment-capability-variants            -> string      required
+  related-rules-claims                       -> string      required
 END
 
 RULE security-reciprocal

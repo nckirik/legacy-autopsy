@@ -2225,7 +2225,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "source-fingerprint": "sha256:95d0dd389a888086030099bef2818e27052ca8fa11f7d9fc3f967049a18be143",
+      "source-fingerprint": "sha256:2827e7cc4ee9552b219df2a45bec1902af076764d2d1877ba852742d3dd50654",
       "ids": [
         {
           "id": "ARCHITECTURE-MODULE",
@@ -2667,11 +2667,16 @@
     },
     {
       "path": "protocol/traceability.cdl",
-      "source-fingerprint": "sha256:a4d57a56f8f3b048bdf3069a86c7484a98d714724eb0e23fabacd72f977c211d",
+      "source-fingerprint": "sha256:56195001710b06fbb95f0fbbff4a70a0df76b3441809f4b17ea9b5291582c0f7",
       "ids": [
         {
           "id": "CLASSIFICATION",
           "kind": "ENUM",
+          "status": "active"
+        },
+        {
+          "id": "DERIVED-FROM-EDGE",
+          "kind": "FIELD",
           "status": "active"
         },
         {

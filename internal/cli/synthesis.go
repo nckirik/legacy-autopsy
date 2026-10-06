@@ -15,9 +15,92 @@ func specSynthesis(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
 		return fmt.Errorf("usage: legacy-autopsy spec synthesis <run> [flags]")
 	}
-	if args[0] != "run" {
-		return fmt.Errorf("spec synthesis operation %q is unsupported; supported operations: run", args[0])
+	switch args[0] {
+	case "run":
+		return specSynthesisRun(args[1:], stdout, stderr)
+	case "bindings":
+		return specSynthesisBindings(args[1:], stdout, stderr)
+	default:
+		return fmt.Errorf("spec synthesis operation %q is unsupported; supported operations: run, bindings", args[0])
 	}
+}
+
+func firstToken(value string) string {
+	fields := strings.Fields(value)
+	if len(fields) == 0 {
+		return ""
+	}
+	return strings.TrimSuffix(fields[0], "/")
+}
+
+// specSynthesisBindings materializes DERIVED-FROM-EDGE records from the
+// declared source-bindings of committed synthesis records.
+func specSynthesisBindings(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec synthesis bindings", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec synthesis bindings requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	records, err := synthesis.LoadSynthesisRecords(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	if len(records) == 0 {
+		return fmt.Errorf("synthesis bindings: no committed synthesis records (run spec synthesis run first)")
+	}
+	inventory, err := synthesis.LoadInventoryFingerprints(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	claims, err := synthesis.LoadClaims(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	claimSubjects := map[string]string{}
+	for _, claim := range claims {
+		claimSubjects[claim.ID] = firstToken(claim.Subject)
+	}
+	runConfig := work.DefaultConfig()
+	if iteration := header["current-iteration"]; iteration != "" {
+		runConfig.Iteration = iteration
+	}
+	session, err := work.NewSession(*db, res.EIR, runConfig, synthesis.MechanicalBindingExecutor{
+		Records:   records,
+		Inventory: inventory,
+		Claims:    claimSubjects,
+		Snapshot:  header["included-environments-snapshots"],
+	}, nil)
+	if err != nil {
+		return err
+	}
+	report, err := session.Run([]work.Unit{synthesis.BindingPlan(header["system-namespace"])})
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "%s: invocation %s\n", report.Units[0].UnitID, report.Units[0].InvocationID)
+	fmt.Fprintf(stdout, "derived-from edges recorded: %d\n", len(report.Units[0].MutationIDs))
+	return nil
+}
+
+func specSynthesisRun(args []string, stdout, stderr io.Writer) error {
 	set := flags("spec synthesis run", stderr)
 	repo := set.String("repo", ".", "protocol repository root")
 	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
@@ -32,7 +115,7 @@ func specSynthesis(args []string, stdout, stderr io.Writer) error {
 	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
 	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
 	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
-	if err := set.Parse(args[1:]); err != nil {
+	if err := set.Parse(args); err != nil {
 		return err
 	}
 	if len(set.Args()) != 0 {
