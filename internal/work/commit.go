@@ -84,6 +84,15 @@ func CommitWithIDs(caps *Caps, unit Unit, p Proposal) ([]string, error) {
 		}
 		return PayloadText(names, payload)
 	}
+	if len(unit.RuntimeFields) > 0 {
+		for i := range resolved {
+			injected, err := injectRuntimeFields(resolved[i].Payload, unit.RuntimeFields, resolved[i].RecordID)
+			if err != nil {
+				return nil, fmt.Errorf("work: unit %s record %s: %w", unit.ID, resolved[i].RecordID, err)
+			}
+			resolved[i].Payload = injected
+		}
+	}
 	for _, record := range resolved {
 		values, err := PayloadText(names, record.Payload)
 		if err != nil {

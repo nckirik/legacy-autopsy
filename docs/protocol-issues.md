@@ -470,3 +470,24 @@ oracle snapshot is an open process decision.
   those rows.
 - **Impact:** enables the Exit A traversal-closure condition and one-FRT-per-boundary
   verification at cell granularity.
+
+## PI-18: Synthesis-to-source mapping is not a declared binding
+
+- **Status:** proposed; not yet accepted. Blocks coverage `Mapped` dispositions.
+- **Source:** Autonomous pipeline work 2026-10-06; `assurance.EvaluateExitA`
+  reports `COVERAGE-DENOMINATOR: Fail 0/40 mapped or excluded` even after 16
+  synthesis modules were authored.
+- **Affected:** §16 coverage dispositions, `SOURCE-COVERAGE-ROW.mappings` /
+  `frontier-ticket-claim-evidence`, synthesis catalog schemas, Exit A condition 2.
+- **Observed:** coverage rows carry a free-string `mappings` field, and synthesis
+  records do not declare which source units/claims each record was derived from.
+  A deterministic runtime therefore cannot move a source unit from `Unmapped` to
+  `Mapped` or prove the mapping, so the Exit A denominator can never close without
+  the model self-attesting in free text.
+- **Proposed direction:** declare the mapping explicitly - for example a required
+  `source-bindings` set field on synthesis records (SRC IDs / CLM IDs), or a
+  dedicated mapping record keyed by (synthesis ID, source-version, claim), so the
+  runtime can validate the referenced units/claims exist, recompute coverage
+  dispositions, and gate closure deterministically.
+- **Impact:** enables `Mapped` coverage, Exit A denominator closure, and
+  traceability projections; no change to synthesis semantics.

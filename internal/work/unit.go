@@ -30,26 +30,29 @@ type Input struct {
 }
 
 type Unit struct {
-	ID                   string   `json:"id"`
-	Mode                 string   `json:"mode"`
-	Scope                string   `json:"scope,omitempty"`
-	Persona              string   `json:"persona,omitempty"`
-	POV                  string   `json:"pov,omitempty"`
-	RecordID             string   `json:"record_id,omitempty"`
-	IDFromField          string   `json:"id_from_field,omitempty"`
-	IDFromCoordinate     string   `json:"id_from_coordinate,omitempty"`
-	IDOwnerField         string   `json:"id_owner_field,omitempty"`
-	IDDiscriminatorField string   `json:"id_discriminator_field,omitempty"`
-	IDType               string   `json:"id_type,omitempty"`
-	Namespace            string   `json:"namespace,omitempty"`
-	ExpectedRecords      int      `json:"expected_records,omitempty"`
-	Reads                []Ref    `json:"reads,omitempty"`
-	ResultType           string   `json:"result_type"`
-	AllowedEffects       []string `json:"allowed_effects,omitempty"`
-	RequiresReview       bool     `json:"requires_review,omitempty"`
-	Inputs               []Input  `json:"inputs,omitempty"`
-	Sections             []string `json:"sections,omitempty"`
-	ReasoningEffort      string   `json:"reasoning_effort,omitempty"`
+	ID                   string `json:"id"`
+	Mode                 string `json:"mode"`
+	Scope                string `json:"scope,omitempty"`
+	Persona              string `json:"persona,omitempty"`
+	POV                  string `json:"pov,omitempty"`
+	RecordID             string `json:"record_id,omitempty"`
+	IDFromField          string `json:"id_from_field,omitempty"`
+	IDFromCoordinate     string `json:"id_from_coordinate,omitempty"`
+	IDOwnerField         string `json:"id_owner_field,omitempty"`
+	IDDiscriminatorField string `json:"id_discriminator_field,omitempty"`
+	IDType               string `json:"id_type,omitempty"`
+	Namespace            string `json:"namespace,omitempty"`
+	ExpectedRecords      int    `json:"expected_records,omitempty"`
+	// RuntimeFields are payload fields the runtime fills with the resolved
+	// record ID after identity assignment (for example a declared `block-id`).
+	RuntimeFields   []string `json:"runtime_fields,omitempty"`
+	Reads           []Ref    `json:"reads,omitempty"`
+	ResultType      string   `json:"result_type"`
+	AllowedEffects  []string `json:"allowed_effects,omitempty"`
+	RequiresReview  bool     `json:"requires_review,omitempty"`
+	Inputs          []Input  `json:"inputs,omitempty"`
+	Sections        []string `json:"sections,omitempty"`
+	ReasoningEffort string   `json:"reasoning_effort,omitempty"`
 }
 
 // Validate checks the unit against the compiled schema: every declared read and

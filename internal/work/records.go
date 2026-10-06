@@ -155,6 +155,45 @@ func resolveCoordinateIDs(unit Unit, p Proposal) ([]ResolvedRecord, error) {
 	return resolved, nil
 }
 
+// injectRuntimeFields replaces the value of each named payload field with the
+// resolved record ID, preserving declared field order. Every runtime field must
+// be present exactly once; missing carriers fail closed so the executor learns
+// the contract instead of silently committing a wrong identity.
+func injectRuntimeFields(payload []byte, fields []string, value string) ([]byte, error) {
+	wanted := map[string]bool{}
+	for _, field := range fields {
+		wanted[capabilities.ColumnName(field)] = false
+	}
+	lines := strings.Split(string(payload), "\n")
+	for i, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if !strings.HasPrefix(trimmed, "- **") {
+			continue
+		}
+		end := strings.Index(trimmed[2:], ":**")
+		if end < 0 {
+			continue
+		}
+		label := trimmed[4 : end+2]
+		column := capabilities.ColumnName(label)
+		if _, ok := wanted[column]; !ok {
+			continue
+		}
+		if wanted[column] {
+			return nil, fmt.Errorf("runtime field %q appears more than once", label)
+		}
+		wanted[column] = true
+		indent := line[:len(line)-len(strings.TrimLeft(line, " \t"))]
+		lines[i] = indent + "- **" + label + ":** " + value
+	}
+	for name, seen := range wanted {
+		if !seen {
+			return nil, fmt.Errorf("runtime field %q is missing; emit it with a placeholder value", name)
+		}
+	}
+	return []byte(strings.Join(lines, "\n")), nil
+}
+
 func extractFieldValue(fieldName string, payload []byte) (string, error) {
 	parsed, err := md.Parse(string(payload))
 	if err != nil {
