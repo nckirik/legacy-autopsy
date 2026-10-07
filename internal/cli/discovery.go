@@ -104,6 +104,7 @@ func specDiscoveryRun(args []string, stdout, stderr io.Writer) error {
 	maxFiles := set.Int("max-files", 2000, "bounded candidate count")
 	batchSize := set.Int("batch-size", 25, "candidates per inventory unit")
 	reviewMode := set.String("review-mode", "", "override review policy: all|critical|uncertainty")
+	updateExisting := set.Bool("update-existing", false, "replace records whose evidence-anchored identity exists with changed content")
 	maxRetries := set.Int("max-retries", 0, "override the retry budget")
 	windowOffset := set.Int("window-offset", 0, "skip the first N sorted candidates (windowed runs)")
 	showModel := set.String("show-model", "off", "stream raw model output: off|stderr|stdout")
@@ -172,6 +173,7 @@ func specDiscoveryRun(args []string, stdout, stderr io.Writer) error {
 	if *maxRetries > 0 {
 		runConfig.MaxRetries = *maxRetries
 	}
+	runConfig.UpdateExisting = *updateExisting
 	if iteration := header["current-iteration"]; iteration != "" {
 		runConfig.Iteration = iteration
 	}

@@ -114,7 +114,8 @@ func specPreflightRun(args []string, stdout, stderr io.Writer) error {
 	timeout := set.Duration("llm-timeout", 0, "per-request timeout (default 120s)")
 	showModel := set.String("show-model", "off", "stream raw model output: off|stderr|stdout (diagnostic, non-authoritative)")
 	maxRetries := set.Int("max-retries", 0, "override the retry budget for rejected proposals")
-	if err := set.Parse(args[1:]); err != nil {
+	updateExisting := set.Bool("update-existing", false, "replace records whose evidence-anchored identity exists with changed content")
+	if err := set.Parse(args); err != nil {
 		return err
 	}
 	if len(set.Args()) != 0 {
@@ -161,6 +162,7 @@ func specPreflightRun(args []string, stdout, stderr io.Writer) error {
 	if *maxRetries > 0 {
 		runConfig.MaxRetries = *maxRetries
 	}
+	runConfig.UpdateExisting = *updateExisting
 	if err := runConfig.Validate(); err != nil {
 		return err
 	}
