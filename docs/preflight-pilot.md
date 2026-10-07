@@ -137,6 +137,16 @@ claim subject + source anchor). Verified live: re-running identical evidence rep
 same identity fail closed by default and are replaced at `version+1` with
 `--update-existing`.
 
+## Fresh rehearsal and re-run semantics (2026-10-06)
+
+A from-scratch workspace (12-file window) reached **Exit A Pass** with all six
+conditions green (120/120 matrix cells, 12/12 mapped and provenanced). Re-running the
+model stages on the same evidence without flags reproduced every identity
+(`SRC-FILE-*`, `CLM-*`, `MOD-*`) and refused changed content as
+"explicit update required". With `--update-existing`, discovery, claims, and synthesis
+committed versioned replacements, and the gate remained **Pass** - identities, edges,
+dispositions, and cell closure all survived the updates.
+
 ## Next steps
 
 - Remaining catalog runs; export reconciliation; symbol/route/AST kinds.
