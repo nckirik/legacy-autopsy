@@ -132,7 +132,7 @@ func TestLoadInventoryAndPlanClaims(t *testing.T) {
 	if len(ids) != 2 {
 		t.Fatalf("claims = %v", ids)
 	}
-	want, _ := capabilities.TypedID("CLM", "demo", first, "api.js exposes an HTTP entry point")
+	want, _ := capabilities.TypedID("CLM", "demo", first, "api.js:1")
 	found := false
 	for _, id := range ids {
 		if id == want {
@@ -171,7 +171,7 @@ func TestExpandCoverageAndSummary(t *testing.T) {
 	first := seedInventory(t, db, doc, "FILE", "api.js", "sha256:aaa")
 	second := seedInventory(t, db, doc, "FILE", "web.js", "sha256:bbb")
 	claimPayload := "- **subject-id-record-version:** " + first + "\n- **field-step:** file\n- **claim:** api exposes a route\n- **materiality:** Material\n- **evidence-level:** [E-DIRECT]\n- **anchor:** api.js:1\n- **source-fingerprint-snapshot:** sha256:aaa\n- **evidence-route-lineage-id:** static-filesystem\n- **projection-classification:** raw-visible\n- **independent-supporting-claims:** None\n- **independence-basis:** None\n- **contradiction-ids:** None\n- **created-last-revalidated-by:** None\n"
-	claimID, err := capabilities.TypedID("CLM", "demo", first, "api exposes a route")
+	claimID, err := capabilities.TypedID("CLM", "demo", first, "api.js:1")
 	if err != nil {
 		t.Fatal(err)
 	}

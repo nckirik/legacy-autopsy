@@ -233,6 +233,7 @@ func specAssuranceClaims(args []string, stdout, stderr io.Writer) error {
 	maxExcerpt := set.Int("max-excerpt", 1200, "bytes of file excerpt per source unit")
 	reviewMode := set.String("review-mode", "", "override review policy: all|critical|uncertainty")
 	maxRetries := set.Int("max-retries", 0, "override the retry budget")
+	updateExisting := set.Bool("update-existing", false, "replace claims whose evidence-anchored identity exists with changed prose")
 	showModel := set.String("show-model", "off", "stream raw model output: off|stderr|stdout")
 	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
 	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
@@ -285,6 +286,7 @@ func specAssuranceClaims(args []string, stdout, stderr io.Writer) error {
 	if *maxRetries > 0 {
 		runConfig.MaxRetries = *maxRetries
 	}
+	runConfig.UpdateExisting = *updateExisting
 	if iteration := header["current-iteration"]; iteration != "" {
 		runConfig.Iteration = iteration
 	}

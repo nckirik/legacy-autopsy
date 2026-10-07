@@ -323,7 +323,12 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
   `source-bindings`; `spec synthesis bindings` materializes keyed
   `DERIVED-FROM-EDGE` rows (claim bindings resolve to their subject source unit) and
   `spec assurance advance` recomputes dispositions - live **40/40 mapped**. Remaining:
-  the other catalogs and the synthesis-coverage condition.
+  the other catalogs. **Identity policy (all catalogs + claims):** identities anchor
+  in evidence - synthesis records use the lexicographically first bound source unit,
+  claims use their subject + source anchor rather than prose; identical re-runs are
+  idempotent, changed content at the same identity is either refused or explicitly
+  replaced with a version bump (`--update-existing`). Live MOD proof: 8/8 IDs
+  reproduced on re-run, 7 bodies replaced at version 2 under the flag.
 - [ ] Handoff: artifact authoring, packaging, and the §15.5 verifier chain.
       **Gated** on a passing Exit A (which needs Synthesis coverage mapped) and on
       model-driven stage assembly.

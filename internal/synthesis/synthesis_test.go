@@ -197,3 +197,18 @@ func summaryForTest(t *testing.T, db string, doc *cdl.EIRDoc) (assurance.Summary
 	t.Helper()
 	return assurance.CoverageSummary(db, doc)
 }
+
+func TestAllCatalogsUseEvidenceAnchoredIdentity(t *testing.T) {
+	for id, catalog := range Catalogs {
+		unit := Plan(catalog, nil, Directives{Namespace: "demo", Snapshot: "dev"})
+		if unit.IDFromBindings != "source-bindings" {
+			t.Errorf("catalog %s is not evidence-anchored: IDFromBindings=%q", id, unit.IDFromBindings)
+		}
+		if len(unit.RuntimeFields) != 1 || unit.RuntimeFields[0] != "block-id" {
+			t.Errorf("catalog %s does not inject block-id: %v", id, unit.RuntimeFields)
+		}
+		if unit.MinRecords != 1 || !unit.RequiresReview {
+			t.Errorf("catalog %s lacks floor/review: MinRecords=%d RequiresReview=%v", id, unit.MinRecords, unit.RequiresReview)
+		}
+	}
+}

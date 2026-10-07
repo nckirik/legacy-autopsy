@@ -86,13 +86,16 @@ func Plan(root string, inventory []Inventory, directives Directives) ([]work.Uni
 			reads = append(reads, work.Ref{FieldID: "SOURCE-INVENTORY-RECORD", RecordID: item.ID})
 		}
 		units = append(units, work.Unit{
-			ID:                   fmt.Sprintf("U-ASSURANCE-CLAIMS-%03d", start/batchSize+1),
-			Mode:                 "Discovery",
-			Scope:                directives.Namespace,
-			IDType:               "CLM",
-			Namespace:            directives.Namespace,
-			IDOwnerField:         "subject-id-record-version",
-			IDDiscriminatorField: "claim",
+			ID:           fmt.Sprintf("U-ASSURANCE-CLAIMS-%03d", start/batchSize+1),
+			Mode:         "Discovery",
+			Scope:        directives.Namespace,
+			IDType:       "CLM",
+			Namespace:    directives.Namespace,
+			IDOwnerField: "subject-id-record-version",
+			// Identity anchors in evidence: the claim's source coordinate (its
+			// anchor), not its prose. Rewording a claim preserves its ID; a
+			// different claim at the same anchor conflicts explicitly.
+			IDDiscriminatorField: "anchor",
 			ExpectedRecords:      len(batch),
 			ResultType:           "CLAIM",
 			Reads:                reads,
