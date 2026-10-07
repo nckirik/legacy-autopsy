@@ -108,7 +108,8 @@ func contextMarkdown(catalog Catalog, claims []ClaimRef, directives Directives) 
 	b.WriteString("- `block-id` is runtime-assigned: emit the field with placeholder value `PENDING`.\n")
 	b.WriteString("- Identity is anchored in evidence: the lexicographically first bound source unit determines the record ID. `record-title` is a short human title; `domain-path` is descriptive.\n")
 	b.WriteString("- Where the evidence does not support a field, use `Unknown` (fail-inclusive) or `None`; never invent facts.\n")
-	b.WriteString("- `source-bindings` lists only CLM-* or SRC-* ID tokens, comma-separated: no subjects, brackets, or prose.\n\n")
+	b.WriteString("- `source-bindings` lists only CLM-* or SRC-* ID tokens, comma-separated: no subjects, brackets, or prose.\n")
+	b.WriteString("- Every required field must appear as a single `- **<Field>:** <value>` line. Table- or collection-shaped values (for example `columns-fields`) must be serialized into that one line (semicolon-separated rows), never emitted as a separate Markdown table.\n\n")
 	b.WriteString("## Committed claims (evidence)\n\n")
 	limit := directives.MaxClaims
 	if limit <= 0 || limit > len(claims) {
