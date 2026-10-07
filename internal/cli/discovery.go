@@ -78,6 +78,8 @@ func specDiscoveryFrontier(args []string, stdout, stderr io.Writer) error {
 	if *iteration != "" {
 		runConfig.Iteration = *iteration
 	}
+	// Frontiers are a rebuildable projection of committed inventory.
+	runConfig.UpdateExisting = true
 	session, err := work.NewSession(*db, res.EIR, runConfig, discovery.MechanicalFrontierExecutor{Inventory: units}, nil)
 	if err != nil {
 		return err

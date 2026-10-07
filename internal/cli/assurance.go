@@ -81,6 +81,8 @@ func specAssuranceSweep(args []string, stdout, stderr io.Writer) error {
 	if iteration := header["current-iteration"]; iteration != "" {
 		runConfig.Iteration = iteration
 	}
+	// Cell sweeps are a rebuildable projection of committed coverage state.
+	runConfig.UpdateExisting = true
 	session, err := work.NewSession(*db, res.EIR, runConfig, assurance.MechanicalCellSweepExecutor{Scopes: scopes}, nil)
 	if err != nil {
 		return err

@@ -82,6 +82,9 @@ func specSynthesisBindings(args []string, stdout, stderr io.Writer) error {
 	if iteration := header["current-iteration"]; iteration != "" {
 		runConfig.Iteration = iteration
 	}
+	// Derived-edge records are a rebuildable projection of committed synthesis:
+	// re-running replaces them so the recorded building invocation stays current.
+	runConfig.UpdateExisting = true
 	session, err := work.NewSession(*db, res.EIR, runConfig, synthesis.MechanicalBindingExecutor{
 		Records:   records,
 		Inventory: inventory,

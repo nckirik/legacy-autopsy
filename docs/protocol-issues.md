@@ -514,7 +514,7 @@ oracle snapshot is an open process decision.
 
 ## PI-20: Evidence-anchored identity collides for multi-record catalogs
 
-- **Status:** proposed; not yet accepted. Blocks CFG (and likely others).
+- **Status:** implemented in the runtime; live CFG run committed 3 configuration records keyed by `exact-key` over the shared primary source.
 - **Source:** Fresh rehearsal 2026-10-06; `U-SYNTHESIS-CFG` failed with
   `duplicate resolved record ID "CFG-9D153761542F" (two records share primary
   evidence SRC-FILE-957AD5A10D5B)`.
@@ -532,7 +532,7 @@ oracle snapshot is an open process decision.
 
 ## PI-21: Zero-domain catalogs cannot satisfy the MinRecords floor
 
-- **Status:** proposed; not yet accepted. Blocks SCHED (and any absent family).
+- **Status:** implemented in the runtime; live SCHED run produced a logged zero-domain declaration ("all committed claims were searched ... none describe a scheduled/async execution unit") with zero fabricated records.
 - **Source:** Fresh rehearsal 2026-10-06; `U-SYNTHESIS-SCHED` returned a
   protocol-mechanics blocker rather than fabricate a schedule record.
 - **Affected:** synthesis unit contract (`MinRecords`), §6 catalog applicability,

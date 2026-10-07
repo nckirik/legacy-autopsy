@@ -323,7 +323,8 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
   `source-bindings`; `spec synthesis bindings` materializes keyed
   `DERIVED-FROM-EDGE` rows (claim bindings resolve to their subject source unit) and
   `spec assurance advance` recomputes dispositions - live **40/40 mapped**. Remaining:
-  the other catalogs. **Identity policy (all catalogs + claims):** identities anchor
+  all 14 catalogs attempted (12 with records, SCHED an evidence-backed zero domain;
+  CFG keyed by `exact-key`). **Identity policy (all catalogs + claims):** identities anchor
   in evidence - synthesis records use the lexicographically first bound source unit,
   claims use their subject + source anchor rather than prose; identical re-runs are
   idempotent, changed content at the same identity is either refused or explicitly
