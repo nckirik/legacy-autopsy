@@ -171,7 +171,7 @@ func (s *Session) runUnit(unit Unit) (stats UnitStats, err error) {
 				continue
 			}
 		}
-		committedIDs, commitErr := CommitWithIDs(caps, unit, proposal)
+		committedIDs, commitErr := CommitWithIDs(caps, unit, proposal, s.config.UpdateExisting)
 		if err := commitErr; err != nil {
 			var stale *StaleError
 			if errors.As(err, &stale) {

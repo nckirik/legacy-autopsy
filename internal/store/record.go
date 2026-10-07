@@ -194,3 +194,26 @@ func ensureTrailingNewline(value string) string {
 	}
 	return value + "\n"
 }
+
+// VersionOf returns the stored record version.
+func VersionOf(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string) (int, error) {
+	if _, err := tableField(doc, fieldID); err != nil {
+		return 0, err
+	}
+	rows, err := queryRows(dbPath, fmt.Sprintf("select la_record_version from %q where la_record_id = %s;", ident(fieldID), literal(recordID)))
+	if err != nil {
+		return 0, err
+	}
+	if len(rows) == 0 {
+		return 0, fmt.Errorf("store: %s %s not found", fieldID, recordID)
+	}
+	number, ok := rows[0]["la_record_version"].(json.Number)
+	if !ok {
+		return 0, fmt.Errorf("store: %s %s has a non-numeric version", fieldID, recordID)
+	}
+	version, err := number.Int64()
+	if err != nil {
+		return 0, err
+	}
+	return int(version), nil
+}

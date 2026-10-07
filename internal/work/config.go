@@ -30,6 +30,9 @@ type Config struct {
 	MaxRetries       int
 	// Iteration is the canonical §10.6 token used for invocation IDs.
 	Iteration string
+	// UpdateExisting allows explicit re-synthesis to replace a record whose
+	// evidence-anchored identity already exists with different content.
+	UpdateExisting bool
 	// Observer receives lifecycle events for progress surfaces; it never
 	// affects execution outcome.
 	Observer *Observer

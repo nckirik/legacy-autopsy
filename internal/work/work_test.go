@@ -502,4 +502,26 @@ func TestReRunIsIdempotent(t *testing.T) {
 	if _, err := session.Run([]Unit{conflict}); err == nil {
 		t.Fatal("conflicting re-run accepted")
 	}
+	updateConfig := DefaultConfig()
+	updateConfig.UpdateExisting = true
+	session, err = NewSession(db, doc, updateConfig, funcExecutor(func(inv Invocation) (Proposal, error) {
+		return invariantProposal("changed"), nil
+	}), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := session.Run([]Unit{conflict}); err != nil {
+		t.Fatalf("explicit update rejected: %v", err)
+	}
+	payload, err := store.Get(db, doc, "INVARIANT", "INV-IDEM")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(payload), "changed") {
+		t.Fatalf("record not replaced: %s", payload)
+	}
+	version, err := store.VersionOf(db, doc, "INVARIANT", "INV-IDEM")
+	if err != nil || version != 2 {
+		t.Fatalf("version = %d err = %v", version, err)
+	}
 }

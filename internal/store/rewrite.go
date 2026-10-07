@@ -68,3 +68,24 @@ func RewriteRecord(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string, upd
 	sql := fmt.Sprintf("UPDATE %q SET %s WHERE la_record_id = %s;", ident(field.ID), strings.Join(setClauses, ", "), literal(recordID))
 	return execSQL(dbPath, sql)
 }
+
+// ReplaceRecord atomically replaces a record's payload and version, regenerating
+// the canonical payload, fingerprint, and derived columns. It is a
+// runtime-owned mechanical mutation for explicit re-synthesis with changed
+// content at the same evidence-anchored identity.
+func ReplaceRecord(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string, version int, payload []byte) error {
+	field, err := tableField(doc, fieldID)
+	if err != nil {
+		return err
+	}
+	if version < 1 {
+		return fmt.Errorf("store: replace %s %s: version must be positive", fieldID, recordID)
+	}
+	record := RecordInput{RecordID: recordID, Version: version, Payload: payload}
+	statement, err := ingestStatement(doc, field, record)
+	if err != nil {
+		return err
+	}
+	script := "BEGIN;\nDELETE FROM " + fmt.Sprintf("%q", ident(field.ID)) + " WHERE la_record_id = " + literal(recordID) + ";\n" + statement + "\nCOMMIT;\n"
+	return execSQL(dbPath, script)
+}

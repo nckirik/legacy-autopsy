@@ -39,12 +39,12 @@ func (e *StaleError) Error() string {
 // effects, stale-checks every observed dependency except the proposal's own
 // target, and only then ingests it.
 func Commit(caps *Caps, unit Unit, p Proposal) error {
-	_, err := CommitWithIDs(caps, unit, p)
+	_, err := CommitWithIDs(caps, unit, p, false)
 	return err
 }
 
 // CommitWithIDs is Commit returning the runtime-assigned record IDs.
-func CommitWithIDs(caps *Caps, unit Unit, p Proposal) ([]string, error) {
+func CommitWithIDs(caps *Caps, unit Unit, p Proposal, updateExisting bool) ([]string, error) {
 	if p.FieldID != unit.ResultType {
 		return nil, fmt.Errorf("work: unit %s proposal writes %s, result contract is %s", unit.ID, p.FieldID, unit.ResultType)
 	}
@@ -120,6 +120,7 @@ func CommitWithIDs(caps *Caps, unit Unit, p Proposal) ([]string, error) {
 		}
 	}
 	inputs := make([]store.RecordInput, 0, len(resolved))
+	written := make([]string, 0, len(resolved))
 	for _, record := range resolved {
 		existing, err := store.Get(caps.db, caps.doc, p.FieldID, record.RecordID)
 		if err == nil {
@@ -130,19 +131,26 @@ func CommitWithIDs(caps *Caps, unit Unit, p Proposal) ([]string, error) {
 			if string(existing) == string(canonical) {
 				continue // idempotent: identical evidence reproduced the identical record
 			}
-			return nil, fmt.Errorf("work: unit %s record %s already exists with different content", unit.ID, record.RecordID)
+			if !updateExisting {
+				return nil, fmt.Errorf("work: unit %s record %s already exists with different content (explicit update required)", unit.ID, record.RecordID)
+			}
+			version, err := store.VersionOf(caps.db, caps.doc, p.FieldID, record.RecordID)
+			if err != nil {
+				return nil, err
+			}
+			if err := store.ReplaceRecord(caps.db, caps.doc, p.FieldID, record.RecordID, version+1, record.Payload); err != nil {
+				return nil, err
+			}
+			written = append(written, record.RecordID)
+			continue
 		}
 		inputs = append(inputs, store.RecordInput{RecordID: record.RecordID, Version: 1, Payload: record.Payload})
+		written = append(written, record.RecordID)
 	}
-	if len(inputs) == 0 {
-		return nil, nil
+	if len(inputs) > 0 {
+		if err := store.IngestMany(caps.db, caps.doc, p.FieldID, inputs); err != nil {
+			return nil, err
+		}
 	}
-	if err := store.IngestMany(caps.db, caps.doc, p.FieldID, inputs); err != nil {
-		return nil, err
-	}
-	ids := make([]string, 0, len(resolved))
-	for _, record := range resolved {
-		ids = append(ids, record.RecordID)
-	}
-	return ids, nil
+	return written, nil
 }

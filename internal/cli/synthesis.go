@@ -111,6 +111,7 @@ func specSynthesisRun(args []string, stdout, stderr io.Writer) error {
 	maxClaims := set.Int("max-claims", 200, "bounded claims in the unit context")
 	reviewMode := set.String("review-mode", "", "override review policy: all|critical|uncertainty")
 	maxRetries := set.Int("max-retries", 0, "override the retry budget")
+	updateExisting := set.Bool("update-existing", false, "replace records whose evidence-anchored identity exists with changed content")
 	showModel := set.String("show-model", "off", "stream raw model output: off|stderr|stdout")
 	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
 	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
@@ -167,6 +168,7 @@ func specSynthesisRun(args []string, stdout, stderr io.Writer) error {
 	if *maxRetries > 0 {
 		runConfig.MaxRetries = *maxRetries
 	}
+	runConfig.UpdateExisting = *updateExisting
 	if iteration := header["current-iteration"]; iteration != "" {
 		runConfig.Iteration = iteration
 	}
