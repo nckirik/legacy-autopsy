@@ -222,7 +222,9 @@ func resolveBindingIDs(unit Unit, p Proposal, resolve SourceResolver) ([]Resolve
 		}
 		var sourceIDs []string
 		for _, token := range strings.Split(raw, ",") {
-			token = strings.TrimSpace(token)
+			// Tolerate transport formatting such as `CLM-x [SRC-y]`: IDs never
+			// contain whitespace, so the first token is the identity.
+			token = firstToken(strings.TrimSpace(token))
 			if token == "" || strings.EqualFold(token, "none") {
 				continue
 			}

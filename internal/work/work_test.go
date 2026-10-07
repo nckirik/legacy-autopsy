@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
+	"github.com/nckirik/legacy-autopsy/internal/capabilities"
 	"github.com/nckirik/legacy-autopsy/internal/spec"
 	"github.com/nckirik/legacy-autopsy/internal/store"
 )
@@ -523,5 +524,28 @@ func TestReRunIsIdempotent(t *testing.T) {
 	version, err := store.VersionOf(db, doc, "INVARIANT", "INV-IDEM")
 	if err != nil || version != 2 {
 		t.Fatalf("version = %d err = %v", version, err)
+	}
+}
+
+func TestBindingTokensTolerateTransportFormatting(t *testing.T) {
+	doc := &cdl.EIRDoc{}
+	payload := []byte("- **source-bindings:** CLM-000000000001 [SRC-FILE-AAAAAAAAAAAA]\n- **Constraint:** c\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n")
+	unit := Unit{ID: "U-FMT", Mode: "Discovery", IDFromBindings: "source-bindings", IDType: "MOD", Namespace: "demo", ResultType: "INVARIANT"}
+	resolver := func(token string) (string, bool) {
+		if token == "CLM-000000000001" {
+			return "SRC-FILE-AAAAAAAAAAAA", true
+		}
+		return "", false
+	}
+	resolved, err := ResolveRecords(doc, unit, Proposal{FieldID: "INVARIANT", Records: []Record{{Payload: payload}}}, resolver)
+	if err != nil {
+		t.Fatalf("bracketed token rejected: %v", err)
+	}
+	want, err := capabilities.TypedID("MOD", "demo", "SRC-FILE-AAAAAAAAAAAA", "MOD")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(resolved) != 1 || resolved[0].RecordID != want {
+		t.Fatalf("resolved = %+v want %s", resolved, want)
 	}
 }

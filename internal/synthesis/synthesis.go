@@ -107,14 +107,15 @@ func contextMarkdown(catalog Catalog, claims []ClaimRef, directives Directives) 
 	fmt.Fprintf(&b, "- **Environment/Snapshot:** %s\n", directives.Snapshot)
 	b.WriteString("- `block-id` is runtime-assigned: emit the field with placeholder value `PENDING`.\n")
 	b.WriteString("- Identity is anchored in evidence: the lexicographically first bound source unit determines the record ID. `record-title` is a short human title; `domain-path` is descriptive.\n")
-	b.WriteString("- Where the evidence does not support a field, use `Unknown` (fail-inclusive) or `None`; never invent facts.\n\n")
+	b.WriteString("- Where the evidence does not support a field, use `Unknown` (fail-inclusive) or `None`; never invent facts.\n")
+	b.WriteString("- `source-bindings` lists only CLM-* or SRC-* ID tokens, comma-separated: no subjects, brackets, or prose.\n\n")
 	b.WriteString("## Committed claims (evidence)\n\n")
 	limit := directives.MaxClaims
 	if limit <= 0 || limit > len(claims) {
 		limit = len(claims)
 	}
 	for _, claim := range claims[:limit] {
-		fmt.Fprintf(&b, "- %s [%s]: %s\n", claim.ID, strings.TrimSpace(claim.Subject), claim.Text)
+		fmt.Fprintf(&b, "- %s: %s\n", claim.ID, claim.Text)
 	}
 	return []byte(b.String())
 }
