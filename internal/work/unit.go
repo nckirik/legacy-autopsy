@@ -46,6 +46,9 @@ type Unit struct {
 	IDType          string   `json:"id_type,omitempty"`
 	Namespace       string   `json:"namespace,omitempty"`
 	ExpectedRecords int      `json:"expected_records,omitempty"`
+	// MinRecords fails the proposal when fewer records are authored (a
+	// fail-closed floor; 0 disables).
+	MinRecords int `json:"min_records,omitempty"`
 	// RuntimeFields are payload fields the runtime fills with the resolved
 	// record ID after identity assignment (for example a declared `block-id`).
 	RuntimeFields   []string `json:"runtime_fields,omitempty"`

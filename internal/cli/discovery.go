@@ -1,8 +1,11 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
@@ -102,6 +105,7 @@ func specDiscoveryRun(args []string, stdout, stderr io.Writer) error {
 	batchSize := set.Int("batch-size", 25, "candidates per inventory unit")
 	reviewMode := set.String("review-mode", "", "override review policy: all|critical|uncertainty")
 	maxRetries := set.Int("max-retries", 0, "override the retry budget")
+	windowOffset := set.Int("window-offset", 0, "skip the first N sorted candidates (windowed runs)")
 	showModel := set.String("show-model", "off", "stream raw model output: off|stderr|stdout")
 	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
 	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
@@ -131,12 +135,17 @@ func specDiscoveryRun(args []string, stdout, stderr io.Writer) error {
 	for _, cluster := range clusters {
 		scopePaths = append(scopePaths, cluster.ScopePaths...)
 	}
-	candidates, err := discovery.Enumerate(*target, scopePaths, *maxFiles)
+	candidates, err := discovery.EnumerateWindow(*target, scopePaths, *windowOffset, *maxFiles)
 	if err != nil {
 		return err
 	}
 	if len(candidates) == 0 {
-		return fmt.Errorf("discovery: no candidates under scope %v", scopePaths)
+		return fmt.Errorf("discovery: no candidates under scope %v at offset %d", scopePaths, *windowOffset)
+	}
+	if manifest, err := writeWindowManifest(*db, *target, directives.Namespace, *windowOffset, candidates); err != nil {
+		return err
+	} else {
+		fmt.Fprintf(stdout, "window manifest: %s\n", manifest)
 	}
 	directives.BatchSize = *batchSize
 	config, err := llm.ConfigFromEnv()
@@ -254,6 +263,42 @@ func discoveryContext(db string, doc *cdl.EIRDoc) (discovery.Directives, []disco
 		})
 	}
 	return directives, clusters, nil
+}
+
+// writeWindowManifest records which files were in a bounded discovery window,
+// so successive windowed runs are auditable. The manifest is a debug/audit
+// derivative, never operational state.
+func writeWindowManifest(db, target, namespace string, offset int, candidates []discovery.Candidate) (string, error) {
+	type manifestCandidate struct {
+		Path        string `json:"path"`
+		Size        int64  `json:"size"`
+		Fingerprint string `json:"fingerprint"`
+	}
+	manifest := struct {
+		Target     string              `json:"target"`
+		Namespace  string              `json:"namespace"`
+		Offset     int                 `json:"offset"`
+		Count      int                 `json:"count"`
+		Candidates []manifestCandidate `json:"candidates"`
+	}{
+		Target: target, Namespace: namespace, Offset: offset, Count: len(candidates),
+	}
+	for _, candidate := range candidates {
+		manifest.Candidates = append(manifest.Candidates, manifestCandidate{Path: candidate.Path, Size: candidate.Size, Fingerprint: candidate.Fingerprint})
+	}
+	dir := filepath.Join(filepath.Dir(db), "windows")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return "", err
+	}
+	path := filepath.Join(dir, fmt.Sprintf("discovery-%05d-%05d.json", offset, len(candidates)))
+	data, err := json.MarshalIndent(manifest, "", "  ")
+	if err != nil {
+		return "", err
+	}
+	if err := os.WriteFile(path, append(data, '\n'), 0o644); err != nil {
+		return "", err
+	}
+	return path, nil
 }
 
 func splitList(raw string) []string {

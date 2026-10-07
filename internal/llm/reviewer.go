@@ -43,7 +43,7 @@ func (r *Reviewer) Review(request work.ReviewRequest) (work.ReviewResult, error)
 			}
 		}
 	}
-	text, err := r.client.CompleteEffortStream(context.Background(), reviewerSystemPrompt, string(request.Context.Bytes), r.client.config.Reasoning, sink)
+	text, err := r.client.CompleteEffortStream(context.Background(), reviewerSystemPrompt, string(request.Context.Bytes), r.client.config.ReviewReasoning, sink)
 	if r.Debug != nil {
 		fmt.Fprintf(r.Debug, "\n===== end review %s =====\n", request.Unit.ID)
 	}

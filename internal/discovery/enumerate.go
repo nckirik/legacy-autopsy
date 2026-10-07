@@ -23,6 +23,27 @@ type Candidate struct {
 	Fingerprint string
 }
 
+// EnumerateWindow returns a bounded window of candidates after skipping the
+// first offset entries of the sorted candidate list, so successive runs can
+// cover different files while each run stays bounded.
+func EnumerateWindow(root string, scopePaths []string, offset, maxFiles int) ([]Candidate, error) {
+	if offset < 0 {
+		offset = 0
+	}
+	all, err := Enumerate(root, scopePaths, offset+maxFiles)
+	if err != nil {
+		return nil, err
+	}
+	if offset >= len(all) {
+		return nil, nil
+	}
+	window := all[offset:]
+	if len(window) > maxFiles {
+		window = window[:maxFiles]
+	}
+	return window, nil
+}
+
 // Enumerate walks the target repository and returns bounded, sorted candidates.
 // scopePaths restrict the walk to those normalized relative prefixes; an empty
 // scope means the whole repository. Fingerprints are streamed SHA-256 over the

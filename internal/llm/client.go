@@ -26,6 +26,9 @@ const (
 	EnvMaxTokens     = "LEGACY_AUTOPSY_LLM_MAX_TOKENS"
 	EnvStream        = "LEGACY_AUTOPSY_LLM_STREAM"
 	EnvStreamTimeout = "LEGACY_AUTOPSY_LLM_STREAM_TIMEOUT"
+	// EnvReviewReasoning sets the reviewer's effort independently of the
+	// executor (default "medium"; Q38FN supports low/medium/xhigh).
+	EnvReviewReasoning = "LEGACY_AUTOPSY_LLM_REVIEW_REASONING"
 	// EnvReasoning optionally sets the OpenAI-compatible reasoning_effort side
 	// parameter (for example "low", "medium", "high", "xhigh").
 	EnvReasoning = "LEGACY_AUTOPSY_LLM_REASONING"
@@ -37,6 +40,8 @@ const (
 type Delta struct {
 	Content   string
 	Reasoning string
+	// Usage is set on the final delta when the provider reports token counts.
+	Usage *Usage
 }
 
 // Config describes one OpenAI-compatible endpoint.
@@ -51,20 +56,26 @@ type Config struct {
 	// legitimately exceed the first-byte timeout.
 	StreamTimeout time.Duration
 	Reasoning     string
-	DisableStream bool
+	// ReviewReasoning is the effort used by the independent reviewer.
+	ReviewReasoning string
+	DisableStream   bool
 }
 
 // ConfigFromEnv loads connection details from the environment and fills
 // non-secret defaults. The key is required but never echoed.
 func ConfigFromEnv() (Config, error) {
 	cfg := Config{
-		BaseURL:       strings.TrimSpace(os.Getenv(EnvURL)),
-		APIKey:        strings.TrimSpace(os.Getenv(EnvKey)),
-		Model:         strings.TrimSpace(os.Getenv(EnvModel)),
-		Reasoning:     strings.TrimSpace(os.Getenv(EnvReasoning)),
-		Timeout:       120 * time.Second,
-		MaxTokens:     16384,
-		StreamTimeout: 45 * time.Minute,
+		BaseURL:         strings.TrimSpace(os.Getenv(EnvURL)),
+		APIKey:          strings.TrimSpace(os.Getenv(EnvKey)),
+		Model:           strings.TrimSpace(os.Getenv(EnvModel)),
+		Reasoning:       strings.TrimSpace(os.Getenv(EnvReasoning)),
+		ReviewReasoning: strings.TrimSpace(os.Getenv(EnvReviewReasoning)),
+		Timeout:         120 * time.Second,
+		MaxTokens:       16384,
+		StreamTimeout:   45 * time.Minute,
+	}
+	if cfg.ReviewReasoning == "" {
+		cfg.ReviewReasoning = "medium"
 	}
 	if raw := strings.TrimSpace(os.Getenv(EnvStreamTimeout)); raw != "" {
 		parsed, err := time.ParseDuration(raw)
@@ -144,12 +155,24 @@ type chatMessage struct {
 }
 
 type chatRequest struct {
-	Model           string        `json:"model"`
-	Messages        []chatMessage `json:"messages"`
-	Temperature     float64       `json:"temperature"`
-	MaxTokens       int           `json:"max_tokens,omitempty"`
-	ReasoningEffort string        `json:"reasoning_effort,omitempty"`
-	Stream          bool          `json:"stream,omitempty"`
+	Model           string         `json:"model"`
+	Messages        []chatMessage  `json:"messages"`
+	Temperature     float64        `json:"temperature"`
+	MaxTokens       int            `json:"max_tokens,omitempty"`
+	ReasoningEffort string         `json:"reasoning_effort,omitempty"`
+	Stream          bool           `json:"stream,omitempty"`
+	StreamOptions   *streamOptions `json:"stream_options,omitempty"`
+}
+
+type streamOptions struct {
+	IncludeUsage bool `json:"include_usage"`
+}
+
+// Usage is the provider token accounting for one completed call.
+type Usage struct {
+	PromptTokens     int `json:"prompt_tokens"`
+	CompletionTokens int `json:"completion_tokens"`
+	ReasoningTokens  int `json:"reasoning_tokens"`
 }
 
 type chatResponse struct {
@@ -170,6 +193,13 @@ type chatStreamChunk struct {
 		} `json:"delta"`
 		FinishReason string `json:"finish_reason"`
 	} `json:"choices"`
+	Usage *struct {
+		PromptTokens      int `json:"prompt_tokens"`
+		CompletionTokens  int `json:"completion_tokens"`
+		CompletionDetails *struct {
+			ReasoningTokens int `json:"reasoning_tokens"`
+		} `json:"completion_tokens_details"`
+	} `json:"usage"`
 	Error *struct {
 		Message string `json:"message"`
 	} `json:"error"`
@@ -201,6 +231,9 @@ func (c *Client) CompleteEffortStream(ctx context.Context, system, user, effort 
 		MaxTokens:       maxTokens,
 		ReasoningEffort: effort,
 		Stream:          !c.config.DisableStream,
+	}
+	if request.Stream {
+		request.StreamOptions = &streamOptions{IncludeUsage: true}
 	}
 	body, err := json.Marshal(request)
 	if err != nil {
@@ -291,6 +324,17 @@ func (c *Client) streamOnce(ctx context.Context, endpoint string, body []byte, o
 		}
 		if chunk.Error != nil {
 			return "", "", fmt.Errorf("llm: provider error: %s", chunk.Error.Message)
+		}
+		if chunk.Usage != nil && onDelta != nil {
+			reasoning := 0
+			if chunk.Usage.CompletionDetails != nil {
+				reasoning = chunk.Usage.CompletionDetails.ReasoningTokens
+			}
+			onDelta(Delta{Usage: &Usage{
+				PromptTokens:     chunk.Usage.PromptTokens,
+				CompletionTokens: chunk.Usage.CompletionTokens,
+				ReasoningTokens:  reasoning,
+			}})
 		}
 		for _, choice := range chunk.Choices {
 			if choice.Delta.ReasoningContent != "" {

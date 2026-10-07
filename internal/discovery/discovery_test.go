@@ -228,3 +228,22 @@ func TestFrontierReferenceValidation(t *testing.T) {
 		t.Fatalf("missing source accepted: %v", err)
 	}
 }
+
+func TestEnumerateWindow(t *testing.T) {
+	root := testTree(t)
+	all, err := Enumerate(root, nil, 100)
+	if err != nil {
+		t.Fatal(err)
+	}
+	window, err := EnumerateWindow(root, nil, 2, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(window) != 2 || window[0].Path != all[2].Path || window[1].Path != all[3].Path {
+		t.Fatalf("window = %+v, all = %+v", window, all)
+	}
+	empty, err := EnumerateWindow(root, nil, 100, 10)
+	if err != nil || len(empty) != 0 {
+		t.Fatalf("past-end window = %+v err = %v", empty, err)
+	}
+}

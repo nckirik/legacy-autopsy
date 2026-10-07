@@ -31,6 +31,9 @@ func ResolveRecords(doc *cdl.EIRDoc, unit Unit, p Proposal) ([]ResolvedRecord, e
 	if unit.ExpectedRecords > 0 && len(p.Records) != unit.ExpectedRecords {
 		return nil, fmt.Errorf("work: unit %s expects %d records, proposed %d", unit.ID, unit.ExpectedRecords, len(p.Records))
 	}
+	if unit.MinRecords > 0 && len(p.Records) < unit.MinRecords {
+		return nil, fmt.Errorf("work: unit %s requires at least %d records, proposed %d", unit.ID, unit.MinRecords, len(p.Records))
+	}
 	if unit.IDFromCoordinate != "" {
 		return resolveCoordinateIDs(unit, p)
 	}

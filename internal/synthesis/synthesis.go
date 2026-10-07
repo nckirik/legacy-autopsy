@@ -90,6 +90,7 @@ func Plan(catalog Catalog, claims []ClaimRef, directives Directives) work.Unit {
 		IDOwnerField:         "domain-path",
 		IDDiscriminatorField: "record-title",
 		RuntimeFields:        []string{"block-id"},
+		MinRecords:           1,
 		RequiresReview:       true,
 		ResultType:           catalog.FieldID,
 		Inputs:               []work.Input{{Name: "synthesis-context.md", Bytes: contextMarkdown(catalog, claims, directives)}},
