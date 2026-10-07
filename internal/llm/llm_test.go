@@ -140,6 +140,14 @@ func TestConfigFromEnv(t *testing.T) {
 	if config.Model != "model-x" || config.Reasoning != "xhigh" || config.MaxTokens != 16384 {
 		t.Fatalf("config = %+v", config)
 	}
+	if config.ReviewReasoning != "medium" {
+		t.Fatalf("reviewer default = %q, want medium", config.ReviewReasoning)
+	}
+	t.Setenv(EnvReviewReasoning, "low")
+	if overridden, err := ConfigFromEnv(); err != nil || overridden.ReviewReasoning != "low" {
+		t.Fatalf("reviewer override = %+v err = %v", overridden, err)
+	}
+	t.Setenv(EnvReviewReasoning, "")
 	t.Setenv(EnvReasoning, "bad\nvalue")
 	if _, err := ConfigFromEnv(); err == nil {
 		t.Fatal("line break in reasoning accepted")
