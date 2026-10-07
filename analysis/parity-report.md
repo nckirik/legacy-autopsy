@@ -3,7 +3,7 @@
 - Schema version: 1
 - Generator: parityreport parityreport/0.1
 - Generated at: 2026-09-25T00:00:00Z
-- Protocol: 4.5 (sha256:478c8614e9d2945f99a6ce1b8ac7848848af1bcee2a7fd3da7298169d7242517)
+- Protocol: 4.6 (sha256:5b794a07d8e47f478b518ffd16cb12f7b7a50a1b1f4d3cd6965d473cda23d3bf)
 - Language: cdl/0.4 (EIR format 4)
 
 ## Section coverage
@@ -123,9 +123,9 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 27 sources |
 | drift-tests | pass | 24 tests in 24 files |
-| generated-protocol | pass | sha256:478c8614e9d2945f99a6ce1b8ac7848848af1bcee2a7fd3da7298169d7242517 |
-| golden-eir | pass | sha256:c3ee012c12009b99d2818f1b7854bd946065ed4fdb738ab5fb4ac4ed531f1203 |
-| golden-prompt | pass | sha256:bb8beb2ca27b8e4d3dfbc5594dbd6c5e750c8dbfe020c1f069897053629bab3f |
+| generated-protocol | pass | sha256:5b794a07d8e47f478b518ffd16cb12f7b7a50a1b1f4d3cd6965d473cda23d3bf |
+| golden-eir | pass | sha256:aaac605a232f1f195196aa42c7913bad83d8734170b9ee116666603fd75323b4 |
+| golden-prompt | pass | sha256:806af8f454e70b8bf62d8b7bb70cfb92402231915e7bcd4ba053cea27a06cdc0 |
 | fixture-oracle | pass | 24/24 passed |
 | identity-ledger | pass | 538 identities across 27 sources |
 
@@ -160,7 +160,7 @@
 | protocol/ticket-fsm.cdl | 6 | 20 | sha256:33e51665b071fedafb359fd074b95b64ce76296f26502b01fae3cd281f035125 |
 | protocol/coverage-and-exits.cdl | 6 | 19 | sha256:4e7136c0fba1851cca37d53c063bd9685ab4430d38f4c31a0bef2804eca8cdcb |
 | protocol/synthesis-catalogs.cdl | 13 | 66 | sha256:669904f04afc4ce496c6a6602bbaad7e2e8369852c5f0749e5f66464e6d0ab6d |
-| protocol/traceability.cdl | 5 | 16 | sha256:bc51566c5f4f0d9ae025b898f7b16501ee44e8d7be56801073aa060549029cab |
+| protocol/traceability.cdl | 5 | 16 | sha256:be0f976036aba346b118c10e72a78d55f922d9e8a0921c1a27cb0e35bb840566 |
 | protocol/handbook-and-decisions.cdl | 10 | 23 | sha256:56c6ad208fbc054697e2cd51b3b8c15e3b4872407ac456328c5c2b175273c066 |
 | protocol/packaging.cdl | 9 | 50 | sha256:36493cd62b0d502d2b2c5455ae648b6e6e9d461d31c4d73a6e7558b9c1e15fd0 |
 | protocol/conformance.cdl | 5 | 10 | sha256:9a8fb1d1d5212eb46e646fc31b84b0b2869ff1581c85f0c1ec5f8c598656407a |

@@ -511,3 +511,37 @@ oracle snapshot is an open process decision.
   per key tuple produces the evidence, and closure is computed by matching tuples and
   verifying the covered frontiers are terminal.
 - **Impact:** deterministic per-cell closure and an honest Exit A condition 4.
+
+## PI-20: Evidence-anchored identity collides for multi-record catalogs
+
+- **Status:** proposed; not yet accepted. Blocks CFG (and likely others).
+- **Source:** Fresh rehearsal 2026-10-06; `U-SYNTHESIS-CFG` failed with
+  `duplicate resolved record ID "CFG-9D153761542F" (two records share primary
+  evidence SRC-FILE-957AD5A10D5B)`.
+- **Affected:** §4.1 semantic-catalog identity, synthesis catalog schemas.
+- **Observed:** anchoring a record's ID in its first bound source unit is stable
+  across re-runs, but a catalog may legitimately have several records derived from
+  one primary source (two configuration keys in one file). The second record cannot
+  be represented without a discriminator beyond the primary source.
+- **Proposed direction:** declare a per-catalog evidence-stable discriminator field
+  used in the canonical key (for example `exact-key` for `CFG`,
+  `type-trigger-frequency-window` for `SCHED`), so IDs stay evidence-anchored while
+  allowing multiple records per primary source; model prose fields remain
+  descriptive.
+- **Impact:** unblocks CFG and similar catalogs without reintroducing prose identity.
+
+## PI-21: Zero-domain catalogs cannot satisfy the MinRecords floor
+
+- **Status:** proposed; not yet accepted. Blocks SCHED (and any absent family).
+- **Source:** Fresh rehearsal 2026-10-06; `U-SYNTHESIS-SCHED` returned a
+  protocol-mechanics blocker rather than fabricate a schedule record.
+- **Affected:** synthesis unit contract (`MinRecords`), §6 catalog applicability,
+  zero-domain evidence rules.
+- **Observed:** `MinRecords=1` was adopted to prevent empty catalogs, but a legacy
+  project may legitimately have no schedules (or no faults, etc.). The model
+  correctly refused to invent one, producing a blocker instead.
+- **Proposed direction:** allow an explicit zero-domain result: either `MinRecords=0`
+  with a required reason-bearing "Not-Applicable" record/declaration per catalog, or
+  a unit contract that accepts a structured zero-domain proposal with evidence (the
+  scan/claims proving absence). Empty catalogs must be claim-backed, never silent.
+- **Impact:** honest zero domains without fabrication, and no false blockers.

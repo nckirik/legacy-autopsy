@@ -220,7 +220,7 @@ func TestUpdateAssets(t *testing.T) {
 	if err := os.WriteFile(repoPath("protocol.md"), rendered, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(repoPath("protocol/legacy/protocol-4.5.md"), rendered, 0o644); err != nil {
+	if err := os.WriteFile(repoPath("protocol/legacy/protocol-4.6.md"), rendered, 0o644); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -300,10 +300,10 @@ func TestGoldenProtocolRender(t *testing.T) {
 		}
 	}
 	for _, marker := range []string{
-		"**Version:** 4.5",
-		"**Protocol Version:** 4.5",
-		"Protocol Version: 4.5",
-		"End of Canonical Deconstruction Protocol, edition 4.5",
+		"**Version:** 4.6",
+		"**Protocol Version:** 4.6",
+		"Protocol Version: 4.6",
+		"End of Canonical Deconstruction Protocol, edition 4.6",
 		"## 8.3. Invocation-mode enum and explicit multi-file modes",
 		"Preflight | Export Acquisition",
 	} {
@@ -311,7 +311,7 @@ func TestGoldenProtocolRender(t *testing.T) {
 			t.Fatalf("generated protocol missing %q", marker)
 		}
 	}
-	for _, forbidden := range []string{"{{PROTOCOL-VERSION}}", "v4.5", "**Protocol Version:** 4.1"} {
+	for _, forbidden := range []string{"{{PROTOCOL-VERSION}}", "v4.6", "**Protocol Version:** 4.1"} {
 		if strings.Contains(string(got), forbidden) {
 			t.Fatalf("generated protocol contains stale version literal %q", forbidden)
 		}
@@ -344,7 +344,7 @@ func TestRenderPromptRequiresCoveredSection(t *testing.T) {
 func TestGoldenEditionOracle(t *testing.T) {
 	res := compileAssembly(t)
 	got := RenderProtocol(res.EIR)
-	want, err := os.ReadFile(repoPath("protocol/legacy/protocol-4.5.md"))
+	want, err := os.ReadFile(repoPath("protocol/legacy/protocol-4.6.md"))
 	if err != nil {
 		t.Fatal(err)
 	}

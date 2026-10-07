@@ -238,7 +238,7 @@ END
 
 FIELD DERIVED-FROM-EDGE
   STORAGE record
-  KEY derived-record-id, source-record-id, source-version, binding-kind
+  KEY derived-record-id, source-record-id, source-version, binding-kind, claim-id
   derived-record-id         -> string required
   derived-field             -> string required
   source-record-id          -> string required

@@ -17,7 +17,7 @@ func BindingPlan(namespace string) work.Unit {
 		ID:           "U-SYNTHESIS-BINDINGS",
 		Mode:         "Partial-Synthesis",
 		Scope:        namespace,
-		IDFromFields: []string{"derived-record-id", "source-record-id", "source-version", "binding-kind"},
+		IDFromFields: []string{"derived-record-id", "source-record-id", "source-version", "binding-kind", "claim-id"},
 		ResultType:   "DERIVED-FROM-EDGE",
 		Sections:     []string{"dependency-provenance"},
 	}
@@ -54,12 +54,14 @@ func LoadSynthesisRecords(db string, doc *cdl.EIRDoc) ([]SynthesisRecord, error)
 			if err != nil {
 				return nil, err
 			}
+			seen := map[string]bool{}
 			var bindings []string
 			for _, token := range strings.Split(values["source-bindings"], ",") {
 				token = strings.TrimSpace(token)
-				if token == "" || strings.EqualFold(token, "none") {
+				if token == "" || strings.EqualFold(token, "none") || seen[token] {
 					continue
 				}
+				seen[token] = true
 				bindings = append(bindings, token)
 			}
 			sort.Strings(bindings)

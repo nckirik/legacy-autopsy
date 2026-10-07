@@ -2667,7 +2667,7 @@
     },
     {
       "path": "protocol/traceability.cdl",
-      "source-fingerprint": "sha256:56195001710b06fbb95f0fbbff4a70a0df76b3441809f4b17ea9b5291582c0f7",
+      "source-fingerprint": "sha256:94504fe945ab3c6ede40b893dab4197c063e63862b056e2cab78f7a042ab6409",
       "ids": [
         {
           "id": "CLASSIFICATION",
