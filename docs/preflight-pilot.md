@@ -129,7 +129,14 @@ TRAVERSAL-MATRIX-CLOSURE     Pass  25/25 matrix cells closed
 Exit A: Pass
 ```
 
+## Identity and update policy (all vague entities)
+
+Synthesis records and claims anchor identity in evidence (first bound source unit;
+claim subject + source anchor). Verified live: re-running identical evidence reproduced
+8/8 `MOD-*` IDs; byte-identical records are idempotent no-ops; changed bodies at the
+same identity fail closed by default and are replaced at `version+1` with
+`--update-existing`.
+
 ## Next steps
 
-- Per-cell traversal closure (real sweep evidence per matrix cell); remaining
-  catalogs; export reconciliation; symbol/route/AST kinds.
+- Remaining catalog runs; export reconciliation; symbol/route/AST kinds.
