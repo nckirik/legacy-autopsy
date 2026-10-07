@@ -238,7 +238,18 @@ func resolveBindingIDs(unit Unit, p Proposal, resolve SourceResolver) ([]Resolve
 			return nil, fmt.Errorf("work: unit %s record %d declares no resolvable evidence bindings", unit.ID, i+1)
 		}
 		sort.Strings(sourceIDs)
-		id, err := capabilities.TypedID(unit.IDType, unit.Namespace, sourceIDs[0], unit.IDType)
+		discriminator := unit.IDType
+		if unit.IDDiscriminatorField != "" {
+			value, err := extractFieldValue(unit.IDDiscriminatorField, record.Payload)
+			if err != nil {
+				return nil, fmt.Errorf("work: unit %s record %d: %w", unit.ID, i+1, err)
+			}
+			discriminator = strings.Join(strings.Fields(value), " ")
+			if discriminator == "" {
+				return nil, fmt.Errorf("work: unit %s record %d has an empty identity discriminator %q", unit.ID, i+1, unit.IDDiscriminatorField)
+			}
+		}
+		id, err := capabilities.TypedID(unit.IDType, unit.Namespace, sourceIDs[0], discriminator)
 		if err != nil {
 			return nil, err
 		}

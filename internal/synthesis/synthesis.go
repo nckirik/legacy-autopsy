@@ -21,11 +21,14 @@ type Directives struct {
 	MaxClaims      int
 }
 
-// Catalog is one synthesis record family.
+// Catalog is one synthesis record family. DiscriminatorField, when set, is an
+// evidence-stable payload field that lets several records share a primary source
+// without identity collisions.
 type Catalog struct {
-	FieldID string
-	IDType  string
-	Section string
+	FieldID            string
+	IDType             string
+	Section            string
+	DiscriminatorField string
 }
 
 // Catalogs maps catalog IDs to their declared record family and section.
@@ -39,8 +42,8 @@ var Catalogs = map[string]Catalog{
 	"UC":    {FieldID: "USE-CASE", IDType: "UC", Section: "use-case-catalog"},
 	"IF":    {FieldID: "INTERFACE-RECORD", IDType: "IF", Section: "interface-catalog"},
 	"DEP":   {FieldID: "DEPLOYMENT-ELEMENT", IDType: "DEP", Section: "deployment-catalog"},
-	"CFG":   {FieldID: "CONFIGURATION-RECORD", IDType: "CFG", Section: "deployment-catalog"},
-	"SCHED": {FieldID: "SCHEDULE-RECORD", IDType: "SCHED", Section: "deployment-catalog"},
+	"CFG":   {FieldID: "CONFIGURATION-RECORD", IDType: "CFG", Section: "deployment-catalog", DiscriminatorField: "exact-key"},
+	"SCHED": {FieldID: "SCHEDULE-RECORD", IDType: "SCHED", Section: "deployment-catalog", DiscriminatorField: "type-trigger-frequency-window"},
 	"NFR":   {FieldID: "NFR-RECORD", IDType: "NFR", Section: "nfr-security-catalog"},
 	"SEC":   {FieldID: "SECURITY-FINDING", IDType: "SEC", Section: "nfr-security-catalog"},
 	"FLT":   {FieldID: "FAULT-RECORD", IDType: "FLT", Section: "nfr-security-catalog"},
@@ -82,19 +85,21 @@ func LoadClaims(db string, doc *cdl.EIRDoc) ([]ClaimRef, error) {
 // Plan builds the bounded synthesis unit for one catalog.
 func Plan(catalog Catalog, claims []ClaimRef, directives Directives) work.Unit {
 	return work.Unit{
-		ID:              "U-SYNTHESIS-" + catalog.IDType,
-		Mode:            "Partial-Synthesis",
-		Scope:           directives.Namespace,
-		IDType:          catalog.IDType,
-		Namespace:       directives.Namespace,
-		IDFromBindings:  "source-bindings",
-		RuntimeFields:   []string{"block-id"},
-		MinRecords:      1,
-		RequiresReview:  true,
-		ResultType:      catalog.FieldID,
-		Inputs:          []work.Input{{Name: "synthesis-context.md", Bytes: contextMarkdown(catalog, claims, directives)}},
-		Sections:        []string{"synthesis-scope", catalog.Section},
-		ReasoningEffort: "off",
+		ID:                   "U-SYNTHESIS-" + catalog.IDType,
+		Mode:                 "Partial-Synthesis",
+		Scope:                directives.Namespace,
+		IDType:               catalog.IDType,
+		Namespace:            directives.Namespace,
+		IDFromBindings:       "source-bindings",
+		IDDiscriminatorField: catalog.DiscriminatorField,
+		RuntimeFields:        []string{"block-id"},
+		MinRecords:           1,
+		AllowZeroDomain:      true,
+		RequiresReview:       true,
+		ResultType:           catalog.FieldID,
+		Inputs:               []work.Input{{Name: "synthesis-context.md", Bytes: contextMarkdown(catalog, claims, directives)}},
+		Sections:             []string{"synthesis-scope", catalog.Section},
+		ReasoningEffort:      "off",
 	}
 }
 
@@ -109,7 +114,8 @@ func contextMarkdown(catalog Catalog, claims []ClaimRef, directives Directives) 
 	b.WriteString("- Identity is anchored in evidence: the lexicographically first bound source unit determines the record ID. `record-title` is a short human title; `domain-path` is descriptive.\n")
 	b.WriteString("- Where the evidence does not support a field, use `Unknown` (fail-inclusive) or `None`; never invent facts.\n")
 	b.WriteString("- `source-bindings` lists only CLM-* or SRC-* ID tokens, comma-separated: no subjects, brackets, or prose.\n")
-	b.WriteString("- Every required field must appear as a single `- **<Field>:** <value>` line. Table- or collection-shaped values (for example `columns-fields`) must be serialized into that one line (semicolon-separated rows), never emitted as a separate Markdown table.\n\n")
+	b.WriteString("- Every required field must appear as a single `- **<Field>:** <value>` line. Table- or collection-shaped values (for example `columns-fields`) must be serialized into that one line (semicolon-separated rows), never emitted as a separate Markdown table.\n")
+	b.WriteString("- If the committed evidence contains nothing for this catalog family, declare a ZERO-DOMAIN result with the searched evidence IDs instead of inventing records or blocking.\n\n")
 	b.WriteString("## Committed claims (evidence)\n\n")
 	limit := directives.MaxClaims
 	if limit <= 0 || limit > len(claims) {

@@ -177,6 +177,10 @@ EFFECTS: none
 	if !strings.Contains(string(proposal.Records[0].Payload), "**Constraint:**") {
 		t.Fatalf("payload = %q", proposal.Records[0].Payload)
 	}
+	zero, err := ParseProposal("RESULT: ZERO-DOMAIN\nREASON: no schedules found in the window\nEVIDENCE: SRC-1, SRC-2\n")
+	if err != nil || zero.ZeroDomain == nil || len(zero.ZeroDomain.Evidence) != 2 {
+		t.Fatalf("zero-domain parse = %+v err = %v", zero, err)
+	}
 	blocker, err := ParseProposal("RESULT: BLOCKER\nKIND: uncertainty\nMESSAGE: not enough evidence\n")
 	if err == nil {
 		t.Fatal("blocker parsed as a proposal")

@@ -549,3 +549,50 @@ func TestBindingTokensTolerateTransportFormatting(t *testing.T) {
 		t.Fatalf("resolved = %+v want %s", resolved, want)
 	}
 }
+
+func TestZeroDomainDeclaration(t *testing.T) {
+	db, doc := testDoc(t)
+	srcID := "SRC-FILE-ZZZZZZZZZZZZ"
+	inventory := "- **kind:** FILE\n- **concrete-coordinate:** z.js\n- **parent-container-src:** None\n- **source-fingerprint-snapshot-src-version:** sha256:z version 1\n- **discovery-method:** filesystem\n- **scope-summary:** WEB\n- **environment-runtime-state:** dev\n- **traversal-tracks:** Normal\n- **canonical-owner:** WEB\n- **disposition-summary:** Unknown\n- **mappings:** None\n- **frontier-references:** None\n- **coverage-rows:** None\n- **coverage-summary:** C-GAP\n- **claims:** None\n"
+	if err := store.Ingest(db, doc, "SOURCE-INVENTORY-RECORD", srcID, 1, []byte(inventory)); err != nil {
+		t.Fatal(err)
+	}
+	unit := Unit{ID: "U-ZD", Mode: "Partial-Synthesis", IDFromBindings: "source-bindings", IDType: "MOD", Namespace: "demo", ResultType: "INVARIANT", AllowZeroDomain: true}
+	zero := &ZeroDomain{Reason: "no evidence for this catalog in the window", Evidence: []string{srcID}}
+	if _, err := CommitWithIDs(NewCaps(db, doc), unit, Proposal{FieldID: "INVARIANT", ZeroDomain: zero}, false); err != nil {
+		t.Fatalf("valid zero-domain rejected: %v", err)
+	}
+	if _, err := CommitWithIDs(NewCaps(db, doc), Unit{ID: "U-ZD2", Mode: "Partial-Synthesis", IDFromBindings: "source-bindings", IDType: "MOD", Namespace: "demo", ResultType: "INVARIANT"}, Proposal{FieldID: "INVARIANT", ZeroDomain: zero}, false); err == nil {
+		t.Fatal("zero-domain accepted without permission")
+	}
+	for name, proposal := range map[string]Proposal{
+		"no reason":    {FieldID: "INVARIANT", ZeroDomain: &ZeroDomain{Evidence: []string{srcID}}},
+		"no evidence":  {FieldID: "INVARIANT", ZeroDomain: &ZeroDomain{Reason: "r"}},
+		"bad evidence": {FieldID: "INVARIANT", ZeroDomain: &ZeroDomain{Reason: "r", Evidence: []string{"SRC-FILE-MISSING0000"}}},
+	} {
+		if _, err := CommitWithIDs(NewCaps(db, doc), unit, proposal, false); err == nil {
+			t.Fatalf("%s accepted", name)
+		}
+	}
+	session, err := NewSession(db, doc, DefaultConfig(), funcExecutor(func(inv Invocation) (Proposal, error) {
+		return Proposal{FieldID: "INVARIANT", ZeroDomain: zero}, nil
+	}), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	report, err := session.Run([]Unit{unit})
+	if err != nil {
+		t.Fatal(err)
+	}
+	stats := report.Units[0]
+	if !stats.Committed || stats.ZeroDomain == "" || len(stats.MutationIDs) != 0 {
+		t.Fatalf("stats = %+v", stats)
+	}
+	logPayload, err := store.Get(db, doc, "INVOCATION-LOG", stats.InvocationID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(logPayload), "zero-domain (no records)") {
+		t.Fatalf("log missing zero-domain mutation: %s", logPayload)
+	}
+}

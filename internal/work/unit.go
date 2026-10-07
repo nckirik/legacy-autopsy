@@ -53,6 +53,9 @@ type Unit struct {
 	// MinRecords fails the proposal when fewer records are authored (a
 	// fail-closed floor; 0 disables).
 	MinRecords int `json:"min_records,omitempty"`
+	// AllowZeroDomain permits an explicit reason-and-evidence-backed absence
+	// declaration instead of records.
+	AllowZeroDomain bool `json:"allow_zero_domain,omitempty"`
 	// RuntimeFields are payload fields the runtime fills with the resolved
 	// record ID after identity assignment (for example a declared `block-id`).
 	RuntimeFields   []string `json:"runtime_fields,omitempty"`

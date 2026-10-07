@@ -32,6 +32,11 @@ EFFECTS: none
 - **<Field Label>:** <value>
 ---END---
 
+Response format for a declared zero domain (only when the unit allows it):
+RESULT: ZERO-DOMAIN
+REASON: <one sentence naming what was searched>
+EVIDENCE: <comma-separated SRC-*/CLM-* evidence IDs that were searched>
+
 Response format for a blocker:
 RESULT: BLOCKER
 KIND: <kind>
@@ -108,6 +113,13 @@ func (e *Executor) Execute(invocation work.Invocation) (work.Proposal, error) {
 	proposal, err := ParseProposal(text)
 	if err != nil {
 		return work.Proposal{}, err
+	}
+	if proposal.ZeroDomain != nil {
+		if !invocation.Unit.AllowZeroDomain {
+			return work.Proposal{}, fmt.Errorf("llm: unit %s does not allow zero-domain declarations", invocation.Unit.ID)
+		}
+		proposal.FieldID = invocation.Unit.ResultType
+		return proposal, nil
 	}
 	if proposal.FieldID == "" {
 		proposal.FieldID = invocation.Unit.ResultType
@@ -229,6 +241,19 @@ func ParseProposal(text string) (work.Proposal, error) {
 		}
 	}
 	switch fields["RESULT"] {
+	case "ZERO-DOMAIN":
+		reason := strings.TrimSpace(fields["REASON"])
+		if reason == "" {
+			return work.Proposal{}, fmt.Errorf("llm: zero-domain response has no REASON")
+		}
+		var evidence []string
+		for _, token := range strings.Split(fields["EVIDENCE"], ",") {
+			token = strings.TrimSpace(token)
+			if token != "" {
+				evidence = append(evidence, token)
+			}
+		}
+		return work.Proposal{ZeroDomain: &work.ZeroDomain{Reason: reason, Evidence: evidence}}, nil
 	case "BLOCKER":
 		kind := strings.ToLower(fields["KIND"])
 		if kind == "" {

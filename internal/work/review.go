@@ -18,10 +18,11 @@ type ReviewResult struct {
 // ReviewRequest is what a reviewer receives: the unit contract, the proposed
 // records, and a context constructed independently of the worker invocation.
 type ReviewRequest struct {
-	Unit     Unit
-	Targets  []Ref
-	Payloads [][]byte
-	Context  Context
+	Unit       Unit
+	Targets    []Ref
+	Payloads   [][]byte
+	ZeroDomain *ZeroDomain
+	Context    Context
 }
 
 // Reviewer independently challenges a worker proposal. It MAY use the same

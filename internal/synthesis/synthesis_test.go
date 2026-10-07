@@ -210,5 +210,11 @@ func TestAllCatalogsUseEvidenceAnchoredIdentity(t *testing.T) {
 		if unit.MinRecords != 1 || !unit.RequiresReview {
 			t.Errorf("catalog %s lacks floor/review: MinRecords=%d RequiresReview=%v", id, unit.MinRecords, unit.RequiresReview)
 		}
+		if unit.IDDiscriminatorField != catalog.DiscriminatorField {
+			t.Errorf("catalog %s discriminator = %q, want %q", id, unit.IDDiscriminatorField, catalog.DiscriminatorField)
+		}
+		if !unit.AllowZeroDomain {
+			t.Errorf("catalog %s does not allow evidence-backed zero domains", id)
+		}
 	}
 }

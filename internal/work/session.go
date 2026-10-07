@@ -42,6 +42,7 @@ type UnitStats struct {
 	Blocker      BlockerClass
 	Committed    bool
 	LastError    string
+	ZeroDomain   string
 	// InvocationID is the protocol invocation identity ITERATION-PERSONA-POV-SEQUENCE.
 	InvocationID       string
 	LoadedFingerprints []string
@@ -152,6 +153,9 @@ func (s *Session) runUnit(unit Unit) (stats UnitStats, err error) {
 			stats.Escalated = ReachesOperator(class)
 			return stats, err
 		}
+		if proposal.ZeroDomain != nil {
+			stats.ZeroDomain = proposal.ZeroDomain.Reason
+		}
 		if s.config.NeedsReview(unit, false) && s.reviewer != nil {
 			if s.config.Observer != nil && s.config.Observer.Reviewing != nil {
 				s.config.Observer.Reviewing(unit)
@@ -214,6 +218,13 @@ func (s *Session) notifyRetry(unit Unit, reason string) {
 // review constructs the reviewer's context independently of the worker
 // context and asks for a verdict.
 func (s *Session) review(unit Unit, proposal Proposal) (ReviewResult, error) {
+	if proposal.ZeroDomain != nil {
+		context := Context{UnitID: unit.ID, Bytes: []byte(
+			"## Zero-domain declaration\n\n- **Result contract:** " + unit.ResultType +
+				"\n- **Reason:** " + proposal.ZeroDomain.Reason +
+				"\n- **Evidence:** " + strings.Join(proposal.ZeroDomain.Evidence, ", ") + "\n")}
+		return s.reviewer.Review(ReviewRequest{Unit: unit, ZeroDomain: proposal.ZeroDomain, Context: context})
+	}
 	sessionCaps := NewCaps(s.db, s.doc)
 	resolved, err := ResolveRecords(s.doc, unit, proposal, storeSourceResolver(sessionCaps))
 	if err != nil {

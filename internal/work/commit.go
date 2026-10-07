@@ -2,6 +2,7 @@ package work
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/nckirik/legacy-autopsy/internal/capabilities"
 	"github.com/nckirik/legacy-autopsy/internal/certify"
@@ -22,6 +23,15 @@ type Proposal struct {
 	FieldID string
 	Records []Record
 	Effects []string
+	// ZeroDomain declares an evidence-backed absence of records for the unit's
+	// result type. Only valid when the unit allows it.
+	ZeroDomain *ZeroDomain
+}
+
+// ZeroDomain is a reason- and evidence-backed absence declaration.
+type ZeroDomain struct {
+	Reason   string
+	Evidence []string
 }
 
 // StaleError reports a dependency whose committed fingerprint changed or
@@ -48,8 +58,23 @@ func CommitWithIDs(caps *Caps, unit Unit, p Proposal, updateExisting bool) ([]st
 	if p.FieldID != unit.ResultType {
 		return nil, fmt.Errorf("work: unit %s proposal writes %s, result contract is %s", unit.ID, p.FieldID, unit.ResultType)
 	}
+	resolve := storeSourceResolver(caps)
 	if len(p.Records) == 0 {
-		return nil, fmt.Errorf("work: unit %s proposal has no records", unit.ID)
+		if !unit.AllowZeroDomain {
+			return nil, fmt.Errorf("work: unit %s proposal has no records", unit.ID)
+		}
+		if p.ZeroDomain == nil || strings.TrimSpace(p.ZeroDomain.Reason) == "" {
+			return nil, fmt.Errorf("work: unit %s zero-domain declaration requires a reason", unit.ID)
+		}
+		if len(p.ZeroDomain.Evidence) == 0 {
+			return nil, fmt.Errorf("work: unit %s zero-domain declaration requires evidence bindings", unit.ID)
+		}
+		for _, token := range p.ZeroDomain.Evidence {
+			if _, ok := resolve(strings.TrimSpace(token)); !ok {
+				return nil, fmt.Errorf("work: unit %s zero-domain evidence %q does not resolve", unit.ID, token)
+			}
+		}
+		return nil, nil
 	}
 	for _, effect := range p.Effects {
 		allowed := false
@@ -63,7 +88,7 @@ func CommitWithIDs(caps *Caps, unit Unit, p Proposal, updateExisting bool) ([]st
 			return nil, fmt.Errorf("work: unit %s effect %q is not allowed", unit.ID, effect)
 		}
 	}
-	resolved, err := ResolveRecords(caps.doc, unit, p, storeSourceResolver(caps))
+	resolved, err := ResolveRecords(caps.doc, unit, p, resolve)
 	if err != nil {
 		return nil, err
 	}
