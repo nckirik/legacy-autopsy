@@ -3,6 +3,7 @@ package work
 import (
 	"fmt"
 
+	"github.com/nckirik/legacy-autopsy/internal/capabilities"
 	"github.com/nckirik/legacy-autopsy/internal/certify"
 	"github.com/nckirik/legacy-autopsy/internal/store"
 )
@@ -62,7 +63,7 @@ func CommitWithIDs(caps *Caps, unit Unit, p Proposal) ([]string, error) {
 			return nil, fmt.Errorf("work: unit %s effect %q is not allowed", unit.ID, effect)
 		}
 	}
-	resolved, err := ResolveRecords(caps.doc, unit, p)
+	resolved, err := ResolveRecords(caps.doc, unit, p, storeSourceResolver(caps))
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +121,21 @@ func CommitWithIDs(caps *Caps, unit Unit, p Proposal) ([]string, error) {
 	}
 	inputs := make([]store.RecordInput, 0, len(resolved))
 	for _, record := range resolved {
+		existing, err := store.Get(caps.db, caps.doc, p.FieldID, record.RecordID)
+		if err == nil {
+			canonical, err := capabilities.CanonicalMarkdown(record.Payload)
+			if err != nil {
+				return nil, err
+			}
+			if string(existing) == string(canonical) {
+				continue // idempotent: identical evidence reproduced the identical record
+			}
+			return nil, fmt.Errorf("work: unit %s record %s already exists with different content", unit.ID, record.RecordID)
+		}
 		inputs = append(inputs, store.RecordInput{RecordID: record.RecordID, Version: 1, Payload: record.Payload})
+	}
+	if len(inputs) == 0 {
+		return nil, nil
 	}
 	if err := store.IngestMany(caps.db, caps.doc, p.FieldID, inputs); err != nil {
 		return nil, err

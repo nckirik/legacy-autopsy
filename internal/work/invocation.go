@@ -50,6 +50,9 @@ func (s *Session) appendInvocationLog(unit Unit, invocationID string, stats Unit
 	if stats.Committed {
 		summary = "committed"
 		mutation = fmt.Sprintf("committed %d record(s)", len(stats.MutationIDs))
+		if len(stats.MutationIDs) == 0 {
+			mutation = "already committed (identical evidence)"
+		}
 	}
 	if stats.LastError != "" {
 		summary = "stopped"

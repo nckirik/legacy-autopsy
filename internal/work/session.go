@@ -214,7 +214,8 @@ func (s *Session) notifyRetry(unit Unit, reason string) {
 // review constructs the reviewer's context independently of the worker
 // context and asks for a verdict.
 func (s *Session) review(unit Unit, proposal Proposal) (ReviewResult, error) {
-	resolved, err := ResolveRecords(s.doc, unit, proposal)
+	sessionCaps := NewCaps(s.db, s.doc)
+	resolved, err := ResolveRecords(s.doc, unit, proposal, storeSourceResolver(sessionCaps))
 	if err != nil {
 		return ReviewResult{}, err
 	}

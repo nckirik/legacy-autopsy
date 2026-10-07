@@ -462,3 +462,44 @@ func TestInvocationIdentityAndLog(t *testing.T) {
 		t.Fatalf("sequence not continued: %q", third.InvocationID)
 	}
 }
+
+func TestReRunIsIdempotent(t *testing.T) {
+	db, doc := testDoc(t)
+	unit := Unit{ID: "U-IDEM", Mode: "Discovery", RecordID: "INV-IDEM", ResultType: "INVARIANT"}
+	proposal := invariantProposal("stable")
+	for i := 0; i < 2; i++ {
+		session, err := NewSession(db, doc, DefaultConfig(), funcExecutor(func(inv Invocation) (Proposal, error) {
+			return proposal, nil
+		}), nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		report, err := session.Run([]Unit{unit})
+		if err != nil {
+			t.Fatalf("run %d: %v", i+1, err)
+		}
+		if !report.Units[0].Committed {
+			t.Fatalf("run %d not committed: %+v", i+1, report.Units[0])
+		}
+		if i == 1 && len(report.Units[0].MutationIDs) != 0 {
+			t.Fatalf("identical re-run mutated records: %v", report.Units[0].MutationIDs)
+		}
+	}
+	ids, err := store.List(db, doc, "INVARIANT")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Join(ids, ",") != "INV-IDEM" {
+		t.Fatalf("ids = %v", ids)
+	}
+	conflict := Unit{ID: "U-IDEM", Mode: "Discovery", RecordID: "INV-IDEM", ResultType: "INVARIANT"}
+	session, err := NewSession(db, doc, DefaultConfig(), funcExecutor(func(inv Invocation) (Proposal, error) {
+		return invariantProposal("changed"), nil
+	}), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := session.Run([]Unit{conflict}); err == nil {
+		t.Fatal("conflicting re-run accepted")
+	}
+}

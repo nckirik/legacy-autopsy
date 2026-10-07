@@ -2,11 +2,13 @@ package work
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/capabilities"
 	md "github.com/nckirik/legacy-autopsy/internal/markdown"
+	"github.com/nckirik/legacy-autopsy/internal/store"
 )
 
 // ResolvedRecord is one proposed record with its runtime-assigned ID.
@@ -18,11 +20,15 @@ type ResolvedRecord struct {
 // ResolveRecords assigns record IDs per the unit contract: a single declared
 // target, or the value of the declared ID field extracted from each payload.
 // Duplicate IDs fail closed.
-func ResolveRecords(doc *cdl.EIRDoc, unit Unit, p Proposal) ([]ResolvedRecord, error) {
+// SourceResolver maps a declared binding token (claim or source-unit ID) to
+// its canonical source-unit ID.
+type SourceResolver func(token string) (string, bool)
+
+func ResolveRecords(doc *cdl.EIRDoc, unit Unit, p Proposal, resolve SourceResolver) ([]ResolvedRecord, error) {
 	if len(p.Records) == 0 {
 		return nil, fmt.Errorf("work: unit %s proposal has no records", unit.ID)
 	}
-	if unit.IDFromField == "" && unit.IDFromCoordinate == "" && unit.IDOwnerField == "" && len(unit.IDFromFields) == 0 {
+	if unit.IDFromField == "" && unit.IDFromCoordinate == "" && unit.IDOwnerField == "" && len(unit.IDFromFields) == 0 && unit.IDFromBindings == "" {
 		if len(p.Records) != 1 {
 			return nil, fmt.Errorf("work: unit %s targets a single record but proposed %d", unit.ID, len(p.Records))
 		}
@@ -42,6 +48,9 @@ func ResolveRecords(doc *cdl.EIRDoc, unit Unit, p Proposal) ([]ResolvedRecord, e
 	}
 	if len(unit.IDFromFields) > 0 {
 		return resolveCompositeIDs(unit, p)
+	}
+	if unit.IDFromBindings != "" {
+		return resolveBindingIDs(unit, p, resolve)
 	}
 	seen := map[string]bool{}
 	resolved := make([]ResolvedRecord, 0, len(p.Records))
@@ -200,6 +209,46 @@ func injectRuntimeFields(payload []byte, fields []string, value string) ([]byte,
 	return []byte(strings.Join(lines, "\n")), nil
 }
 
+// resolveBindingIDs anchors a record ID in its evidence: the lexicographically
+// first source unit among the resolved bindings becomes the owner coordinate,
+// so re-running over the same evidence reproduces the same identity.
+func resolveBindingIDs(unit Unit, p Proposal, resolve SourceResolver) ([]ResolvedRecord, error) {
+	seen := map[string]bool{}
+	resolved := make([]ResolvedRecord, 0, len(p.Records))
+	for i, record := range p.Records {
+		raw, err := extractFieldValue(unit.IDFromBindings, record.Payload)
+		if err != nil {
+			return nil, fmt.Errorf("work: unit %s record %d: %w", unit.ID, i+1, err)
+		}
+		var sourceIDs []string
+		for _, token := range strings.Split(raw, ",") {
+			token = strings.TrimSpace(token)
+			if token == "" || strings.EqualFold(token, "none") {
+				continue
+			}
+			sourceID, ok := resolve(token)
+			if !ok {
+				return nil, fmt.Errorf("work: unit %s record %d binds unresolvable evidence %q", unit.ID, i+1, token)
+			}
+			sourceIDs = append(sourceIDs, sourceID)
+		}
+		if len(sourceIDs) == 0 {
+			return nil, fmt.Errorf("work: unit %s record %d declares no resolvable evidence bindings", unit.ID, i+1)
+		}
+		sort.Strings(sourceIDs)
+		id, err := capabilities.TypedID(unit.IDType, unit.Namespace, sourceIDs[0], unit.IDType)
+		if err != nil {
+			return nil, err
+		}
+		if seen[id] {
+			return nil, fmt.Errorf("work: unit %s duplicate resolved record ID %q (two records share primary evidence %s)", unit.ID, id, sourceIDs[0])
+		}
+		seen[id] = true
+		resolved = append(resolved, ResolvedRecord{RecordID: id, Payload: record.Payload})
+	}
+	return resolved, nil
+}
+
 // resolveCompositeIDs composes a natural key record ID from declared payload
 // fields, for keyed supporting rows (matrix cells, derived-from edges).
 func resolveCompositeIDs(unit Unit, p Proposal) ([]ResolvedRecord, error) {
@@ -244,4 +293,33 @@ func extractFieldValue(fieldName string, payload []byte) (string, error) {
 		return value, nil
 	}
 	return "", fmt.Errorf("ID field %q is missing", fieldName)
+}
+
+// storeSourceResolver resolves a binding token to its canonical source-unit ID:
+// claims resolve to their subject unit, source IDs to themselves.
+func storeSourceResolver(caps *Caps) SourceResolver {
+	return func(token string) (string, bool) {
+		if strings.HasPrefix(token, "CLM-") {
+			payload, err := store.Get(caps.db, caps.doc, "CLAIM", token)
+			if err != nil {
+				return "", false
+			}
+			names, _, _, err := FieldContract(caps.doc, "CLAIM")
+			if err != nil {
+				return "", false
+			}
+			values, err := PayloadText(names, payload)
+			if err != nil {
+				return "", false
+			}
+			subject := strings.TrimSuffix(firstToken(values["subject-id-record-version"]), "/")
+			if subject == "" {
+				return "", false
+			}
+			exists, err := store.Exists(caps.db, caps.doc, "SOURCE-INVENTORY-RECORD", subject)
+			return subject, err == nil && exists
+		}
+		exists, err := store.Exists(caps.db, caps.doc, "SOURCE-INVENTORY-RECORD", token)
+		return token, err == nil && exists
+	}
 }

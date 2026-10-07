@@ -82,20 +82,19 @@ func LoadClaims(db string, doc *cdl.EIRDoc) ([]ClaimRef, error) {
 // Plan builds the bounded synthesis unit for one catalog.
 func Plan(catalog Catalog, claims []ClaimRef, directives Directives) work.Unit {
 	return work.Unit{
-		ID:                   "U-SYNTHESIS-" + catalog.IDType,
-		Mode:                 "Partial-Synthesis",
-		Scope:                directives.Namespace,
-		IDType:               catalog.IDType,
-		Namespace:            directives.Namespace,
-		IDOwnerField:         "domain-path",
-		IDDiscriminatorField: "record-title",
-		RuntimeFields:        []string{"block-id"},
-		MinRecords:           1,
-		RequiresReview:       true,
-		ResultType:           catalog.FieldID,
-		Inputs:               []work.Input{{Name: "synthesis-context.md", Bytes: contextMarkdown(catalog, claims, directives)}},
-		Sections:             []string{"synthesis-scope", catalog.Section},
-		ReasoningEffort:      "off",
+		ID:              "U-SYNTHESIS-" + catalog.IDType,
+		Mode:            "Partial-Synthesis",
+		Scope:           directives.Namespace,
+		IDType:          catalog.IDType,
+		Namespace:       directives.Namespace,
+		IDFromBindings:  "source-bindings",
+		RuntimeFields:   []string{"block-id"},
+		MinRecords:      1,
+		RequiresReview:  true,
+		ResultType:      catalog.FieldID,
+		Inputs:          []work.Input{{Name: "synthesis-context.md", Bytes: contextMarkdown(catalog, claims, directives)}},
+		Sections:        []string{"synthesis-scope", catalog.Section},
+		ReasoningEffort: "off",
 	}
 }
 
@@ -107,7 +106,7 @@ func contextMarkdown(catalog Catalog, claims []ClaimRef, directives Directives) 
 	fmt.Fprintf(&b, "- **System Namespace:** %s\n", directives.Namespace)
 	fmt.Fprintf(&b, "- **Environment/Snapshot:** %s\n", directives.Snapshot)
 	b.WriteString("- `block-id` is runtime-assigned: emit the field with placeholder value `PENDING`.\n")
-	b.WriteString("- `record-title` is a short human title; `domain-path` is the stable normalized path or domain coordinate the record describes.\n")
+	b.WriteString("- Identity is anchored in evidence: the lexicographically first bound source unit determines the record ID. `record-title` is a short human title; `domain-path` is descriptive.\n")
 	b.WriteString("- Where the evidence does not support a field, use `Unknown` (fail-inclusive) or `None`; never invent facts.\n\n")
 	b.WriteString("## Committed claims (evidence)\n\n")
 	limit := directives.MaxClaims

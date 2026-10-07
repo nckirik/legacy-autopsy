@@ -42,10 +42,14 @@ type Unit struct {
 	IDDiscriminatorField string `json:"id_discriminator_field,omitempty"`
 	// IDFromFields composes a natural composite record ID from the named
 	// payload fields joined by "|" (for keyed supporting rows).
-	IDFromFields    []string `json:"id_from_fields,omitempty"`
-	IDType          string   `json:"id_type,omitempty"`
-	Namespace       string   `json:"namespace,omitempty"`
-	ExpectedRecords int      `json:"expected_records,omitempty"`
+	IDFromFields []string `json:"id_from_fields,omitempty"`
+	// IDFromBindings anchors identity in evidence: the named payload field lists
+	// record IDs (claims or source units); the runtime resolves them to source
+	// units and uses the lexicographically first as the owner coordinate.
+	IDFromBindings  string `json:"id_from_bindings,omitempty"`
+	IDType          string `json:"id_type,omitempty"`
+	Namespace       string `json:"namespace,omitempty"`
+	ExpectedRecords int    `json:"expected_records,omitempty"`
 	// MinRecords fails the proposal when fewer records are authored (a
 	// fail-closed floor; 0 disables).
 	MinRecords int `json:"min_records,omitempty"`
@@ -68,7 +72,7 @@ func (u Unit) Validate(doc *cdl.EIRDoc) error {
 		return fmt.Errorf("work: unit requires ID, mode, and result type")
 	}
 	modes := 0
-	for _, set := range []bool{u.RecordID != "", u.IDFromField != "", u.IDFromCoordinate != "", u.IDOwnerField != "", len(u.IDFromFields) > 0} {
+	for _, set := range []bool{u.RecordID != "", u.IDFromField != "", u.IDFromCoordinate != "", u.IDOwnerField != "", len(u.IDFromFields) > 0, u.IDFromBindings != ""} {
 		if set {
 			modes++
 		}
@@ -76,7 +80,7 @@ func (u Unit) Validate(doc *cdl.EIRDoc) error {
 	if modes != 1 {
 		return fmt.Errorf("work: unit %s requires exactly one record-ID mode", u.ID)
 	}
-	if (u.IDFromCoordinate != "" || u.IDOwnerField != "") && (u.IDType == "" || u.Namespace == "") {
+	if (u.IDFromCoordinate != "" || u.IDOwnerField != "" || u.IDFromBindings != "") && (u.IDType == "" || u.Namespace == "") {
 		return fmt.Errorf("work: unit %s runtime IDs require an ID type and namespace", u.ID)
 	}
 	if u.IDOwnerField != "" && u.IDDiscriminatorField == "" {

@@ -41,11 +41,21 @@ func (f fakeExecutor) Execute(inv work.Invocation) (work.Proposal, error) { retu
 func TestPlanInjectsBlockIDAndDerivesSemanticID(t *testing.T) {
 	doc, db := testDocDB(t)
 	claims := []ClaimRef{
-		{ID: "CLM-000000000001", Subject: "SRC-FILE-A", Text: "app/routes.js registers the public and API routes"},
-		{ID: "CLM-000000000002", Subject: "SRC-FILE-B", Text: "the passport strategy authenticates users via SAML"},
+		{ID: "CLM-000000000001", Subject: "SRC-FILE-AAAAAAAAAAAA", Text: "app/routes.js registers the public and API routes"},
+		{ID: "CLM-000000000002", Subject: "SRC-FILE-BBBBBBBBBBBB", Text: "the passport strategy authenticates users via SAML"},
+	}
+	for _, claim := range claims {
+		inventory := "- **kind:** FILE\n- **concrete-coordinate:** " + claim.Subject + ".js\n- **parent-container-src:** None\n- **source-fingerprint-snapshot-src-version:** sha256:x version 1\n- **discovery-method:** filesystem\n- **scope-summary:** WEB\n- **environment-runtime-state:** dev\n- **traversal-tracks:** Normal\n- **canonical-owner:** WEB\n- **disposition-summary:** Unknown\n- **mappings:** None\n- **frontier-references:** None\n- **coverage-rows:** None\n- **coverage-summary:** C-GAP\n- **claims:** None\n"
+		if err := store.Ingest(db, doc, "SOURCE-INVENTORY-RECORD", claim.Subject, 1, []byte(inventory)); err != nil {
+			t.Fatal(err)
+		}
+		claimPayload := "- **subject-id-record-version:** " + claim.Subject + "\n- **field-step:** file\n- **claim:** " + claim.Text + "\n- **materiality:** Material\n- **evidence-level:** [E-DIRECT]\n- **anchor:** x:1\n- **source-fingerprint-snapshot:** sha256:x\n- **evidence-route-lineage-id:** static-filesystem\n- **projection-classification:** raw-visible\n- **independent-supporting-claims:** None\n- **independence-basis:** None\n- **contradiction-ids:** None\n- **created-last-revalidated-by:** None\n"
+		if err := store.Ingest(db, doc, "CLAIM", claim.ID, 1, []byte(claimPayload)); err != nil {
+			t.Fatal(err)
+		}
 	}
 	unit := Plan(Catalogs["MOD"], claims, Directives{Namespace: "demo", Snapshot: "dev"})
-	if unit.RuntimeFields[0] != "block-id" || unit.IDOwnerField != "domain-path" {
+	if unit.RuntimeFields[0] != "block-id" || unit.IDFromBindings != "source-bindings" {
 		t.Fatalf("unit = %+v", unit)
 	}
 	executor := fakeExecutor(func(inv work.Invocation) (work.Proposal, error) {
@@ -80,7 +90,7 @@ func TestPlanInjectsBlockIDAndDerivesSemanticID(t *testing.T) {
 	if !report.Units[0].Committed {
 		t.Fatalf("stats = %+v", report.Units[0])
 	}
-	want, err := capabilities.TypedID("MOD", "demo", "app/routes", "Request Routing and Authentication")
+	want, err := capabilities.TypedID("MOD", "demo", "SRC-FILE-AAAAAAAAAAAA", "MOD")
 	if err != nil {
 		t.Fatal(err)
 	}
