@@ -353,10 +353,10 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
 ### W6 - Acceptance rerun
 
 - [~] Rerun the same small project on the current protocol through the bounded
-      semantic-work harness. The fresh `veri-yonetimi` workspace (24 sources, two
-      discovery windows) passes Exit A, holds 16 narrated handbook chapters, and
-      reports the candidate table 14/0/0. Remaining: human content-readiness acts,
-      package assembly, comparative metrics.
+  semantic-work harness. The fresh `veri-yonetimi` workspace (24 sources, two
+  discovery windows) passes Exit A, holds 16 narrated handbook chapters, and
+  reports the candidate table 14/0/0. Remaining: human content-readiness acts,
+  package assembly, comparative metrics.
 - [ ] Acceptance criteria: zero illegal tokens by construction; every fingerprint
       recomputed; handbook meets the substance floor and is actually read; decision batch
       reviewable in the target time; static-only run reaches both gates with disclosed
