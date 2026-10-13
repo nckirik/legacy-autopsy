@@ -2,6 +2,7 @@ package handbook
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"testing"
 
@@ -109,5 +110,28 @@ func TestNarrateFailsClosedOnPersistentProblems(t *testing.T) {
 	completer := &fakeCompleter{replies: []string{bad, bad, bad}}
 	if _, err := Narrate(context.Background(), completer, db, doc, "01"); err == nil {
 		t.Fatal("persistent validation failure accepted")
+	}
+}
+
+func TestNarrateNumbersCitationsAndIndexesEvidence(t *testing.T) {
+	doc, db := testDocDB(t)
+	claims := seedModules(t, db, doc, 8)
+	completer := &fakeCompleter{replies: []string{goodNarrative(claims)}}
+	narrative, err := Narrate(context.Background(), completer, db, doc, "01")
+	if err != nil {
+		t.Fatal(err)
+	}
+	body := narrative.Markdown
+	if !strings.Contains(body, "one clear responsibility [1].") {
+		t.Fatalf("citations not numbered:\n%s", body)
+	}
+	if strings.Contains(strings.Split(body, "### Evidence Index")[0], "CLM-") {
+		t.Fatalf("machine IDs leaked into the reading surface:\n%s", body)
+	}
+	for i, claim := range claims {
+		marker := fmt.Sprintf("%d. `%s`", i+1, claim)
+		if !strings.Contains(body, marker) {
+			t.Fatalf("evidence index missing %q", marker)
+		}
 	}
 }

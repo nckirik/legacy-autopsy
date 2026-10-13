@@ -123,7 +123,8 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 			problems = append(problems, finding.String())
 		}
 		if len(problems) == 0 {
-			full := narrative + recordAppendix(observed)
+			numbered, index := numberCitations(narrative)
+			full := numbered + index + recordAppendix(observed)
 			return ChapterNarrative{Chapter: spec.Number, Markdown: full}, nil
 		}
 		feedback = strings.Join(problems, "\n")
@@ -158,6 +159,36 @@ func composeNarrative(spec *ChapterSpec, purpose, behavior, decisions string) st
 		fmt.Fprintf(&b, "- %s\n", item)
 	}
 	return b.String()
+}
+
+// numberCitations replaces claim citations with bracketed numbers in order of
+// first appearance and returns the chapter text plus its evidence index, so the
+// reading surface carries no machine IDs.
+func numberCitations(narrative string) (string, string) {
+	order := []string{}
+	numbers := map[string]int{}
+	replace := func(match string) string {
+		claim := claimPattern.FindString(match)
+		if claim == "" {
+			return match
+		}
+		if _, ok := numbers[claim]; !ok {
+			order = append(order, claim)
+			numbers[claim] = len(order)
+		}
+		return fmt.Sprintf("[%d]", numbers[claim])
+	}
+	text := regexp.MustCompile(`\(CLM-[A-F0-9]{12}\)`).ReplaceAllStringFunc(narrative, replace)
+	text = claimPattern.ReplaceAllStringFunc(text, replace)
+	if len(order) == 0 {
+		return text, ""
+	}
+	var b strings.Builder
+	b.WriteString("\n### Evidence Index\n\n")
+	for i, claim := range order {
+		fmt.Fprintf(&b, "%d. `%s`\n", i+1, claim)
+	}
+	return text, b.String()
 }
 
 func recordAppendix(observed []Record) string {
