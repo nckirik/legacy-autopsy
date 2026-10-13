@@ -81,7 +81,7 @@ func LintChapter(subject, markdown string) []Finding {
 			findings = append(findings, Finding{Code: "HBK-MISSING-SECTION", Subject: subject, Detail: "missing required section " + section})
 		}
 	}
-	for _, finding := range ste.Lint(subject, markdown) {
+	for _, finding := range ste.Lint(subject, proseView(markdown)) {
 		findings = append(findings, Finding{Code: finding.Code, Subject: finding.Subject, Detail: finding.Detail})
 	}
 	if count := AssertionCount(markdown); count < MinimumAssertions {
@@ -93,6 +93,20 @@ func LintChapter(subject, markdown string) []Finding {
 		}
 	}
 	return findings
+}
+
+// proseView removes mechanical reference lines (identity bindings) so the STE
+// lint sees human-facing prose only.
+func proseView(markdown string) string {
+	var lines []string
+	for _, line := range strings.Split(markdown, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "- **source-bindings:**") {
+			continue
+		}
+		lines = append(lines, line)
+	}
+	return strings.Join(lines, "\n")
 }
 
 // ReadabilityReview is the deterministic schema of a PI-12 readability CNF.

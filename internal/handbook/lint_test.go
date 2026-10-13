@@ -115,3 +115,13 @@ func TestAssemblePassesSubstanceLint(t *testing.T) {
 		t.Fatalf("sparse chapter passed: %v", findings)
 	}
 }
+
+func TestProseViewSkipsReferenceLines(t *testing.T) {
+	markdown := "- **source-bindings:** CLM-0801828E5A1D, CLM-083EF5BD088B, CLM-0CB0778430FF, CLM-10879EC5BA92, CLM-18D4375686BF\n- **Constraint:** The system writes one entry.\n"
+	findings := LintChapter("01", markdown)
+	for _, finding := range findings {
+		if finding.Code == "STE-SENTENCE-LENGTH" {
+			t.Fatalf("reference line linted as prose: %v", findings)
+		}
+	}
+}
