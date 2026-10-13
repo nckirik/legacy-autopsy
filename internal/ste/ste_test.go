@@ -45,3 +45,27 @@ func TestDirectiveCoversKeyRules(t *testing.T) {
 		}
 	}
 }
+
+func TestLintRelaxesFieldLines(t *testing.T) {
+	serialized := "- **columns-fields:** id integer primary key; name text; created timestamp; updated timestamp; owner id; status text; deleted flag; notes text\n"
+	if findings := Lint("chapter", serialized); len(findings) != 0 {
+		t.Fatalf("serialized field flagged: %v", findings)
+	}
+	binding := "- **source-bindings:** CLM-0801828E5A1D, CLM-083EF5BD088B, CLM-0CB0778430FF, CLM-10879EC5BA92, CLM-18D4375686BF\n"
+	if findings := Lint("chapter", binding); len(findings) != 0 {
+		t.Fatalf("reference line flagged: %v", findings)
+	}
+	identifier := "- **exact-key:** APP_SESSION_TIMEOUT_SECONDS\n"
+	if findings := Lint("chapter", identifier); len(findings) != 0 {
+		t.Fatalf("identifier value flagged: %v", findings)
+	}
+	proseField := "- **responsibility-domain-boundary:** The operator can't read a sentence that keeps going without a stop for a very long time and then continues even further than any reader would accept in one line of text\n"
+	findings := Lint("chapter", proseField)
+	codes := map[string]bool{}
+	for _, finding := range findings {
+		codes[finding.Code] = true
+	}
+	if !codes["STE-CONTRACTION"] || !codes["STE-SENTENCE-LENGTH"] {
+		t.Fatalf("prose field missed: %v", findings)
+	}
+}

@@ -40,44 +40,92 @@ func (f Finding) String() string { return fmt.Sprintf("%s %s: %s", f.Code, f.Sub
 // procedural-looking text for review.
 const MaxWords = 25
 
-// Lint checks the mechanically verifiable STE rules.
+// Lint checks the mechanically verifiable STE rules. Field-label lines are
+// measured on their value only, serialized `;`-separated values are exempt from
+// the semicolon rule, and reference lines (identity bindings) are skipped.
 func Lint(subject, text string) []Finding {
 	var findings []Finding
-	for _, sentence := range sentences(text) {
-		words := strings.Fields(sentence)
-		if len(words) > MaxWords {
-			findings = append(findings, Finding{
-				Code: "STE-SENTENCE-LENGTH", Subject: subject,
-				Detail: fmt.Sprintf("sentence has %d words (limit %d): %q", len(words), MaxWords, truncate(sentence, 80)),
-			})
+	report := func(code, detail string) {
+		findings = append(findings, Finding{Code: code, Subject: subject, Detail: detail})
+	}
+	for _, line := range strings.Split(text, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if isReferenceLine(trimmed) {
+			continue
 		}
+		value := trimmed
+		field := false
+		if label, rest, ok := splitFieldLine(trimmed); ok {
+			field = true
+			value = rest
+			_ = label
+		}
+		if value == "" {
+			continue
+		}
+		structured := strings.Contains(value, "; ") && !strings.ContainsAny(value, ".!?")
+		if !structured && field && !looksLikeProse(value) {
+			// Identifier or path values are data, not prose.
+			checkLexical(value, report)
+			continue
+		}
+		if !structured {
+			for _, sentence := range sentences(value) {
+				words := strings.Fields(sentence)
+				if len(words) > MaxWords {
+					report("STE-SENTENCE-LENGTH", fmt.Sprintf("sentence has %d words (limit %d): %q", len(words), MaxWords, truncate(sentence, 80)))
+				}
+			}
+		}
+		if !field && !structured && strings.Contains(value, ";") {
+			report("STE-SEMICOLON", "Do not use semicolons. Split the sentence or use a list.")
+		}
+		checkLexical(value, report)
 	}
+	return findings
+}
+
+func checkLexical(text string, report func(code, detail string)) {
 	for _, contraction := range contractions(text) {
-		findings = append(findings, Finding{
-			Code: "STE-CONTRACTION", Subject: subject,
-			Detail: fmt.Sprintf("contraction %q is not permitted", contraction),
-		})
-	}
-	if strings.Contains(text, ";") {
-		findings = append(findings, Finding{
-			Code: "STE-SEMICOLON", Subject: subject,
-			Detail: "Do not use semicolons. Split the sentence or use a list.",
-		})
+		report("STE-CONTRACTION", fmt.Sprintf("contraction %q is not permitted", contraction))
 	}
 	if strings.Contains(strings.ToLower(text), "n/a") {
-		findings = append(findings, Finding{
-			Code: "STE-EMPTY-VALUE", Subject: subject,
-			Detail: `use "None" for an empty value, not "N/A"`,
-		})
+		report("STE-EMPTY-VALUE", `use "None" for an empty value, not "N/A"`)
 	}
 	lower := strings.ToLower(text)
 	if strings.Contains(lower, "should ") || strings.HasSuffix(lower, "should") {
-		findings = append(findings, Finding{
-			Code: "STE-SHOULD", Subject: subject,
-			Detail: `use "must" for a requirement and "can" for a capability, not "should"`,
-		})
+		report("STE-SHOULD", `use "must" for a requirement and "can" for a capability, not "should"`)
 	}
-	return findings
+}
+
+func isReferenceLine(trimmed string) bool {
+	return strings.HasPrefix(trimmed, "- **source-bindings:")
+}
+
+func splitFieldLine(trimmed string) (string, string, bool) {
+	if !strings.HasPrefix(trimmed, "- **") {
+		return "", "", false
+	}
+	end := strings.Index(trimmed[2:], ":**")
+	if end < 0 {
+		return "", "", false
+	}
+	return trimmed[4 : end+2], strings.TrimSpace(trimmed[end+5:]), true
+}
+
+func looksLikeProse(value string) bool {
+	words := strings.Fields(value)
+	if len(words) < 3 {
+		return false
+	}
+	lowercaseWords := 0
+	for _, word := range words {
+		clean := strings.Trim(word, ".,:;()[]\"")
+		if clean != strings.ToUpper(clean) && len(clean) >= 3 {
+			lowercaseWords++
+		}
+	}
+	return lowercaseWords >= 2
 }
 
 var knownContractions = []string{
