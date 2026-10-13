@@ -86,7 +86,7 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 	}
 	user := narrativeUserPrompt(*spec, observed, evidence)
 	var feedback string
-	for attempt := 0; attempt < 3; attempt++ {
+	for attempt := 0; attempt < 5; attempt++ {
 		if feedback != "" {
 			user = narrativeUserPrompt(*spec, observed, evidence) + "\n\nPrevious attempt rejected:\n" + feedback
 		}
