@@ -59,7 +59,7 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 	}
 	user := narrativeUserPrompt(*spec, observed)
 	var feedback string
-	for attempt := 0; attempt < 2; attempt++ {
+	for attempt := 0; attempt < 3; attempt++ {
 		if feedback != "" {
 			user = narrativeUserPrompt(*spec, observed) + "\n\nPrevious attempt rejected by lint:\n" + feedback
 		}
@@ -81,7 +81,12 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 			Navigation:      navigationFor(specs, spec.Number),
 		}
 		body := chapterBody(Assemble([]Chapter{chapter}))
-		findings := LintChapter(spec.Number, string(body))
+		// The STE gate judges the generated narrative. Observed record prose is
+		// governed at synthesis time; historical records must not fail the
+		// narrative retry loop.
+		narrativeOnly := chapter
+		narrativeOnly.Observed = nil
+		findings := LintChapter(spec.Number, string(chapterBody(Assemble([]Chapter{narrativeOnly}))))
 		if len(findings) == 0 {
 			return ChapterNarrative{Chapter: spec.Number, Markdown: string(body)}, nil
 		}

@@ -56,10 +56,8 @@ func TestNarrateRetriesWithLintFeedback(t *testing.T) {
 
 func TestNarrateFailsClosedOnPersistentLint(t *testing.T) {
 	doc, db := testDocDB(t)
-	completer := &fakeCompleter{replies: []string{
-		"## Audience Purpose\nThe operator can't read this.\n\n## Target Decisions\nNot-Applicable: no records exist for this chapter in the current scope.\n",
-		"## Audience Purpose\nThe operator can't read this.\n\n## Target Decisions\nNot-Applicable: no records exist for this chapter in the current scope.\n",
-	}}
+	bad := "## Audience Purpose\nThe operator can't read this.\n\n## Target Decisions\nNot-Applicable: no records exist for this chapter in the current scope.\n"
+	completer := &fakeCompleter{replies: []string{bad, bad, bad}}
 	if _, err := Narrate(context.Background(), completer, db, doc, "01"); err == nil {
 		t.Fatal("persistent lint failure accepted")
 	}

@@ -61,7 +61,7 @@ func Lint(subject, text string) []Finding {
 	if strings.Contains(text, ";") {
 		findings = append(findings, Finding{
 			Code: "STE-SEMICOLON", Subject: subject,
-			Detail: "semicolons are not permitted; split the sentence or use a list",
+			Detail: "Do not use semicolons. Split the sentence or use a list.",
 		})
 	}
 	if strings.Contains(strings.ToLower(text), "n/a") {
