@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
+	"github.com/nckirik/legacy-autopsy/internal/ste"
 	"github.com/nckirik/legacy-autopsy/internal/store"
 	"github.com/nckirik/legacy-autopsy/internal/work"
 )
@@ -106,6 +107,9 @@ func Plan(catalog Catalog, claims []ClaimRef, directives Directives) work.Unit {
 func contextMarkdown(catalog Catalog, claims []ClaimRef, directives Directives) []byte {
 	var b strings.Builder
 	b.WriteString("# Synthesis context (runtime-generated, bounded)\n\n")
+	b.WriteString("## Prose rules (human-facing output)\n\n")
+	b.WriteString(ste.Directive)
+	b.WriteString("\n\n")
 	b.WriteString("Group the evidence below into " + catalog.FieldID + " records. Author one record per coherent responsibility boundary that the claims support.\n\n")
 	fmt.Fprintf(&b, "## Runtime directives (must be used exactly)\n\n")
 	fmt.Fprintf(&b, "- **System Namespace:** %s\n", directives.Namespace)

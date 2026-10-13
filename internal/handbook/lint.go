@@ -6,6 +6,8 @@ package handbook
 import (
 	"fmt"
 	"strings"
+
+	"github.com/nckirik/legacy-autopsy/internal/ste"
 )
 
 // RequiredSections are the chapter sections every handbook chapter must carry.
@@ -78,6 +80,9 @@ func LintChapter(subject, markdown string) []Finding {
 		if !strings.Contains(lower, section) {
 			findings = append(findings, Finding{Code: "HBK-MISSING-SECTION", Subject: subject, Detail: "missing required section " + section})
 		}
+	}
+	for _, finding := range ste.Lint(subject, markdown) {
+		findings = append(findings, Finding{Code: finding.Code, Subject: finding.Subject, Detail: finding.Detail})
 	}
 	if count := AssertionCount(markdown); count < MinimumAssertions {
 		if !NotApplicableWithReason(markdown) {
