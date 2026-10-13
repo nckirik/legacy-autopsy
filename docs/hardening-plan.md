@@ -391,7 +391,7 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
        a non-authoritative marker. `0A` is the bootstrap exception because it declares
        the binding.
 
-8. [x] Human-facing generated prose uses ASD-STE100 (Simplified Technical
+9. [x] Human-facing generated prose uses ASD-STE100 (Simplified Technical
        English): the directive is injected into human-facing generation prompts and
        the measurable rules (sentence length, contractions, semicolons, `N/A`,
        `should`) are linted by `internal/ste` as part of the handbook substance gate.
