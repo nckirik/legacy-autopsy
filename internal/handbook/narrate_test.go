@@ -111,7 +111,7 @@ func TestNarrateFailsClosedOnPersistentProblems(t *testing.T) {
 	doc, db := testDocDB(t)
 	seedModules(t, db, doc, 8)
 	bad := "## Audience Purpose\nThe operator can't read this (CLM-FFFFFFFFFFFF).\n\n## Observed Legacy Behavior\nMissing citations.\n\n## Target Decisions\nNone.\n"
-	completer := &fakeCompleter{replies: []string{bad, bad, bad}}
+	completer := &fakeCompleter{replies: []string{bad, bad, bad, bad, bad}}
 	if _, err := Narrate(context.Background(), completer, db, doc, "01"); err == nil {
 		t.Fatal("persistent validation failure accepted")
 	}

@@ -13,6 +13,7 @@ import (
 	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/assurance"
 	"github.com/nckirik/legacy-autopsy/internal/handbook"
+	"github.com/nckirik/legacy-autopsy/internal/ste"
 	"github.com/nckirik/legacy-autopsy/internal/store"
 	"github.com/nckirik/legacy-autopsy/internal/synthesis"
 	"github.com/nckirik/legacy-autopsy/internal/work"
@@ -108,7 +109,14 @@ func EvaluateCandidateChecks(db string, doc *cdl.EIRDoc, opts Options) ([]Candid
 				if err != nil {
 					return nil, err
 				}
+				// Substance counts the composed chapter (footnote definitions carry
+				// the claim bindings); STE judges the narrative reading surface only.
 				for _, finding := range handbook.LintChapter(chapter.Number, string(content)) {
+					if !strings.HasPrefix(finding.Code, "STE-") {
+						findings = append(findings, finding.String())
+					}
+				}
+				for _, finding := range ste.Lint(chapter.Number, readingSurface(string(content))) {
 					findings = append(findings, finding.String())
 				}
 			}
@@ -457,6 +465,23 @@ func pendingAndContradictions(db string, doc *cdl.EIRDoc) (int, int, error) {
 		return 0, 0, err
 	}
 	return pending, len(contradictions), nil
+}
+
+// readingSurface removes the collapsed record appendix and the evidence-note
+// definitions: those carry data and claim text governed at their own stages, not
+// handbook narrative.
+func readingSurface(content string) string {
+	if idx := strings.Index(content, "\n### Record Details"); idx >= 0 {
+		content = content[:idx]
+	}
+	var lines []string
+	for _, line := range strings.Split(content, "\n") {
+		if strings.HasPrefix(strings.TrimSpace(line), "[^") {
+			continue
+		}
+		lines = append(lines, line)
+	}
+	return strings.Join(lines, "\n")
 }
 
 func firstToken(value string) string {
