@@ -109,11 +109,7 @@ func loadRecords(db string, doc *cdl.EIRDoc, fieldID string) ([]Record, error) {
 		if err != nil {
 			return nil, err
 		}
-		header := "- **Record:** " + id + " (" + fieldID + ")\n"
-		if title := strings.TrimSpace(values["record-title"]); title != "" {
-			header = "- **Record:** " + id + ": " + title + "\n"
-		}
-		records = append(records, Record{ID: id, Payload: []byte(header + string(payload))})
+		records = append(records, Record{ID: id, Payload: []byte(renderRecord(fieldID, id, values))})
 	}
 	return records, nil
 }

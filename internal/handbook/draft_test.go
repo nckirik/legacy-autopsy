@@ -67,3 +67,29 @@ func TestDraftRendersChaptersAndLint(t *testing.T) {
 		t.Fatalf("draft lint findings: %v", findings)
 	}
 }
+
+func TestRenderRecordHumanView(t *testing.T) {
+	values := map[string]string{
+		"record-title":                   "Request Routing",
+		"source-bindings":                "CLM-0801828E5A1D, CLM-083EF5BD088B",
+		"block-id":                       "MOD-139CF7974C7C",
+		"domain-path":                    "veri-yonetimi/routing",
+		"responsibility-domain-boundary": "The module owns HTTP routing.",
+		"public-interfaces":              "Unknown",
+		"failure-propagation":            "Unknown",
+	}
+	out := renderRecord("ARCHITECTURE-MODULE", "MOD-139CF7974C7C", values)
+	for _, marker := range []string{
+		"#### Request Routing (`MOD-139CF7974C7C`)",
+		"- **Responsibility Domain Boundary:** The module owns HTTP routing.",
+		"- **Evidence claims:** CLM-0801828E5A1D, CLM-083EF5BD088B",
+		"<details><summary>All record fields</summary>",
+	} {
+		if !strings.Contains(out, marker) {
+			t.Fatalf("render missing %q:\n%s", marker, out)
+		}
+	}
+	if strings.Contains(out, "**source-bindings:**") || strings.Contains(out, "**Source Bindings:**") {
+		t.Fatalf("mechanical field leaked into human view:\n%s", out)
+	}
+}
