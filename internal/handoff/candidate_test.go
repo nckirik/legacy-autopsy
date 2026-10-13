@@ -48,13 +48,16 @@ func TestEvaluateCandidateChecksEmptyState(t *testing.T) {
 			t.Fatalf("%s = %q, want Fail on empty state", id, results[id])
 		}
 	}
+	if results["CANDIDATE-06-LIFECYCLE"] != "Fail" {
+		t.Fatalf("lifecycle = %q, want Fail on empty state", results["CANDIDATE-06-LIFECYCLE"])
+	}
 	if results["CANDIDATE-13-PENDING-AND-CONTRADICTIONS"] != "Pass" {
 		t.Fatalf("pending/contradictions = %q, want Pass on empty state", results["CANDIDATE-13-PENDING-AND-CONTRADICTIONS"])
 	}
 	if results["CANDIDATE-05-REFERENTIAL-INTEGRITY"] != "Pass" {
 		t.Fatalf("referential integrity = %q, want vacuous Pass on empty state", results["CANDIDATE-05-REFERENTIAL-INTEGRITY"])
 	}
-	for _, id := range []string{"CANDIDATE-04-HANDBOOK-QUALITY", "CANDIDATE-06-LIFECYCLE", "CANDIDATE-09-PRIVACY-SECURITY", "CANDIDATE-10-DISABLED-CAPABILITIES", "CANDIDATE-11-FAULTS", "CANDIDATE-12-PROFILES"} {
+	for _, id := range []string{"CANDIDATE-04-HANDBOOK-QUALITY", "CANDIDATE-09-PRIVACY-SECURITY", "CANDIDATE-10-DISABLED-CAPABILITIES", "CANDIDATE-11-FAULTS", "CANDIDATE-12-PROFILES"} {
 		if results[id] != "Unsupported" {
 			t.Fatalf("%s = %q, want Unsupported", id, results[id])
 		}

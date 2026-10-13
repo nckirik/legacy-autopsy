@@ -127,7 +127,19 @@ func EvaluateCandidateChecks(db string, doc *cdl.EIRDoc, opts Options) ([]Candid
 		add("CANDIDATE-05-REFERENTIAL-INTEGRITY", "Pass", "edges, claims, and matrix rows reference committed records")
 	}
 
-	add("CANDIDATE-06-LIFECYCLE", "Unsupported", "lifecycle eligibility records are not generated yet")
+	totalUnits, coveredUnits, unknownUnits, err := assurance.LifecycleCoverage(db, doc)
+	if err != nil {
+		return nil, err
+	}
+	if totalUnits == 0 {
+		add("CANDIDATE-06-LIFECYCLE", "Fail", "no source units to classify")
+	} else if coveredUnits < totalUnits {
+		add("CANDIDATE-06-LIFECYCLE", "Fail", fmt.Sprintf("%d of %d source units lack lifecycle eligibility", totalUnits-coveredUnits, totalUnits))
+	} else if unknownUnits > 0 {
+		add("CANDIDATE-06-LIFECYCLE", "Fail", fmt.Sprintf("%d source units have Unknown eligibility", unknownUnits))
+	} else {
+		add("CANDIDATE-06-LIFECYCLE", "Pass", fmt.Sprintf("%d source units carry resolved lifecycle eligibility", totalUnits))
+	}
 
 	// CANDIDATE-07: use cases carry a resolved capability classification.
 	useCases, detail, err := useCaseCheck(db, doc)

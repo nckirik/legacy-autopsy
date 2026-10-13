@@ -30,8 +30,10 @@ func specAssurance(args []string, stdout, stderr io.Writer) error {
 		return specAssuranceAdvance(args[1:], stdout, stderr)
 	case "reconcile":
 		return specAssuranceReconcile(args[1:], stdout, stderr)
+	case "lifecycle":
+		return specAssuranceLifecycle(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims, coverage, sweep, gate, advance, reconcile", args[0])
+		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims, coverage, sweep, gate, advance, reconcile, lifecycle", args[0])
 	}
 }
 
@@ -179,6 +181,114 @@ func specAssuranceReconcile(args []string, stdout, stderr io.Writer) error {
 		return err
 	}
 	fmt.Fprintf(stdout, "reconciliation: invocation %s, zero-domain=%v\n", report.Units[0].InvocationID, report.Units[0].ZeroDomain != "")
+	return nil
+}
+
+// specAssuranceLifecycle authors lifecycle eligibility per source unit.
+func specAssuranceLifecycle(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec assurance lifecycle", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	batchSize := set.Int("batch-size", 10, "source units per lifecycle unit")
+	reviewMode := set.String("review-mode", "", "override review policy: all|critical|uncertainty")
+	maxRetries := set.Int("max-retries", 0, "override the retry budget")
+	updateExisting := set.Bool("update-existing", false, "replace eligibility whose identity exists with changed content")
+	showModel := set.String("show-model", "off", "stream raw model output: off|stderr|stdout")
+	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
+	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
+	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec assurance lifecycle requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	units, err := assurance.LifecyclePlan(*db, res.EIR, header["system-namespace"], header["included-environments-snapshots"], *batchSize)
+	if err != nil {
+		return err
+	}
+	if len(units) == 0 {
+		return fmt.Errorf("assurance lifecycle: no committed source inventory")
+	}
+	config, err := llm.ConfigFromEnv()
+	if err != nil {
+		return err
+	}
+	if *llmURL != "" {
+		config.BaseURL = *llmURL
+	}
+	if *llmModel != "" {
+		config.Model = *llmModel
+	}
+	if *llmReasoning != "" {
+		config.Reasoning = *llmReasoning
+	}
+	client, err := llm.NewClient(config)
+	if err != nil {
+		return err
+	}
+	runConfig := work.DefaultConfig()
+	if *reviewMode != "" {
+		runConfig.ReviewMode = work.ReviewMode(*reviewMode)
+	}
+	if *maxRetries > 0 {
+		runConfig.MaxRetries = *maxRetries
+	}
+	runConfig.UpdateExisting = *updateExisting
+	if iteration := header["current-iteration"]; iteration != "" {
+		runConfig.Iteration = iteration
+	}
+	if err := runConfig.Validate(); err != nil {
+		return err
+	}
+	executor := llm.NewExecutor(client)
+	reviewer := llm.NewReviewer(client)
+	if *llmReasoning != "" {
+		executor.ForceReasoning = llmReasoning
+	}
+	switch strings.ToLower(*showModel) {
+	case "", "off", "none":
+		wireActivity(&runConfig, executor, stdout)
+	case "stderr":
+		executor.SetDebug(stderr)
+		reviewer.Debug = stderr
+	case "stdout":
+		executor.SetDebug(stdout)
+		reviewer.Debug = stdout
+	default:
+		return fmt.Errorf("--show-model must be off, stderr, or stdout")
+	}
+	session, err := work.NewSession(*db, res.EIR, runConfig, executor, reviewer)
+	if err != nil {
+		return err
+	}
+	report, runErr := session.Run(units)
+	for _, stats := range report.Units {
+		fmt.Fprintf(stdout, "%-26s %8d %5d %6d %7d %-12s %v\n",
+			stats.UnitID, stats.ContextBytes, stats.Dependencies, stats.Fetches, stats.Retries, stats.Review, stats.Escalated)
+		if stats.LastError != "" {
+			fmt.Fprintf(stdout, "  last rejection: %s\n", stats.LastError)
+		}
+	}
+	if runErr != nil {
+		fmt.Fprintf(stderr, "lifecycle stopped: %s\n", runErr)
+		return runErr
+	}
+	fmt.Fprintf(stdout, "lifecycle units committed: %d\n", len(report.Units))
 	return nil
 }
 
