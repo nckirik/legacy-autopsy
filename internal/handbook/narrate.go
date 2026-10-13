@@ -226,7 +226,7 @@ func numberCitations(narrative string, notes map[string]string) (string, string)
 		if note == "" {
 			note = "evidence record"
 		}
-		fmt.Fprintf(&b, "[^%d]: %s (`%s`)\n", i+1, note, claim)
+		fmt.Fprintf(&b, "[^%d]: %s (see [%s](%s#%s))\n", i+1, note, claim, EvidenceRegisterFile, ClaimAnchor(claim))
 	}
 	return text, b.String()
 }

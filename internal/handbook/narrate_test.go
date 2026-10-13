@@ -134,8 +134,9 @@ func TestNarrateNumbersCitationsAndIndexesEvidence(t *testing.T) {
 	}
 	for i, claim := range claims {
 		marker := fmt.Sprintf("[^%d]:", i+1)
-		if !strings.Contains(body, marker) || !strings.Contains(body, "(`"+claim+"`)") {
-			t.Fatalf("evidence notes missing %q for %s", marker, claim)
+		link := fmt.Sprintf("[%s](evidence.md#%s)", claim, ClaimAnchor(claim))
+		if !strings.Contains(body, marker) || !strings.Contains(body, link) {
+			t.Fatalf("evidence notes missing %q or %q", marker, link)
 		}
 	}
 }

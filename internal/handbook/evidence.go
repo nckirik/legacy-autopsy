@@ -10,6 +10,14 @@ import (
 	"github.com/nckirik/legacy-autopsy/internal/work"
 )
 
+// EvidenceRegisterFile is the register file name that chapter footnotes link to.
+const EvidenceRegisterFile = "evidence.md"
+
+// ClaimAnchor is the stable HTML anchor for one claim entry.
+func ClaimAnchor(claim string) string {
+	return "clm-" + strings.ToLower(strings.TrimPrefix(claim, "CLM-"))
+}
+
 // EvidenceRegister renders the handbook evidence appendix: every committed claim
 // with its text, subject source unit, anchor, materiality, and evidence level,
 // so chapter footnotes resolve to a readable register.
@@ -41,7 +49,7 @@ func EvidenceRegister(db string, doc *cdl.EIRDoc) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Fprintf(&b, "## `%s`\n\n", id)
+		fmt.Fprintf(&b, "<a id=\"%s\"></a>\n\n## `%s`\n\n", ClaimAnchor(id), id)
 		fmt.Fprintf(&b, "- **Claim:** %s\n", strings.Join(strings.Fields(values["claim"]), " "))
 		fmt.Fprintf(&b, "- **Subject:** %s\n", strings.Fields(values["subject-id-record-version"])[0])
 		fmt.Fprintf(&b, "- **Anchor:** `%s`\n", values["anchor"])

@@ -19,6 +19,7 @@ func TestEvidenceRegisterExplainsClaims(t *testing.T) {
 	}
 	for _, marker := range []string{
 		"# Evidence Register",
+		`<a id="clm-000000000001"></a>`,
 		"## `CLM-000000000001`",
 		"- **Claim:** app/routes.js registers the public and API routes",
 		"- **Anchor:** `app/routes.js:1`",
