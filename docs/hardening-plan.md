@@ -117,7 +117,7 @@ context construction; executors own one semantic work unit at a time.
 
 Status markers: `[x]` done, `[~]` started, `[ ]` todo.
 
-Overall: **W1 and W3 done; W2 in progress; W4-W6 pending.**
+Overall: **W1 and W3 done; W2 near complete (packaging remains); W5 landed; W6 in progress.**
 
 ### W1 - Protocol text revision (v4.2 + v4.2.1 patch) - done
 
@@ -330,9 +330,18 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
   idempotent, changed content at the same identity is either refused or explicitly
   replaced with a version bump (`--update-existing`). Live MOD proof: 8/8 IDs
   reproduced on re-run, 7 bodies replaced at version 2 under the flag.
+- [x] Candidate readiness pipelines: lifecycle eligibility
+      (`spec assurance lifecycle`, one resolved record per source unit), privacy
+      finding mirrors (`spec assurance privacy`, reciprocal PRV <-> SEC), persona
+      profile synchronization (`spec synthesis profiles`, runtime PRF identity and
+      semantic fingerprint), plus deterministic disabled-capability and
+      fault-topology coverage checks. The handoff candidate evaluator
+      (`spec handoff candidate`) now evaluates all 14 §15.1 candidate conditions on
+      the fresh `veri-yonetimi` workspace: **14 pass, 0 fail, 0 unsupported**.
 - [ ] Handoff: artifact authoring, packaging, and the §15.5 verifier chain.
-      **Gated** on a passing Exit A (which needs Synthesis coverage mapped) and on
-      model-driven stage assembly.
+      **Ready** on the candidate report; remaining is stage-4/6 package assembly and
+      the human content-readiness acts (decisions, confirmations, readability,
+      equivalence).
 - [x] Traversal closure modeling (PI-17, v4.3): `REQUIRED-TRAVERSAL-MATRIX-ROW` records
       keyed by cluster/persona/POV/track/environment/snapshot; `spec preflight matrix`
       mechanically expands cells; the gate evaluates real closure (live pilot 0/25).
@@ -343,7 +352,11 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
 
 ### W6 - Acceptance rerun
 
-- [ ] Rerun the same small project on v4.2.1 through the bounded semantic-work harness.
+- [~] Rerun the same small project on the current protocol through the bounded
+      semantic-work harness. The fresh `veri-yonetimi` workspace (24 sources, two
+      discovery windows) passes Exit A, holds 16 narrated handbook chapters, and
+      reports the candidate table 14/0/0. Remaining: human content-readiness acts,
+      package assembly, comparative metrics.
 - [ ] Acceptance criteria: zero illegal tokens by construction; every fingerprint
       recomputed; handbook meets the substance floor and is actually read; decision batch
       reviewable in the target time; static-only run reaches both gates with disclosed
