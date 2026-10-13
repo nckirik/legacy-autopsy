@@ -230,6 +230,16 @@ func (s *Session) review(unit Unit, proposal Proposal) (ReviewResult, error) {
 	if err != nil {
 		return ReviewResult{}, err
 	}
+	// Show the reviewer the records as they will be committed: runtime-owned
+	// fields carry their resolved values, not placeholders.
+	if len(unit.RuntimeFields) > 0 {
+		for i := range resolved {
+			injected, err := injectRuntimeFields(resolved[i].Payload, unit.RuntimeFields, resolved[i].RecordID)
+			if err == nil {
+				resolved[i].Payload = injected
+			}
+		}
+	}
 	reviewCaps := NewCaps(s.db, s.doc)
 	context, err := BuildReviewContext(reviewCaps, unit, resolved)
 	if err != nil {

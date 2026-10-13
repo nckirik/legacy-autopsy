@@ -47,7 +47,7 @@ var Catalogs = map[string]Catalog{
 	"SCHED": {FieldID: "SCHEDULE-RECORD", IDType: "SCHED", Section: "deployment-catalog", DiscriminatorField: "type-trigger-frequency-window"},
 	"NFR":   {FieldID: "NFR-RECORD", IDType: "NFR", Section: "nfr-security-catalog"},
 	"SEC":   {FieldID: "SECURITY-FINDING", IDType: "SEC", Section: "nfr-security-catalog"},
-	"FLT":   {FieldID: "FAULT-RECORD", IDType: "FLT", Section: "nfr-security-catalog"},
+	"FLT":   {FieldID: "FAULT-RECORD", IDType: "FLT", Section: "nfr-security-catalog", DiscriminatorField: "failure-class-trigger-detection-point"},
 }
 
 // ClaimRef is a bounded committed claim.

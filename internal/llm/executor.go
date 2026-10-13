@@ -49,6 +49,14 @@ Rules:
 - Judge only the proposed record against the declared result contract, its declared
   dependencies, and the protocol semantics visible in the provided context.
 - Do not assume the worker's reasoning; you did not see it.
+- Record identity fields are runtime-owned and already resolved. Never reject a
+  record because an identity or version field looks unusual.
+- This is a bounded static run. "Unknown" and "None" are valid fail-inclusive
+  values when the evidence does not support a field, and evidence bindings show
+  what was searched. Do not require facts the evidence does not contain, and do
+  not demand classification or remediation outside the declared result contract.
+- Reject only for a concrete contradiction, a missing required field, an
+  unsupported claim, or evidence that does not match the record.
 - Output no prose outside the response format.
 
 Response format:

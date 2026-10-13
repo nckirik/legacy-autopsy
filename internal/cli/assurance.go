@@ -28,8 +28,10 @@ func specAssurance(args []string, stdout, stderr io.Writer) error {
 		return specAssuranceGate(args[1:], stdout, stderr)
 	case "advance":
 		return specAssuranceAdvance(args[1:], stdout, stderr)
+	case "reconcile":
+		return specAssuranceReconcile(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims, coverage, sweep, gate", args[0])
+		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims, coverage, sweep, gate, advance, reconcile", args[0])
 	}
 }
 
@@ -128,6 +130,55 @@ func specAssuranceAdvance(args []string, stdout, stderr io.Writer) error {
 		return err
 	}
 	fmt.Fprintf(stdout, "coverage rows advanced to Mapped: %d\n", changed)
+	return nil
+}
+
+// specAssuranceReconcile declares export reconciliation state, including the
+// evidence-backed zero domain when no exports exist.
+func specAssuranceReconcile(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec assurance reconcile", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec assurance reconcile requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	sources, err := assurance.ReconciliationSources(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	if len(sources) == 0 {
+		return fmt.Errorf("assurance reconcile: no committed source inventory to cite as evidence")
+	}
+	runConfig := work.DefaultConfig()
+	if iteration := header["current-iteration"]; iteration != "" {
+		runConfig.Iteration = iteration
+	}
+	session, err := work.NewSession(*db, res.EIR, runConfig, assurance.MechanicalReconcileExecutor{SourceIDs: sources}, nil)
+	if err != nil {
+		return err
+	}
+	report, err := session.Run([]work.Unit{assurance.ReconcilePlan(header["system-namespace"])})
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "reconciliation: invocation %s, zero-domain=%v\n", report.Units[0].InvocationID, report.Units[0].ZeroDomain != "")
 	return nil
 }
 
