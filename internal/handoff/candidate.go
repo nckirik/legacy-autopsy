@@ -163,9 +163,60 @@ func EvaluateCandidateChecks(db string, doc *cdl.EIRDoc, opts Options) ([]Candid
 	}
 	add("CANDIDATE-08-CONFIGURATION", configs, detail)
 
-	add("CANDIDATE-09-PRIVACY-SECURITY", "Unsupported", "privacy finding mirrors are not generated yet")
-	add("CANDIDATE-10-DISABLED-CAPABILITIES", "Unsupported", "capability containers for disabled units are not generated yet")
-	add("CANDIDATE-11-FAULTS", "Unsupported", "failure-class registry coverage is not generated yet")
+	// CANDIDATE-09: every 0C privacy finding has a reciprocal SEC mirror, and
+	// every SEC finding has a 0C origin.
+	privacy, err := assurance.PrivacyCoverage(db, doc)
+	if err != nil {
+		return nil, err
+	}
+	switch {
+	case privacy.Findings == 0 && privacy.SECFindings == 0:
+		add("CANDIDATE-09-PRIVACY-SECURITY", "Fail", "no privacy or security findings are recorded")
+	case privacy.Mirrored < privacy.Findings:
+		add("CANDIDATE-09-PRIVACY-SECURITY", "Fail", fmt.Sprintf("%d of %d privacy findings lack a resolving SEC mirror", privacy.Findings-privacy.Mirrored, privacy.Findings))
+	case privacy.SECWithOrigin < privacy.SECFindings:
+		add("CANDIDATE-09-PRIVACY-SECURITY", "Fail", fmt.Sprintf("%d of %d SEC findings lack a 0C origin", privacy.SECFindings-privacy.SECWithOrigin, privacy.SECFindings))
+	default:
+		add("CANDIDATE-09-PRIVACY-SECURITY", "Pass", fmt.Sprintf("%d privacy findings mirrored to %d SEC records", privacy.Findings, privacy.SECFindings))
+	}
+
+	// CANDIDATE-10: every effective-denominator disabled unit has exactly one
+	// canonical bound CAP.
+	disabled, err := assurance.DisabledCoverage(db, doc)
+	if err != nil {
+		return nil, err
+	}
+	switch {
+	case len(disabled.Uncovered) > 0:
+		add("CANDIDATE-10-DISABLED-CAPABILITIES", "Fail", fmt.Sprintf("%d disabled units lack a canonical CAP; first: %s", len(disabled.Uncovered), disabled.Uncovered[0]))
+	case len(disabled.Overlapping) > 0:
+		add("CANDIDATE-10-DISABLED-CAPABILITIES", "Fail", fmt.Sprintf("%d disabled units have overlapping CAP memberships; first: %s", len(disabled.Overlapping), disabled.Overlapping[0]))
+	case len(disabled.Unbound) > 0:
+		add("CANDIDATE-10-DISABLED-CAPABILITIES", "Fail", fmt.Sprintf("%d CAPs lack a bound approved target decision; first: %s", len(disabled.Unbound), disabled.Unbound[0]))
+	case len(disabled.DisabledUnits) == 0:
+		add("CANDIDATE-10-DISABLED-CAPABILITIES", "Pass", fmt.Sprintf("denominator resolved: 0 of %d source units, 0 of %d use cases, and 0 of %d components are Disabled", disabled.SRCTotal, disabled.UCTotal, disabled.CMPTotal))
+	default:
+		add("CANDIDATE-10-DISABLED-CAPABILITIES", "Pass", fmt.Sprintf("%d disabled units map to %d bound canonical CAPs", len(disabled.DisabledUnits), disabled.CAPs))
+	}
+
+	// CANDIDATE-11: fault records carry claim evidence and the fault/resilience
+	// topology references resolve.
+	faults, err := assurance.FaultCoverage(db, doc)
+	if err != nil {
+		return nil, err
+	}
+	switch {
+	case faults.FLTs == 0:
+		add("CANDIDATE-11-FAULTS", "Fail", "no fault records exist and no evidence-backed zero domain is declared")
+	case len(faults.Unbound) > 0:
+		add("CANDIDATE-11-FAULTS", "Fail", fmt.Sprintf("%d fault records lack claim evidence; first: %s", len(faults.Unbound), faults.Unbound[0]))
+	case len(faults.Dangling) > 0:
+		add("CANDIDATE-11-FAULTS", "Fail", fmt.Sprintf("%d fault references do not resolve; first: %s", len(faults.Dangling), faults.Dangling[0]))
+	case len(faults.UnresolvedRefs) > 0:
+		add("CANDIDATE-11-FAULTS", "Fail", fmt.Sprintf("%d module fault-propagation references do not resolve; first: %s", len(faults.UnresolvedRefs), faults.UnresolvedRefs[0]))
+	default:
+		add("CANDIDATE-11-FAULTS", "Pass", fmt.Sprintf("%d fault records carry claim evidence and resolved topology references", faults.FLTs))
+	}
 	add("CANDIDATE-12-PROFILES", "Unsupported", "persona profile payloads are not generated yet")
 	pending, contradictions, err := pendingAndContradictions(db, doc)
 	if err != nil {
