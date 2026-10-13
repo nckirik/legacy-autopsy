@@ -45,6 +45,10 @@ func seedModules(t *testing.T, db string, doc *cdl.EIRDoc, count int) []string {
 		if err := store.Ingest(db, doc, "ARCHITECTURE-MODULE", id, 1, []byte(payload)); err != nil {
 			t.Fatal(err)
 		}
+		claimPayload := "- **subject-id-record-version:** SRC-FILE-AAAAAAAAAAAA\n- **field-step:** file\n- **claim:** module " + string(rune('A'+i-1)) + " owns one boundary\n- **materiality:** Material\n- **evidence-level:** [E-DIRECT]\n- **anchor:** app/m" + string(rune('0'+i)) + ":1\n- **source-fingerprint-snapshot:** sha256:x\n- **evidence-route-lineage-id:** static-filesystem\n- **projection-classification:** raw-visible\n- **independent-supporting-claims:** None\n- **independence-basis:** None\n- **contradiction-ids:** None\n- **created-last-revalidated-by:** None\n"
+		if err := store.Ingest(db, doc, "CLAIM", claim, 1, []byte(claimPayload)); err != nil {
+			t.Fatal(err)
+		}
 	}
 	return claims
 }
@@ -129,9 +133,9 @@ func TestNarrateNumbersCitationsAndIndexesEvidence(t *testing.T) {
 		t.Fatalf("machine IDs leaked into the reading surface:\n%s", body)
 	}
 	for i, claim := range claims {
-		marker := fmt.Sprintf("[^%d]: `%s`", i+1, claim)
-		if !strings.Contains(body, marker) {
-			t.Fatalf("evidence index missing %q", marker)
+		marker := fmt.Sprintf("[^%d]:", i+1)
+		if !strings.Contains(body, marker) || !strings.Contains(body, "(`"+claim+"`)") {
+			t.Fatalf("evidence notes missing %q for %s", marker, claim)
 		}
 	}
 }

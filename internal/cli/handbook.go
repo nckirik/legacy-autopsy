@@ -22,8 +22,11 @@ func specHandbook(args []string, stdout, stderr io.Writer) error {
 	if args[0] == "index" {
 		return specHandbookIndex(args[1:], stdout, stderr)
 	}
+	if args[0] == "evidence" {
+		return specHandbookEvidence(args[1:], stdout, stderr)
+	}
 	if args[0] != "draft" {
-		return fmt.Errorf("spec handbook operation %q is unsupported; supported operations: draft, narrate, index", args[0])
+		return fmt.Errorf("spec handbook operation %q is unsupported; supported operations: draft, narrate, index, evidence", args[0])
 	}
 	set := flags("spec handbook draft", stderr)
 	repo := set.String("repo", ".", "protocol repository root")
@@ -162,5 +165,42 @@ func specHandbookIndex(args []string, stdout, stderr io.Writer) error {
 		return nil
 	}
 	_, err = stdout.Write(index)
+	return err
+}
+
+// specHandbookEvidence writes the evidence register appendix.
+func specHandbookEvidence(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handbook evidence", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	out := set.String("out", "", "write the register to this path (default stdout)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec handbook evidence requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	register, err := handbook.EvidenceRegister(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	if *out != "" {
+		if err := os.WriteFile(*out, register, 0o644); err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "evidence register: %s\n", *out)
+		return nil
+	}
+	_, err = stdout.Write(register)
 	return err
 }

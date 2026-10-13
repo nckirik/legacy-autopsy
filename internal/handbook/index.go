@@ -32,6 +32,8 @@ func IndexMarkdown(entries []IndexEntry) []byte {
 		}
 		fmt.Fprintf(&b, "- [%s. %s](%s) - %s\n", entry.Number, entry.Title, entry.Path, summary)
 	}
+	b.WriteString("\n## Appendices\n\n")
+	b.WriteString("- [Evidence Register](evidence.md) - the claim IDs cited by chapter footnotes, with their text, source, and anchor\n")
 	return []byte(b.String())
 }
 

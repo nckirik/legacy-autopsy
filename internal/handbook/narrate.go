@@ -9,6 +9,8 @@ import (
 
 	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/ste"
+	"github.com/nckirik/legacy-autopsy/internal/store"
+	"github.com/nckirik/legacy-autopsy/internal/work"
 )
 
 // Completer is one bounded model call (satisfied by the llm adapter).
@@ -78,6 +80,10 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 		}
 		observed = append(observed, records...)
 	}
+	claimNotes, err := loadClaimNotes(db, doc, evidence)
+	if err != nil {
+		return ChapterNarrative{}, err
+	}
 	user := narrativeUserPrompt(*spec, observed, evidence)
 	var feedback string
 	for attempt := 0; attempt < 3; attempt++ {
@@ -123,7 +129,7 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 			problems = append(problems, finding.String())
 		}
 		if len(problems) == 0 {
-			numbered, index := numberCitations(narrative)
+			numbered, index := numberCitations(narrative, claimNotes)
 			full := numbered + index + recordAppendix(observed)
 			return ChapterNarrative{Chapter: spec.Number, Markdown: full}, nil
 		}
@@ -164,7 +170,37 @@ func composeNarrative(spec *ChapterSpec, purpose, behavior, decisions string) st
 // numberCitations replaces claim citations with bracketed numbers in order of
 // first appearance and returns the chapter text plus its evidence index, so the
 // reading surface carries no machine IDs.
-func numberCitations(narrative string) (string, string) {
+// claimNotes maps claim IDs to a readable note (claim text plus subject).
+func loadClaimNotes(db string, doc *cdl.EIRDoc, evidence map[string]bool) (map[string]string, error) {
+	notes := map[string]string{}
+	if len(evidence) == 0 {
+		return notes, nil
+	}
+	names, _, _, err := work.FieldContract(doc, "CLAIM")
+	if err != nil {
+		return nil, err
+	}
+	for claim := range evidence {
+		payload, err := store.Get(db, doc, "CLAIM", claim)
+		if err != nil {
+			return nil, err
+		}
+		values, err := work.PayloadText(names, payload)
+		if err != nil {
+			return nil, err
+		}
+		text := strings.Join(strings.Fields(values["claim"]), " ")
+		subject := strings.Fields(values["subject-id-record-version"])
+		note := text
+		if len(subject) > 0 {
+			note = fmt.Sprintf("%s - source %s", text, subject[0])
+		}
+		notes[claim] = note
+	}
+	return notes, nil
+}
+
+func numberCitations(narrative string, notes map[string]string) (string, string) {
 	order := []string{}
 	numbers := map[string]int{}
 	replace := func(match string) string {
@@ -186,7 +222,11 @@ func numberCitations(narrative string) (string, string) {
 	var b strings.Builder
 	b.WriteString("\n### Evidence Notes\n\n")
 	for i, claim := range order {
-		fmt.Fprintf(&b, "[^%d]: `%s`\n", i+1, claim)
+		note := notes[claim]
+		if note == "" {
+			note = "evidence record"
+		}
+		fmt.Fprintf(&b, "[^%d]: %s (`%s`)\n", i+1, note, claim)
 	}
 	return text, b.String()
 }
