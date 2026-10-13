@@ -3,6 +3,8 @@ package handbook
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
@@ -21,23 +23,33 @@ type ChapterNarrative struct {
 	Findings []Finding
 }
 
-const narrativeSystemPrompt = `You write one handbook chapter for a legacy-system reconstruction. The canonical protocol state is authoritative; you never invent records or evidence.
+const narrativeSystemPrompt = `You write one chapter of a software architecture reconstruction handbook. Fresh developers read this chapter to understand the legacy system. Write it as a design document in prose, not as bullet lists or field dumps.
+
+The canonical protocol state is authoritative. The structured records below are your evidence. Do not invent behavior, names, or evidence.
+
+Citation rules:
+- Every observed statement must cite the claim IDs that support it, in parentheses: (CLM-0123ABCDEF45).
+- Every record listed under Inputs must be represented by at least one cited statement.
+- Never cite a claim that is not in the Inputs evidence list.
 
 ` + ste.Directive + `
 
-Output exactly two sections, nothing else:
+Output exactly three sections and nothing else:
 
 ## Audience Purpose
-<one short paragraph>
+<one paragraph: who reads this chapter and what they need from it>
+
+## Observed Legacy Behavior
+<several paragraphs of narrative prose that explain the observed behavior as a coherent design description. Use short paragraphs and lists only when a list is the clear form. Cite claims after each statement.>
 
 ## Target Decisions
-<one short paragraph, or "Not-Applicable: <reason>" when no decision applies>
+<one paragraph, or "Not-Applicable: <reason>" when no decision applies>
 
-Do not add headings, record lists, navigation, or commentary. The runtime adds the observed records and navigation.`
+Do not add other headings, navigation, record IDs, or field tables. The runtime adds navigation and a collapsed record appendix.`
 
-// Narrate authors the narrative sections for one chapter from its committed
-// records and returns the composed chapter with lint findings. It retries once
-// with the lint findings as feedback.
+// Narrate authors the full chapter narrative from its committed records and
+// validates citations, the STE rules, and the substance floor. It retries with
+// the validation findings as feedback.
 func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDoc, chapterNumber string) (ChapterNarrative, error) {
 	specs := DefaultChapters()
 	var spec *ChapterSpec
@@ -50,87 +62,148 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 		return ChapterNarrative{}, fmt.Errorf("handbook: unknown chapter %q", chapterNumber)
 	}
 	var observed []Record
+	evidence := map[string]bool{}
+	recordClaims := map[string][]string{}
 	for _, catalogID := range spec.Catalogs {
 		records, err := loadRecords(db, doc, catalogID)
 		if err != nil {
 			return ChapterNarrative{}, err
 		}
+		for _, record := range records {
+			claims := claimsIn(string(record.Payload))
+			recordClaims[record.ID] = claims
+			for _, claim := range claims {
+				evidence[claim] = true
+			}
+		}
 		observed = append(observed, records...)
 	}
-	user := narrativeUserPrompt(*spec, observed)
+	user := narrativeUserPrompt(*spec, observed, evidence)
 	var feedback string
 	for attempt := 0; attempt < 3; attempt++ {
 		if feedback != "" {
-			user = narrativeUserPrompt(*spec, observed) + "\n\nPrevious attempt rejected by lint:\n" + feedback
+			user = narrativeUserPrompt(*spec, observed, evidence) + "\n\nPrevious attempt rejected:\n" + feedback
 		}
 		text, err := completer.Complete(ctx, narrativeSystemPrompt, user)
 		if err != nil {
 			return ChapterNarrative{}, err
 		}
-		purpose, decisions := splitNarrative(text)
-		if purpose == "" || decisions == "" {
-			feedback = "output must contain both ## Audience Purpose and ## Target Decisions sections"
-			continue
+		purpose, behavior, decisions := splitNarrative(text)
+		var problems []string
+		if purpose == "" || behavior == "" || decisions == "" {
+			problems = append(problems, "output must contain ## Audience Purpose, ## Observed Legacy Behavior, and ## Target Decisions sections")
 		}
-		chapter := Chapter{
-			Number:          spec.Number,
-			Title:           spec.Title,
-			AudiencePurpose: purpose,
-			Observed:        observed,
-			TargetDecisions: decisions,
-			Navigation:      navigationFor(specs, spec.Number),
+		for _, claim := range claimsIn(text) {
+			if !evidence[claim] {
+				problems = append(problems, fmt.Sprintf("citation %s is not in the chapter evidence list", claim))
+			}
 		}
-		body := chapterBody(Assemble([]Chapter{chapter}))
-		// Split the gates: the substance floor counts the composed chapter,
-		// including claim citations carried by observed records. The STE gate
-		// judges only the generated narrative, because record prose is governed
-		// at synthesis time and historical records must not drive the retry loop.
-		narrativeOnly := chapter
-		narrativeOnly.Observed = nil
-		var findings []Finding
-		for _, finding := range LintChapter(spec.Number, string(body)) {
+		for recordID, claims := range recordClaims {
+			if len(claims) == 0 {
+				continue
+			}
+			covered := false
+			for _, claim := range claims {
+				if strings.Contains(text, claim) {
+					covered = true
+					break
+				}
+			}
+			if !covered {
+				problems = append(problems, fmt.Sprintf("record %s is not represented by any cited statement", recordID))
+			}
+		}
+		narrative := composeNarrative(spec, purpose, behavior, decisions)
+		for _, finding := range LintChapter(spec.Number, narrative) {
 			if !strings.HasPrefix(finding.Code, "STE-") {
-				findings = append(findings, finding)
+				problems = append(problems, finding.String())
 			}
 		}
-		for _, finding := range LintChapter(spec.Number, string(chapterBody(Assemble([]Chapter{narrativeOnly})))) {
-			if strings.HasPrefix(finding.Code, "STE-") {
-				findings = append(findings, finding)
-			}
+		for _, finding := range ste.Lint(spec.Number, purpose+"\n"+behavior+"\n"+decisions) {
+			problems = append(problems, finding.String())
 		}
-		if len(findings) == 0 {
-			return ChapterNarrative{Chapter: spec.Number, Markdown: string(body)}, nil
+		if len(problems) == 0 {
+			full := narrative + recordAppendix(observed)
+			return ChapterNarrative{Chapter: spec.Number, Markdown: full}, nil
 		}
-		var messages []string
-		for _, finding := range findings {
-			messages = append(messages, finding.String())
-		}
-		feedback = strings.Join(messages, "\n")
+		feedback = strings.Join(problems, "\n")
 	}
-	return ChapterNarrative{}, fmt.Errorf("handbook: chapter %s did not pass lint: %s", chapterNumber, feedback)
+	return ChapterNarrative{}, fmt.Errorf("handbook: chapter %s did not pass validation: %s", chapterNumber, feedback)
 }
 
-func narrativeUserPrompt(spec ChapterSpec, observed []Record) string {
-	var b strings.Builder
-	fmt.Fprintf(&b, "Chapter %s: %s\n\nObserved synthesis records:\n", spec.Number, spec.Title)
-	if len(observed) == 0 {
-		b.WriteString("- None. Use a reason-bearing Not-Applicable for target decisions.\n")
+var claimPattern = regexp.MustCompile(`CLM-[A-F0-9]{12}`)
+
+func claimsIn(text string) []string {
+	seen := map[string]bool{}
+	var claims []string
+	for _, match := range claimPattern.FindAllString(text, -1) {
+		if !seen[match] {
+			seen[match] = true
+			claims = append(claims, match)
+		}
 	}
-	for _, record := range observed {
-		fmt.Fprintf(&b, "\n### %s\n\n%s\n", record.ID, record.Payload)
+	sort.Strings(claims)
+	return claims
+}
+
+func composeNarrative(spec *ChapterSpec, purpose, behavior, decisions string) string {
+	var b strings.Builder
+	fmt.Fprintf(&b, "## %s. %s\n\n", spec.Number, spec.Title)
+	fmt.Fprintf(&b, "### Audience Purpose\n\n%s\n\n", purpose)
+	fmt.Fprintf(&b, "### Observed Legacy Behavior\n\n%s\n\n", behavior)
+	fmt.Fprintf(&b, "### Target Decisions\n\n%s\n\n", decisions)
+	fmt.Fprintf(&b, "### Navigation\n\n")
+	specs := DefaultChapters()
+	for _, item := range navigationFor(specs, spec.Number) {
+		fmt.Fprintf(&b, "- %s\n", item)
 	}
 	return b.String()
 }
 
-func splitNarrative(text string) (string, string) {
+func recordAppendix(observed []Record) string {
+	if len(observed) == 0 {
+		return ""
+	}
+	var b strings.Builder
+	b.WriteString("\n### Record Details\n\n")
+	for _, record := range observed {
+		fmt.Fprintf(&b, "<details><summary>%s</summary>\n\n%s\n</details>\n\n", record.ID, record.Payload)
+	}
+	return b.String()
+}
+
+func narrativeUserPrompt(spec ChapterSpec, observed []Record, evidence map[string]bool) string {
+	var b strings.Builder
+	fmt.Fprintf(&b, "Chapter %s: %s\n\n", spec.Number, spec.Title)
+	if len(observed) == 0 {
+		b.WriteString("Inputs: None. Write a short chapter. Use a reason-bearing Not-Applicable for target decisions.\n")
+		return b.String()
+	}
+	b.WriteString("Inputs (structured evidence records):\n\n")
+	for _, record := range observed {
+		fmt.Fprintf(&b, "%s\n\n", record.Payload)
+	}
+	claims := make([]string, 0, len(evidence))
+	for claim := range evidence {
+		claims = append(claims, claim)
+	}
+	sort.Strings(claims)
+	fmt.Fprintf(&b, "Evidence claim IDs (cite only these): %s\n", strings.Join(claims, ", "))
+	return b.String()
+}
+
+func splitNarrative(text string) (string, string, string) {
 	text = strings.ReplaceAll(text, "\r\n", "\n")
-	var purpose, decisions strings.Builder
+	var purpose, behavior, decisions strings.Builder
 	current := &purpose
 	for _, line := range strings.Split(text, "\n") {
 		trimmed := strings.TrimSpace(line)
 		switch {
 		case strings.HasPrefix(trimmed, "## Audience Purpose"):
 			current = &purpose
+			continue
+		case strings.HasPrefix(trimmed, "## Observed Legacy Behavior"):
+			current = &behavior
 			continue
 		case strings.HasPrefix(trimmed, "## Target Decisions"):
 			current = &decisions
@@ -141,7 +214,7 @@ func splitNarrative(text string) (string, string) {
 		current.WriteString(line)
 		current.WriteString("\n")
 	}
-	return strings.TrimSpace(purpose.String()), strings.TrimSpace(decisions.String())
+	return strings.TrimSpace(purpose.String()), strings.TrimSpace(behavior.String()), strings.TrimSpace(decisions.String())
 }
 
 func navigationFor(specs []ChapterSpec, number string) []string {

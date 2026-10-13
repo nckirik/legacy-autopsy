@@ -4,6 +4,9 @@ import (
 	"context"
 	"strings"
 	"testing"
+
+	"github.com/nckirik/legacy-autopsy/cdl"
+	"github.com/nckirik/legacy-autopsy/internal/store"
 )
 
 type fakeCompleter struct {
@@ -17,16 +20,62 @@ func (f *fakeCompleter) Complete(ctx context.Context, system, user string) (stri
 	return reply, nil
 }
 
-func TestNarrateComposesAndLints(t *testing.T) {
+func seedModules(t *testing.T, db string, doc *cdl.EIRDoc, count int) []string {
+	t.Helper()
+	var claims []string
+	for i := 1; i <= count; i++ {
+		claim := "CLM-0000000000" + string(rune('0'+(i/10))) + string(rune('0'+(i%10)))
+		claims = append(claims, claim)
+		id := "MOD-00000000000" + string(rune('0'+i))
+		payload := "- **source-bindings:** " + claim + "\n" +
+			"- **block-id:** " + id + "\n" +
+			"- **record-title:** Module " + string(rune('A'+i-1)) + "\n" +
+			"- **domain-path:** app/m" + string(rune('0'+i)) + "\n" +
+			"- **responsibility-domain-boundary:** The module owns one boundary.\n" +
+			"- **public-interfaces:** None\n" +
+			"- **encapsulated-state-entities:** None\n" +
+			"- **dependencies-dependents:** None\n" +
+			"- **data-and-events-passed:** None\n" +
+			"- **failure-propagation:** None\n" +
+			"- **invariants-rules-owned:** None\n" +
+			"- **observed-legacy-placement:** app\n" +
+			"- **target-decision:** Pending\n" +
+			"- **personas-use-cases-capabilities:** None\n"
+		if err := store.Ingest(db, doc, "ARCHITECTURE-MODULE", id, 1, []byte(payload)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	return claims
+}
+
+func goodNarrative(claims []string) string {
+	var b strings.Builder
+	b.WriteString("## Audience Purpose\nThe operator reads this chapter to understand the system.\n\n## Observed Legacy Behavior\n")
+	for i, claim := range claims {
+		b.WriteString("The system gives module " + string(rune('A'+i)) + " one clear responsibility (" + claim + ").\n")
+	}
+	b.WriteString("Each module owns its boundary and its interfaces.\n\n## Target Decisions\nNot-Applicable: no records exist for this chapter in the current scope.\n")
+	return b.String()
+}
+
+func TestNarrateComposesProseChapter(t *testing.T) {
 	doc, db := testDocDB(t)
-	completer := &fakeCompleter{replies: []string{
-		"## Audience Purpose\nThe operator reads this chapter to understand the system.\n\n## Target Decisions\nNot-Applicable: no records exist for this chapter in the current scope.\n",
-	}}
+	claims := seedModules(t, db, doc, 8)
+	completer := &fakeCompleter{replies: []string{goodNarrative(claims)}}
 	narrative, err := Narrate(context.Background(), completer, db, doc, "01")
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, marker := range []string{"## 01. System Overview", "### Audience Purpose", "The operator reads this chapter", "### Observed Legacy Behavior", "### Navigation"} {
+	for _, marker := range []string{
+		"## 01. System Overview",
+		"### Audience Purpose",
+		"### Observed Legacy Behavior",
+		"The system gives module A one clear responsibility",
+		"### Target Decisions",
+		"### Navigation",
+		"### Record Details",
+		"<details><summary>MOD-",
+	} {
 		if !strings.Contains(narrative.Markdown, marker) {
 			t.Fatalf("narrative missing %q:\n%s", marker, narrative.Markdown)
 		}
@@ -36,12 +85,11 @@ func TestNarrateComposesAndLints(t *testing.T) {
 	}
 }
 
-func TestNarrateRetriesWithLintFeedback(t *testing.T) {
+func TestNarrateRetriesOnCitationsAndStyle(t *testing.T) {
 	doc, db := testDocDB(t)
-	completer := &fakeCompleter{replies: []string{
-		"## Audience Purpose\nThe operator can't read this; it must be simpler.\n\n## Target Decisions\nNot-Applicable: no records exist for this chapter in the current scope.\n",
-		"## Audience Purpose\nThe operator can read this chapter.\n\n## Target Decisions\nNot-Applicable: no records exist for this chapter in the current scope.\n",
-	}}
+	claims := seedModules(t, db, doc, 8)
+	bad := "## Audience Purpose\nThe operator can't read module A (CLM-FFFFFFFFFFFF).\n\n## Observed Legacy Behavior\nA short paragraph.\n\n## Target Decisions\nNone.\n"
+	completer := &fakeCompleter{replies: []string{bad, goodNarrative(claims)}}
 	narrative, err := Narrate(context.Background(), completer, db, doc, "01")
 	if err != nil {
 		t.Fatal(err)
@@ -49,16 +97,17 @@ func TestNarrateRetriesWithLintFeedback(t *testing.T) {
 	if completer.calls != 2 {
 		t.Fatalf("calls = %d, want 2", completer.calls)
 	}
-	if !strings.Contains(narrative.Markdown, "The operator can read this chapter.") {
+	if !strings.Contains(narrative.Markdown, "The system gives module A") {
 		t.Fatalf("retry output not used:\n%s", narrative.Markdown)
 	}
 }
 
-func TestNarrateFailsClosedOnPersistentLint(t *testing.T) {
+func TestNarrateFailsClosedOnPersistentProblems(t *testing.T) {
 	doc, db := testDocDB(t)
-	bad := "## Audience Purpose\nThe operator can't read this.\n\n## Target Decisions\nNot-Applicable: no records exist for this chapter in the current scope.\n"
+	seedModules(t, db, doc, 8)
+	bad := "## Audience Purpose\nThe operator can't read this (CLM-FFFFFFFFFFFF).\n\n## Observed Legacy Behavior\nMissing citations.\n\n## Target Decisions\nNone.\n"
 	completer := &fakeCompleter{replies: []string{bad, bad, bad}}
 	if _, err := Narrate(context.Background(), completer, db, doc, "01"); err == nil {
-		t.Fatal("persistent lint failure accepted")
+		t.Fatal("persistent validation failure accepted")
 	}
 }

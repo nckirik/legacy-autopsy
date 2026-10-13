@@ -35,13 +35,13 @@ type Catalog struct {
 // Catalogs maps catalog IDs to their declared record family and section.
 var Catalogs = map[string]Catalog{
 	"MOD":   {FieldID: "ARCHITECTURE-MODULE", IDType: "MOD", Section: "architecture-blueprint"},
-	"ER":    {FieldID: "ENTITY-RECORD", IDType: "ER", Section: "entity-catalog"},
+	"ER":    {FieldID: "ENTITY-RECORD", IDType: "ER", Section: "entity-catalog", DiscriminatorField: "domain-context-purpose"},
 	"REL":   {FieldID: "RELATIONSHIP-RECORD", IDType: "REL", Section: "relationship-catalog"},
 	"SM":    {FieldID: "STATE-MACHINE", IDType: "SM", Section: "state-machine-catalog"},
 	"DR":    {FieldID: "DATABASE-ROUTINE", IDType: "DR", Section: "database-routine-catalog"},
-	"BR":    {FieldID: "BUSINESS-RULE-RECORD", IDType: "BR", Section: "business-rule-catalog"},
+	"BR":    {FieldID: "BUSINESS-RULE-RECORD", IDType: "BR", Section: "business-rule-catalog", DiscriminatorField: "condition"},
 	"UC":    {FieldID: "USE-CASE", IDType: "UC", Section: "use-case-catalog"},
-	"IF":    {FieldID: "INTERFACE-RECORD", IDType: "IF", Section: "interface-catalog"},
+	"IF":    {FieldID: "INTERFACE-RECORD", IDType: "IF", Section: "interface-catalog", DiscriminatorField: "channel-transport-direction"},
 	"DEP":   {FieldID: "DEPLOYMENT-ELEMENT", IDType: "DEP", Section: "deployment-catalog"},
 	"CFG":   {FieldID: "CONFIGURATION-RECORD", IDType: "CFG", Section: "deployment-catalog", DiscriminatorField: "exact-key"},
 	"SCHED": {FieldID: "SCHEDULE-RECORD", IDType: "SCHED", Section: "deployment-catalog", DiscriminatorField: "type-trigger-frequency-window"},
