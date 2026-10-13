@@ -57,10 +57,11 @@ func TestEvaluateCandidateChecksEmptyState(t *testing.T) {
 	if results["CANDIDATE-05-REFERENTIAL-INTEGRITY"] != "Pass" {
 		t.Fatalf("referential integrity = %q, want vacuous Pass on empty state", results["CANDIDATE-05-REFERENTIAL-INTEGRITY"])
 	}
-	for _, id := range []string{"CANDIDATE-04-HANDBOOK-QUALITY", "CANDIDATE-12-PROFILES"} {
-		if results[id] != "Unsupported" {
-			t.Fatalf("%s = %q, want Unsupported", id, results[id])
-		}
+	if results["CANDIDATE-04-HANDBOOK-QUALITY"] != "Unsupported" {
+		t.Fatalf("handbook = %q, want Unsupported without a rendered handbook", results["CANDIDATE-04-HANDBOOK-QUALITY"])
+	}
+	if results["CANDIDATE-12-PROFILES"] != "Fail" {
+		t.Fatalf("profiles = %q, want Fail with no persona registry rows", results["CANDIDATE-12-PROFILES"])
 	}
 	if results["CANDIDATE-09-PRIVACY-SECURITY"] != "Fail" {
 		t.Fatalf("privacy = %q, want Fail when no findings are recorded", results["CANDIDATE-09-PRIVACY-SECURITY"])

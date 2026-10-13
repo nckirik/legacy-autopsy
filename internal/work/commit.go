@@ -119,6 +119,19 @@ func CommitWithIDs(caps *Caps, unit Unit, p Proposal, updateExisting bool) ([]st
 			resolved[i].Payload = injected
 		}
 	}
+	for _, carrier := range unit.RuntimeFingerprintFields {
+		for i := range resolved {
+			fingerprint, err := capabilities.SemanticContentFingerprint(resolved[i].Payload, carrier)
+			if err != nil {
+				return nil, fmt.Errorf("work: unit %s record %s fingerprint: %w", unit.ID, resolved[i].RecordID, err)
+			}
+			injected, err := injectRuntimeFields(resolved[i].Payload, []string{carrier}, fingerprint)
+			if err != nil {
+				return nil, fmt.Errorf("work: unit %s record %s: %w", unit.ID, resolved[i].RecordID, err)
+			}
+			resolved[i].Payload = injected
+		}
+	}
 	for _, record := range resolved {
 		values, err := PayloadText(names, record.Payload)
 		if err != nil {

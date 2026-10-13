@@ -217,7 +217,31 @@ func EvaluateCandidateChecks(db string, doc *cdl.EIRDoc, opts Options) ([]Candid
 	default:
 		add("CANDIDATE-11-FAULTS", "Pass", fmt.Sprintf("%d fault records carry claim evidence and resolved topology references", faults.FLTs))
 	}
-	add("CANDIDATE-12-PROFILES", "Unsupported", "persona profile payloads are not generated yet")
+	// CANDIDATE-12: legal PRF identity, fingerprint, and dependency closure.
+	namespace, err := headerNamespace(db, doc)
+	if err != nil {
+		return nil, err
+	}
+	profiles, err := synthesis.ProfileCoverage(db, doc, namespace)
+	if err != nil {
+		return nil, err
+	}
+	switch {
+	case profiles.RegistryRows == 0:
+		add("CANDIDATE-12-PROFILES", "Fail", "no persona registry rows exist")
+	case len(profiles.Missing) > 0:
+		add("CANDIDATE-12-PROFILES", "Fail", fmt.Sprintf("%d persona registry rows lack their canonical PRF; first: %s", len(profiles.Missing), profiles.Missing[0]))
+	case len(profiles.Mismatched) > 0:
+		add("CANDIDATE-12-PROFILES", "Fail", fmt.Sprintf("%d PRF identity mismatches; first: %s", len(profiles.Mismatched), profiles.Mismatched[0]))
+	case len(profiles.BadVersion) > 0:
+		add("CANDIDATE-12-PROFILES", "Fail", fmt.Sprintf("%d PRFs lack a positive semantic record version; first: %s", len(profiles.BadVersion), profiles.BadVersion[0]))
+	case len(profiles.BadFinger) > 0:
+		add("CANDIDATE-12-PROFILES", "Fail", fmt.Sprintf("%d PRFs have a non-recomputing semantic fingerprint; first: %s", len(profiles.BadFinger), profiles.BadFinger[0]))
+	case len(profiles.Dangling) > 0:
+		add("CANDIDATE-12-PROFILES", "Fail", fmt.Sprintf("%d PRF dependency references do not resolve; first: %s", len(profiles.Dangling), profiles.Dangling[0]))
+	default:
+		add("CANDIDATE-12-PROFILES", "Pass", fmt.Sprintf("%d persona profiles carry legal PRF identity, fingerprint, and resolved dependency closure", profiles.Profiles))
+	}
 	pending, contradictions, err := pendingAndContradictions(db, doc)
 	if err != nil {
 		return nil, err
@@ -439,6 +463,22 @@ func configurationCheck(db string, doc *cdl.EIRDoc) (string, string, error) {
 	return "Pass", fmt.Sprintf("%d configurations declare a behavioral effect", len(ids)), nil
 }
 
+func headerNamespace(db string, doc *cdl.EIRDoc) (string, error) {
+	payload, err := store.Get(db, doc, "PREFLIGHT-HEADER", "0A")
+	if err != nil {
+		return "", nil
+	}
+	names, _, _, err := work.FieldContract(doc, "PREFLIGHT-HEADER")
+	if err != nil {
+		return "", err
+	}
+	values, err := work.PayloadText(names, payload)
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(values["system-namespace"]), nil
+}
+
 func headerSnapshot(db string, doc *cdl.EIRDoc) (string, error) {
 	payload, err := store.Get(db, doc, "PREFLIGHT-HEADER", "0A")
 	if err != nil {
@@ -503,8 +543,7 @@ func pendingAndContradictions(db string, doc *cdl.EIRDoc) (int, int, error) {
 				return 0, 0, err
 			}
 			for _, value := range values {
-				lower := strings.ToLower(value)
-				if strings.Contains(lower, "pending") || strings.Contains(lower, "provisional") || strings.Contains(lower, "b-stale") {
+				if isPendingStatus(value) {
 					pending++
 					break
 				}
@@ -516,6 +555,18 @@ func pendingAndContradictions(db string, doc *cdl.EIRDoc) (int, int, error) {
 		return 0, 0, err
 	}
 	return pending, len(contradictions), nil
+}
+
+// isPendingStatus reports an exact pending/provisional status value. Substring
+// matching would misclassify legitimate names such as a `*-pending` state.
+func isPendingStatus(value string) bool {
+	normalized := strings.ToLower(strings.TrimSpace(value))
+	normalized = strings.Trim(normalized, "[]")
+	switch normalized {
+	case "pending", "provisional", "b-draft", "b-stale", "pending-synthesis-reference":
+		return true
+	}
+	return false
 }
 
 // readingSurface removes the collapsed record appendix and the evidence-note
