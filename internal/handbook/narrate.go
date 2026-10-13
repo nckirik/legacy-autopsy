@@ -176,7 +176,7 @@ func numberCitations(narrative string) (string, string) {
 			order = append(order, claim)
 			numbers[claim] = len(order)
 		}
-		return fmt.Sprintf("[%d]", numbers[claim])
+		return fmt.Sprintf("[^%d]", numbers[claim])
 	}
 	text := regexp.MustCompile(`\(CLM-[A-F0-9]{12}\)`).ReplaceAllStringFunc(narrative, replace)
 	text = claimPattern.ReplaceAllStringFunc(text, replace)
@@ -184,9 +184,9 @@ func numberCitations(narrative string) (string, string) {
 		return text, ""
 	}
 	var b strings.Builder
-	b.WriteString("\n### Evidence Index\n\n")
+	b.WriteString("\n### Evidence Notes\n\n")
 	for i, claim := range order {
-		fmt.Fprintf(&b, "%d. `%s`\n", i+1, claim)
+		fmt.Fprintf(&b, "[^%d]: `%s`\n", i+1, claim)
 	}
 	return text, b.String()
 }

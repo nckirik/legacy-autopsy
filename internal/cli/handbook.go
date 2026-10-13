@@ -19,8 +19,11 @@ func specHandbook(args []string, stdout, stderr io.Writer) error {
 	if args[0] == "narrate" {
 		return specHandbookNarrate(args[1:], stdout, stderr)
 	}
+	if args[0] == "index" {
+		return specHandbookIndex(args[1:], stdout, stderr)
+	}
 	if args[0] != "draft" {
-		return fmt.Errorf("spec handbook operation %q is unsupported; supported operations: draft, narrate", args[0])
+		return fmt.Errorf("spec handbook operation %q is unsupported; supported operations: draft, narrate, index", args[0])
 	}
 	set := flags("spec handbook draft", stderr)
 	repo := set.String("repo", ".", "protocol repository root")
@@ -127,4 +130,37 @@ type handbookCompleter struct {
 
 func (h *handbookCompleter) Complete(ctx context.Context, system, user string) (string, error) {
 	return h.client.CompleteEffort(ctx, system, user, h.effort)
+}
+
+// specHandbookIndex builds the tag-free top-level index from rendered chapters.
+func specHandbookIndex(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handbook index", stderr)
+	dir := set.String("dir", "", "directory with chapter-NN.md files (required)")
+	out := set.String("out", "", "write the index to this path (default stdout)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *dir == "" {
+		return fmt.Errorf("spec handbook index requires --dir")
+	}
+	entries, err := handbook.LoadIndexEntries(*dir)
+	if err != nil {
+		return err
+	}
+	if len(entries) == 0 {
+		return fmt.Errorf("spec handbook index: no chapter-*.md files in %s", *dir)
+	}
+	index := handbook.IndexMarkdown(entries)
+	if *out != "" {
+		if err := os.WriteFile(*out, index, 0o644); err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "handbook index: %s (%d chapters)\n", *out, len(entries))
+		return nil
+	}
+	_, err = stdout.Write(index)
+	return err
 }
