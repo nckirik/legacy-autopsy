@@ -5,12 +5,16 @@ package handoff
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/assurance"
+	"github.com/nckirik/legacy-autopsy/internal/handbook"
 	"github.com/nckirik/legacy-autopsy/internal/store"
+	"github.com/nckirik/legacy-autopsy/internal/synthesis"
 	"github.com/nckirik/legacy-autopsy/internal/work"
 )
 
@@ -21,9 +25,17 @@ type CandidateCheck struct {
 	Detail string
 }
 
+// Options configures candidate evaluation inputs that are projections rather
+// than store state.
+type Options struct {
+	// HandbookDir, when set, contains chapter-NN.md files to lint for
+	// CANDIDATE-04.
+	HandbookDir string
+}
+
 // EvaluateCandidateChecks evaluates the candidate report check registry against
 // committed state.
-func EvaluateCandidateChecks(db string, doc *cdl.EIRDoc) ([]CandidateCheck, error) {
+func EvaluateCandidateChecks(db string, doc *cdl.EIRDoc, opts Options) ([]CandidateCheck, error) {
 	var checks []CandidateCheck
 	add := func(id, result, detail string) {
 		checks = append(checks, CandidateCheck{ID: id, Result: result, Detail: detail})
@@ -77,7 +89,36 @@ func EvaluateCandidateChecks(db string, doc *cdl.EIRDoc) ([]CandidateCheck, erro
 		add("CANDIDATE-03-SYNTHESIS-DOMAINS", "Pass", fmt.Sprintf("%d mapped units have synthesis provenance", mappedUnits))
 	}
 
-	add("CANDIDATE-04-HANDBOOK-QUALITY", "Unsupported", "handbook quality is validated on rendered chapters, which are not store state")
+	if opts.HandbookDir == "" {
+		add("CANDIDATE-04-HANDBOOK-QUALITY", "Unsupported", "no rendered handbook directory was provided")
+	} else {
+		chapters, err := handbook.LoadIndexEntries(opts.HandbookDir)
+		if err != nil {
+			return nil, err
+		}
+		expected := len(handbook.DefaultChapters())
+		if len(chapters) < expected {
+			add("CANDIDATE-04-HANDBOOK-QUALITY", "Fail", fmt.Sprintf("handbook has %d of %d chapters", len(chapters), expected))
+		} else if len(chapters) == 0 {
+			add("CANDIDATE-04-HANDBOOK-QUALITY", "Fail", "handbook directory has no chapter files")
+		} else {
+			var findings []string
+			for _, chapter := range chapters {
+				content, err := os.ReadFile(filepath.Join(opts.HandbookDir, chapter.Path))
+				if err != nil {
+					return nil, err
+				}
+				for _, finding := range handbook.LintChapter(chapter.Number, string(content)) {
+					findings = append(findings, finding.String())
+				}
+			}
+			if len(findings) > 0 {
+				add("CANDIDATE-04-HANDBOOK-QUALITY", "Fail", fmt.Sprintf("%d handbook findings; first: %s", len(findings), findings[0]))
+			} else {
+				add("CANDIDATE-04-HANDBOOK-QUALITY", "Pass", fmt.Sprintf("%d handbook chapters pass substance and STE gates", len(chapters)))
+			}
+		}
+	}
 
 	// CANDIDATE-05: referential integrity of committed supporting records.
 	if err := referentialIntegrity(db, doc); err != nil {
@@ -106,7 +147,15 @@ func EvaluateCandidateChecks(db string, doc *cdl.EIRDoc) ([]CandidateCheck, erro
 	add("CANDIDATE-10-DISABLED-CAPABILITIES", "Unsupported", "capability containers for disabled units are not generated yet")
 	add("CANDIDATE-11-FAULTS", "Unsupported", "failure-class registry coverage is not generated yet")
 	add("CANDIDATE-12-PROFILES", "Unsupported", "persona profile payloads are not generated yet")
-	add("CANDIDATE-13-PENDING-AND-CONTRADICTIONS", "Unsupported", "contradiction and pending-work validators are not generated yet")
+	pending, contradictions, err := pendingAndContradictions(db, doc)
+	if err != nil {
+		return nil, err
+	}
+	if pending > 0 {
+		add("CANDIDATE-13-PENDING-AND-CONTRADICTIONS", "Fail", fmt.Sprintf("%d synthesis records carry pending or provisional status", pending))
+	} else {
+		add("CANDIDATE-13-PENDING-AND-CONTRADICTIONS", "Pass", fmt.Sprintf("no pending synthesis records; %d contradictions recorded", contradictions))
+	}
 
 	// CANDIDATE-14: snapshot consistency of committed coverage state.
 	snapshot, err := headerSnapshot(db, doc)
@@ -355,6 +404,47 @@ func snapshotMismatches(db string, doc *cdl.EIRDoc, coverageIDs []string, snapsh
 		}
 	}
 	return mismatches, nil
+}
+
+// pendingAndContradictions counts synthesis records with pending/provisional
+// status and committed contradiction records.
+func pendingAndContradictions(db string, doc *cdl.EIRDoc) (int, int, error) {
+	pending := 0
+	for _, catalog := range synthesis.Catalogs {
+		ids, err := store.List(db, doc, catalog.FieldID)
+		if err != nil {
+			return 0, 0, err
+		}
+		if len(ids) == 0 {
+			continue
+		}
+		names, _, _, err := work.FieldContract(doc, catalog.FieldID)
+		if err != nil {
+			return 0, 0, err
+		}
+		for _, id := range ids {
+			payload, err := store.Get(db, doc, catalog.FieldID, id)
+			if err != nil {
+				return 0, 0, err
+			}
+			values, err := work.PayloadText(names, payload)
+			if err != nil {
+				return 0, 0, err
+			}
+			for _, value := range values {
+				lower := strings.ToLower(value)
+				if strings.Contains(lower, "pending") || strings.Contains(lower, "provisional") || strings.Contains(lower, "b-stale") {
+					pending++
+					break
+				}
+			}
+		}
+	}
+	contradictions, err := store.List(db, doc, "CONTRADICTION")
+	if err != nil {
+		return 0, 0, err
+	}
+	return pending, len(contradictions), nil
 }
 
 func firstToken(value string) string {

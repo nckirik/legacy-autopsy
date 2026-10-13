@@ -19,6 +19,7 @@ func specHandoff(args []string, stdout, stderr io.Writer) error {
 	source := set.String("source", "", "single CDL source (default: full assembly)")
 	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
 	db := set.String("db", "", "SQLite database path (required)")
+	handbookDir := set.String("handbook-dir", "", "rendered handbook directory for the quality check")
 	if err := set.Parse(args[1:]); err != nil {
 		return err
 	}
@@ -32,7 +33,7 @@ func specHandoff(args []string, stdout, stderr io.Writer) error {
 	if err != nil {
 		return err
 	}
-	checks, err := handoff.EvaluateCandidateChecks(*db, res.EIR)
+	checks, err := handoff.EvaluateCandidateChecks(*db, res.EIR, handoff.Options{HandbookDir: *handbookDir})
 	if err != nil {
 		return err
 	}
