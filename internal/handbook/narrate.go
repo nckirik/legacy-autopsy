@@ -81,12 +81,23 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 			Navigation:      navigationFor(specs, spec.Number),
 		}
 		body := chapterBody(Assemble([]Chapter{chapter}))
-		// The STE gate judges the generated narrative. Observed record prose is
-		// governed at synthesis time; historical records must not fail the
-		// narrative retry loop.
+		// Split the gates: the substance floor counts the composed chapter,
+		// including claim citations carried by observed records. The STE gate
+		// judges only the generated narrative, because record prose is governed
+		// at synthesis time and historical records must not drive the retry loop.
 		narrativeOnly := chapter
 		narrativeOnly.Observed = nil
-		findings := LintChapter(spec.Number, string(chapterBody(Assemble([]Chapter{narrativeOnly}))))
+		var findings []Finding
+		for _, finding := range LintChapter(spec.Number, string(body)) {
+			if !strings.HasPrefix(finding.Code, "STE-") {
+				findings = append(findings, finding)
+			}
+		}
+		for _, finding := range LintChapter(spec.Number, string(chapterBody(Assemble([]Chapter{narrativeOnly})))) {
+			if strings.HasPrefix(finding.Code, "STE-") {
+				findings = append(findings, finding)
+			}
+		}
 		if len(findings) == 0 {
 			return ChapterNarrative{Chapter: spec.Number, Markdown: string(body)}, nil
 		}
