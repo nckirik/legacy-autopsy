@@ -3,9 +3,11 @@ package handoff
 import (
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
+	"github.com/nckirik/legacy-autopsy/internal/artifact"
 	"github.com/nckirik/legacy-autopsy/internal/spec"
 	"github.com/nckirik/legacy-autopsy/internal/store"
 )
@@ -71,5 +73,41 @@ func TestEvaluateCandidateChecksEmptyState(t *testing.T) {
 	}
 	if results["CANDIDATE-10-DISABLED-CAPABILITIES"] != "Pass" {
 		t.Fatalf("disabled = %q, want Pass on a resolved zero denominator", results["CANDIDATE-10-DISABLED-CAPABILITIES"])
+	}
+}
+
+func TestBuildCandidateReportEmptyState(t *testing.T) {
+	doc, db := testDocDB(t)
+	report, err := BuildCandidateReport(db, doc, ReportOptions{
+		Namespace:             "demo",
+		ProtocolVersion:       "4.6",
+		EnvironmentsSnapshots: "dev",
+		ArtifactPath:          "exit-e/EXIT-E-CANDIDATE-REPORT.md",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Result != "Blocked" {
+		t.Fatalf("result = %q, want Blocked on empty state", report.Result)
+	}
+	if report.Fingerprint == "" || report.InstanceBinding == "" || len(report.Payload) == 0 {
+		t.Fatalf("report artifact is incomplete: %+v", report)
+	}
+	recomputed, err := artifact.PayloadFingerprint(CandidateReportArtifactType, "exit-e/EXIT-E-CANDIDATE-REPORT.md", report.Payload)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if recomputed != report.Fingerprint {
+		t.Fatalf("fingerprint %s does not recompute to %s", report.Fingerprint, recomputed)
+	}
+	if err := artifact.ValidatePayload(doc, CandidateReportArtifactType, report.Payload); err != nil {
+		t.Fatalf("payload schema: %v", err)
+	}
+	text := string(report.Payload)
+	if !strings.Contains(text, "| CANDIDATE-14-SNAPSHOT-INPUTS |") {
+		t.Fatalf("report is missing the candidate check rows")
+	}
+	if strings.Contains(text, "BLOCKER-CANDIDATE-01-EXIT-A | CANDIDATE-01-EXIT-A | all deterministic") {
+		t.Fatalf("passing check produced a blocker")
 	}
 }

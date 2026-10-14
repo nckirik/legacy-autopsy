@@ -3,6 +3,7 @@ package preflight
 import (
 	"fmt"
 
+	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/work"
 )
 
@@ -17,7 +18,7 @@ type Directives struct {
 // DefaultDirectives are the pilot preflight directives.
 func DefaultDirectives() Directives {
 	return Directives{
-		ProtocolVersion: "4.2.1",
+		ProtocolVersion: cdl.ProtocolEdition(),
 		StorageBinding:  "sqlite/1",
 		Iteration:       "ALFA",
 		MaxDepth:        3,

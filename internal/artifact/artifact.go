@@ -44,7 +44,7 @@ func ValidatePayload(doc *cdl.EIRDoc, fieldID string, payload []byte) error {
 	for i, spec := range field.Fields {
 		position[spec.Name] = i
 	}
-	parsed, err := md.Parse(string(payload))
+	parsed, err := md.Parse(string(ExtractPayloadBody(payload)))
 	if err != nil {
 		return fmt.Errorf("artifact: parse %s payload: %w", fieldID, err)
 	}
@@ -85,7 +85,8 @@ func PayloadFingerprint(artifactType, path string, payload []byte) (string, erro
 	if err != nil {
 		return "", err
 	}
-	canonical, err := capabilities.CanonicalMarkdown(payload)
+	body := ExtractPayloadBody(payload)
+	canonical, err := capabilities.CanonicalMarkdown(body)
 	if err != nil {
 		return "", err
 	}
@@ -94,6 +95,27 @@ func PayloadFingerprint(artifactType, path string, payload []byte) (string, erro
 		return "", err
 	}
 	return capabilities.Hash([]byte(identity + "\n" + string(withoutCarrier))), nil
+}
+
+// ExtractPayloadBody returns the exact AST content between the generic
+// artifact-payload boundary markers. Payloads without markers are returned
+// unchanged (envelope-region payloads).
+func ExtractPayloadBody(payload []byte) []byte {
+	text := string(payload)
+	start := strings.Index(text, "<!-- ARTIFACT-PAYLOAD:")
+	if start < 0 {
+		return payload
+	}
+	startEnd := strings.Index(text[start:], "-->")
+	if startEnd < 0 {
+		return payload
+	}
+	bodyStart := start + startEnd + len("-->")
+	end := strings.Index(text[bodyStart:], "<!-- END-ARTIFACT-PAYLOAD")
+	if end < 0 {
+		return payload
+	}
+	return []byte(text[bodyStart : bodyStart+end])
 }
 
 // InstanceBinding returns the post-hash artifact-instance binding.

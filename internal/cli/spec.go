@@ -76,6 +76,7 @@ func specRecord(args []string, stdout, stderr io.Writer) error {
 	field := set.String("field", "", "FIELD ID (table class)")
 	id := set.String("id", "", "record ID")
 	version := set.Int("version", 1, "record version for put")
+	updateExisting := set.Bool("update-existing", false, "replace an existing record with the next version")
 	payloadPath := set.String("payload", "", "Markdown payload file for put")
 	if err := set.Parse(args[1:]); err != nil {
 		return err
@@ -131,6 +132,17 @@ func specRecord(args []string, stdout, stderr io.Writer) error {
 		payload, err := os.ReadFile(*payloadPath)
 		if err != nil {
 			return err
+		}
+		if *updateExisting {
+			current, err := store.VersionOf(*db, res.EIR, *field, *id)
+			if err != nil {
+				return err
+			}
+			if err := store.ReplaceRecord(*db, res.EIR, *field, *id, current+1, payload); err != nil {
+				return err
+			}
+			fmt.Fprintf(stdout, "put %s %s (replaced version %d)\n", *field, *id, current+1)
+			return nil
 		}
 		if err := store.Ingest(*db, res.EIR, *field, *id, *version, payload); err != nil {
 			return err
