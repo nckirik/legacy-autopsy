@@ -15,7 +15,7 @@ import (
 // specHandoff dispatches the §15.1/§15.4 handoff operations.
 func specHandoff(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness|equivalence> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness|equivalence|review> [flags]")
 	}
 	switch args[0] {
 	case "candidate":
@@ -28,8 +28,10 @@ func specHandoff(args []string, stdout, stderr io.Writer) error {
 		return specHandoffReadiness(args[1:], stdout, stderr)
 	case "equivalence":
 		return specHandoffEquivalence(args[1:], stdout, stderr)
+	case "review":
+		return specHandoffReview(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence", args[0])
+		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence, review", args[0])
 	}
 }
 

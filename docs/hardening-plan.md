@@ -394,6 +394,15 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
       `assurance.AdvanceMatrix` closes matching `C-COVERED` cells. Live pilot:
       **25/25 cells closed** and all Exit A conditions Pass.
 
+- [x] Interactive human review tooling (`spec handoff review readability` and
+      `spec handoff review equivalence`): the harness walks the operator through
+      every chapter and every suite mapping with per-item [p]ass/[f]ail/[s]kip and
+      [a]ccept/[e]xclude/[s]kip prompts (fail and exclude require a reason), records
+      the review with reviewer/scope/limitations/timestamp, and the readiness
+      evaluator validates coverage, exact HBK fingerprints, and per-record verdicts
+      against the recorded review. Reviewer identity and verdicts come only from the
+      human act; the machine never records an approval on its own.
+
 ### W6 - Acceptance rerun
 
 - [~] Rerun the same small project on the current protocol through the bounded

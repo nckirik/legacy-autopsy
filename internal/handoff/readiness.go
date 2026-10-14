@@ -193,24 +193,16 @@ func BuildContentReadiness(db string, doc *cdl.EIRDoc, opts ReadinessOptions) (C
 	}
 
 	// READINESS-05: fingerprint-bound human readability review.
-	reviewCount := 0
-	if opts.HandbookDir != "" {
-		entries, err := os.ReadDir(opts.HandbookDir)
-		if err != nil {
-			return report, err
-		}
-		for _, entry := range entries {
-			if !entry.IsDir() && strings.HasPrefix(entry.Name(), "readability-") && strings.HasSuffix(entry.Name(), ".md") {
-				reviewCount++
-			}
-		}
+	readabilityFail, readabilityDetail, err := readabilityCoverage(opts.HandbookDir, opts.HandbookViewDir)
+	if err != nil {
+		return report, err
 	}
-	if reviewCount == 0 {
-		if err := add("READINESS-05-HANDBOOK-READABILITY", "Fail", "no human readability reviews are recorded", standardBindings("READINESS-05-HANDBOOK-READABILITY")); err != nil {
+	if readabilityFail != "" {
+		if err := add("READINESS-05-HANDBOOK-READABILITY", "Fail", readabilityFail, standardBindings("READINESS-05-HANDBOOK-READABILITY")); err != nil {
 			return report, err
 		}
 	} else {
-		if err := add("READINESS-05-HANDBOOK-READABILITY", "Fail", fmt.Sprintf("%d readability reviews are recorded but coverage validation is incomplete", reviewCount), standardBindings("READINESS-05-HANDBOOK-READABILITY")); err != nil {
+		if err := add("READINESS-05-HANDBOOK-READABILITY", "Pass", readabilityDetail, standardBindings("READINESS-05-HANDBOOK-READABILITY")); err != nil {
 			return report, err
 		}
 	}
@@ -727,8 +719,50 @@ func snapshotConsistency(reportBytes, manifestBytes []byte, snapshot string) str
 	return ""
 }
 
+// readabilityCoverage validates the recorded human readability reviews against
+// the exact candidate HBK bindings.
+func readabilityCoverage(sectionsDir, viewDir string) (string, string, error) {
+	dir := viewDir
+	if dir == "" {
+		dir = sectionsDir
+	}
+	if dir == "" {
+		return "no handbook review directory was provided", "", nil
+	}
+	sections, err := handbook.LoadMintedSections(sectionsDir)
+	if err != nil {
+		return "", "", err
+	}
+	chapters := make([]handbook.Binding, 0, len(sections))
+	for _, section := range sections {
+		chapters = append(chapters, handbook.Binding{HBKID: section.ID, Fingerprint: section.Fingerprint})
+	}
+	reviews, files, err := handbook.LoadReadabilityReviews(dir)
+	if err != nil {
+		return "", "", err
+	}
+	if len(files) == 0 {
+		return "no human readability reviews are recorded", "", nil
+	}
+	if findings := handbook.VerifyReadabilityCoverage("handbook", chapters, reviews); len(findings) > 0 {
+		return findings[0].String(), "", nil
+	}
+	failed := 0
+	verdicts := 0
+	for _, file := range files {
+		if file.Result == "Fail" {
+			failed++
+		}
+		verdicts += len(file.Verdicts)
+	}
+	if failed > 0 {
+		return fmt.Sprintf("%d readability reviews recorded Fail", failed), "", nil
+	}
+	return "", fmt.Sprintf("%d verdicts cover all %d chapters with matching fingerprints", verdicts, len(chapters)), nil
+}
+
 // equivalenceCoverage validates that the suite maps every UC, BR, SM, and IF
-// exactly once and that a human review record exists beside it.
+// exactly once and that the human review accepted or excluded every mapping.
 func equivalenceCoverage(db string, doc *cdl.EIRDoc, suitePath string) (string, string) {
 	if suitePath == "" {
 		return "no equivalence-suite artifact was provided", ""
@@ -754,11 +788,10 @@ func equivalenceCoverage(db string, doc *cdl.EIRDoc, suitePath string) (string, 
 		seen[mapping.RecordID]++
 	}
 	missing, duplicated := 0, 0
-	for id, count := range seen {
+	for _, count := range seen {
 		if count > 1 {
 			duplicated++
 		}
-		_ = id
 	}
 	for _, fieldID := range []string{"USE-CASE", "BUSINESS-RULE-RECORD", "STATE-MACHINE", "INTERFACE-RECORD"} {
 		ids, err := store.List(db, doc, fieldID)
@@ -778,10 +811,46 @@ func equivalenceCoverage(db string, doc *cdl.EIRDoc, suitePath string) (string, 
 		return fmt.Sprintf("%d of %d records lack a suite mapping", missing, denominator), ""
 	}
 	reviewPath := filepath.Join(filepath.Dir(suitePath), "equivalence-review.md")
-	if _, err := os.Stat(reviewPath); err != nil {
+	review, ok, err := equivalence.LoadSuiteReview(reviewPath)
+	if err != nil {
+		return err.Error(), ""
+	}
+	if !ok {
 		return fmt.Sprintf("coverage complete (%d of %d); human review record is pending", denominator, denominator), ""
 	}
-	return fmt.Sprintf("coverage complete (%d of %d) with a bound human review", denominator, denominator), ""
+	if review.Result != "Pass" {
+		return "the acceptance suite review is incomplete (some records were skipped)", ""
+	}
+	reviewed := map[string]int{}
+	accepted, excluded := 0, 0
+	for _, row := range review.Rows {
+		reviewed[row.RecordID]++
+		switch row.Verdict {
+		case "Accepted":
+			accepted++
+		case "Excluded":
+			if strings.TrimSpace(row.Reason) == "" {
+				return fmt.Sprintf("exclusion of %s has no reason", row.RecordID), ""
+			}
+			excluded++
+		default:
+			return fmt.Sprintf("review verdict %q for %s is invalid", row.Verdict, row.RecordID), ""
+		}
+	}
+	for id, count := range reviewed {
+		if count > 1 {
+			return fmt.Sprintf("%s is reviewed more than once", id), ""
+		}
+		if _, ok := seen[id]; !ok {
+			return fmt.Sprintf("%s is reviewed but not mapped in the suite", id), ""
+		}
+	}
+	for id := range seen {
+		if reviewed[id] == 0 {
+			return fmt.Sprintf("%s has no review decision", id), ""
+		}
+	}
+	return "", fmt.Sprintf("%d reviews cover all %d mappings (%d accepted, %d excluded)", accepted+excluded, denominator, accepted, excluded)
 }
 
 // approvedExclusionCount counts coverage rows with an approved-exclusion
