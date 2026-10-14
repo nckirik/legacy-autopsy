@@ -72,7 +72,7 @@ func CollectSuiteReview(prompt Prompter, out io.Writer, mappings []Mapping, revi
 	for _, mapping := range mappings {
 		fmt.Fprintf(out, "\n---- %s %s (%s) ----\n", mapping.RecordType, mapping.RecordID, mapping.Skeleton)
 		if strings.TrimSpace(mapping.Body) != "" {
-			fmt.Fprintf(out, "%s\n", strings.TrimSpace(mapping.Body))
+			fmt.Fprintf(out, "%s\n", plainBody(mapping.Body))
 		}
 		for {
 			answer, err := prompt("[a]ccept / [e]xclude / [s]kip: ")
@@ -229,4 +229,12 @@ func optionalCell(cells []string, index int) string {
 
 func cell(value string) string {
 	return strings.Join(strings.Fields(value), " ")
+}
+
+// plainBody renders a Markdown skeleton body for terminal reading: emphasis
+// markers and backticks are removed, indentation is preserved.
+func plainBody(body string) string {
+	body = strings.ReplaceAll(body, "**", "")
+	body = strings.ReplaceAll(body, "`", "")
+	return body
 }

@@ -291,7 +291,7 @@ func specHandoffReviewConfirm(args []string, stdout, stderr io.Writer) error {
 		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
 	}
 	if *db == "" {
-		return fmt.Errorf("spec handoff review confirm requires --db")
+		return fmt.Errorf("spec handoff review confirm requires --db (for example --db /home/can/dev/veri-yonetimi/.extracted/legacy-autopsy.db)")
 	}
 	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
 	if err != nil {
