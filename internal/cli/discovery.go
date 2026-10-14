@@ -289,6 +289,11 @@ func specDiscoveryHits(args []string, stdout, stderr io.Writer) error {
 	} else {
 		fmt.Fprintf(stdout, "hits window manifest: %s\n", manifest)
 	}
+	prefixes, err := personaPrefixSet(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	directives.PersonaPrefixes = prefixes
 	directives.BatchSize = *batchSize
 	config, err := llm.ConfigFromEnv()
 	if err != nil {
@@ -402,10 +407,42 @@ func discoveryContext(db string, doc *cdl.EIRDoc) (discovery.Directives, []disco
 			ID:         values["cluster-id"],
 			Title:      values["cluster-title"],
 			Owner:      values["canonical-owner-persona"],
+			PrimaryPOV: values["primary-pov"],
+			Track:      values["traversal-track"],
+			Entries:    splitList(values["concrete-entry-coordinates"]),
 			ScopePaths: splitList(values["scope-paths"]),
 		})
 	}
 	return directives, clusters, nil
+}
+
+// personaPrefixSet returns the registered persona prefixes from the committed
+// 0A registry, so discovery units bind Persona only to registered owners.
+func personaPrefixSet(db string, doc *cdl.EIRDoc) (map[string]bool, error) {
+	names, _, _, err := work.FieldContract(doc, "PERSONA-REGISTRY")
+	if err != nil {
+		return nil, err
+	}
+	ids, err := store.List(db, doc, "PERSONA-REGISTRY")
+	if err != nil {
+		return nil, err
+	}
+	prefixes := map[string]bool{}
+	for _, id := range ids {
+		payload, err := store.Get(db, doc, "PERSONA-REGISTRY", id)
+		if err != nil {
+			return nil, err
+		}
+		values, err := work.PayloadText(names, payload)
+		if err != nil {
+			return nil, err
+		}
+		prefix := strings.ToUpper(strings.TrimSpace(values["prefix"]))
+		if prefix != "" {
+			prefixes[prefix] = true
+		}
+	}
+	return prefixes, nil
 }
 
 // writeWindowManifest records which files were in a bounded discovery window,

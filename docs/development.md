@@ -154,6 +154,13 @@ authors one `SOURCE-INVENTORY-RECORD` per hit; the runtime computes the
 extraction is deterministic and re-runnable; absence of a hit kind still needs
 its own evidence-backed enumerator record.
 
+Hit units carry the §8.2 strict single-scope bindings: one entry cluster
+(resolved from the cluster's concrete entry coordinates), its traversal track,
+one POV (routes -> `POV-5`, queries -> `POV-4`, jobs -> `POV-3`), and the
+cluster owner's persona prefix when it is a registered persona. A shared cluster
+whose participating personas are not yet resolvable records `Persona=None` in
+the context instead of inventing an owner; ambiguity is fail-inclusive.
+
 Per-unit telemetry is appended to `<workspace db>.metrics.jsonl` (non-authoritative;
 duration, retries, context bytes, result) so rehearsal comparisons stay mechanical.
 

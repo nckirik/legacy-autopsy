@@ -12,7 +12,22 @@ type Cluster struct {
 	ID         string
 	Title      string
 	Owner      string
+	PrimaryPOV string
+	Track      string
+	Entries    []string
 	ScopePaths []string
+}
+
+// RegisteredPersona reports whether the cluster's canonical owner is a
+// registered persona prefix. Shared clusters return false: their participating
+// personas come from the SHARED-ENTRY record, and until that record resolves
+// them the unit records Persona=None instead of inventing an owner.
+func (c Cluster) RegisteredPersona(prefixes map[string]bool) (string, bool) {
+	owner := strings.ToUpper(strings.TrimSpace(c.Owner))
+	if owner == "" || !prefixes[owner] {
+		return "", false
+	}
+	return owner, true
 }
 
 // Directives are runtime-owned discovery values.
@@ -21,6 +36,9 @@ type Directives struct {
 	Snapshot       string
 	StorageBinding string
 	BatchSize      int
+	// PersonaPrefixes is the set of registered persona prefixes; hit units bind
+	// Persona only when the cluster owner is one of them.
+	PersonaPrefixes map[string]bool
 }
 
 // Plan builds one bounded inventory unit per candidate batch. Each unit must

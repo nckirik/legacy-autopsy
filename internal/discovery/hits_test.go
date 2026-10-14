@@ -110,6 +110,52 @@ func TestEnumerateHitsDeterministicAndBounded(t *testing.T) {
 	}
 }
 
+func TestClusterForHitBinding(t *testing.T) {
+	clusters := []Cluster{
+		{ID: "API", Entries: []string{"api/routes.py"}},
+		{ID: "WEB", Entries: []string{"web/app.py"}},
+	}
+	cases := []struct {
+		file string
+		want string
+	}{
+		{"web/app.py", "WEB"},
+		{"web/pages/dashboard.py", "WEB"},
+		{"api/handlers/users.py", "API"},
+		{"shared/util.py", ""},
+	}
+	for _, tc := range cases {
+		cluster, ok := ClusterForHit(Hit{File: tc.file}, clusters)
+		if tc.want == "" {
+			if ok {
+				t.Fatalf("hit %s bound to %s, want unbound", tc.file, cluster.ID)
+			}
+			continue
+		}
+		if !ok || cluster.ID != tc.want {
+			t.Fatalf("hit %s bound = %+v/%v, want %s", tc.file, cluster, ok, tc.want)
+		}
+	}
+	cluster, ok := ClusterForHit(Hit{File: "shared/util.py"}, []Cluster{{ID: "WEB", Entries: []string{"web/app.py"}}})
+	if !ok || cluster.ID != "WEB" {
+		t.Fatalf("single-cluster fallback = %+v/%v", cluster, ok)
+	}
+}
+
+func TestHitPlanLeavesSharedOwnerUnbound(t *testing.T) {
+	hits := []Hit{{Coordinate: "web/routes.py :: route :: GET /x", Kind: HitRoute, File: "web/routes.py"}}
+	units := HitPlan(hits, []Cluster{{ID: "WEB", Owner: "SHARED", Track: "Normal", Entries: []string{"web/routes.py"}}}, Directives{Namespace: "demo", Snapshot: "dev", BatchSize: 10, PersonaPrefixes: map[string]bool{"WEB": true, "AD": true}})
+	if len(units) != 1 {
+		t.Fatalf("units = %+v", units)
+	}
+	if units[0].Persona != "" || units[0].POV != "POV-5" || units[0].ID != "U-DISCOVERY-HITS-WEB-POV-5-001" {
+		t.Fatalf("unit = %+v", units[0])
+	}
+	if !strings.Contains(string(units[0].Inputs[0].Bytes), "shared ownership") {
+		t.Fatalf("context lacks the shared-ownership note:\n%s", units[0].Inputs[0].Bytes)
+	}
+}
+
 func TestHitPlanCommitsInventoryWithRuntimeIDs(t *testing.T) {
 	doc, db := testDocAndDB(t)
 	root := hitsTree(t)
@@ -125,16 +171,29 @@ func TestHitPlanCommitsInventoryWithRuntimeIDs(t *testing.T) {
 	if err := store.Ingest(db, doc, "PREFLIGHT-HEADER", "0A", 1, header); err != nil {
 		t.Fatal(err)
 	}
-	units := HitPlan(hits, []Cluster{{ID: "WEB", Title: "Web", Owner: "WEB"}}, Directives{Namespace: "demo", Snapshot: "dev", StorageBinding: "sqlite/1", BatchSize: 10})
-	if len(units) != 1 || units[0].ExpectedRecords != len(hits) {
+	units := HitPlan(hits, []Cluster{{ID: "WEB", Title: "Web", Owner: "WEB", PrimaryPOV: "POV-1", Track: "Normal", Entries: []string{"app/routes.py"}}}, Directives{Namespace: "demo", Snapshot: "dev", StorageBinding: "sqlite/1", BatchSize: 10, PersonaPrefixes: map[string]bool{"WEB": true}})
+	if len(units) != 3 {
 		t.Fatalf("units = %+v", units)
 	}
+	povs := map[string]string{}
+	for _, unit := range units {
+		povs[unit.POV] = unit.ID
+		if unit.Persona != "WEB" {
+			t.Fatalf("unit %s persona = %q, want WEB", unit.ID, unit.Persona)
+		}
+	}
+	if povs["POV-3"] != "U-DISCOVERY-HITS-WEB-POV-3-001" || povs["POV-4"] != "U-DISCOVERY-HITS-WEB-POV-4-001" || povs["POV-5"] != "U-DISCOVERY-HITS-WEB-POV-5-001" {
+		t.Fatalf("pov units = %v", povs)
+	}
 	executor := fakeExecutor(func(inv work.Invocation) (work.Proposal, error) {
-		if !strings.Contains(string(inv.Context.Bytes), "app/routes.py") {
-			t.Error("context lacks hit coordinates")
+		if !strings.Contains(string(inv.Context.Bytes), "## Candidate hits") || !strings.Contains(string(inv.Context.Bytes), inv.Unit.POV) {
+			t.Error("context lacks hit coordinates or the bound POV")
 		}
 		var proposal work.Proposal
 		for _, hit := range hits {
+			if hitPOV(hit.Kind) != inv.Unit.POV {
+				continue
+			}
 			payload := "- **kind:** " + string(hit.Kind) + "\n" +
 				"- **concrete-coordinate:** " + hit.Coordinate + "\n" +
 				"- **parent-container-src:** None\n" +
@@ -159,8 +218,18 @@ func TestHitPlanCommitsInventoryWithRuntimeIDs(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := session.Run(units); err != nil {
+	report, err := session.Run(units)
+	if err != nil {
 		t.Fatal(err)
+	}
+	personaBound := false
+	for _, stats := range report.Units {
+		if strings.HasPrefix(stats.InvocationID, "ALFA-WEB-POV-") {
+			personaBound = true
+		}
+	}
+	if !personaBound {
+		t.Fatalf("no persona/POV-bound invocation ID: %+v", report.Units)
 	}
 	ids, err := store.List(db, doc, "SOURCE-INVENTORY-RECORD")
 	if err != nil {

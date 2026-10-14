@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 	"strings"
@@ -315,40 +316,139 @@ func normalizeHitText(value string) string {
 	return strings.Join(strings.Fields(value), " ")
 }
 
-// HitPlan builds one bounded inventory unit per hit batch. Each unit must author
-// exactly one SOURCE-INVENTORY-RECORD per hit, in order; the runtime computes
-// every SRC ID from the payload kind and coordinate.
+// hitPOV maps a hit kind to its isolated point of view (§2 five isolated
+// POVs): queries are data movement (POV-4), routes are system wiring (POV-5),
+// and jobs are background workflows (POV-3).
+func hitPOV(kind HitKind) string {
+	switch kind {
+	case HitQuery:
+		return "POV-4"
+	case HitRoute:
+		return "POV-5"
+	case HitJob:
+		return "POV-3"
+	default:
+		return ""
+	}
+}
+
+// ClusterForHit resolves one hit file to exactly one cluster: an exact entry
+// coordinate first, then a file under an entry coordinate's directory. When
+// several clusters could match, the hit stays unbound (fail-inclusive); when
+// exactly one cluster exists it is the fallback owner of the bounded scan.
+func ClusterForHit(hit Hit, clusters []Cluster) (Cluster, bool) {
+	ordered := make([]Cluster, len(clusters))
+	copy(ordered, clusters)
+	sort.Slice(ordered, func(i, j int) bool { return ordered[i].ID < ordered[j].ID })
+	for _, cluster := range ordered {
+		for _, entry := range cluster.Entries {
+			if entry == hit.File {
+				return cluster, true
+			}
+		}
+	}
+	matches := map[string]Cluster{}
+	dir := path.Dir(hit.File)
+	for _, cluster := range ordered {
+		for _, entry := range cluster.Entries {
+			entryDir := path.Dir(entry)
+			if entryDir == "." {
+				continue
+			}
+			if dir == entryDir || strings.HasPrefix(hit.File, entryDir+"/") {
+				matches[cluster.ID] = cluster
+				break
+			}
+		}
+	}
+	if len(matches) == 1 {
+		for _, cluster := range matches {
+			return cluster, true
+		}
+	}
+	if len(ordered) == 1 {
+		return ordered[0], true
+	}
+	return Cluster{}, false
+}
+
+// HitPlan builds one bounded inventory unit per bound (cluster, POV) hit batch.
+// Each unit must author exactly one SOURCE-INVENTORY-RECORD per hit, in order;
+// the runtime computes every SRC ID from the payload kind and coordinate. Units
+// carry the strict single-scope bindings (§8.2): one persona where the cluster
+// owner is a registered prefix, one cluster, one traversal track, one POV.
 func HitPlan(hits []Hit, clusters []Cluster, directives Directives) []work.Unit {
 	batchSize := directives.BatchSize
 	if batchSize <= 0 {
 		batchSize = 25
 	}
-	var units []work.Unit
-	for start := 0; start < len(hits); start += batchSize {
-		end := start + batchSize
-		if end > len(hits) {
-			end = len(hits)
+	type group struct {
+		cluster Cluster
+		bound   bool
+		pov     string
+		hits    []Hit
+	}
+	var groups []*group
+	index := map[string]*group{}
+	for _, hit := range hits {
+		pov := hitPOV(hit.Kind)
+		if pov == "" {
+			continue
 		}
-		batch := hits[start:end]
-		units = append(units, work.Unit{
-			ID:               fmt.Sprintf("U-DISCOVERY-HITS-%03d", start/batchSize+1),
-			Mode:             "Discovery",
-			Scope:            directives.Namespace,
-			IDFromCoordinate: "concrete-coordinate",
-			IDType:           "SRC",
-			Namespace:        directives.Namespace,
-			ExpectedRecords:  len(batch),
-			ResultType:       "SOURCE-INVENTORY-RECORD",
-			Reads:            []work.Ref{{FieldID: "PREFLIGHT-HEADER", RecordID: "0A"}},
-			Inputs:           []work.Input{{Name: "discovery-hits-context.md", Bytes: hitContextMarkdown(batch, clusters, directives)}},
-			Sections:         []string{"atomic-unit-rule", "source-inventory"},
-			ReasoningEffort:  "off",
-		})
+		cluster, bound := ClusterForHit(hit, clusters)
+		key := pov + "|unbound"
+		if bound {
+			key = pov + "|" + cluster.ID
+		}
+		item, ok := index[key]
+		if !ok {
+			item = &group{cluster: cluster, bound: bound, pov: pov}
+			index[key] = item
+			groups = append(groups, item)
+		}
+		item.hits = append(item.hits, hit)
+	}
+	var units []work.Unit
+	for _, item := range groups {
+		for start := 0; start < len(item.hits); start += batchSize {
+			end := start + batchSize
+			if end > len(item.hits) {
+				end = len(item.hits)
+			}
+			batch := item.hits[start:end]
+			persona := ""
+			if item.bound {
+				if prefix, ok := item.cluster.RegisteredPersona(directives.PersonaPrefixes); ok {
+					persona = prefix
+				}
+			}
+			clusterToken := "UNBOUND"
+			if item.bound {
+				clusterToken = item.cluster.ID
+			}
+			unit := work.Unit{
+				ID:               fmt.Sprintf("U-DISCOVERY-HITS-%s-%s-%03d", clusterToken, item.pov, start/batchSize+1),
+				Mode:             "Discovery",
+				Scope:            directives.Namespace,
+				Persona:          persona,
+				POV:              item.pov,
+				IDFromCoordinate: "concrete-coordinate",
+				IDType:           "SRC",
+				Namespace:        directives.Namespace,
+				ExpectedRecords:  len(batch),
+				ResultType:       "SOURCE-INVENTORY-RECORD",
+				Reads:            []work.Ref{{FieldID: "PREFLIGHT-HEADER", RecordID: "0A"}},
+				Inputs:           []work.Input{{Name: "discovery-hits-context.md", Bytes: hitContextMarkdown(batch, item.cluster, item.bound, persona, item.pov, directives)}},
+				Sections:         []string{"atomic-unit-rule", "source-inventory", "five-isolated-povs", "traversal-tracks"},
+				ReasoningEffort:  "off",
+			}
+			units = append(units, unit)
+		}
 	}
 	return units
 }
 
-func hitContextMarkdown(batch []Hit, clusters []Cluster, directives Directives) []byte {
+func hitContextMarkdown(batch []Hit, cluster Cluster, bound bool, persona, pov string, directives Directives) []byte {
 	var b strings.Builder
 	b.WriteString("# Discovery hits batch (runtime-generated, bounded)\n\n")
 	b.WriteString("## Candidate hits - author exactly one SOURCE-INVENTORY-RECORD per row, in this order\n\n")
@@ -360,15 +460,22 @@ func hitContextMarkdown(batch []Hit, clusters []Cluster, directives Directives) 
 	for _, hit := range batch {
 		fmt.Fprintf(&b, "### %s\n\n> %s\n\n", hit.Coordinate, hit.Evidence)
 	}
-	b.WriteString("## Entry clusters (use the matching cluster's owner persona and scope)\n\n")
-	if len(clusters) == 0 {
-		b.WriteString("- None\n")
+	b.WriteString("## Strict single-scope bindings (§8.2; do not switch roots, personas, POVs, or tracks)\n\n")
+	fmt.Fprintf(&b, "- **Persona:** %s\n", orNone(persona))
+	if bound {
+		fmt.Fprintf(&b, "- **Entry Cluster:** %s (%s)\n", cluster.ID, cluster.Title)
+		fmt.Fprintf(&b, "- **Traversal Track:** %s\n", cluster.Track)
 	} else {
-		for _, cluster := range clusters {
-			fmt.Fprintf(&b, "- %s (%s): owner %s, scope %s\n", cluster.ID, cluster.Title, cluster.Owner, strings.Join(cluster.ScopePaths, ", "))
-		}
+		b.WriteString("- **Entry Cluster:** None (no declared cluster covers every hit file; the record states fail-inclusive None bindings)\n")
+		b.WriteString("- **Traversal Track:** None\n")
 	}
-	b.WriteString("\n## Runtime directives (must be used exactly)\n\n")
+	fmt.Fprintf(&b, "- **Active POV:** %s\n\n", pov)
+	if !bound {
+		b.WriteString("The hit-to-cluster binding is unresolved. Emit `canonical-owner: None`, `scope-summary: Unbound`, and `traversal-tracks: Normal` only when the evidence shows it; otherwise `Unknown`.\n\n")
+	} else if persona == "" {
+		b.WriteString("The cluster owner is not a registered persona (shared ownership). Emit `canonical-owner: None` and leave persona attribution to the shared-entry record; do not invent a persona.\n\n")
+	}
+	b.WriteString("## Runtime directives (must be used exactly)\n\n")
 	fmt.Fprintf(&b, "- **System Namespace:** %s\n", directives.Namespace)
 	fmt.Fprintf(&b, "- **Environment/Snapshot:** %s\n", directives.Snapshot)
 	fmt.Fprintf(&b, "- **Canonical Storage Binding:** %s\n", directives.StorageBinding)
@@ -377,9 +484,20 @@ func hitContextMarkdown(batch []Hit, clusters []Cluster, directives Directives) 
 	b.WriteString("- `source-fingerprint-snapshot-src-version` is the row Evidence Fingerprint plus ` version 1`.\n")
 	b.WriteString("- `discovery-method` is `other` for this bounded lexical scan; use a stronger declared method only with evidence.\n")
 	b.WriteString("- `parent-container-src`, `mappings`, `frontier-references`, `coverage-rows`, and `claims` are `None` unless evidence-backed.\n")
-	b.WriteString("- `canonical-owner` is the owner persona prefix of the cluster whose scope contains the hit file; otherwise `None`.\n")
+	if bound {
+		fmt.Fprintf(&b, "- `traversal-tracks` is `%s` (the bound cluster track).\n", cluster.Track)
+	}
+	if persona != "" {
+		fmt.Fprintf(&b, "- `canonical-owner` is `%s` (the bound cluster's registered owner persona).\n", persona)
+	}
 	b.WriteString("- `disposition-summary` is `Unknown` (fail-inclusive) until swept.\n")
 	b.WriteString("- `coverage-summary` is the closed enum value `C-GAP` for newly discovered unswept units.\n")
-	b.WriteString("- `traversal-tracks` is `Normal` unless the scan evidence shows otherwise.\n")
 	return []byte(b.String())
+}
+
+func orNone(value string) string {
+	if strings.TrimSpace(value) == "" {
+		return "None"
+	}
+	return value
 }
