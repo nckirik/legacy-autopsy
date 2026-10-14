@@ -4,13 +4,19 @@ package identity
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/internal/capabilities"
 )
 
-var allowedTypes = set("CMP", "CLM", "ER", "REL", "BR", "UC", "IF", "DEP", "CFG", "SCHED", "NFR", "SEC", "SM", "DR", "CAP", "PRV", "FLT", "MOD", "INV", "AUTH", "STATE", "DEC", "CON", "FRT", "SWP", "CLU", "SHR", "DSC", "EXP", "GAP", "CNF")
-var deferredSpecializedTypes = set("PRF", "HBK", "COV", "CND")
+var allowedTypes = set("CMP", "CLM", "ER", "REL", "BR", "UC", "IF", "DEP", "CFG", "SCHED", "NFR", "SEC", "SM", "DR", "CAP", "PRV", "FLT", "MOD", "PRF", "HBK", "INV", "AUTH", "STATE", "DEC", "CON", "FRT", "SWP", "CLU", "SHR", "DSC", "EXP", "GAP", "CNF")
+var deferredSpecializedTypes = set("COV", "CND")
+
+var (
+	personaPrefixPattern = regexp.MustCompile(`^[A-Z][A-Z0-9]{1,7}$`)
+	hbkAnchorPattern     = regexp.MustCompile(`^[a-z0-9]+(?:-[a-z0-9]+)*$`)
+)
 var sourceKinds = set("FILE", "SYM", "ROUTE", "RPC", "JOB", "QUERY", "TABLE", "VIEW", "DR", "CONSTRAINT", "GENERATED", "CFG", "WORKFLOW", "NODE", "EDGE", "PAGE", "WIDGET", "ACTION", "BINDING", "QUEUE", "EVENT", "STORAGE", "IFACE", "OTHER")
 
 func set(values ...string) map[string]struct{} {
@@ -39,6 +45,32 @@ func Generate(recordType, sourceKind, namespace, ownerCoordinate, discriminator 
 		return Result{}, fmt.Errorf("protocol ID type %q requires specialized coordinates not implemented by this bootstrap", recordType)
 	} else if _, ok := allowedTypes[recordType]; !ok {
 		return Result{}, fmt.Errorf("unsupported protocol ID type %q", recordType)
+	}
+	switch recordType {
+	case "PRF":
+		if discriminator != "persona-profile" {
+			return Result{}, fmt.Errorf("PRF semantic discriminator must be the literal persona-profile")
+		}
+		if !personaPrefixPattern.MatchString(strings.TrimSpace(ownerCoordinate)) {
+			return Result{}, fmt.Errorf("PRF owner coordinate must be a persona prefix matching [A-Z][A-Z0-9]{1,7}")
+		}
+		ownerCoordinate = strings.TrimSpace(ownerCoordinate)
+	case "HBK":
+		if discriminator != "handbook-section" {
+			return Result{}, fmt.Errorf("HBK semantic discriminator must be the literal handbook-section")
+		}
+		path, anchor, found := strings.Cut(ownerCoordinate, "#")
+		if !found {
+			return Result{}, fmt.Errorf("HBK owner coordinate must be normalized-path#stable-anchor")
+		}
+		normalized, err := NormalizeRelativePath(path)
+		if err != nil {
+			return Result{}, fmt.Errorf("HBK path: %w", err)
+		}
+		if !hbkAnchorPattern.MatchString(anchor) {
+			return Result{}, fmt.Errorf("HBK stable section anchor %q must match [a-z0-9]+(?:-[a-z0-9]+)*", anchor)
+		}
+		ownerCoordinate = normalized + "#" + anchor
 	}
 	namespace = normalizeCoordinate(namespace)
 	if recordType == "SRC" && sourceKind == "FILE" {

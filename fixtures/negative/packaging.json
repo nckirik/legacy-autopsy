@@ -1,0 +1,18 @@
+[
+  {
+    "id": "packaging-envelope-unknown-kind",
+    "protocol_section": "\u00a74.1.2. Normative canonical hash profile and packaging artifacts",
+    "group": "packaging-hash-profile",
+    "operation": "envelope-fingerprint",
+    "input": {
+      "path": "exit-e/X.md",
+      "target": "X",
+      "kind": "SIGNATURE",
+      "version": "1",
+      "region": "- **A:** b\n"
+    },
+    "expected": "",
+    "expect_error": true,
+    "expected_diagnostic": "ENVELOPE_INVALID"
+  }
+]

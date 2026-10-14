@@ -1,6 +1,9 @@
 package identity
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestGenerateDeterministicID(t *testing.T) {
 	result, err := Generate("CMP", "", "billing-v1", "src/payments/service.go#Charge", "atomic-component")
@@ -36,9 +39,25 @@ func TestGenerateSourceFileNormalizesOwnerPath(t *testing.T) {
 	}
 }
 
-func TestGenerateRejectsDeferredSpecializedIdentity(t *testing.T) {
-	if _, err := Generate("PRF", "", "billing-v1", "ABC", "persona-profile"); err == nil {
-		t.Fatal("expected specialized identity rejection")
+func TestGenerateSpecializedIdentity(t *testing.T) {
+	prf, err := Generate("PRF", "", "billing-v1", "ABC", "persona-profile")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.HasPrefix(prf.ID, "PRF-") {
+		t.Fatalf("prf id = %q", prf.ID)
+	}
+	if _, err := Generate("PRF", "", "billing-v1", "abc", "persona-profile"); err == nil {
+		t.Fatal("expected malformed persona prefix rejection")
+	}
+	if _, err := Generate("HBK", "", "billing-v1", "start-here.md#intro", "handbook-section"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Generate("HBK", "", "billing-v1", "start-here.md#Bad_Anchor", "handbook-section"); err == nil {
+		t.Fatal("expected malformed anchor rejection")
+	}
+	if _, err := Generate("COV", "", "billing-v1", "x", "coverage"); err == nil {
+		t.Fatal("expected deferred coverage identity rejection")
 	}
 }
 

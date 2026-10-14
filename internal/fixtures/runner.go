@@ -12,7 +12,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/nckirik/legacy-autopsy/internal/artifact"
 	"github.com/nckirik/legacy-autopsy/internal/canonical"
+	"github.com/nckirik/legacy-autopsy/internal/capabilities"
 	"github.com/nckirik/legacy-autopsy/internal/identity"
 	"github.com/nckirik/legacy-autopsy/internal/protocol"
 	"github.com/nckirik/legacy-autopsy/internal/workspace"
@@ -44,14 +46,17 @@ func (e *diagnosticError) Error() string { return e.Code + ": " + e.Err.Error() 
 func (e *diagnosticError) Unwrap() error { return e.Err }
 
 var operationGroups = map[string]string{
-	"protocol-version":      "protocol-discovery",
-	"protocol-mode-count":   "protocol-discovery",
-	"protocol-section-line": "protocol-discovery",
-	"generate-id":           "identity",
-	"normalize-path":        "path-normalization",
-	"basic-markdown-hash":   "basic-markdown-hash",
-	"persona-directory":     "persona-directory",
-	"workspace-skeleton":    "workspace-skeleton",
+	"payload-fingerprint":        "packaging-hash-profile",
+	"package-member-fingerprint": "packaging-hash-profile",
+	"envelope-fingerprint":       "packaging-hash-profile",
+	"protocol-version":           "protocol-discovery",
+	"protocol-mode-count":        "protocol-discovery",
+	"protocol-section-line":      "protocol-discovery",
+	"generate-id":                "identity",
+	"normalize-path":             "path-normalization",
+	"basic-markdown-hash":        "basic-markdown-hash",
+	"persona-directory":          "persona-directory",
+	"workspace-skeleton":         "workspace-skeleton",
 }
 
 var unsupported = []string{
@@ -175,6 +180,19 @@ func execute(repoRoot string, fixture Case) (string, error) {
 	case "generate-id":
 		result, err := identity.Generate(fixture.Input["type"], fixture.Input["kind"], fixture.Input["namespace"], fixture.Input["owner"], fixture.Input["discriminator"])
 		return result.ID, classified("IDENTITY_INVALID", err)
+	case "payload-fingerprint":
+		result, err := artifact.PayloadFingerprint(fixture.Input["artifact_type"], fixture.Input["artifact_path"], []byte(fixture.Input["payload"]))
+		return result, classified("ARTIFACT_INVALID", err)
+	case "package-member-fingerprint":
+		result, err := capabilities.PackageMemberFingerprint(fixture.Input["path"], []byte(fixture.Input["content"]))
+		return result, classified("MEMBER_INVALID", err)
+	case "envelope-fingerprint":
+		version, err := strconv.Atoi(fixture.Input["version"])
+		if err != nil {
+			return "", &diagnosticError{Code: "ENVELOPE_INVALID", Err: err}
+		}
+		result, err := capabilities.EnvelopeFingerprint(fixture.Input["path"], fixture.Input["target"], fixture.Input["kind"], version, []byte(fixture.Input["region"]))
+		return result, classified("ENVELOPE_INVALID", err)
 	case "protocol-version":
 		model, err := protocol.Load(protocol.OraclePath(repoRoot))
 		if err != nil {

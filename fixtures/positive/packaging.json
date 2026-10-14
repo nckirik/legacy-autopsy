@@ -1,0 +1,67 @@
+[
+  {
+    "id": "packaging-payload-fingerprint",
+    "protocol_section": "\u00a74.1.2. Normative canonical hash profile and packaging artifacts",
+    "group": "packaging-hash-profile",
+    "operation": "payload-fingerprint",
+    "input": {
+      "artifact_type": "SCOPE-CERTIFICATE",
+      "artifact_path": "exit-e/SCOPE-CERTIFICATE.md",
+      "payload": "<!-- ARTIFACT-PAYLOAD: SCOPE-CERTIFICATE -->\n\n- **ARTIFACT-TYPE:** SCOPE-CERTIFICATE\n- **ARTIFACT-PAYLOAD-FINGERPRINT:** PENDING\n\n<!-- END-ARTIFACT-PAYLOAD: SCOPE-CERTIFICATE -->\n"
+    },
+    "expected": "sha256:d0b23a21806eb2831a2a26d0e64054fe577daee7d89975d18405d582382ea809"
+  },
+  {
+    "id": "packaging-member-fingerprint",
+    "protocol_section": "\u00a74.1.2. Normative canonical hash profile and packaging artifacts",
+    "group": "packaging-hash-profile",
+    "operation": "package-member-fingerprint",
+    "input": {
+      "path": "handbook/chapter-01.md",
+      "content": "- **A:** b\n"
+    },
+    "expected": "sha256:25596a1b6afefa9d31e164fdaed46be2d735eb0bea4bf59cb49292d0e27b9799"
+  },
+  {
+    "id": "packaging-envelope-fingerprint",
+    "protocol_section": "\u00a74.1.2. Normative canonical hash profile and packaging artifacts",
+    "group": "packaging-hash-profile",
+    "operation": "envelope-fingerprint",
+    "input": {
+      "path": "exit-e/OUTER-BUNDLE-MANIFEST.md",
+      "target": "OUTER-BUNDLE-MANIFEST",
+      "kind": "CERTIFICATION",
+      "version": "1",
+      "region": "- **Required Human Signatories / Signature Timestamps:** Can at 2026-10-14T17:11:19Z\n- **Envelope Audit:** approved\n"
+    },
+    "expected": "sha256:1418d7aa287f0e3f2f2550ec46c900902e3d5f277d3e25b360bf63a513bef6f6"
+  },
+  {
+    "id": "identity-hbk-anchor",
+    "protocol_section": "\u00a74.1. ID generation",
+    "group": "identity",
+    "operation": "generate-id",
+    "input": {
+      "type": "HBK",
+      "kind": "",
+      "namespace": "demo",
+      "owner": "chapter-02.md#chapter-02",
+      "discriminator": "handbook-section"
+    },
+    "expected": "HBK-3D5176D03F8B"
+  },
+  {
+    "id": "identity-prf-prefix",
+    "protocol_section": "\u00a74.1. ID generation",
+    "group": "identity",
+    "operation": "generate-id",
+    "input": {
+      "type": "PRF",
+      "kind": "",
+      "namespace": "demo",
+      "owner": "WEB",
+      "discriminator": "persona-profile"
+    },
+    "expected": "PRF-38B2081E64EF"
+  }
+]
