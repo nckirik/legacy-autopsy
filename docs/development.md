@@ -173,6 +173,16 @@ dual-entry `SHARED-REFERENCE` pointer rows mechanically per persona and POV,
 with the discovering invocation recovered from `0G`; components without a
 resolvable persona produce no pointer row and are reported instead.
 
+```sh
+go run ./cmd/legacy-autopsy spec discovery pov-manifest --db <workspace db> [--out <personas root>]
+```
+
+`spec discovery pov-manifest` deterministically projects the committed shared
+references into persona-local POV manifest files
+(`personas/{persona-directory}/{NN}-{NAME}-POV.md`, §6.2 pointer layout). The
+projection is non-authoritative navigation; references whose component or
+persona is not committed are skipped instead of guessed.
+
 Per-unit telemetry is appended to `<workspace db>.metrics.jsonl` (non-authoritative;
 duration, retries, context bytes, result) so rehearsal comparisons stay mechanical.
 

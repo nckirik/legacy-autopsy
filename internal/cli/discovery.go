@@ -21,7 +21,7 @@ import (
 // inventory pipeline against the canonical store.
 func specDiscovery(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec discovery <run|hits|components|frontier> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec discovery <run|hits|components|pov-manifest|frontier> [flags]")
 	}
 	op := args[0]
 	switch op {
@@ -31,10 +31,12 @@ func specDiscovery(args []string, stdout, stderr io.Writer) error {
 		return specDiscoveryHits(args[1:], stdout, stderr)
 	case "components":
 		return specDiscoveryComponents(args[1:], stdout, stderr)
+	case "pov-manifest":
+		return specDiscoveryPOVManifest(args[1:], stdout, stderr)
 	case "frontier":
 		return specDiscoveryFrontier(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec discovery operation %q is unsupported; supported operations: run, hits, components, frontier", op)
+		return fmt.Errorf("spec discovery operation %q is unsupported; supported operations: run, hits, components, pov-manifest, frontier", op)
 	}
 }
 
@@ -546,6 +548,65 @@ func specDiscoveryComponents(args []string, stdout, stderr io.Writer) error {
 		pointers += len(stats.MutationIDs)
 	}
 	fmt.Fprintf(stdout, "components committed: %d, shared-reference pointers: %d\n", len(components), pointers)
+	return nil
+}
+
+// specDiscoveryPOVManifest projects committed shared references into
+// persona-local POV manifest files under the workspace personas/ root (or the
+// declared --out directory). The projection is deterministic and
+// non-authoritative.
+func specDiscoveryPOVManifest(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec discovery pov-manifest", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	out := set.String("out", "", "personas root (default: <workspace>/personas)")
+	dryRun := set.Bool("dry-run", false, "print the manifest paths without writing")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec discovery pov-manifest requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	manifests, err := discovery.POVManifests(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	if len(manifests) == 0 {
+		fmt.Fprintf(stdout, "pov manifests: 0 (no committed shared references with registered personas)\n")
+		return nil
+	}
+	root := *out
+	if root == "" {
+		root = filepath.Join(filepath.Dir(*db), "personas")
+	}
+	for _, manifest := range manifests {
+		fmt.Fprintf(stdout, "%-45s %5d bytes\n", manifest.Path, len(manifest.Markdown))
+		if *dryRun {
+			continue
+		}
+		target := filepath.Join(root, manifest.Directory, manifest.FileName)
+		if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
+			return err
+		}
+		if err := os.WriteFile(target, manifest.Markdown, 0o644); err != nil {
+			return err
+		}
+	}
+	if *dryRun {
+		fmt.Fprintf(stdout, "pov manifests: %d (dry run, nothing written)\n", len(manifests))
+		return nil
+	}
+	fmt.Fprintf(stdout, "pov manifests written: %d (root=%s)\n", len(manifests), root)
 	return nil
 }
 
