@@ -15,7 +15,7 @@ import (
 // specHandoff dispatches the §15.1/§15.4 handoff operations.
 func specHandoff(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness|equivalence|review> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness|equivalence|review|certificate> [flags]")
 	}
 	switch args[0] {
 	case "candidate":
@@ -30,8 +30,10 @@ func specHandoff(args []string, stdout, stderr io.Writer) error {
 		return specHandoffEquivalence(args[1:], stdout, stderr)
 	case "review":
 		return specHandoffReview(args[1:], stdout, stderr)
+	case "certificate":
+		return specHandoffCertificate(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence, review", args[0])
+		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence, review, certificate", args[0])
 	}
 }
 
@@ -306,6 +308,68 @@ func specHandoffEquivalence(args []string, stdout, stderr io.Writer) error {
 		return err
 	}
 	fmt.Fprintf(stdout, "suite mappings: %d\n", len(suite.Mappings))
+	fmt.Fprintf(stdout, "written: %s\n", *out)
+	return nil
+}
+
+// specHandoffCertificate emits the immutable §15.4 step-5 scope certificate.
+func specHandoffCertificate(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handoff certificate", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	report := set.String("report", "preview/package/EXIT-E-CANDIDATE-REPORT.md", "emitted candidate report payload file")
+	reportPath := set.String("report-artifact-path", handoff.CandidateReportDefaultPath, "candidate report package-relative artifact path")
+	manifest := set.String("manifest", "preview/package/CANDIDATE-PAYLOAD-MANIFEST.md", "emitted candidate payload manifest file")
+	manifestPath := set.String("manifest-artifact-path", handoff.CandidateManifestDefaultPath, "manifest package-relative artifact path")
+	readiness := set.String("readiness", "preview/package/EXIT-E-CONTENT-READINESS-REPORT.md", "emitted content-readiness report file")
+	readinessPath := set.String("readiness-artifact-path", handoff.ContentReadinessDefaultPath, "readiness package-relative artifact path")
+	out := set.String("out", "preview/package/exit-e/SCOPE-CERTIFICATE.md", "output file for the artifact payload")
+	artifactPath := set.String("artifact-path", handoff.ScopeCertificateDefaultPath, "package-relative artifact path")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec handoff certificate requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	certificate, err := handoff.BuildScopeCertificate(*db, res.EIR, handoff.CertificateOptions{
+		Namespace:             header["system-namespace"],
+		ProtocolVersion:       header["protocol-version"],
+		EnvironmentsSnapshots: header["included-environments-snapshots"],
+		StorageBinding:        header["canonical-storage-binding"],
+		ReportPath:            *report,
+		ReportArtifactPath:    *reportPath,
+		ManifestPath:          *manifest,
+		ManifestArtifactPath:  *manifestPath,
+		ReadinessPath:         *readiness,
+		ReadinessArtifactPath: *readinessPath,
+		ArtifactPath:          *artifactPath,
+	})
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
+		return err
+	}
+	if err := os.WriteFile(*out, certificate.Payload, 0o644); err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "artifact: %s\n", *artifactPath)
+	fmt.Fprintf(stdout, "fingerprint: %s\n", certificate.Fingerprint)
+	fmt.Fprintf(stdout, "instance: %s\n", certificate.InstanceBinding)
 	fmt.Fprintf(stdout, "written: %s\n", *out)
 	return nil
 }

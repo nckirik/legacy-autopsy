@@ -126,6 +126,10 @@ func specHandoffReviewReadability(args []string, stdout, stderr io.Writer) error
 		}
 		merged[verdict.HBKID] = verdict
 	}
+	review.Reviewer = newVerdicts.Reviewer
+	review.Scope = newVerdicts.Scope
+	review.Limitations = newVerdicts.Limitations
+	review.Timestamp = newVerdicts.Timestamp
 	review.Verdicts = review.Verdicts[:0]
 	review.Result = "Pass"
 	for _, hbkID := range order {
@@ -135,7 +139,6 @@ func specHandoffReviewReadability(args []string, stdout, stderr io.Writer) error
 			review.Result = "Fail"
 		}
 	}
-	review.Timestamp = newVerdicts.Timestamp
 	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
 		return err
 	}
@@ -326,7 +329,10 @@ func specHandoffReviewConfirm(args []string, stdout, stderr io.Writer) error {
 		return err
 	}
 	readabilityByHBK := map[string]string{}
-	if _, files, err := handbook.LoadReadabilityReviews(*reviewDir); err == nil {
+	if reviewFiles, files, err := handbook.LoadReadabilityReviews(*reviewDir); err != nil {
+		return err
+	} else {
+		_ = reviewFiles
 		for _, file := range files {
 			for _, verdict := range file.Verdicts {
 				readabilityByHBK[verdict.HBKID] = verdict.Verdict
@@ -364,9 +370,9 @@ func specHandoffReviewConfirm(args []string, stdout, stderr io.Writer) error {
 		case "synthesis":
 			fmt.Fprintf(stdout, "These structured records back the handbook chapters you reviewed; the same prose appears under each chapter's Record Details.\n")
 		case "PRF":
-			fmt.Fprintf(stdout, "This persona profile is a semantic summary built from the committed claims for this persona.\n")
+			fmt.Fprintf(stdout, "This persona profile summarizes what the committed evidence says about this persona: its entries, sign-in, permissions, workflows, and failure behavior.\n")
 		case "HBK":
-			fmt.Fprintf(stdout, "Readability review: %s. Confirming binds this chapter into the certified package.\n", readabilityByHBK[group.Bindings[0].RecordID])
+			fmt.Fprintf(stdout, "Readability review: %s. This section is the semantic record of the chapter; confirming binds it into the certified package.\n", readabilityByHBK[group.Bindings[0].RecordID])
 		}
 		readabilityValue := "Not-Applicable"
 		if group.Type == "HBK" {
