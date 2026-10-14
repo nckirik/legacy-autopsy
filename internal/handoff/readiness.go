@@ -132,6 +132,13 @@ func BuildContentReadiness(db string, doc *cdl.EIRDoc, opts ReadinessOptions) (C
 	if err != nil {
 		return report, err
 	}
+	if immutabilityFail == "" && opts.HandbookViewDir != "" && opts.HandbookDir != "" {
+		if drift, err := viewDrift(opts.HandbookDir, opts.HandbookViewDir); err != nil {
+			return report, err
+		} else if drift != "" {
+			immutabilityFail = drift
+		}
+	}
 	if immutabilityFail != "" {
 		if err := add("READINESS-01-CANDIDATE-IMMUTABILITY", "Fail", immutabilityFail, standardBindings("READINESS-01-CANDIDATE-IMMUTABILITY")); err != nil {
 			return report, err
@@ -823,6 +830,25 @@ func sequenceViolation(reportBytes, manifestBytes []byte, reportFingerprint, man
 		return "candidate report references the later manifest"
 	}
 	return ""
+}
+
+// viewDrift verifies that every clean human chapter view is exactly the bound
+// payload content of its minted HBK section.
+func viewDrift(sectionsDir, viewDir string) (string, error) {
+	sections, err := handbook.LoadMintedSections(sectionsDir)
+	if err != nil {
+		return "", err
+	}
+	for _, section := range sections {
+		view, err := os.ReadFile(filepath.Join(viewDir, filepath.FromSlash(section.Path)))
+		if err != nil {
+			return fmt.Sprintf("human view %s is missing", section.Path), nil
+		}
+		if string(view) != handbook.SectionContent(section.Bytes) {
+			return fmt.Sprintf("human view %s does not match its bound HBK payload", section.Path), nil
+		}
+	}
+	return "", nil
 }
 
 // withoutCarrierLines removes every payload-fingerprint carrier line.

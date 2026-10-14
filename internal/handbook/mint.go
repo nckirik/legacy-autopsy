@@ -196,6 +196,12 @@ func LoadMintedSections(dir string) ([]MintedSection, error) {
 	return sections, nil
 }
 
+// SectionContent returns the human-readable payload content of a minted
+// section: the prose exactly as it is bound inside the HBK payload region.
+func SectionContent(content []byte) string {
+	return strings.Trim(unmint(string(content)), "\n") + "\n"
+}
+
 // RestoreDir strips every HBK wrapper from an already-minted directory,
 // restoring the clean human reading view. Unminted files are left untouched.
 func RestoreDir(dir string) (int, error) {

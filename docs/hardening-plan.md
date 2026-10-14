@@ -348,11 +348,13 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
       **Ready-For-Human-Review**, 14/14 checks Pass, empty blockers. The preflight
       header default protocol version now tracks the compiled edition (`cdl`), and
       `spec record put --update-existing` supports explicit versioned replacement.
-- [x] HBK handbook-section minting (`spec handbook mint`): wraps every chapter in
-      its typed HBK payload (ID from namespace + path + stable anchor, semantic
-      version, runtime-computed semantic-content fingerprint, resolved UPSTREAM
-      synthesis versions/fingerprints) with the B-POPULATED certification envelope;
-      re-minting is byte-idempotent and stale fingerprints fail closed.
+- [x] HBK handbook-section minting (`spec handbook mint`): reads the clean human
+      chapter views and writes typed HBK semantic payloads to a separate package
+      directory (`handbook/sections/`), so the human reading surface stays prose-first
+      while the machine identity, UPSTREAM bindings, and B-POPULATED certification
+      envelope live in the bound section member. Re-minting is byte-idempotent, stale
+      fingerprints fail closed, `--restore` rebuilds the clean view, and readiness
+      verifies the human view is exactly the bound payload content.
 - [x] Candidate payload manifest emission (§15.4 step 2, second artifact):
       `spec handoff manifest` binds all 60 synthesis records, 5 PRF profiles, and 16
       HBK sections with versions, semantic fingerprints, dependency-set
