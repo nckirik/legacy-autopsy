@@ -359,11 +359,18 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
       fingerprints (derived-from edges, profile closures, HBK upstream), the
       one-way candidate report reference, and counts. Live fresh workspace: 81
       semantic bindings, fingerprint `sha256:49be221c...`.
-- [ ] Handoff: remaining packaging stages. Next: the Exit E Content-Readiness Report
-      (candidate revalidation, envelope/member checks, pending confirmation and
-      decision blockers), then the scope certificate, outer bundle manifest, and the
-      §15.5 final verification with the human content-readiness acts (decisions,
-      confirmations, readability, equivalence).
+- [x] Exit E Content-Readiness Report emission (§15.4 step 4, pre-certificate):
+      `spec handoff readiness` recomputes candidate immutability across all 81
+      semantic bindings, validates member-set fingerprints and snapshot consistency,
+      records pending/human-gated checks as blockers, and keeps Exit E `Pending`.
+      Live fresh workspace: **Blocked** with exactly the human-gated checks
+      (confirmations, decision approvals zero-denominator pass, equivalence,
+      readability, envelope integrity).
+- [ ] Handoff: remaining packaging stages. Next: the equivalence/acceptance-test
+      skeleton suite (the last autonomously generable readiness input), then the
+      human content-readiness acts (DEC approvals, CNF confirmations, readability
+      review) so READINESS-02/04/05/07 can pass, then the scope certificate, outer
+      bundle manifest, and the §15.5 final verification.
 - [x] Traversal closure modeling (PI-17, v4.3): `REQUIRED-TRAVERSAL-MATRIX-ROW` records
       keyed by cluster/persona/POV/track/environment/snapshot; `spec preflight matrix`
       mechanically expands cells; the gate evaluates real closure (live pilot 0/25).

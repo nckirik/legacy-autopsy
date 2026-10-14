@@ -8,12 +8,13 @@ import (
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/internal/handoff"
+	"github.com/nckirik/legacy-autopsy/internal/store"
 )
 
 // specHandoff dispatches the §15.1/§15.4 handoff operations.
 func specHandoff(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness> [flags]")
 	}
 	switch args[0] {
 	case "candidate":
@@ -22,8 +23,10 @@ func specHandoff(args []string, stdout, stderr io.Writer) error {
 		return specHandoffReport(args[1:], stdout, stderr)
 	case "manifest":
 		return specHandoffManifest(args[1:], stdout, stderr)
+	case "readiness":
+		return specHandoffReadiness(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest", args[0])
+		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness", args[0])
 	}
 }
 
@@ -177,6 +180,82 @@ func specHandoffManifest(args []string, stdout, stderr io.Writer) error {
 	fmt.Fprintf(stdout, "fingerprint: %s\n", manifest.Fingerprint)
 	fmt.Fprintf(stdout, "instance: %s\n", manifest.InstanceBinding)
 	fmt.Fprintf(stdout, "semantic bindings: %d, DEC bindings: %d\n", manifest.SemanticBindings, manifest.DECBindings)
+	fmt.Fprintf(stdout, "written: %s\n", *out)
+	return nil
+}
+
+// specHandoffReadiness emits the immutable §15.4 step-4 content-readiness report.
+func specHandoffReadiness(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handoff readiness", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	report := set.String("report", "preview/package/EXIT-E-CANDIDATE-REPORT.md", "emitted candidate report payload file")
+	reportPath := set.String("report-artifact-path", handoff.CandidateReportDefaultPath, "candidate report package-relative artifact path")
+	manifest := set.String("manifest", "preview/package/CANDIDATE-PAYLOAD-MANIFEST.md", "emitted candidate payload manifest file")
+	manifestPath := set.String("manifest-artifact-path", handoff.CandidateManifestDefaultPath, "manifest package-relative artifact path")
+	handbookDir := set.String("handbook-dir", "", "minted handbook directory")
+	out := set.String("out", "preview/package/EXIT-E-CONTENT-READINESS-REPORT.md", "output file for the artifact payload")
+	artifactPath := set.String("artifact-path", handoff.ContentReadinessDefaultPath, "package-relative artifact path")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec handoff readiness requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	dump, _, err := store.CanonicalDump(*db, res.EIR, store.Provenance{
+		Generator:         "legacy-autopsy content readiness",
+		SourceFingerprint: header["system-namespace"],
+	})
+	if err != nil {
+		return err
+	}
+	readiness, err := handoff.BuildContentReadiness(*db, res.EIR, handoff.ReadinessOptions{
+		Namespace:             header["system-namespace"],
+		ProtocolVersion:       header["protocol-version"],
+		EnvironmentsSnapshots: header["included-environments-snapshots"],
+		StorageBinding:        header["canonical-storage-binding"],
+		ReportPath:            *report,
+		ReportArtifactPath:    *reportPath,
+		ManifestPath:          *manifest,
+		ManifestArtifactPath:  *manifestPath,
+		HandbookDir:           *handbookDir,
+		StoreDump:             dump,
+		ArtifactPath:          *artifactPath,
+	})
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
+		return err
+	}
+	if err := os.WriteFile(*out, readiness.Payload, 0o644); err != nil {
+		return err
+	}
+	failures := 0
+	for _, check := range readiness.Checks {
+		fmt.Fprintf(stdout, "%-42s %s\n", check.ID, check.Result)
+		if check.Result != "Pass" {
+			failures++
+		}
+	}
+	fmt.Fprintf(stdout, "artifact: %s\n", *artifactPath)
+	fmt.Fprintf(stdout, "fingerprint: %s\n", readiness.Fingerprint)
+	fmt.Fprintf(stdout, "instance: %s\n", readiness.InstanceBinding)
+	fmt.Fprintf(stdout, "content readiness: %s (%d failing checks)\n", readiness.Result, failures)
 	fmt.Fprintf(stdout, "written: %s\n", *out)
 	return nil
 }
