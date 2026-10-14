@@ -36,6 +36,9 @@ type Config struct {
 	// Observer receives lifecycle events for progress surfaces; it never
 	// affects execution outcome.
 	Observer *Observer
+	// MetricsPath is the non-authoritative per-unit telemetry sink (JSON lines).
+	// Empty selects `<db>.metrics.jsonl` beside the workspace store.
+	MetricsPath string
 }
 
 // DefaultConfig is the protocol default: independent review for units that

@@ -571,7 +571,11 @@ oracle snapshot is an open process decision.
 
 ## PI-23: Per-unit execution telemetry is not persisted
 
-- **Status:** open follow-up from W6 metrics.
+- **Status:** implemented as a non-authoritative JSONL sidecar
+  (`<workspace db>.metrics.jsonl`): timestamp, unit, mode, invocation id, result,
+  duration, retries, context bytes, dependencies, fetches, review, escalation,
+  error. Model token usage still needs an executor usage surface before it can be
+  recorded; the historical W6 run predates the sidecar.
 - **Source:** W6 rehearsal 2026-10-14; `docs/w6-metrics.md` records wall clock and
   token usage as "not recorded".
 - **Affected:** `0G` invocation-log schema, metrics/acceptance review.

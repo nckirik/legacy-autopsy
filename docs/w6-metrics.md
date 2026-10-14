@@ -60,9 +60,11 @@ Synchronization 5, Preflight 3, Export Acquisition 1.
 
 ## Gaps and follow-up instrumentation
 
-- Per-unit wall clock, token usage, retry causes, and tool-call counts are not
-  persisted by the runtime; only retry counts and outcomes reach `0G`. Adding
-  duration/usage telemetry to the invocation log (or a sidecar metrics table)
-  would make the next comparison mechanical.
+- Per-unit wall clock, token usage, retry causes, and tool-call counts were not
+  persisted for this historical run. The runtime now writes a non-authoritative
+  JSONL sidecar (`<workspace db>.metrics.jsonl`) with timestamp, unit, mode,
+  invocation id, result, duration, retries, context bytes, dependencies, fetches,
+  review outcome, escalation, and error, so the next rehearsal comparison is
+  mechanical (PI-23); model token usage still needs an executor usage surface.
 - Operator-message counting needs a session-level counter; the harness currently
   records only store-visible acts.

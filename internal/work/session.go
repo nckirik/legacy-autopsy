@@ -1,10 +1,13 @@
 package work
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/certify"
@@ -33,6 +36,7 @@ type Executor interface {
 // UnitStats is the per-work-item instrumentation record.
 type UnitStats struct {
 	UnitID       string
+	DurationMS   int64
 	ContextBytes int
 	Dependencies int
 	Fetches      int
@@ -58,12 +62,13 @@ type Report struct {
 // store, with read-set provenance, stale-safe commits, optional independent
 // review, blocker routing, and per-unit instrumentation.
 type Session struct {
-	db         string
-	doc        *cdl.EIRDoc
-	config     Config
-	executor   Executor
-	reviewer   Reviewer
-	maxRetries int
+	db          string
+	doc         *cdl.EIRDoc
+	config      Config
+	executor    Executor
+	reviewer    Reviewer
+	maxRetries  int
+	metricsPath string
 }
 
 // NewSession builds a session. reviewer may be nil when the policy never
@@ -79,7 +84,11 @@ func NewSession(db string, doc *cdl.EIRDoc, config Config, executor Executor, re
 	if maxRetries == 0 {
 		maxRetries = 3
 	}
-	return &Session{db: db, doc: doc, config: config, executor: executor, reviewer: reviewer, maxRetries: maxRetries}, nil
+	metricsPath := config.MetricsPath
+	if metricsPath == "" {
+		metricsPath = db + ".metrics.jsonl"
+	}
+	return &Session{db: db, doc: doc, config: config, executor: executor, reviewer: reviewer, maxRetries: maxRetries, metricsPath: metricsPath}, nil
 }
 
 // Run processes units sequentially, one work item at a time, and returns the
@@ -98,6 +107,7 @@ func (s *Session) Run(units []Unit) (Report, error) {
 }
 
 func (s *Session) runUnit(unit Unit) (stats UnitStats, err error) {
+	started := time.Now()
 	stats = UnitStats{UnitID: unit.ID}
 	if err := unit.Validate(s.doc); err != nil {
 		return stats, err
@@ -111,9 +121,11 @@ func (s *Session) runUnit(unit Unit) (stats UnitStats, err error) {
 		s.config.Observer.UnitStarted(unit)
 	}
 	defer func() {
+		stats.DurationMS = time.Since(started).Milliseconds()
 		if logErr := s.appendInvocationLog(unit, invocationID, stats); logErr != nil && err == nil {
 			err = logErr
 		}
+		s.appendMetrics(unit, stats, err)
 		if s.config.Observer != nil && s.config.Observer.UnitDone != nil {
 			s.config.Observer.UnitDone(stats)
 		}
@@ -251,4 +263,63 @@ func (s *Session) review(unit Unit, proposal Proposal) (ReviewResult, error) {
 		request.Payloads = append(request.Payloads, record.Payload)
 	}
 	return s.reviewer.Review(request)
+}
+
+// unitMetrics is one non-authoritative telemetry line. It never carries record
+// content and is not part of any semantic hash.
+type unitMetrics struct {
+	Timestamp    string `json:"timestamp"`
+	Unit         string `json:"unit"`
+	Mode         string `json:"mode"`
+	Invocation   string `json:"invocation"`
+	Result       string `json:"result"`
+	DurationMS   int64  `json:"duration_ms"`
+	Retries      int    `json:"retries"`
+	ContextBytes int    `json:"context_bytes"`
+	Dependencies int    `json:"dependencies"`
+	Fetches      int    `json:"fetches"`
+	Review       string `json:"review"`
+	Escalated    bool   `json:"escalated"`
+	Error        string `json:"error,omitempty"`
+}
+
+// appendMetrics writes one telemetry line to the non-authoritative sink. Write
+// failures never change the execution outcome.
+func (s *Session) appendMetrics(unit Unit, stats UnitStats, runErr error) {
+	result := "no-op"
+	switch {
+	case runErr != nil:
+		result = "failed"
+	case stats.ZeroDomain != "":
+		result = "zero-domain"
+	case stats.Committed:
+		result = "committed"
+	}
+	line := unitMetrics{
+		Timestamp:    time.Now().UTC().Format(time.RFC3339),
+		Unit:         stats.UnitID,
+		Mode:         unit.Mode,
+		Invocation:   stats.InvocationID,
+		Result:       result,
+		DurationMS:   stats.DurationMS,
+		Retries:      stats.Retries,
+		ContextBytes: stats.ContextBytes,
+		Dependencies: stats.Dependencies,
+		Fetches:      stats.Fetches,
+		Review:       string(stats.Review),
+		Escalated:    stats.Escalated,
+	}
+	if runErr != nil {
+		line.Error = runErr.Error()
+	}
+	encoded, err := json.Marshal(line)
+	if err != nil {
+		return
+	}
+	file, err := os.OpenFile(s.metricsPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+	_, _ = file.Write(append(encoded, '\n'))
 }
