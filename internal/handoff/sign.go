@@ -108,23 +108,32 @@ type SignAndVerifyOptions struct {
 // bundle bytes and emits the non-authoritative verification receipt.
 func BuildFinalReceipt(doc *cdl.EIRDoc, opts SignAndVerifyOptions, timestamp string) (FinalReceipt, error) {
 	var receipt FinalReceipt
-	outer, err := os.ReadFile(opts.OuterPath)
+	// Bundle-bytes-only: when a materialized package is available, every
+	// verification input is read from the package itself, never from external
+	// paths.
+	load := func(external, artifactPath string) ([]byte, error) {
+		if opts.PackageDir != "" {
+			return os.ReadFile(filepath.Join(opts.PackageDir, filepath.FromSlash(artifactPath)))
+		}
+		return os.ReadFile(external)
+	}
+	outer, err := load(opts.OuterPath, opts.OuterArtifactPath)
 	if err != nil {
 		return receipt, err
 	}
-	report, err := os.ReadFile(opts.ReportPath)
+	report, err := load(opts.ReportPath, opts.ReportArtifactPath)
 	if err != nil {
 		return receipt, err
 	}
-	manifest, err := os.ReadFile(opts.ManifestPath)
+	manifest, err := load(opts.ManifestPath, opts.ManifestArtifactPath)
 	if err != nil {
 		return receipt, err
 	}
-	readiness, err := os.ReadFile(opts.ReadinessPath)
+	readiness, err := load(opts.ReadinessPath, opts.ReadinessArtifactPath)
 	if err != nil {
 		return receipt, err
 	}
-	certificate, err := os.ReadFile(opts.CertificatePath)
+	certificate, err := load(opts.CertificatePath, opts.CertificateArtifactPath)
 	if err != nil {
 		return receipt, err
 	}
