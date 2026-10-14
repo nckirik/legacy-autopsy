@@ -122,7 +122,8 @@ func specHandbookNarrate(args []string, stdout, stderr io.Writer) error {
 		return err
 	}
 	if *out != "" {
-		if err := os.WriteFile(*out, []byte(narrative.Markdown), 0o644); err != nil {
+		markdown := strings.TrimRight(narrative.Markdown, "\n") + "\n"
+		if err := os.WriteFile(*out, []byte(markdown), 0o644); err != nil {
 			return err
 		}
 		fmt.Fprintf(stdout, "chapter %s: %s\n", *chapter, *out)

@@ -360,6 +360,14 @@ func specHandoffReviewConfirm(args []string, stdout, stderr io.Writer) error {
 	envelopes := 0
 	for _, group := range handoff.ConfirmationGroups(bindings) {
 		fmt.Fprintf(stdout, "\n---- %s ----\n", groupDescription(group, personaByProfile, sectionTitles))
+		switch group.Type {
+		case "synthesis":
+			fmt.Fprintf(stdout, "These structured records back the handbook chapters you reviewed; the same prose appears under each chapter's Record Details.\n")
+		case "PRF":
+			fmt.Fprintf(stdout, "This persona profile is a semantic summary built from the committed claims for this persona.\n")
+		case "HBK":
+			fmt.Fprintf(stdout, "Readability review: %s. Confirming binds this chapter into the certified package.\n", readabilityByHBK[group.Bindings[0].RecordID])
+		}
 		readabilityValue := "Not-Applicable"
 		if group.Type == "HBK" {
 			readabilityValue = readabilityByHBK[group.Bindings[0].RecordID]
@@ -389,13 +397,27 @@ func specHandoffReviewConfirm(args []string, stdout, stderr io.Writer) error {
 				}
 			}
 		}
-		answer, err := prompt("[c]onfirm / [s]kip: ")
-		if err != nil {
-			return err
+		confirmedThisGroup := false
+		for {
+			answer, err := prompt("[c]onfirm / [l]ist / [s]kip: ")
+			if err != nil {
+				return err
+			}
+			switch strings.ToLower(strings.TrimSpace(answer)) {
+			case "c", "confirm":
+				confirmedThisGroup = true
+			case "l", "list":
+				if err := listGroupDetails(*db, res.EIR, group, stdout); err != nil {
+					return err
+				}
+				continue
+			}
+			break
 		}
-		if strings.ToLower(strings.TrimSpace(answer)) != "c" && strings.ToLower(strings.TrimSpace(answer)) != "confirm" {
+		if !confirmedThisGroup {
 			continue
 		}
+
 		cnfID, payload, err := handoff.BuildConfirmation(header["system-namespace"], group.Key, *approver, *scope, *limitations, *timestamp, readabilityValue, group.Bindings, reportFingerprint, manifestFingerprint)
 		if err != nil {
 			return err
@@ -517,4 +539,28 @@ func firstNonEmpty(values ...string) string {
 		}
 	}
 	return ""
+}
+
+// listGroupDetails prints the record identities of one confirmation group.
+func listGroupDetails(db string, doc *cdl.EIRDoc, group handoff.ConfirmationGroup, stdout io.Writer) error {
+	for _, binding := range group.Bindings {
+		title := ""
+		fieldID, ok := synthesis.FieldForID(binding.RecordID)
+		if ok {
+			names, _, _, err := work.FieldContract(doc, fieldID)
+			if err == nil {
+				if payload, err := store.Get(db, doc, fieldID, binding.RecordID); err == nil {
+					if values, err := work.PayloadText(names, payload); err == nil {
+						title = strings.Join(strings.Fields(values["record-title"]), " ")
+					}
+				}
+			}
+		}
+		if title == "" {
+			fmt.Fprintf(stdout, "  %s\n", binding.RecordID)
+			continue
+		}
+		fmt.Fprintf(stdout, "  %s  %s\n", binding.RecordID, title)
+	}
+	return nil
 }
