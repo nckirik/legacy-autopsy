@@ -545,3 +545,41 @@ oracle snapshot is an open process decision.
   a unit contract that accepts a structured zero-domain proposal with evidence (the
   scan/claims proving absence). Empty catalogs must be claim-backed, never silent.
 - **Impact:** honest zero domains without fabrication, and no false blockers.
+
+## PI-22: Certification envelopes for store-backed records under a non-Markdown binding
+
+- **Status:** implemented as a documented binding convention in the pilot;
+  needs a protocol decision.
+- **Source:** W6 rehearsal 2026-10-14; PRF profiles and synthesis blocks are
+  persisted as canonical payloads in the SQLite binding and therefore have no
+  Markdown region to hold the literal `<!-- CERTIFICATION-ENVELOPE -->` block.
+- **Affected:** §4.1.1/§4.1.2 envelope boundaries, §8 profile synchronization,
+  candidate/readiness confirmation bindings.
+- **Observed:** the protocol requires every synthesis/PRF/HBK certification
+  envelope to be `[B-CONFIRMED]` and to receive an externally stored canonical
+  envelope fingerprint. File-backed HBK sections carry the literal envelope; for
+  store-backed records the runtime currently records the exact CNF binding as the
+  certification evidence and READINESS-07 validates HBK envelopes plus the CNF
+  bindings for store records.
+- **Proposed direction:** either (a) specify the binding-level representation of
+  certification envelopes for non-Markdown bindings (for example an envelope
+  table or sidecar serialization with its own canonical fingerprint), or (b)
+  require PRF/synthesis packages to materialize Markdown members carrying the
+  literal envelopes even under other canonical bindings.
+- **Impact:** makes `[B-CONFIRMED]` and envelope fingerprint recomputation fully
+  literal for every semantic record family instead of convention-bound.
+
+## PI-23: Per-unit execution telemetry is not persisted
+
+- **Status:** open follow-up from W6 metrics.
+- **Source:** W6 rehearsal 2026-10-14; `docs/w6-metrics.md` records wall clock and
+  token usage as "not recorded".
+- **Affected:** `0G` invocation-log schema, metrics/acceptance review.
+- **Observed:** the invocation log stores retries and mutation summaries but not
+  duration, model calls, or token usage, so the W6 comparison against the
+  first-run baseline cannot be fully mechanical.
+- **Proposed direction:** extend the invocation-log record (or add a runtime
+  metrics sidecar) with per-unit duration, model-call count, token usage, and
+  retry causes; keep the values non-authoritative and outside semantic hashes.
+- **Impact:** reproducible W6 metrics and regression detection for bounded
+  execution quality.
