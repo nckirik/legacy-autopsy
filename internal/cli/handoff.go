@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/nckirik/legacy-autopsy/internal/equivalence"
 	"github.com/nckirik/legacy-autopsy/internal/handoff"
 	"github.com/nckirik/legacy-autopsy/internal/store"
 )
@@ -14,7 +15,7 @@ import (
 // specHandoff dispatches the §15.1/§15.4 handoff operations.
 func specHandoff(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness|equivalence> [flags]")
 	}
 	switch args[0] {
 	case "candidate":
@@ -25,8 +26,10 @@ func specHandoff(args []string, stdout, stderr io.Writer) error {
 		return specHandoffManifest(args[1:], stdout, stderr)
 	case "readiness":
 		return specHandoffReadiness(args[1:], stdout, stderr)
+	case "equivalence":
+		return specHandoffEquivalence(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness", args[0])
+		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence", args[0])
 	}
 }
 
@@ -197,6 +200,7 @@ func specHandoffReadiness(args []string, stdout, stderr io.Writer) error {
 	manifest := set.String("manifest", "preview/package/CANDIDATE-PAYLOAD-MANIFEST.md", "emitted candidate payload manifest file")
 	manifestPath := set.String("manifest-artifact-path", handoff.CandidateManifestDefaultPath, "manifest package-relative artifact path")
 	handbookDir := set.String("handbook-dir", "", "minted handbook directory")
+	equivalencePath := set.String("equivalence", "", "generated acceptance-suite file")
 	out := set.String("out", "preview/package/EXIT-E-CONTENT-READINESS-REPORT.md", "output file for the artifact payload")
 	artifactPath := set.String("artifact-path", handoff.ContentReadinessDefaultPath, "package-relative artifact path")
 	if err := set.Parse(args); err != nil {
@@ -233,6 +237,7 @@ func specHandoffReadiness(args []string, stdout, stderr io.Writer) error {
 		ManifestPath:          *manifest,
 		ManifestArtifactPath:  *manifestPath,
 		HandbookDir:           *handbookDir,
+		EquivalencePath:       *equivalencePath,
 		StoreDump:             dump,
 		ArtifactPath:          *artifactPath,
 	})
@@ -256,6 +261,43 @@ func specHandoffReadiness(args []string, stdout, stderr io.Writer) error {
 	fmt.Fprintf(stdout, "fingerprint: %s\n", readiness.Fingerprint)
 	fmt.Fprintf(stdout, "instance: %s\n", readiness.InstanceBinding)
 	fmt.Fprintf(stdout, "content readiness: %s (%d failing checks)\n", readiness.Result, failures)
+	fmt.Fprintf(stdout, "written: %s\n", *out)
+	return nil
+}
+
+// specHandoffEquivalence generates the deterministic acceptance-test suite.
+func specHandoffEquivalence(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handoff equivalence", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	out := set.String("out", "preview/package/equivalence/acceptance-suite.md", "output file for the suite")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec handoff equivalence requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	suite, err := equivalence.Build(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
+		return err
+	}
+	if err := os.WriteFile(*out, suite.Markdown, 0o644); err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "suite mappings: %d\n", len(suite.Mappings))
 	fmt.Fprintf(stdout, "written: %s\n", *out)
 	return nil
 }

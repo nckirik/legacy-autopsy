@@ -366,11 +366,18 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
       Live fresh workspace: **Blocked** with exactly the human-gated checks
       (confirmations, decision approvals zero-denominator pass, equivalence,
       readability, envelope integrity).
-- [ ] Handoff: remaining packaging stages. Next: the equivalence/acceptance-test
-      skeleton suite (the last autonomously generable readiness input), then the
-      human content-readiness acts (DEC approvals, CNF confirmations, readability
-      review) so READINESS-02/04/05/07 can pass, then the scope certificate, outer
-      bundle manifest, and the §15.5 final verification.
+- [x] Acceptance/equivalence suite generator (`spec handoff equivalence`):
+      deterministic skeletons for every UC (contract, pre/post conditions, related
+      IDs), BR (invariant property), SM (transition coverage), and external IF
+      (compatibility baseline), plus the coverage mapping table. Live fresh
+      workspace: 23 mappings, coverage complete.
+- [ ] Handoff: **blocked on human content-readiness acts.** The stage-4 report is
+      emitted and Blocked with exactly the human gates: READINESS-02 (CNF
+      confirmations for 5 PRF profiles and HBK sections), READINESS-04 (equivalence
+      suite human review record), READINESS-05 (fingerprint-bound handbook
+      readability review), READINESS-07 (confirmation envelopes). After those, the
+      scope certificate, outer bundle manifest, and §15.5 final verification can
+      proceed.
 - [x] Traversal closure modeling (PI-17, v4.3): `REQUIRED-TRAVERSAL-MATRIX-ROW` records
       keyed by cluster/persona/POV/track/environment/snapshot; `spec preflight matrix`
       mechanically expands cells; the gate evaluates real closure (live pilot 0/25).

@@ -10,6 +10,7 @@ import (
 	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/artifact"
 	"github.com/nckirik/legacy-autopsy/internal/capabilities"
+	"github.com/nckirik/legacy-autopsy/internal/equivalence"
 	"github.com/nckirik/legacy-autopsy/internal/handbook"
 	"github.com/nckirik/legacy-autopsy/internal/store"
 	"github.com/nckirik/legacy-autopsy/internal/synthesis"
@@ -33,6 +34,7 @@ type ReadinessOptions struct {
 	ManifestPath          string
 	ManifestArtifactPath  string
 	HandbookDir           string
+	EquivalencePath       string
 	StoreDump             []byte
 	ArtifactPath          string
 }
@@ -169,9 +171,16 @@ func BuildContentReadiness(db string, doc *cdl.EIRDoc, opts ReadinessOptions) (C
 		}
 	}
 
-	// READINESS-04: equivalence suite.
-	if err := add("READINESS-04-EQUIVALENCE", "Fail", "no equivalence-suite artifacts are generated", standardBindings("READINESS-04-EQUIVALENCE")); err != nil {
-		return report, err
+	// READINESS-04: equivalence suite coverage and human review.
+	equivalenceFail, equivalenceDetail := equivalenceCoverage(db, doc, opts.EquivalencePath)
+	if equivalenceFail != "" {
+		if err := add("READINESS-04-EQUIVALENCE", "Fail", equivalenceFail, standardBindings("READINESS-04-EQUIVALENCE")); err != nil {
+			return report, err
+		}
+	} else {
+		if err := add("READINESS-04-EQUIVALENCE", "Pass", equivalenceDetail, standardBindings("READINESS-04-EQUIVALENCE")); err != nil {
+			return report, err
+		}
 	}
 
 	// READINESS-05: fingerprint-bound human readability review.
@@ -386,6 +395,15 @@ func readinessMembers(opts ReadinessOptions) ([]memberRow, error) {
 	}
 	if len(opts.StoreDump) > 0 {
 		if err := add(StoreMemberPath, "CANONICAL-STORE-DUMP", opts.StoreDump); err != nil {
+			return nil, err
+		}
+	}
+	if opts.EquivalencePath != "" {
+		content, err := os.ReadFile(opts.EquivalencePath)
+		if err != nil {
+			return nil, err
+		}
+		if err := add(equivalence.SuitePath, "EQUIVALENCE-SUITE", content); err != nil {
 			return nil, err
 		}
 	}
@@ -680,6 +698,63 @@ func snapshotConsistency(reportBytes, manifestBytes []byte, snapshot string) str
 		}
 	}
 	return ""
+}
+
+// equivalenceCoverage validates that the suite maps every UC, BR, SM, and IF
+// exactly once and that a human review record exists beside it.
+func equivalenceCoverage(db string, doc *cdl.EIRDoc, suitePath string) (string, string) {
+	if suitePath == "" {
+		return "no equivalence-suite artifact was provided", ""
+	}
+	content, err := os.ReadFile(suitePath)
+	if err != nil {
+		return "equivalence suite is not readable", ""
+	}
+	mappings := equivalence.ParseMappings(content)
+	if len(mappings) == 0 {
+		return "equivalence suite declares no coverage mappings", ""
+	}
+	denominator := 0
+	for _, fieldID := range []string{"USE-CASE", "BUSINESS-RULE-RECORD", "STATE-MACHINE", "INTERFACE-RECORD"} {
+		ids, err := store.List(db, doc, fieldID)
+		if err != nil {
+			return err.Error(), ""
+		}
+		denominator += len(ids)
+	}
+	seen := map[string]int{}
+	for _, mapping := range mappings {
+		seen[mapping.RecordID]++
+	}
+	missing, duplicated := 0, 0
+	for id, count := range seen {
+		if count > 1 {
+			duplicated++
+		}
+		_ = id
+	}
+	for _, fieldID := range []string{"USE-CASE", "BUSINESS-RULE-RECORD", "STATE-MACHINE", "INTERFACE-RECORD"} {
+		ids, err := store.List(db, doc, fieldID)
+		if err != nil {
+			return err.Error(), ""
+		}
+		for _, id := range ids {
+			if seen[id] == 0 {
+				missing++
+			}
+		}
+	}
+	if duplicated > 0 {
+		return fmt.Sprintf("%d suite mappings appear more than once", duplicated), ""
+	}
+	if missing > 0 {
+		return fmt.Sprintf("%d of %d records lack a suite mapping", missing, denominator), ""
+	}
+	reviewPath := filepath.Join(filepath.Dir(suitePath), "equivalence-review.md")
+	if _, err := os.Stat(reviewPath); err != nil {
+		return fmt.Sprintf("coverage complete (%d of %d); human review record is pending", denominator, denominator), ""
+	}
+	return fmt.Sprintf("coverage complete (%d of %d) with a bound human review", denominator, denominator), ""
 }
 
 // approvedExclusionCount counts coverage rows with an approved-exclusion
