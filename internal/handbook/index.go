@@ -61,7 +61,7 @@ func LoadIndexEntries(dir string) ([]IndexEntry, error) {
 					entry.Title = heading[dot+2:]
 				}
 			}
-			if strings.HasPrefix(trimmed, "### Audience Purpose") {
+			if strings.HasPrefix(trimmed, "### Summary") {
 				continue
 			}
 			if entry.Number != "" && entry.Summary == "" && trimmed != "" && !strings.HasPrefix(trimmed, "#") {

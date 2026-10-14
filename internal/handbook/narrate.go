@@ -25,24 +25,19 @@ type ChapterNarrative struct {
 	Findings []Finding
 }
 
-const narrativeSystemPrompt = `You write one chapter of a software architecture reconstruction handbook. Fresh developers read this chapter to understand the legacy system. Write it as a design document in prose, not as bullet lists or field dumps.
+const narrativeSystemPrompt = `You write one chapter of a software architecture reconstruction handbook. Write it as a person explaining the system to a colleague: direct, natural, and clear. Avoid template formulas, repeated sentence openings, and filler. Do not open with "a fresh developer" or describe who reads the chapter.
 
 The canonical protocol state is authoritative. The structured records below are your evidence. Do not invent behavior, names, or evidence.
-
-Citation rules:
-- Every observed statement must cite the claim IDs that support it, in parentheses: (CLM-0123ABCDEF45).
-- Every record listed under Inputs must be represented by at least one cited statement.
-- Never cite a claim that is not in the Inputs evidence list.
 
 ` + ste.Directive + `
 
 Output exactly three sections and nothing else:
 
-## Audience Purpose
-<one paragraph: who reads this chapter and what they need from it>
+## Summary
+<two or three plain paragraphs about what this part of the system does for its users and how work moves through it. Generalized terms are welcome: web application, database, database view, container, build pipeline, version control, template, session, token, sign-in, and the like. Do not name specific products, vendors, libraries, languages, frameworks, hosts, ports, file or directory paths, routes, code identifiers, or record identifiers, and add no citations. Describe the surface and the overall flow, not the implementation details. This section replaces the older audience-purpose paragraph, so it may say briefly what the reader gets from the chapter, but it must mostly describe the system.>
 
 ## Observed Legacy Behavior
-<several paragraphs of narrative prose that explain the observed behavior as a coherent design description. Use short paragraphs and lists only when a list is the clear form. Cite claims after each statement.>
+<several paragraphs of narrative prose that explain the observed behavior as a coherent design description, with the concrete technical detail. Write flowing prose: connect related facts in one sentence instead of one fact per sentence, and vary how sentences begin. Use short paragraphs and lists only when a list is the clear form. Put each cited statement on its own line (a single line break between statements; a blank line starts a new paragraph). State the observed facts fully: cover the evidence thoroughly and aim for at least eight separate cited statements whenever the evidence supports them. Cite claims after each statement: (CLM-0123ABCDEF45). Every record listed under Inputs must be represented by at least one cited statement. Never cite a claim that is not in the Inputs evidence list.>
 
 ## Target Decisions
 <one paragraph, or "Not-Applicable: <reason>" when no decision applies>
@@ -97,7 +92,13 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 		purpose, behavior, decisions := splitNarrative(text)
 		var problems []string
 		if purpose == "" || behavior == "" || decisions == "" {
-			problems = append(problems, "output must contain ## Audience Purpose, ## Observed Legacy Behavior, and ## Target Decisions sections")
+			problems = append(problems, "output must contain ## Summary, ## Observed Legacy Behavior, and ## Target Decisions sections")
+		}
+		if typedIDPattern.MatchString(purpose) {
+			problems = append(problems, "the Summary must not contain record identifiers")
+		}
+		if strings.Contains(purpose, "CLM-") || strings.Contains(purpose, "[^") {
+			problems = append(problems, "the Summary must not contain citations")
 		}
 		for _, claim := range claimsIn(text) {
 			if !evidence[claim] {
@@ -134,11 +135,19 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 			return ChapterNarrative{Chapter: spec.Number, Markdown: full}, nil
 		}
 		feedback = strings.Join(problems, "\n")
+		for _, problem := range problems {
+			if strings.Contains(problem, "HBK-SUBSTANCE") {
+				feedback += "\nHint: split combined statements and add one cited sentence per distinct observed fact. Each finding usually supports several facts: its category, its affected scope, its risk, its safeguard gap, and its mitigation."
+				break
+			}
+		}
 	}
 	return ChapterNarrative{}, fmt.Errorf("handbook: chapter %s did not pass validation: %s", chapterNumber, feedback)
 }
 
 var claimPattern = regexp.MustCompile(`CLM-[A-F0-9]{12}`)
+
+var typedIDPattern = regexp.MustCompile(`[A-Z][A-Z0-9]{1,7}-[A-F0-9]{12}`)
 
 func claimsIn(text string) []string {
 	seen := map[string]bool{}
@@ -156,7 +165,7 @@ func claimsIn(text string) []string {
 func composeNarrative(spec *ChapterSpec, purpose, behavior, decisions string) string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "## %s. %s\n\n", spec.Number, spec.Title)
-	fmt.Fprintf(&b, "### Audience Purpose\n\n%s\n\n", purpose)
+	fmt.Fprintf(&b, "### Summary\n\n%s\n\n", purpose)
 	fmt.Fprintf(&b, "### Observed Legacy Behavior\n\n%s\n\n", behavior)
 	fmt.Fprintf(&b, "### Target Decisions\n\n%s\n\n", decisions)
 	fmt.Fprintf(&b, "### Navigation\n\n")
@@ -270,7 +279,7 @@ func splitNarrative(text string) (string, string, string) {
 	for _, line := range strings.Split(text, "\n") {
 		trimmed := strings.TrimSpace(line)
 		switch {
-		case strings.HasPrefix(trimmed, "## Audience Purpose"):
+		case strings.HasPrefix(trimmed, "## Summary"):
 			current = &purpose
 			continue
 		case strings.HasPrefix(trimmed, "## Observed Legacy Behavior"):

@@ -11,7 +11,7 @@ import (
 )
 
 // RequiredSections are the chapter sections every handbook chapter must carry.
-var RequiredSections = []string{"audience purpose", "observed legacy behavior", "target decisions", "navigation"}
+var RequiredSections = []string{"summary", "observed legacy behavior", "target decisions", "navigation"}
 
 // MinimumAssertions is the PI-11 claim-backed assertion floor per chapter.
 const MinimumAssertions = 8

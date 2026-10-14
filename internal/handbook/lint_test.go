@@ -8,7 +8,7 @@ import (
 
 func chapter(assertions int) string {
 	var b strings.Builder
-	b.WriteString("# Overview\n\n## Audience Purpose\nFor maintainers.\n\n## Observed Legacy Behavior\n")
+	b.WriteString("# Overview\n\n## Summary\nFor maintainers.\n\n## Observed Legacy Behavior\n")
 	for i := 0; i < assertions; i++ {
 		fmt.Fprintf(&b, "- The scheduler retries jobs after failures (CLM-%04d).\n", i+1)
 	}

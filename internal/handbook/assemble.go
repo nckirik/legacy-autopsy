@@ -33,7 +33,7 @@ func Assemble(chapters []Chapter) []byte {
 	b.WriteString("> Generated reconstruction projection. Source of truth is the canonical protocol state.\n\n")
 	for _, chapter := range chapters {
 		fmt.Fprintf(&b, "## %s. %s\n\n", chapter.Number, chapter.Title)
-		b.WriteString("### Audience Purpose\n\n")
+		b.WriteString("### Summary\n\n")
 		writeProse(&b, chapter.AudiencePurpose)
 		b.WriteString("\n### Observed Legacy Behavior\n\n")
 		if len(chapter.Observed) == 0 {

@@ -58,7 +58,7 @@ func TestDraftRendersChaptersAndLint(t *testing.T) {
 		t.Fatal(err)
 	}
 	text := string(out)
-	for _, marker := range []string{"# Legacy System Reconstruction Handbook", "## 01. System Overview", "## 16. Glossary and Reference", "### Audience Purpose", "### Observed Legacy Behavior", "### Navigation"} {
+	for _, marker := range []string{"# Legacy System Reconstruction Handbook", "## 01. System Overview", "## 16. Glossary and Reference", "### Summary", "### Observed Legacy Behavior", "### Navigation"} {
 		if !strings.Contains(text, marker) {
 			t.Fatalf("draft missing %q", marker)
 		}

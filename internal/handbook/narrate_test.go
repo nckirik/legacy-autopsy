@@ -55,7 +55,7 @@ func seedModules(t *testing.T, db string, doc *cdl.EIRDoc, count int) []string {
 
 func goodNarrative(claims []string) string {
 	var b strings.Builder
-	b.WriteString("## Audience Purpose\nThe operator reads this chapter to understand the system.\n\n## Observed Legacy Behavior\n")
+	b.WriteString("## Summary\nThe operator reads this chapter to understand the system.\n\n## Observed Legacy Behavior\n")
 	for i, claim := range claims {
 		b.WriteString("The system gives module " + string(rune('A'+i)) + " one clear responsibility (" + claim + ").\n")
 	}
@@ -73,7 +73,7 @@ func TestNarrateComposesProseChapter(t *testing.T) {
 	}
 	for _, marker := range []string{
 		"## 01. System Overview",
-		"### Audience Purpose",
+		"### Summary",
 		"### Observed Legacy Behavior",
 		"The system gives module A one clear responsibility",
 		"### Target Decisions",
@@ -93,7 +93,7 @@ func TestNarrateComposesProseChapter(t *testing.T) {
 func TestNarrateRetriesOnCitationsAndStyle(t *testing.T) {
 	doc, db := testDocDB(t)
 	claims := seedModules(t, db, doc, 8)
-	bad := "## Audience Purpose\nThe operator can't read module A (CLM-FFFFFFFFFFFF).\n\n## Observed Legacy Behavior\nA short paragraph.\n\n## Target Decisions\nNone.\n"
+	bad := "## Summary\nThe operator can't read module A (CLM-FFFFFFFFFFFF).\n\n## Observed Legacy Behavior\nA short paragraph.\n\n## Target Decisions\nNone.\n"
 	completer := &fakeCompleter{replies: []string{bad, goodNarrative(claims)}}
 	narrative, err := Narrate(context.Background(), completer, db, doc, "01")
 	if err != nil {
@@ -110,7 +110,7 @@ func TestNarrateRetriesOnCitationsAndStyle(t *testing.T) {
 func TestNarrateFailsClosedOnPersistentProblems(t *testing.T) {
 	doc, db := testDocDB(t)
 	seedModules(t, db, doc, 8)
-	bad := "## Audience Purpose\nThe operator can't read this (CLM-FFFFFFFFFFFF).\n\n## Observed Legacy Behavior\nMissing citations.\n\n## Target Decisions\nNone.\n"
+	bad := "## Summary\nThe operator can't read this (CLM-FFFFFFFFFFFF).\n\n## Observed Legacy Behavior\nMissing citations.\n\n## Target Decisions\nNone.\n"
 	completer := &fakeCompleter{replies: []string{bad, bad, bad, bad, bad}}
 	if _, err := Narrate(context.Background(), completer, db, doc, "01"); err == nil {
 		t.Fatal("persistent validation failure accepted")
