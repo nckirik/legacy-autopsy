@@ -379,13 +379,24 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
       IDs), BR (invariant property), SM (transition coverage), and external IF
       (compatibility baseline), plus the coverage mapping table. Live fresh
       workspace: 23 mappings, coverage complete.
-- [ ] Handoff: **blocked on human content-readiness acts.** The stage-4 report is
-      emitted and Blocked with exactly the human gates: READINESS-02 (CNF
-      confirmations for 5 PRF profiles and HBK sections), READINESS-04 (equivalence
-      suite human review record), READINESS-05 (fingerprint-bound handbook
-      readability review), READINESS-07 (confirmation envelopes). After those, the
-      scope certificate, outer bundle manifest, and §15.5 final verification can
-      proceed.
+- [x] Human content-readiness acts recorded on the fresh workspace: readability
+      review (16 chapters, Pass after one review-driven chapter-02 revision), the
+      acceptance-suite review (23 decisions, Pass), and 22 confirmations (synthesis
+      batch, 5 PRF profiles, 16 HBK sections) with 16 B-CONFIRMED certification
+      envelopes. The stage-4 report now reads **Ready-For-Certificate (0 failing)**.
+- [x] Scope certificate (`spec handoff certificate`) and outer bundle manifest
+      (`spec handoff outer`): the certificate binds all confirmed manifest tokens to
+      their CNFs; the outer manifest declares `EXIT-E-STATUS: Passed`, the final
+      registry, the recomputed pre-signature input-set fingerprint, and the complete
+      member set, and materializes the exact package layout with `--package-dir`.
+      Live chain fingerprints: candidate `9b5954b0...`, manifest `d2db3fdb...`,
+      readiness `760b2c7e...`, certificate `6827ebc8...`, outer `a02fc080...`.
+- [x] Chain and bundle verification: `spec artifact chain` verifies
+      candidate -> manifest -> readiness -> certificate -> outer (references,
+      registries, snapshot, check sets, pre-signature inputs) and
+      `spec artifact verify` recomputes all 51 members of the materialized package.
+- [ ] Remaining step-6 human act: the outer signature envelope (simple operator
+      approval, no crypto per decision 10) and the §15.5 final verification receipt.
 - [x] Traversal closure modeling (PI-17, v4.3): `REQUIRED-TRAVERSAL-MATRIX-ROW` records
       keyed by cluster/persona/POV/track/environment/snapshot; `spec preflight matrix`
       mechanically expands cells; the gate evaluates real closure (live pilot 0/25).

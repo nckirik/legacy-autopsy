@@ -15,7 +15,7 @@ import (
 // specHandoff dispatches the §15.1/§15.4 handoff operations.
 func specHandoff(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness|equivalence|review|certificate> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness|equivalence|review|certificate|outer> [flags]")
 	}
 	switch args[0] {
 	case "candidate":
@@ -32,8 +32,10 @@ func specHandoff(args []string, stdout, stderr io.Writer) error {
 		return specHandoffReview(args[1:], stdout, stderr)
 	case "certificate":
 		return specHandoffCertificate(args[1:], stdout, stderr)
+	case "outer":
+		return specHandoffOuter(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence, review, certificate", args[0])
+		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence, review, certificate, outer", args[0])
 	}
 }
 
@@ -370,6 +372,103 @@ func specHandoffCertificate(args []string, stdout, stderr io.Writer) error {
 	fmt.Fprintf(stdout, "artifact: %s\n", *artifactPath)
 	fmt.Fprintf(stdout, "fingerprint: %s\n", certificate.Fingerprint)
 	fmt.Fprintf(stdout, "instance: %s\n", certificate.InstanceBinding)
+	fmt.Fprintf(stdout, "written: %s\n", *out)
+	return nil
+}
+
+// specHandoffOuter emits the step-6 outer bundle manifest.
+func specHandoffOuter(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handoff outer", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	report := set.String("report", "preview/package/EXIT-E-CANDIDATE-REPORT.md", "candidate report payload file")
+	manifest := set.String("manifest", "preview/package/CANDIDATE-PAYLOAD-MANIFEST.md", "candidate payload manifest file")
+	readiness := set.String("readiness", "preview/package/EXIT-E-CONTENT-READINESS-REPORT.md", "content-readiness report file")
+	certificate := set.String("certificate", "preview/package/exit-e/SCOPE-CERTIFICATE.md", "scope certificate file")
+	handbookViewDir := set.String("handbook-view-dir", "preview", "clean human handbook view directory")
+	handbookDir := set.String("handbook-dir", "preview/package/handbook/sections", "minted HBK section payload directory")
+	suite := set.String("equivalence", "preview/package/equivalence/acceptance-suite.md", "acceptance-suite file")
+	suiteReview := set.String("equivalence-review", "preview/package/equivalence/equivalence-review.md", "acceptance-suite review file")
+	out := set.String("out", "preview/package/exit-e/OUTER-BUNDLE-MANIFEST.md", "output file for the artifact payload")
+	dumpOut := set.String("dump-out", "", "optional path to write the canonical store dump package member")
+	packageDir := set.String("package-dir", "", "optional directory to materialize the complete package member layout")
+	artifactPath := set.String("artifact-path", handoff.OuterManifestDefaultPath, "package-relative artifact path")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec handoff outer requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	dump, _, err := store.CanonicalDump(*db, res.EIR, store.Provenance{
+		Generator:         "legacy-autopsy outer manifest",
+		SourceFingerprint: header["system-namespace"],
+	})
+	if err != nil {
+		return err
+	}
+	bundle, err := handoff.BuildOuterBundle(res.EIR, handoff.OuterOptions{
+		Namespace:             header["system-namespace"],
+		ProtocolVersion:       header["protocol-version"],
+		EnvironmentsSnapshots: header["included-environments-snapshots"],
+		StorageBinding:        header["canonical-storage-binding"],
+		ReportPath:            *report,
+		ManifestPath:          *manifest,
+		ReadinessPath:         *readiness,
+		CertificatePath:       *certificate,
+		HandbookViewDir:       *handbookViewDir,
+		HandbookSectionDir:    *handbookDir,
+		EquivalenceSuitePath:  *suite,
+		EquivalenceReviewPath: *suiteReview,
+		StoreDump:             dump,
+		ArtifactPath:          *artifactPath,
+	})
+	if err != nil {
+		return err
+	}
+	if *dumpOut != "" {
+		if err := os.MkdirAll(filepath.Dir(*dumpOut), 0o755); err != nil {
+			return err
+		}
+		if err := os.WriteFile(*dumpOut, dump, 0o644); err != nil {
+			return err
+		}
+	}
+	if *packageDir != "" {
+		for _, member := range bundle.Files {
+			path := filepath.Join(*packageDir, filepath.FromSlash(member.Path))
+			if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+				return err
+			}
+			if err := os.WriteFile(path, member.Bytes, 0o644); err != nil {
+				return err
+			}
+		}
+		fmt.Fprintf(stdout, "package members written: %d\n", len(bundle.Files))
+	}
+	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
+		return err
+	}
+	if err := os.WriteFile(*out, bundle.Payload, 0o644); err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "artifact: %s\n", *artifactPath)
+	fmt.Fprintf(stdout, "fingerprint: %s\n", bundle.Fingerprint)
+	fmt.Fprintf(stdout, "instance: %s\n", bundle.InstanceBinding)
+	fmt.Fprintf(stdout, "members: %d\n", len(bundle.Members))
 	fmt.Fprintf(stdout, "written: %s\n", *out)
 	return nil
 }

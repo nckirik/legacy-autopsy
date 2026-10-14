@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/internal/artifact"
+	"github.com/nckirik/legacy-autopsy/internal/handoff"
 )
 
 // specArtifact validates executor-authored artifact payloads and verifies a
@@ -73,11 +74,11 @@ func specArtifact(args []string, stdout, stderr io.Writer) error {
 		paths := []struct {
 			flag, artifactType, path string
 		}{
-			{"candidate", "EXIT-E-CANDIDATE-REPORT", "23-EXIT-E-CANDIDATE-REPORT.md"},
-			{"manifest", "CANDIDATE-PAYLOAD-MANIFEST", "24-CANDIDATE-PAYLOAD-MANIFEST.md"},
-			{"readiness", "EXIT-E-CONTENT-READINESS-REPORT", "25-EXIT-E-CONTENT-READINESS-REPORT.md"},
-			{"certificate", "SCOPE-CERTIFICATE", "26-SCOPE-CERTIFICATE.md"},
-			{"outer", "OUTER-BUNDLE-MANIFEST", "27-OUTER-BUNDLE-MANIFEST.md"},
+			{"candidate", "EXIT-E-CANDIDATE-REPORT", handoff.CandidateReportDefaultPath},
+			{"manifest", "CANDIDATE-PAYLOAD-MANIFEST", handoff.CandidateManifestDefaultPath},
+			{"readiness", "EXIT-E-CONTENT-READINESS-REPORT", handoff.ContentReadinessDefaultPath},
+			{"certificate", "SCOPE-CERTIFICATE", handoff.ScopeCertificateDefaultPath},
+			{"outer", "OUTER-BUNDLE-MANIFEST", handoff.OuterManifestDefaultPath},
 		}
 		values := map[string]string{"candidate": *candidate, "manifest": *manifest, "readiness": *readiness, "certificate": *certificate, "outer": *outer}
 		var stages []artifact.ChainStage

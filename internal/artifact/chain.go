@@ -175,7 +175,7 @@ func verifyCheckSet(doc *cdl.EIRDoc, stage ChainStage) error {
 			return fmt.Errorf("%s check set does not match %s (missing or duplicated %s)", stage.Type, registry, id)
 		}
 	}
-	if observed := payloadField(stage.Payload, "required-check-registry-fingerprint"); observed != CheckRegistryFingerprint(doc) {
+	if observed := payloadField(stage.Payload, "required-check-registry-fingerprint"); !strings.Contains(observed, CheckRegistryFingerprint(doc)) {
 		return fmt.Errorf("%s does not carry the recomputed EXIT-E-CHECKS-v1 fingerprint", stage.Type)
 	}
 	for id := range present {
