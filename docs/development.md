@@ -140,6 +140,20 @@ the result with reviewer identity and timestamp. `spec handbook mint` writes HBK
 semantic payloads to a separate directory, keeping the human chapters prose-first;
 `spec handbook mint --restore` rebuilds the clean views.
 
+Discovery enumerates files and, separately, the non-file units they declare:
+
+```sh
+go run ./cmd/legacy-autopsy spec discovery hits --target <repo> --db <workspace db>
+```
+
+`spec discovery hits` scans the enumerated file window lexically with declared
+extensions and bounds, extracts route registrations, SQL statements, and
+scheduling markers, and runs bounded inventory units over the hits. The model
+authors one `SOURCE-INVENTORY-RECORD` per hit; the runtime computes the
+`SRC-ROUTE`/`SRC-QUERY`/`SRC-JOB` identity from the copied coordinate. Hit
+extraction is deterministic and re-runnable; absence of a hit kind still needs
+its own evidence-backed enumerator record.
+
 Per-unit telemetry is appended to `<workspace db>.metrics.jsonl` (non-authoritative;
 duration, retries, context bytes, result) so rehearsal comparisons stay mechanical.
 

@@ -20,16 +20,18 @@ import (
 // inventory pipeline against the canonical store.
 func specDiscovery(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec discovery <run|frontier> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec discovery <run|hits|frontier> [flags]")
 	}
 	op := args[0]
 	switch op {
 	case "run":
 		return specDiscoveryRun(args[1:], stdout, stderr)
+	case "hits":
+		return specDiscoveryHits(args[1:], stdout, stderr)
 	case "frontier":
 		return specDiscoveryFrontier(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec discovery operation %q is unsupported; supported operations: run, frontier", op)
+		return fmt.Errorf("spec discovery operation %q is unsupported; supported operations: run, hits, frontier", op)
 	}
 }
 
@@ -221,6 +223,143 @@ func specDiscoveryRun(args []string, stdout, stderr io.Writer) error {
 	return nil
 }
 
+// specDiscoveryHits enumerates route, query, and job source units inside the
+// enumerated file window and runs the Discovery inventory pipeline over them.
+// The hit scan is deterministic and bounded; the model authors one inventory
+// record per hit and the runtime computes every SRC identity.
+func specDiscoveryHits(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec discovery hits", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	target := set.String("target", "", "target legacy repository (required)")
+	db := set.String("db", "", "SQLite database path (required)")
+	maxFiles := set.Int("max-files", 2000, "bounded file scan count")
+	maxHits := set.Int("max-hits", 500, "bounded hit count")
+	batchSize := set.Int("batch-size", 25, "hits per inventory unit")
+	reviewMode := set.String("review-mode", "", "override review policy: all|critical|uncertainty")
+	maxRetries := set.Int("max-retries", 0, "override the retry budget")
+	updateExisting := set.Bool("update-existing", false, "replace records whose evidence-anchored identity exists with changed content")
+	showModel := set.String("show-model", "off", "stream raw model output: off|stderr|stdout")
+	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
+	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
+	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *target == "" || *db == "" {
+		return fmt.Errorf("spec discovery hits requires --target and --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	directives, clusters, err := discoveryContext(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	scopePaths := []string{}
+	for _, cluster := range clusters {
+		scopePaths = append(scopePaths, cluster.ScopePaths...)
+	}
+	files, err := discovery.EnumerateWindow(*target, scopePaths, 0, *maxFiles)
+	if err != nil {
+		return err
+	}
+	if len(files) == 0 {
+		return fmt.Errorf("discovery hits: no files under scope %v", scopePaths)
+	}
+	hits, err := discovery.EnumerateHits(*target, files, *maxHits)
+	if err != nil {
+		return err
+	}
+	if len(hits) == 0 {
+		return fmt.Errorf("discovery hits: no route/query/job hits found under scope %v (the absence proof must be authored separately)", scopePaths)
+	}
+	if manifest, err := writeHitsWindowManifest(*db, *target, directives.Namespace, hits); err != nil {
+		return err
+	} else {
+		fmt.Fprintf(stdout, "hits window manifest: %s\n", manifest)
+	}
+	directives.BatchSize = *batchSize
+	config, err := llm.ConfigFromEnv()
+	if err != nil {
+		return err
+	}
+	if *llmURL != "" {
+		config.BaseURL = *llmURL
+	}
+	if *llmModel != "" {
+		config.Model = *llmModel
+	}
+	if *llmReasoning != "" {
+		config.Reasoning = *llmReasoning
+	}
+	client, err := llm.NewClient(config)
+	if err != nil {
+		return err
+	}
+	runConfig := work.DefaultConfig()
+	if *reviewMode != "" {
+		runConfig.ReviewMode = work.ReviewMode(*reviewMode)
+	}
+	if *maxRetries > 0 {
+		runConfig.MaxRetries = *maxRetries
+	}
+	runConfig.UpdateExisting = *updateExisting
+	if iteration := header["current-iteration"]; iteration != "" {
+		runConfig.Iteration = iteration
+	}
+	if err := runConfig.Validate(); err != nil {
+		return err
+	}
+	executor := llm.NewExecutor(client)
+	reviewer := llm.NewReviewer(client)
+	if *llmReasoning != "" {
+		executor.ForceReasoning = llmReasoning
+	}
+	switch strings.ToLower(*showModel) {
+	case "", "off", "none":
+		wireActivity(&runConfig, executor, stdout)
+	case "stderr":
+		executor.SetDebug(stderr)
+		reviewer.Debug = stderr
+	case "stdout":
+		executor.SetDebug(stdout)
+		reviewer.Debug = stdout
+	default:
+		return fmt.Errorf("--show-model must be off, stderr, or stdout")
+	}
+	session, err := work.NewSession(*db, res.EIR, runConfig, executor, reviewer)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "hits: %d (files scanned: %d across %d cluster scope(s))\n", len(hits), len(files), len(clusters))
+	units := discovery.HitPlan(hits, clusters, directives)
+	report, runErr := session.Run(units)
+	for _, stats := range report.Units {
+		fmt.Fprintf(stdout, "%-26s %8d %5d %6d %7d %-12s %v\n",
+			stats.UnitID, stats.ContextBytes, stats.Dependencies, stats.Fetches, stats.Retries, stats.Review, stats.Escalated)
+		if stats.LastError != "" {
+			fmt.Fprintf(stdout, "  last rejection: %s\n", stats.LastError)
+		}
+	}
+	if runErr != nil {
+		fmt.Fprintf(stderr, "discovery hits stopped: %s\n", runErr)
+		return runErr
+	}
+	fmt.Fprintf(stdout, "discovery committed %d inventory unit(s) over %d hit(s)\n", len(report.Units), len(hits))
+	return nil
+}
+
 // discoveryContext reads the committed preflight header and clusters from the
 // store; Discovery requires a completed Preflight.
 func discoveryContext(db string, doc *cdl.EIRDoc) (discovery.Directives, []discovery.Cluster, error) {
@@ -295,6 +434,33 @@ func writeWindowManifest(db, target, namespace string, offset int, candidates []
 		return "", err
 	}
 	path := filepath.Join(dir, fmt.Sprintf("discovery-%05d-%05d.json", offset, len(candidates)))
+	data, err := json.MarshalIndent(manifest, "", "  ")
+	if err != nil {
+		return "", err
+	}
+	if err := os.WriteFile(path, append(data, '\n'), 0o644); err != nil {
+		return "", err
+	}
+	return path, nil
+}
+
+// writeHitsWindowManifest records which route/query/job hits were in a bounded
+// hit window, so a run is auditable. The manifest is a debug/audit derivative,
+// never operational state.
+func writeHitsWindowManifest(db, target, namespace string, hits []discovery.Hit) (string, error) {
+	manifest := struct {
+		Target    string          `json:"target"`
+		Namespace string          `json:"namespace"`
+		Count     int             `json:"count"`
+		Hits      []discovery.Hit `json:"hits"`
+	}{
+		Target: target, Namespace: namespace, Count: len(hits), Hits: hits,
+	}
+	dir := filepath.Join(filepath.Dir(db), "windows")
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return "", err
+	}
+	path := filepath.Join(dir, fmt.Sprintf("discovery-hits-%05d.json", len(hits)))
 	data, err := json.MarshalIndent(manifest, "", "  ")
 	if err != nil {
 		return "", err
