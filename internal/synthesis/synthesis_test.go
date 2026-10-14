@@ -218,3 +218,18 @@ func TestAllCatalogsUseEvidenceAnchoredIdentity(t *testing.T) {
 		}
 	}
 }
+
+func TestFirstPrefixTokenAcceptsSeparatorVariants(t *testing.T) {
+	for input, want := range map[string]string{
+		"SA / human":                  "SA",
+		"SA; human":                   "SA",
+		"SA, human":                   "SA",
+		"SA|human":                    "SA",
+		"SA human":                    "SA",
+		"WEB-web-kullanici / service": "WEB-web-kullanici",
+	} {
+		if got := firstPrefixToken(input); got != want {
+			t.Fatalf("firstPrefixToken(%q) = %q, want %q", input, got, want)
+		}
+	}
+}

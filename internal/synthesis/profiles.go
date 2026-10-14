@@ -316,10 +316,10 @@ func ProfileCoverage(db string, doc *cdl.EIRDoc, namespace string) (ProfileStats
 // `Prefix / Actor Class` value, tolerating the declared slash/space separators.
 func firstPrefixToken(raw string) string {
 	for _, token := range strings.FieldsFunc(raw, func(r rune) bool {
-		return r == '/' || r == '|' || unicode.IsSpace(r)
+		return r == '/' || r == '|' || r == ';' || r == ',' || unicode.IsSpace(r)
 	}) {
 		if token != "" {
-			return token
+			return strings.TrimSpace(token)
 		}
 	}
 	return ""

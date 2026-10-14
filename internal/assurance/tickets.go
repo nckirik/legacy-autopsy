@@ -83,7 +83,7 @@ func TicketlessUnknowns(db string, doc *cdl.EIRDoc) ([]UnknownScope, error) {
 // nextTicketID allocates the next free ticket sequence for the moniker,
 // persona, and target POV. Allocation is deterministic over the committed log
 // and never reuses a sequence.
-func nextTicketID(db string, doc *cdl.EIRDoc, persona, pov string) (string, error) {
+func nextTicketID(db string, doc *cdl.EIRDoc, persona, pov string) (int, string, error) {
 	if persona == "" {
 		persona = "NONE"
 	}
@@ -93,7 +93,7 @@ func nextTicketID(db string, doc *cdl.EIRDoc, persona, pov string) (string, erro
 	prefix := TicketMoniker + "-" + persona + "-" + pov + "-"
 	ids, err := store.List(db, doc, "TICKET")
 	if err != nil {
-		return "", err
+		return 0, "", err
 	}
 	highest := 0
 	for _, id := range ids {
@@ -105,7 +105,7 @@ func nextTicketID(db string, doc *cdl.EIRDoc, persona, pov string) (string, erro
 			highest = sequence
 		}
 	}
-	return fmt.Sprintf("%s%03d", prefix, highest+1), nil
+	return highest + 1, prefix, nil
 }
 
 // TicketPlan builds one bounded Ticket Resolution unit per ticketless Unknown
@@ -138,11 +138,13 @@ func TicketPlan(db string, doc *cdl.EIRDoc, namespace, snapshot string) ([]work.
 		}
 	}
 	var units []work.Unit
+	sequence, prefix, err := nextTicketID(db, doc, "NONE", "POV-4")
+	if err != nil {
+		return nil, err
+	}
 	for _, scope := range scopes {
-		id, err := nextTicketID(db, doc, "NONE", "POV-4")
-		if err != nil {
-			return nil, err
-		}
+		id := fmt.Sprintf("%s%03d", prefix, sequence)
+		sequence++
 		var b strings.Builder
 		b.WriteString("# Ticket authoring context (runtime-generated, bounded)\n\n")
 		b.WriteString("Author exactly one TICKET record for the unresolved lifecycle classification below.\n\n")

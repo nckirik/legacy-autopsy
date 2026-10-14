@@ -112,3 +112,21 @@ func TestTicketPlanOriginatesTicketsForUnknownScopes(t *testing.T) {
 		t.Fatalf("second allocation = %+v", units)
 	}
 }
+
+func TestTicketPlanAllocatesDistinctSequences(t *testing.T) {
+	doc, db := testDocDB(t)
+	for _, suffix := range []string{"AAAAAAAAAAAA", "BBBBBBBBBBBB"} {
+		scope := "SRC-FILE-" + suffix
+		claim := "CLM-" + suffix
+		seedSource(t, db, doc, scope)
+		seedClaim(t, db, doc, claim, scope)
+		seedUnknownLifecycle(t, db, doc, scope, claim)
+	}
+	units, err := TicketPlan(db, doc, "demo", "dev")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(units) != 2 || units[0].RecordID != "TKT-NONE-POV-4-001" || units[1].RecordID != "TKT-NONE-POV-4-002" {
+		t.Fatalf("allocations = %s, %s", units[0].RecordID, units[1].RecordID)
+	}
+}
