@@ -6,7 +6,10 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
+	"github.com/nckirik/legacy-autopsy/cdl"
+	"github.com/nckirik/legacy-autopsy/internal/artifact"
 	"github.com/nckirik/legacy-autopsy/internal/equivalence"
 	"github.com/nckirik/legacy-autopsy/internal/handoff"
 	"github.com/nckirik/legacy-autopsy/internal/store"
@@ -15,7 +18,7 @@ import (
 // specHandoff dispatches the §15.1/§15.4 handoff operations.
 func specHandoff(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness|equivalence|review|certificate|outer> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness|equivalence|review|certificate|outer|sign> [flags]")
 	}
 	switch args[0] {
 	case "candidate":
@@ -34,8 +37,10 @@ func specHandoff(args []string, stdout, stderr io.Writer) error {
 		return specHandoffCertificate(args[1:], stdout, stderr)
 	case "outer":
 		return specHandoffOuter(args[1:], stdout, stderr)
+	case "sign":
+		return specHandoffSign(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence, review, certificate, outer", args[0])
+		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence, review, certificate, outer, sign", args[0])
 	}
 }
 
@@ -471,4 +476,149 @@ func specHandoffOuter(args []string, stdout, stderr io.Writer) error {
 	fmt.Fprintf(stdout, "members: %d\n", len(bundle.Members))
 	fmt.Fprintf(stdout, "written: %s\n", *out)
 	return nil
+}
+
+// specHandoffSign attaches the operator's signature to the outer manifest after
+// recomputing the chain, then emits the §15.5 verification receipt.
+func specHandoffSign(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handoff sign", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	outer := set.String("outer", "preview/package/exit-e/OUTER-BUNDLE-MANIFEST.md", "outer bundle manifest file")
+	outerPath := set.String("outer-artifact-path", handoff.OuterManifestDefaultPath, "outer manifest package-relative artifact path")
+	report := set.String("report", "preview/package/EXIT-E-CANDIDATE-REPORT.md", "candidate report payload file")
+	manifest := set.String("manifest", "preview/package/CANDIDATE-PAYLOAD-MANIFEST.md", "candidate payload manifest file")
+	readiness := set.String("readiness", "preview/package/EXIT-E-CONTENT-READINESS-REPORT.md", "content-readiness report file")
+	certificate := set.String("certificate", "preview/package/exit-e/SCOPE-CERTIFICATE.md", "scope certificate file")
+	packageDir := set.String("package-dir", "", "materialized package directory for member verification")
+	receipt := set.String("receipt", "preview/final-verification-receipt.md", "final verification receipt output")
+	approver := set.String("approver", "", "approving human (prompted when empty)")
+	answers := set.String("answers", "", "scripted answers file (non-interactive)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	stages := make([]artifact.ChainStage, 0, 5)
+	for _, spec := range []struct {
+		file, artifactType, path string
+	}{
+		{*report, handoff.CandidateReportArtifactType, handoff.CandidateReportDefaultPath},
+		{*manifest, handoff.CandidateManifestArtifactType, handoff.CandidateManifestDefaultPath},
+		{*readiness, handoff.ContentReadinessArtifactType, handoff.ContentReadinessDefaultPath},
+		{*certificate, handoff.ScopeCertificateArtifactType, handoff.ScopeCertificateDefaultPath},
+		{*outer, handoff.OuterManifestArtifactType, *outerPath},
+	} {
+		payload, err := os.ReadFile(spec.file)
+		if err != nil {
+			return err
+		}
+		stages = append(stages, artifact.ChainStage{Type: spec.artifactType, Path: spec.path, Payload: payload})
+	}
+	if err := artifact.VerifyChain(res.EIR, stages); err != nil {
+		return fmt.Errorf("handoff sign refuses to sign: %w", err)
+	}
+	prompt, closeFn, err := reviewPrompter(*answers, stdout)
+	if err != nil {
+		return err
+	}
+	if closeFn != nil {
+		defer closeFn()
+	}
+	if strings.TrimSpace(*approver) == "" {
+		for {
+			answer, err := prompt("Approving human (name / role): ")
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(answer) != "" {
+				*approver = strings.TrimSpace(answer)
+				break
+			}
+			fmt.Fprintln(stdout, "The approving human is required.")
+		}
+	}
+	outerBytes, err := os.ReadFile(*outer)
+	if err != nil {
+		return err
+	}
+	fingerprint := outerField(outerBytes, "artifact-payload-fingerprint")
+	snapshot := outerField(outerBytes, "system-protocol-snapshot")
+	fmt.Fprintf(stdout, "\nOuter manifest: %s\nPayload fingerprint: %s\nSnapshot: %s\nEXIT-E-STATUS: %s\n", *outerPath, fingerprint, snapshot, outerField(outerBytes, "exit-e-status"))
+	fmt.Fprintln(stdout, "Signing records your approval of this exact outer payload and its complete member set. No cryptographic signature is produced (operator-approval policy).")
+	for {
+		answer, err := prompt("[s]ign / [a]bort: ")
+		if err != nil {
+			return err
+		}
+		if strings.ToLower(strings.TrimSpace(answer)) == "a" || strings.ToLower(strings.TrimSpace(answer)) == "abort" {
+			fmt.Fprintln(stdout, "aborted; nothing was signed")
+			return nil
+		}
+		if strings.ToLower(strings.TrimSpace(answer)) == "s" || strings.ToLower(strings.TrimSpace(answer)) == "sign" {
+			break
+		}
+		fmt.Fprintln(stdout, "Answer s or a.")
+	}
+	timestamp := time.Now().UTC().Format(time.RFC3339)
+	audit := fmt.Sprintf("approved by %s for outer payload %s; simple operator approval, no cryptographic signature", *approver, fingerprint)
+	signedFingerprint, envelopeFingerprint, err := handoff.SignOuter(*outer, *outerPath, *approver, "", timestamp, audit)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "signed: payload %s, envelope %s\n", signedFingerprint, envelopeFingerprint)
+	final, err := handoff.BuildFinalReceipt(res.EIR, handoff.SignAndVerifyOptions{
+		OuterPath:               *outer,
+		OuterArtifactPath:       *outerPath,
+		ReportPath:              *report,
+		ReportArtifactPath:      handoff.CandidateReportDefaultPath,
+		ManifestPath:            *manifest,
+		ManifestArtifactPath:    handoff.CandidateManifestDefaultPath,
+		ReadinessPath:           *readiness,
+		ReadinessArtifactPath:   handoff.ContentReadinessDefaultPath,
+		CertificatePath:         *certificate,
+		CertificateArtifactPath: handoff.ScopeCertificateDefaultPath,
+		PackageDir:              *packageDir,
+		ValidatorVersion:        cdl.ProtocolVersion,
+	}, timestamp)
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(*receipt), 0o755); err != nil {
+		return err
+	}
+	if err := os.WriteFile(*receipt, final.Payload, 0o644); err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "final verification: %s (receipt %s, fingerprint %s)\n", final.Overall, *receipt, final.Fingerprint)
+	if final.Overall != "Pass" {
+		return fmt.Errorf("final bundle verification failed")
+	}
+	return nil
+}
+
+// outerField extracts one payload field value by slug.
+func outerField(payload []byte, slug string) string {
+	for _, line := range strings.Split(string(payload), "\n") {
+		trimmed := strings.TrimSpace(line)
+		if !strings.HasPrefix(trimmed, "- **") {
+			continue
+		}
+		end := strings.Index(trimmed, ":**")
+		if end < 0 {
+			continue
+		}
+		label := strings.ToLower(strings.ReplaceAll(strings.ReplaceAll(strings.TrimSpace(trimmed[4:end]), " ", "-"), "/", ""))
+		if label == slug {
+			return strings.TrimSpace(trimmed[end+4:])
+		}
+	}
+	return ""
 }

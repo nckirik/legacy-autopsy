@@ -395,8 +395,13 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
       candidate -> manifest -> readiness -> certificate -> outer (references,
       registries, snapshot, check sets, pre-signature inputs) and
       `spec artifact verify` recomputes all 51 members of the materialized package.
-- [ ] Remaining step-6 human act: the outer signature envelope (simple operator
-      approval, no crypto per decision 10) and the §15.5 final verification receipt.
+- [x] Step-6 signing (`spec handoff sign`): refuses to sign unless the whole
+      chain re-verifies, shows the exact outer payload identity, records the operator's
+      approval in the signature envelope only (payload fingerprint unchanged, no
+      crypto per decision 10), then runs the nine deterministic `EXIT-E-FINAL-CHECKS-v1`
+      checks over the materialized bundle bytes and emits the non-authoritative
+      verification receipt outside the package. Dry run: payload fingerprint stable,
+      receipt **Overall Pass**. The live signature remains the operator's act.
 - [x] Traversal closure modeling (PI-17, v4.3): `REQUIRED-TRAVERSAL-MATRIX-ROW` records
       keyed by cluster/persona/POV/track/environment/snapshot; `spec preflight matrix`
       mechanically expands cells; the gate evaluates real closure (live pilot 0/25).
