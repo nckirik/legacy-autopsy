@@ -161,6 +161,18 @@ cluster owner's persona prefix when it is a registered persona. A shared cluster
 whose participating personas are not yet resolvable records `Persona=None` in
 the context instead of inventing an owner; ambiguity is fail-inclusive.
 
+```sh
+go run ./cmd/legacy-autopsy spec discovery components --target <repo> --db <workspace db>
+```
+
+`spec discovery components` authors one `ATOMIC-COMPONENT` per hit whose
+identity is anchored in the hit's committed `SRC` unit (the model fills the
+§6.1 fields from a bounded file excerpt; staging status starts at
+`[S-DISCOVERED]` with `[C-GAP]` coverage). It then materializes the §6.2
+dual-entry `SHARED-REFERENCE` pointer rows mechanically per persona and POV,
+with the discovering invocation recovered from `0G`; components without a
+resolvable persona produce no pointer row and are reported instead.
+
 Per-unit telemetry is appended to `<workspace db>.metrics.jsonl` (non-authoritative;
 duration, retries, context bytes, result) so rehearsal comparisons stay mechanical.
 

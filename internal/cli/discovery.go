@@ -10,6 +10,7 @@ import (
 
 	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/assurance"
+	"github.com/nckirik/legacy-autopsy/internal/capabilities"
 	"github.com/nckirik/legacy-autopsy/internal/discovery"
 	"github.com/nckirik/legacy-autopsy/internal/llm"
 	"github.com/nckirik/legacy-autopsy/internal/store"
@@ -20,7 +21,7 @@ import (
 // inventory pipeline against the canonical store.
 func specDiscovery(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec discovery <run|hits|frontier> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec discovery <run|hits|components|frontier> [flags]")
 	}
 	op := args[0]
 	switch op {
@@ -28,10 +29,12 @@ func specDiscovery(args []string, stdout, stderr io.Writer) error {
 		return specDiscoveryRun(args[1:], stdout, stderr)
 	case "hits":
 		return specDiscoveryHits(args[1:], stdout, stderr)
+	case "components":
+		return specDiscoveryComponents(args[1:], stdout, stderr)
 	case "frontier":
 		return specDiscoveryFrontier(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec discovery operation %q is unsupported; supported operations: run, hits, frontier", op)
+		return fmt.Errorf("spec discovery operation %q is unsupported; supported operations: run, hits, components, frontier", op)
 	}
 }
 
@@ -362,6 +365,187 @@ func specDiscoveryHits(args []string, stdout, stderr io.Writer) error {
 		return runErr
 	}
 	fmt.Fprintf(stdout, "discovery committed %d inventory unit(s) over %d hit(s)\n", len(report.Units), len(hits))
+	return nil
+}
+
+// specDiscoveryComponents authors one ATOMIC-COMPONENT per enumerated hit with
+// runtime-anchored identity in the hit's committed source unit, then
+// materializes the dual-entry shared-reference pointer rows mechanically (§6.2).
+func specDiscoveryComponents(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec discovery components", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	target := set.String("target", "", "target legacy repository (required)")
+	db := set.String("db", "", "SQLite database path (required)")
+	maxFiles := set.Int("max-files", 2000, "bounded file scan count")
+	maxHits := set.Int("max-hits", 200, "bounded hit count")
+	batchSize := set.Int("batch-size", 5, "hits per component unit")
+	reviewMode := set.String("review-mode", "", "override review policy: all|critical|uncertainty")
+	maxRetries := set.Int("max-retries", 0, "override the retry budget")
+	updateExisting := set.Bool("update-existing", false, "replace records whose evidence-anchored identity exists with changed content")
+	showModel := set.String("show-model", "off", "stream raw model output: off|stderr|stdout")
+	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
+	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
+	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *target == "" || *db == "" {
+		return fmt.Errorf("spec discovery components requires --target and --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	directives, clusters, err := discoveryContext(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	prefixes, err := personaPrefixSet(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	directives.PersonaPrefixes = prefixes
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	scopePaths := []string{}
+	for _, cluster := range clusters {
+		scopePaths = append(scopePaths, cluster.ScopePaths...)
+	}
+	files, err := discovery.EnumerateWindow(*target, scopePaths, 0, *maxFiles)
+	if err != nil {
+		return err
+	}
+	hits, err := discovery.EnumerateHits(*target, files, *maxHits)
+	if err != nil {
+		return err
+	}
+	if len(hits) == 0 {
+		return fmt.Errorf("discovery components: no route/query/job hits found under scope %v", scopePaths)
+	}
+	for _, hit := range hits {
+		srcID, err := capabilities.SourceID(directives.Namespace, string(hit.Kind), hit.Coordinate)
+		if err != nil {
+			return err
+		}
+		if _, err := store.Get(*db, res.EIR, "SOURCE-INVENTORY-RECORD", srcID); err != nil {
+			return fmt.Errorf("discovery components: hit %s has no committed source unit %s; run spec discovery hits first", hit.Coordinate, srcID)
+		}
+	}
+	directives.BatchSize = *batchSize
+	units, err := discovery.ComponentPlan(*target, hits, clusters, directives)
+	if err != nil {
+		return err
+	}
+	config, err := llm.ConfigFromEnv()
+	if err != nil {
+		return err
+	}
+	if *llmURL != "" {
+		config.BaseURL = *llmURL
+	}
+	if *llmModel != "" {
+		config.Model = *llmModel
+	}
+	if *llmReasoning != "" {
+		config.Reasoning = *llmReasoning
+	}
+	client, err := llm.NewClient(config)
+	if err != nil {
+		return err
+	}
+	runConfig := work.DefaultConfig()
+	if *reviewMode != "" {
+		runConfig.ReviewMode = work.ReviewMode(*reviewMode)
+	}
+	if *maxRetries > 0 {
+		runConfig.MaxRetries = *maxRetries
+	}
+	runConfig.UpdateExisting = *updateExisting
+	if iteration := header["current-iteration"]; iteration != "" {
+		runConfig.Iteration = iteration
+	}
+	if err := runConfig.Validate(); err != nil {
+		return err
+	}
+	executor := llm.NewExecutor(client)
+	reviewer := llm.NewReviewer(client)
+	if *llmReasoning != "" {
+		executor.ForceReasoning = llmReasoning
+	}
+	switch strings.ToLower(*showModel) {
+	case "", "off", "none":
+		wireActivity(&runConfig, executor, stdout)
+	case "stderr":
+		executor.SetDebug(stderr)
+		reviewer.Debug = stderr
+	case "stdout":
+		executor.SetDebug(stdout)
+		reviewer.Debug = stdout
+	default:
+		return fmt.Errorf("--show-model must be off, stderr, or stdout")
+	}
+	session, err := work.NewSession(*db, res.EIR, runConfig, executor, reviewer)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "component units: %d over %d hit(s)\n", len(units), len(hits))
+	report, runErr := session.Run(units)
+	for _, stats := range report.Units {
+		fmt.Fprintf(stdout, "%-34s %8d %5d %6d %7d %-12s %v\n",
+			stats.UnitID, stats.ContextBytes, stats.Dependencies, stats.Fetches, stats.Retries, stats.Review, stats.Escalated)
+		if stats.LastError != "" {
+			fmt.Fprintf(stdout, "  last rejection: %s\n", stats.LastError)
+		}
+	}
+	if runErr != nil {
+		fmt.Fprintf(stderr, "discovery components stopped: %s\n", runErr)
+		return runErr
+	}
+	components, err := discovery.LoadComponents(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	creating, err := discovery.LoadCreatingInvocations(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	for i := range components {
+		if invocation, ok := creating[components[i].ID]; ok {
+			components[i].CreatingInvocation = invocation
+		}
+	}
+	refUnits := discovery.SharedReferencePlan(components)
+	if len(refUnits) == 0 {
+		fmt.Fprintf(stdout, "shared-reference pointers: 0 (no persona-bound components)\n")
+		return nil
+	}
+	mechConfig := work.DefaultConfig()
+	mechConfig.UpdateExisting = true
+	if iteration := header["current-iteration"]; iteration != "" {
+		mechConfig.Iteration = iteration
+	}
+	refSession, err := work.NewSession(*db, res.EIR, mechConfig, discovery.MechanicalSharedReferenceExecutor{Components: components}, nil)
+	if err != nil {
+		return err
+	}
+	refReport, err := refSession.Run(refUnits)
+	if err != nil {
+		fmt.Fprintf(stderr, "shared-reference materialization stopped: %s\n", err)
+		return err
+	}
+	pointers := 0
+	for _, stats := range refReport.Units {
+		pointers += len(stats.MutationIDs)
+	}
+	fmt.Fprintf(stdout, "components committed: %d, shared-reference pointers: %d\n", len(components), pointers)
 	return nil
 }
 
