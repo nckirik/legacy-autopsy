@@ -5,6 +5,7 @@ package handbook
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/nckirik/legacy-autopsy/internal/ste"
@@ -25,20 +26,33 @@ type Finding struct {
 
 func (f Finding) String() string { return fmt.Sprintf("%s %s: %s", f.Code, f.Subject, f.Detail) }
 
-// AssertionCount counts distinct lines carrying at least one typed claim
-// reference (CLM-*). Headings, navigation, and placeholders never count.
+// AssertionCount counts claim-backed assertion lines: statement lines that
+// carry an inline claim citation or a numbered footnote reference. Footnote
+// definitions and the collapsed record appendix are not assertions, so the
+// count is identical before and after citation numbering.
 func AssertionCount(markdown string) int {
+	if idx := strings.Index(markdown, "\n### Record Details"); idx >= 0 {
+		markdown = markdown[:idx]
+	}
 	count := 0
 	for _, line := range strings.Split(markdown, "\n") {
 		trimmed := strings.TrimSpace(line)
-		if trimmed == "" || strings.HasPrefix(trimmed, "#") || strings.HasPrefix(trimmed, "- [") {
+		if trimmed == "" || strings.HasPrefix(trimmed, "#") || strings.HasPrefix(trimmed, "- [") || strings.HasPrefix(trimmed, "[^") {
 			continue
 		}
-		if claimReference(trimmed) {
+		if claimReference(trimmed) || footnoteReference(trimmed) {
 			count++
 		}
 	}
 	return count
+}
+
+var footnoteReferencePattern = regexp.MustCompile(`\[\^[0-9]+\]`)
+
+// footnoteReference reports whether a statement line carries a numbered
+// citation reference.
+func footnoteReference(line string) bool {
+	return footnoteReferencePattern.MatchString(line)
 }
 
 // claimReference reports whether a line cites at least one CLM-* claim ID.

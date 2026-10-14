@@ -125,3 +125,17 @@ func TestProseViewSkipsReferenceLines(t *testing.T) {
 		}
 	}
 }
+
+func TestAssertionCountNumberedSurfaceParity(t *testing.T) {
+	inline := "The page checks the role first (CLM-AAAAAAAAAAAA).\n\nThe lock serializes access per item [CLM-BBBBBBBBBBBB].\n"
+	numbered := "The page checks the role first [^1].\n\nThe lock serializes access per item [^2].\n\n" +
+		"[^1]: The page checks the role first. - source SRC-FILE-AAAAAAAAAAAA (see [CLM-AAAAAAAAAAAA](evidence.md#clm-aaaaaaaaaaaa))\n" +
+		"[^2]: The lock serializes access per item. - source SRC-FILE-BBBBBBBBBBBB (see [CLM-BBBBBBBBBBBB](evidence.md#clm-bbbbbbbbbbbb))\n\n" +
+		"### Record Details\n\n- **Records:** CLM-CCCCCCCCCCCC, CLM-DDDDDDDDDDDD\n- **Notes:** CLM-EEEEEEEEEEEE\n"
+	if got := AssertionCount(inline); got != 2 {
+		t.Fatalf("inline count = %d, want 2", got)
+	}
+	if got := AssertionCount(numbered); got != 2 {
+		t.Fatalf("numbered count = %d, want 2 (footnote definitions and the appendix do not count)", got)
+	}
+}
