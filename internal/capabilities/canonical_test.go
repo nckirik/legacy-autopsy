@@ -76,6 +76,64 @@ func TestSemanticContentFingerprintExcludesCarrier(t *testing.T) {
 	}
 }
 
+func TestDecisionContentFingerprintEnvelopeInvariance(t *testing.T) {
+	content := "### DEC-ABCDEF012345 Choose a migration path\n\n" +
+		"- **DECISION-CONTENT-VERSION:** 1\n" +
+		"- **DECISION-CONTENT-FINGERPRINT:** sha256:placeholder\n" +
+		"- **Type:** target\n" +
+		"- **Observed Inputs:** MOD-111111111111 version 1 sha256:aaa\n" +
+		"- **Options / Decision / Rationale / Risks:** Keep the module.\n" +
+		"- **Exact Scope and Denominator Effect:** None.\n" +
+		"- **Affected Records / Rollout / Rollback:** None.\n" +
+		"- **Content Supersession:** None\n"
+	base, err := DecisionContentFingerprint([]byte(content), "DECISION-CONTENT-FINGERPRINT")
+	if err != nil {
+		t.Fatal(err)
+	}
+	approved := content + "\n<!-- DECISION-APPROVAL-ENVELOPE: excluded from decision-content version/fingerprint -->\n\n" +
+		"- **Envelope Kind:** DECISION-APPROVAL\n" +
+		"- **Envelope Version:** 1\n" +
+		"- **Approval Status:** Approved\n" +
+		"- **Owner / Approver / Authority Basis / Approval Timestamp:** operator 2026-10-14\n" +
+		"- **Approved Content Binding:** DEC-ABCDEF012345 version 1 " + base + "\n" +
+		"- **Approval Signature / Audit:** review decisions\n" +
+		"<!-- END-DECISION-APPROVAL-ENVELOPE -->\n"
+	withEnvelope, err := DecisionContentFingerprint([]byte(approved), "DECISION-CONTENT-FINGERPRINT")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if base != withEnvelope {
+		t.Fatalf("envelope changed the decision-content fingerprint: %s vs %s", base, withEnvelope)
+	}
+	changed := strings.Replace(approved, "Keep the module.", "Retire the module.", 1)
+	mutated, err := DecisionContentFingerprint([]byte(changed), "DECISION-CONTENT-FINGERPRINT")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if mutated == base {
+		t.Fatal("content change did not change the decision-content fingerprint")
+	}
+	if _, err := DecisionContentFingerprint([]byte(content+"<!-- DECISION-APPROVAL-ENVELOPE: x -->\n"), "DECISION-CONTENT-FINGERPRINT"); err == nil {
+		t.Fatal("partial envelope region was accepted")
+	}
+}
+
+func TestDecisionContentFingerprintCarrierExclusion(t *testing.T) {
+	withoutCarrier := "### DEC-ABCDEF012345 Choose\n\n- **Type:** target\n"
+	withCarrier := withoutCarrier + "- **DECISION-CONTENT-FINGERPRINT:** sha256:placeholder\n"
+	first, err := DecisionContentFingerprint([]byte(withCarrier), "DECISION-CONTENT-FINGERPRINT")
+	if err != nil {
+		t.Fatal(err)
+	}
+	canonical, err := CanonicalMarkdown([]byte(withoutCarrier))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if first != shaHex(string(canonical)) {
+		t.Fatalf("carrier exclusion mismatch: %s", first)
+	}
+}
+
 func TestEnvelopeFingerprint(t *testing.T) {
 	region := []byte("<!-- CERTIFICATION: X -->\n- **Status:** B-CONFIRMED\n<!-- END -->\n")
 	canonical, err := CanonicalMarkdown(region)

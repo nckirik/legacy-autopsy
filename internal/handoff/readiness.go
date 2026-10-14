@@ -624,9 +624,16 @@ func decisionApprovalCoverage(db string, doc *cdl.EIRDoc) (string, string) {
 	}
 	decNames, _, _, err := work.FieldContract(doc, "DECISION")
 	if err != nil {
-		return "decision FIELD is not declared", ""
+		return "", "decision FIELD is not declared"
 	}
-	approved := map[string]bool{}
+	type decisionState struct {
+		approved        bool
+		version         string
+		fingerprint     string
+		binding         string
+		envelopeVersion string
+	}
+	decisions := map[string]decisionState{}
 	decIDs, err := store.List(db, doc, "DECISION")
 	if err != nil {
 		return err.Error(), ""
@@ -640,8 +647,12 @@ func decisionApprovalCoverage(db string, doc *cdl.EIRDoc) (string, string) {
 		if err != nil {
 			return err.Error(), ""
 		}
-		if strings.EqualFold(strings.TrimSpace(values["approval-status"]), "Approved") {
-			approved[id] = true
+		decisions[id] = decisionState{
+			approved:        strings.EqualFold(strings.TrimSpace(values["approval-status"]), "Approved"),
+			version:         strings.TrimSpace(values["decision-content-version"]),
+			fingerprint:     strings.TrimSpace(values["decision-content-fingerprint"]),
+			binding:         strings.TrimSpace(values["approved-content-binding"]),
+			envelopeVersion: strings.TrimSpace(values["approval-envelope-version"]),
 		}
 	}
 	references := 0
@@ -671,7 +682,25 @@ func decisionApprovalCoverage(db string, doc *cdl.EIRDoc) (string, string) {
 			}
 			references++
 			token := strings.Fields(value)[0]
-			if strings.HasPrefix(token, "DEC-") && approved[token] {
+			state, ok := decisions[token]
+			if strings.HasPrefix(token, "DEC-") && ok && state.approved {
+				// The approval envelope must bind the current decision content;
+				// a stale binding means the content changed after approval.
+				if state.envelopeVersion == "" || state.envelopeVersion == "0" {
+					missing++
+					if first == "" {
+						first = id + " -> " + value + " (approval envelope missing)"
+					}
+					continue
+				}
+				binding := state.binding
+				if !strings.Contains(binding, state.version) || !strings.Contains(binding, state.fingerprint) {
+					missing++
+					if first == "" {
+						first = id + " -> " + value + " (approval binds stale decision content)"
+					}
+					continue
+				}
 				continue
 			}
 			missing++
@@ -681,9 +710,10 @@ func decisionApprovalCoverage(db string, doc *cdl.EIRDoc) (string, string) {
 		}
 	}
 	if missing > 0 {
-		return fmt.Sprintf("%d decision references lack approved decision content; first: %s", missing, first), ""
+		return fmt.Sprintf("%d decision references checked", references),
+			fmt.Sprintf("%d decision references lack approved decision content with a current approval binding; first: %s", missing, first)
 	}
-	return fmt.Sprintf("%d decision references resolve to approved decisions", references), ""
+	return fmt.Sprintf("%d decision references resolve to approved decisions with current approval bindings", references), ""
 }
 
 // confirmationCoverage validates every required PRF and HBK candidate binding

@@ -94,6 +94,32 @@ func canonicalTableRow(row string) string {
 // SemanticContentFingerprint canonicalizes a semantic payload and excludes the
 // named carrier field line before hashing.
 func SemanticContentFingerprint(payload []byte, carrier string) (string, error) {
+	canonical, err := excludeFieldLines(payload, carrier)
+	if err != nil {
+		return "", err
+	}
+	return Hash([]byte(canonical)), nil
+}
+
+// DecisionContentFingerprint computes the §5.6 decision-content fingerprint:
+// the canonical decision record excludes its fingerprint carrier and the exact
+// decision-approval envelope region, so attaching an approval envelope never
+// changes decision content or its fingerprint.
+func DecisionContentFingerprint(payload []byte, carrier string) (string, error) {
+	stripped, err := stripEnvelope(payload, "DECISION-APPROVAL-ENVELOPE")
+	if err != nil {
+		return "", err
+	}
+	canonical, err := excludeFieldLines(stripped, carrier)
+	if err != nil {
+		return "", err
+	}
+	return Hash([]byte(canonical)), nil
+}
+
+// excludeFieldLines canonicalizes a payload and removes the named carrier field
+// line (with its leading indentation) before returning the preimage.
+func excludeFieldLines(payload []byte, carrier string) (string, error) {
 	if carrier == "" {
 		return "", fmt.Errorf("canonical: empty carrier name")
 	}
@@ -110,7 +136,34 @@ func SemanticContentFingerprint(payload []byte, carrier string) (string, error) 
 		}
 		kept = append(kept, line)
 	}
-	return Hash([]byte(strings.Join(kept, "\n") + "\n")), nil
+	return strings.Join(kept, "\n") + "\n", nil
+}
+
+// stripEnvelope removes an exact HTML-comment delimited envelope region. The
+// region markers carry the protocol's explanatory suffix; at most one region is
+// allowed and a partial region fails closed.
+func stripEnvelope(payload []byte, envelope string) ([]byte, error) {
+	text := string(payload)
+	beginAt := strings.Index(text, "<!-- "+envelope)
+	if beginAt < 0 {
+		return payload, nil
+	}
+	lineEnd := strings.Index(text[beginAt:], "\n")
+	if lineEnd < 0 {
+		return nil, fmt.Errorf("canonical: unterminated %s begin marker", envelope)
+	}
+	beginEnd := beginAt + lineEnd
+	endMarker := "<!-- END-" + envelope + " -->"
+	endAt := strings.Index(text[beginEnd:], endMarker)
+	if endAt < 0 {
+		return nil, fmt.Errorf("canonical: missing %s end marker", envelope)
+	}
+	endAt += beginEnd + len(endMarker)
+	if strings.Contains(text[endAt:], "<!-- "+envelope) {
+		return nil, fmt.Errorf("canonical: duplicate %s regions", envelope)
+	}
+	stripped := text[:beginAt] + text[endAt:]
+	return []byte(strings.TrimRight(stripped, "\n") + "\n"), nil
 }
 
 // ValidEnvelopeKind reports whether the kind is a declared envelope kind.

@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"os"
@@ -10,8 +11,10 @@ import (
 
 	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/artifact"
+	"github.com/nckirik/legacy-autopsy/internal/decision"
 	"github.com/nckirik/legacy-autopsy/internal/equivalence"
 	"github.com/nckirik/legacy-autopsy/internal/handoff"
+	"github.com/nckirik/legacy-autopsy/internal/llm"
 	"github.com/nckirik/legacy-autopsy/internal/store"
 )
 
@@ -31,6 +34,8 @@ func specHandoff(args []string, stdout, stderr io.Writer) error {
 		return specHandoffReadiness(args[1:], stdout, stderr)
 	case "equivalence":
 		return specHandoffEquivalence(args[1:], stdout, stderr)
+	case "decisions":
+		return specHandoffDecisions(args[1:], stdout, stderr)
 	case "review":
 		return specHandoffReview(args[1:], stdout, stderr)
 	case "certificate":
@@ -42,7 +47,7 @@ func specHandoff(args []string, stdout, stderr io.Writer) error {
 	case "status":
 		return specHandoffStatus(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence, review, certificate, outer, sign, status", args[0])
+		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence, decisions, review, certificate, outer, sign, status", args[0])
 	}
 }
 
@@ -380,6 +385,148 @@ func specHandoffCertificate(args []string, stdout, stderr io.Writer) error {
 	fmt.Fprintf(stdout, "fingerprint: %s\n", certificate.Fingerprint)
 	fmt.Fprintf(stdout, "instance: %s\n", certificate.InstanceBinding)
 	fmt.Fprintf(stdout, "written: %s\n", *out)
+	return nil
+}
+
+// specHandoffDecisions drafts candidate decision content and commits the
+// human-approved decisions as canonical records. Drafting is bounded model work
+// over committed subjects; committing requires the recorded human review.
+func specHandoffDecisions(args []string, stdout, stderr io.Writer) error {
+	if len(args) == 0 {
+		return fmt.Errorf("usage: legacy-autopsy spec handoff decisions <draft|commit> [flags]")
+	}
+	switch args[0] {
+	case "draft":
+		return specHandoffDecisionsDraft(args[1:], stdout, stderr)
+	case "commit":
+		return specHandoffDecisionsCommit(args[1:], stdout, stderr)
+	default:
+		return fmt.Errorf("spec handoff decisions operation %q is unsupported; supported operations: draft, commit", args[0])
+	}
+}
+
+func specHandoffDecisionsDraft(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handoff decisions draft", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	out := set.String("out", decision.DraftPath, "candidate draft output file")
+	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
+	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
+	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec handoff decisions draft requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	targets, err := decision.Targets(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	if len(targets) == 0 {
+		fmt.Fprintf(stdout, "decision drafts: 0 (no unbound decision subjects)\n")
+		return nil
+	}
+	config, err := llm.ConfigFromEnv()
+	if err != nil {
+		return err
+	}
+	if *llmURL != "" {
+		config.BaseURL = *llmURL
+	}
+	if *llmModel != "" {
+		config.Model = *llmModel
+	}
+	effort := config.Reasoning
+	if *llmReasoning != "" {
+		effort = *llmReasoning
+	}
+	client, err := llm.NewClient(config)
+	if err != nil {
+		return err
+	}
+	drafts, err := decision.DraftAll(context.Background(), &handbookCompleter{client: client, effort: effort}, *db, res.EIR)
+	if err != nil {
+		return err
+	}
+	rendered, err := decision.RenderDraft(drafts, time.Now().UTC().Format(time.RFC3339))
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
+		return err
+	}
+	if err := os.WriteFile(*out, rendered, 0o644); err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "decision drafts: %d targets, written to %s\n", len(drafts), *out)
+	return nil
+}
+
+func specHandoffDecisionsCommit(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handoff decisions commit", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	draftFile := set.String("draft", decision.DraftPath, "reviewed candidate decision-draft file")
+	reviewFile := set.String("review", decision.ReviewPath, "recorded human decision review file")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec handoff decisions commit requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	draftContent, err := os.ReadFile(*draftFile)
+	if err != nil {
+		return err
+	}
+	entries, err := decision.ParseDraft(draftContent)
+	if err != nil {
+		return err
+	}
+	reviewContent, err := os.ReadFile(*reviewFile)
+	if err != nil {
+		return err
+	}
+	review, err := decision.ParseReview(reviewContent)
+	if err != nil {
+		return err
+	}
+	created, err := decision.CommitApproved(*db, res.EIR, header["system-namespace"], entries, review)
+	if err != nil {
+		return err
+	}
+	if len(created) == 0 {
+		fmt.Fprintf(stdout, "decision records created: 0 (no approved drafts; review result %s)\n", review.Result)
+		return nil
+	}
+	for _, id := range created {
+		fmt.Fprintf(stdout, "decision record: %s\n", id)
+	}
+	fmt.Fprintf(stdout, "decision records created: %d (review by %s at %s)\n", len(created), review.Reviewer, review.Timestamp)
 	return nil
 }
 

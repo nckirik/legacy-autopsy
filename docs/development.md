@@ -134,11 +134,31 @@ go run ./cmd/legacy-autopsy spec handoff sign --package-dir preview/bundle
 ```
 
 Human acts are interactive by design and never machine-authored:
-`spec handoff review readability|equivalence|confirm` prompt the operator
-(per-chapter Pass/Fail, per-mapping accept/exclude, per-group confirm) and record
-the result with reviewer identity and timestamp. `spec handbook mint` writes HBK
+`spec handoff review readability|equivalence|decisions|confirm` prompt the
+operator (per-chapter Pass/Fail, per-mapping accept/exclude, per-decision
+approve/reject/defer, per-group confirm) and record the result with reviewer
+identity and timestamp. `spec handbook mint` writes HBK
 semantic payloads to a separate directory, keeping the human chapters prose-first;
 `spec handbook mint --restore` rebuilds the clean views.
+
+Decision content follows the same human-authority split:
+
+```sh
+go run ./cmd/legacy-autopsy spec handoff decisions draft --db <workspace db>
+go run ./cmd/legacy-autopsy spec handoff review decisions
+go run ./cmd/legacy-autopsy spec handoff decisions commit --db <workspace db>
+```
+
+`decisions draft` drafts candidate content for every unbound decision subject
+(synthesis records with an empty target decision, pending capability decisions,
+and contradictions whose resolution requires a decision) from exact observed
+inputs. `review decisions` records the human verdicts. `decisions commit`
+creates one canonical `DECISION` record per approved draft: the
+decision-content fingerprint follows §5.6 (fingerprint carrier and the exact
+decision-approval envelope excluded), the approval fields come from the
+recorded review, and the candidate payload manifest binds the content
+version/fingerprint; readiness condition 03 rejects references whose approval
+binds stale content or lacks an approval envelope.
 
 Discovery enumerates files and, separately, the non-file units they declare:
 

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
+	"github.com/nckirik/legacy-autopsy/internal/decision"
 	"github.com/nckirik/legacy-autopsy/internal/equivalence"
 	"github.com/nckirik/legacy-autopsy/internal/handbook"
 	"github.com/nckirik/legacy-autopsy/internal/handoff"
@@ -29,11 +30,61 @@ func specHandoffReview(args []string, stdout, stderr io.Writer) error {
 		return specHandoffReviewReadability(args[1:], stdout, stderr)
 	case "equivalence":
 		return specHandoffReviewEquivalence(args[1:], stdout, stderr)
+	case "decisions":
+		return specHandoffReviewDecisions(args[1:], stdout, stderr)
 	case "confirm":
 		return specHandoffReviewConfirm(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec handoff review operation %q is unsupported; supported operations: readability, equivalence, confirm", args[0])
+		return fmt.Errorf("spec handoff review operation %q is unsupported; supported operations: readability, equivalence, decisions, confirm", args[0])
 	}
+}
+
+// specHandoffReviewDecisions records the human per-decision review of the
+// candidate decision drafts. The review is a human act: it is written only from
+// interactive answers (or a scripted answers file) and carries reviewer
+// identity and timestamp.
+func specHandoffReviewDecisions(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handoff review decisions", stderr)
+	file := set.String("file", decision.DraftPath, "candidate decision-draft file")
+	out := set.String("out", decision.ReviewPath, "review record output file")
+	reviewer := set.String("reviewer", "", "reviewer name / role (prompted when empty)")
+	scope := set.String("scope", "", "review scope (prompted when empty)")
+	limitations := set.String("limitations", "", "review limitations (prompted when empty)")
+	answers := set.String("answers", "", "scripted answers file (non-interactive)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	content, err := os.ReadFile(*file)
+	if err != nil {
+		return err
+	}
+	entries, err := decision.ParseDraft(content)
+	if err != nil {
+		return err
+	}
+	prompt, closeFn, err := reviewPrompter(*answers, stdout)
+	if err != nil {
+		return err
+	}
+	if closeFn != nil {
+		defer closeFn()
+	}
+	review := decision.Review{Reviewer: *reviewer, Scope: *scope, Limitations: *limitations}
+	review, err = decision.CollectReview(decision.Prompter(prompt), stdout, entries, review, time.Now().UTC().Format(time.RFC3339))
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
+		return err
+	}
+	if err := os.WriteFile(*out, decision.RenderReview(review), 0o644); err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "\ndecision review: %s (%d verdicts, result %s)\n", *out, len(review.Rows), review.Result)
+	return nil
 }
 
 // specHandoffReviewReadability records the human per-chapter readability review.
