@@ -84,6 +84,7 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 		user += "\n\nReviewer feedback to address in this revision:\n" + strings.TrimSpace(feedback) + "\n"
 	}
 	var rejection string
+	lastRejection := ""
 	for attempt := 0; attempt < 5; attempt++ {
 		if rejection != "" {
 			user = narrativeUserPrompt(*spec, observed, evidence) + "\n\nPrevious attempt rejected:\n" + rejection
@@ -138,6 +139,7 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 			return ChapterNarrative{Chapter: spec.Number, Markdown: full}, nil
 		}
 		rejection = strings.Join(problems, "\n")
+		lastRejection = rejection
 		for _, problem := range problems {
 			if strings.Contains(problem, "HBK-SUBSTANCE") {
 				rejection += "\nHint: split combined statements and add one cited sentence per distinct observed fact. Each finding usually supports several facts: its category, its affected scope, its risk, its safeguard gap, and its mitigation."
@@ -145,7 +147,7 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 			}
 		}
 	}
-	return ChapterNarrative{}, fmt.Errorf("handbook: chapter %s did not pass validation: %s", chapterNumber, feedback)
+	return ChapterNarrative{}, fmt.Errorf("handbook: chapter %s did not pass validation: %s", chapterNumber, lastRejection)
 }
 
 var claimPattern = regexp.MustCompile(`CLM-[A-F0-9]{12}`)
