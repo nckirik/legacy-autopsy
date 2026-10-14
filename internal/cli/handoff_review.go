@@ -46,6 +46,7 @@ func specHandoffReviewReadability(args []string, stdout, stderr io.Writer) error
 	scope := set.String("scope", "", "review scope (prompted when empty)")
 	limitations := set.String("limitations", "", "review limitations (prompted when empty)")
 	answers := set.String("answers", "", "scripted answers file (non-interactive)")
+	subset := set.String("chapters", "", "comma-separated chapter numbers to re-review and merge (for example 02 or 02,05)")
 	if err := set.Parse(args); err != nil {
 		return err
 	}
@@ -59,8 +60,26 @@ func specHandoffReviewReadability(args []string, stdout, stderr io.Writer) error
 	if len(sections) == 0 {
 		return fmt.Errorf("handoff review readability: no minted HBK sections in %s", *handbookDir)
 	}
+	existing := handbook.ReadabilityReviewFile{}
+	if content, err := os.ReadFile(*out); err == nil {
+		if parsed, err := handbook.ParseReadabilityReview(content); err == nil {
+			existing = parsed
+		}
+	}
 	var chapters []handbook.ChapterPrompt
+	wanted := map[string]bool{}
+	for _, token := range strings.Split(*subset, ",") {
+		token = strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(token), "0"))
+		if token != "" {
+			wanted[token] = true
+		}
+	}
 	for _, section := range sections {
+		number := strings.TrimPrefix(strings.TrimSuffix(section.Path, ".md"), "chapter-")
+		number = strings.TrimPrefix(number, "0")
+		if len(wanted) > 0 && !wanted[number] {
+			continue
+		}
 		view, err := os.ReadFile(filepath.Join(*dir, filepath.FromSlash(section.Path)))
 		if err != nil {
 			return err
@@ -76,6 +95,9 @@ func specHandoffReviewReadability(args []string, stdout, stderr io.Writer) error
 			Summary:     firstSummary(view),
 		})
 	}
+	if len(chapters) == 0 {
+		return fmt.Errorf("handoff review readability: no chapters match %q", *subset)
+	}
 	prompt, closeFn, err := reviewPrompter(*answers, stdout)
 	if err != nil {
 		return err
@@ -83,11 +105,37 @@ func specHandoffReviewReadability(args []string, stdout, stderr io.Writer) error
 	if closeFn != nil {
 		defer closeFn()
 	}
-	review := handbook.ReadabilityReviewFile{Reviewer: *reviewer, Scope: *scope, Limitations: *limitations}
-	review, err = handbook.CollectReadabilityReview(handbook.Prompter(prompt), stdout, chapters, review, time.Now().UTC().Format(time.RFC3339))
+	review := handbook.ReadabilityReviewFile{
+		Reviewer:    firstNonEmpty(*reviewer, existing.Reviewer),
+		Scope:       firstNonEmpty(*scope, existing.Scope),
+		Limitations: firstNonEmpty(*limitations, existing.Limitations),
+	}
+	newVerdicts, err := handbook.CollectReadabilityReview(handbook.Prompter(prompt), stdout, chapters, review, time.Now().UTC().Format(time.RFC3339))
 	if err != nil {
 		return err
 	}
+	merged := map[string]handbook.Verdict{}
+	order := []string{}
+	for _, verdict := range existing.Verdicts {
+		merged[verdict.HBKID] = verdict
+		order = append(order, verdict.HBKID)
+	}
+	for _, verdict := range newVerdicts.Verdicts {
+		if _, ok := merged[verdict.HBKID]; !ok {
+			order = append(order, verdict.HBKID)
+		}
+		merged[verdict.HBKID] = verdict
+	}
+	review.Verdicts = review.Verdicts[:0]
+	review.Result = "Pass"
+	for _, hbkID := range order {
+		verdict := merged[hbkID]
+		review.Verdicts = append(review.Verdicts, verdict)
+		if verdict.Verdict == "Fail" {
+			review.Result = "Fail"
+		}
+	}
+	review.Timestamp = newVerdicts.Timestamp
 	if err := os.MkdirAll(filepath.Dir(*out), 0o755); err != nil {
 		return err
 	}
@@ -459,4 +507,14 @@ func mintedSectionTitles(dir string) (map[string]string, error) {
 		titles[section.ID] = section.Title
 	}
 	return titles, nil
+}
+
+// firstNonEmpty returns the first non-empty value.
+func firstNonEmpty(values ...string) string {
+	for _, value := range values {
+		if strings.TrimSpace(value) != "" {
+			return value
+		}
+	}
+	return ""
 }

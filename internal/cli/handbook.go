@@ -85,6 +85,7 @@ func specHandbookNarrate(args []string, stdout, stderr io.Writer) error {
 	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
 	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
 	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
+	feedback := set.String("feedback", "", "reviewer feedback to address in this revision")
 	if err := set.Parse(args); err != nil {
 		return err
 	}
@@ -116,7 +117,7 @@ func specHandbookNarrate(args []string, stdout, stderr io.Writer) error {
 	if err != nil {
 		return err
 	}
-	narrative, err := handbook.Narrate(context.Background(), &handbookCompleter{client: client, effort: effort}, *db, res.EIR, *chapter)
+	narrative, err := handbook.Narrate(context.Background(), &handbookCompleter{client: client, effort: effort}, *db, res.EIR, *chapter, *feedback)
 	if err != nil {
 		return err
 	}

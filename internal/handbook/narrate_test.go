@@ -67,7 +67,7 @@ func TestNarrateComposesProseChapter(t *testing.T) {
 	doc, db := testDocDB(t)
 	claims := seedModules(t, db, doc, 8)
 	completer := &fakeCompleter{replies: []string{goodNarrative(claims)}}
-	narrative, err := Narrate(context.Background(), completer, db, doc, "01")
+	narrative, err := Narrate(context.Background(), completer, db, doc, "01", "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -95,7 +95,7 @@ func TestNarrateRetriesOnCitationsAndStyle(t *testing.T) {
 	claims := seedModules(t, db, doc, 8)
 	bad := "## Summary\nThe operator can't read module A (CLM-FFFFFFFFFFFF).\n\n## Observed Legacy Behavior\nA short paragraph.\n\n## Target Decisions\nNone.\n"
 	completer := &fakeCompleter{replies: []string{bad, goodNarrative(claims)}}
-	narrative, err := Narrate(context.Background(), completer, db, doc, "01")
+	narrative, err := Narrate(context.Background(), completer, db, doc, "01", "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -112,7 +112,7 @@ func TestNarrateFailsClosedOnPersistentProblems(t *testing.T) {
 	seedModules(t, db, doc, 8)
 	bad := "## Summary\nThe operator can't read this (CLM-FFFFFFFFFFFF).\n\n## Observed Legacy Behavior\nMissing citations.\n\n## Target Decisions\nNone.\n"
 	completer := &fakeCompleter{replies: []string{bad, bad, bad, bad, bad}}
-	if _, err := Narrate(context.Background(), completer, db, doc, "01"); err == nil {
+	if _, err := Narrate(context.Background(), completer, db, doc, "01", ""); err == nil {
 		t.Fatal("persistent validation failure accepted")
 	}
 }
@@ -121,7 +121,7 @@ func TestNarrateNumbersCitationsAndIndexesEvidence(t *testing.T) {
 	doc, db := testDocDB(t)
 	claims := seedModules(t, db, doc, 8)
 	completer := &fakeCompleter{replies: []string{goodNarrative(claims)}}
-	narrative, err := Narrate(context.Background(), completer, db, doc, "01")
+	narrative, err := Narrate(context.Background(), completer, db, doc, "01", "")
 	if err != nil {
 		t.Fatal(err)
 	}

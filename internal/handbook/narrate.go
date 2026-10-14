@@ -47,7 +47,7 @@ Do not add other headings, navigation, record IDs, or field tables. The runtime 
 // Narrate authors the full chapter narrative from its committed records and
 // validates citations, the STE rules, and the substance floor. It retries with
 // the validation findings as feedback.
-func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDoc, chapterNumber string) (ChapterNarrative, error) {
+func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDoc, chapterNumber, feedback string) (ChapterNarrative, error) {
 	specs := DefaultChapters()
 	var spec *ChapterSpec
 	for i := range specs {
@@ -80,10 +80,13 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 		return ChapterNarrative{}, err
 	}
 	user := narrativeUserPrompt(*spec, observed, evidence)
-	var feedback string
+	if strings.TrimSpace(feedback) != "" {
+		user += "\n\nReviewer feedback to address in this revision:\n" + strings.TrimSpace(feedback) + "\n"
+	}
+	var rejection string
 	for attempt := 0; attempt < 5; attempt++ {
-		if feedback != "" {
-			user = narrativeUserPrompt(*spec, observed, evidence) + "\n\nPrevious attempt rejected:\n" + feedback
+		if rejection != "" {
+			user = narrativeUserPrompt(*spec, observed, evidence) + "\n\nPrevious attempt rejected:\n" + rejection
 		}
 		text, err := completer.Complete(ctx, narrativeSystemPrompt, user)
 		if err != nil {
@@ -134,10 +137,10 @@ func Narrate(ctx context.Context, completer Completer, db string, doc *cdl.EIRDo
 			full := numbered + index + recordAppendix(observed)
 			return ChapterNarrative{Chapter: spec.Number, Markdown: full}, nil
 		}
-		feedback = strings.Join(problems, "\n")
+		rejection = strings.Join(problems, "\n")
 		for _, problem := range problems {
 			if strings.Contains(problem, "HBK-SUBSTANCE") {
-				feedback += "\nHint: split combined statements and add one cited sentence per distinct observed fact. Each finding usually supports several facts: its category, its affected scope, its risk, its safeguard gap, and its mitigation."
+				rejection += "\nHint: split combined statements and add one cited sentence per distinct observed fact. Each finding usually supports several facts: its category, its affected scope, its risk, its safeguard gap, and its mitigation."
 				break
 			}
 		}
