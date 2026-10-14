@@ -279,10 +279,36 @@ var typedTokenPattern = regexp.MustCompile(`^[A-Z][A-Z0-9-]*-[A-F0-9]{12,64}$`)
 func profileDependencies(db string, doc *cdl.EIRDoc, values map[string]string) ([][4]string, error) {
 	var tuples [][4]string
 	seen := map[string]bool{}
-	addReference := func(token string) error {
-		token = strings.Trim(strings.TrimSpace(token), "[]`")
+	// declaredFingerprint parses the protocol's `ID@version N sha256:...`
+	// dependency annotation into its fingerprint token.
+	declaredFingerprint := func(annotation string) (string, error) {
+		annotation = strings.TrimSpace(annotation)
+		if annotation == "" {
+			return "", nil
+		}
+		idx := strings.Index(annotation, "sha256:")
+		if idx < 0 {
+			return "", fmt.Errorf("profile dependency annotation %q declares no fingerprint", annotation)
+		}
+		token := annotation[idx:]
+		if cut := strings.IndexAny(token, " ,;"); cut > 0 {
+			token = token[:cut]
+		}
+		return token, nil
+	}
+	addReference := func(raw string) error {
+		token := strings.Trim(strings.TrimSpace(raw), "[]`")
 		if token == "" || strings.EqualFold(token, "None") || seen[token] {
 			return nil
+		}
+		declared := ""
+		if idx := strings.Index(token, "@"); idx > 0 {
+			value, err := declaredFingerprint(token[idx+1:])
+			if err != nil {
+				return err
+			}
+			declared = value
+			token = strings.TrimSpace(token[:idx])
 		}
 		if idx := strings.IndexAny(token, " "); idx > 0 {
 			token = token[:idx]
@@ -297,6 +323,9 @@ func profileDependencies(db string, doc *cdl.EIRDoc, values map[string]string) (
 					fingerprint, err := store.FingerprintOf(db, doc, field, record)
 					if err != nil {
 						return err
+					}
+					if declared != "" && declared != fingerprint {
+						return fmt.Errorf("profile dependency %s declares fingerprint %s but the committed record is %s", token, declared, fingerprint)
 					}
 					seen[token] = true
 					tuples = append(tuples, [4]string{record, fmt.Sprintf("version %d %s", version, fingerprint), "REFERENCE", "None"})
@@ -314,6 +343,15 @@ func profileDependencies(db string, doc *cdl.EIRDoc, values map[string]string) (
 			payload, err := store.Get(db, doc, "CLAIM", token)
 			if err != nil {
 				return fmt.Errorf("profile dependency %s does not resolve", token)
+			}
+			if declared != "" {
+				fingerprint, err := store.FingerprintOf(db, doc, "CLAIM", token)
+				if err != nil {
+					return err
+				}
+				if declared != fingerprint {
+					return fmt.Errorf("profile dependency %s declares fingerprint %s but the committed record is %s", token, declared, fingerprint)
+				}
 			}
 			claim, err := work.PayloadText(claimNames, payload)
 			if err != nil {
@@ -338,6 +376,9 @@ func profileDependencies(db string, doc *cdl.EIRDoc, values map[string]string) (
 		fingerprint, err := store.FingerprintOf(db, doc, fieldID, token)
 		if err != nil {
 			return err
+		}
+		if declared != "" && declared != fingerprint {
+			return fmt.Errorf("profile dependency %s declares fingerprint %s but the committed record is %s", token, declared, fingerprint)
 		}
 		tuples = append(tuples, [4]string{token, fmt.Sprintf("version %d %s", version, fingerprint), "REFERENCE", "None"})
 		return nil
