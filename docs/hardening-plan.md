@@ -338,10 +338,22 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
       fault-topology coverage checks. The handoff candidate evaluator
       (`spec handoff candidate`) now evaluates all 14 §15.1 candidate conditions on
       the fresh `veri-yonetimi` workspace: **14 pass, 0 fail, 0 unsupported**.
-- [ ] Handoff: artifact authoring, packaging, and the §15.5 verifier chain.
-      **Ready** on the candidate report; remaining is stage-4/6 package assembly and
-      the human content-readiness acts (decisions, confirmations, readability,
-      equivalence).
+- [x] Exit E Candidate Report emission (§15.4 step 2, first artifact):
+      `spec handoff report` validates the 14 candidate conditions, computes the
+      deterministic coverage/traceability/handbook summaries, the candidate
+      input-set fingerprint, the Exit A report projection fingerprint, and a §12.5
+      evidence-set fingerprint per check row, then serializes the immutable
+      artifact payload with the generic §4.1.2 boundaries and prints its payload
+      fingerprint and instance binding. Live fresh workspace:
+      **Ready-For-Human-Review**, 14/14 checks Pass, empty blockers. The preflight
+      header default protocol version now tracks the compiled edition (`cdl`), and
+      `spec record put --update-existing` supports explicit versioned replacement.
+- [ ] Handoff: remaining packaging stages. Next: HBK handbook-section payload
+      minting (typed HBK IDs, anchors, semantic fingerprints) so the candidate
+      payload manifest can list synthesis + PRF + HBK bindings; then the
+      content-readiness report, scope certificate, outer bundle manifest, and the
+      §15.5 final verification with the human content-readiness acts (decisions,
+      confirmations, readability, equivalence).
 - [x] Traversal closure modeling (PI-17, v4.3): `REQUIRED-TRAVERSAL-MATRIX-ROW` records
       keyed by cluster/persona/POV/track/environment/snapshot; `spec preflight matrix`
       mechanically expands cells; the gate evaluates real closure (live pilot 0/25).
