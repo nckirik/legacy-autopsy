@@ -34,6 +34,8 @@ type ReadinessOptions struct {
 	ManifestPath          string
 	ManifestArtifactPath  string
 	HandbookDir           string
+	HandbookPrefix        string
+	HandbookViewDir       string
 	EquivalencePath       string
 	StoreDump             []byte
 	ArtifactPath          string
@@ -408,26 +410,17 @@ func readinessMembers(opts ReadinessOptions) ([]memberRow, error) {
 		}
 	}
 	if opts.HandbookDir != "" {
-		entries, err := os.ReadDir(opts.HandbookDir)
-		if err != nil {
+		prefix := opts.HandbookPrefix
+		if prefix == "" {
+			prefix = "handbook/sections"
+		}
+		if err := addDirectoryMembers(opts.HandbookDir, prefix, "HANDBOOK-SECTION", add); err != nil {
 			return nil, err
 		}
-		var names []string
-		for _, entry := range entries {
-			if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".md") {
-				continue
-			}
-			names = append(names, entry.Name())
-		}
-		sort.Strings(names)
-		for _, name := range names {
-			content, err := os.ReadFile(filepath.Join(opts.HandbookDir, name))
-			if err != nil {
-				return nil, err
-			}
-			if err := add("handbook/"+name, "HANDBOOK-SECTION", content); err != nil {
-				return nil, err
-			}
+	}
+	if opts.HandbookViewDir != "" {
+		if err := addDirectoryMembers(opts.HandbookViewDir, "handbook", "HANDBOOK-VIEW", add); err != nil {
+			return nil, err
 		}
 	}
 	sort.Slice(members, func(i, j int) bool {
@@ -437,6 +430,33 @@ func readinessMembers(opts ReadinessOptions) ([]memberRow, error) {
 		return members[i].artifactType < members[j].artifactType
 	})
 	return members, nil
+}
+
+// addDirectoryMembers adds every Markdown file of one directory as a package
+// member under the given package-relative prefix.
+func addDirectoryMembers(dir, prefix, artifactType string, add func(path, artifactType string, content []byte) error) error {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return err
+	}
+	var names []string
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".md") {
+			continue
+		}
+		names = append(names, entry.Name())
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		content, err := os.ReadFile(filepath.Join(dir, name))
+		if err != nil {
+			return err
+		}
+		if err := add(prefix+"/"+name, artifactType, content); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func reportField(payload []byte, slug string) string {

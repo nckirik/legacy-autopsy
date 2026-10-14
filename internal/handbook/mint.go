@@ -196,6 +196,32 @@ func LoadMintedSections(dir string) ([]MintedSection, error) {
 	return sections, nil
 }
 
+// RestoreDir strips every HBK wrapper from an already-minted directory,
+// restoring the clean human reading view. Unminted files are left untouched.
+func RestoreDir(dir string) (int, error) {
+	names, err := chapterFiles(dir)
+	if err != nil {
+		return 0, err
+	}
+	restored := 0
+	for _, name := range names {
+		path := filepath.Join(dir, name)
+		raw, err := os.ReadFile(path)
+		if err != nil {
+			return restored, err
+		}
+		if !strings.Contains(string(raw), mintPayloadMarker) {
+			continue
+		}
+		clean := strings.Trim(unmint(string(raw)), "\n") + "\n"
+		if err := os.WriteFile(path, []byte(clean), 0o644); err != nil {
+			return restored, err
+		}
+		restored++
+	}
+	return restored, nil
+}
+
 // WriteSections writes the minted bytes back to the chapter files.
 func WriteSections(dir string, sections []MintedSection) error {
 	for _, section := range sections {

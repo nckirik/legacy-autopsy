@@ -218,17 +218,26 @@ func specHandbookMint(args []string, stdout, stderr io.Writer) error {
 	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
 	source := set.String("source", "", "single CDL source (default: full assembly)")
 	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
-	db := set.String("db", "", "SQLite database path (required)")
-	dir := set.String("dir", "", "rendered handbook directory (required)")
-	write := set.Bool("write", false, "write the minted sections back in place")
+	db := set.String("db", "", "SQLite database path")
+	dir := set.String("dir", "preview", "clean human handbook chapter directory")
+	out := set.String("out", "preview/package/handbook/sections", "output directory for the minted HBK section payloads")
+	restore := set.Bool("restore", false, "strip HBK wrappers from --dir instead of minting")
 	if err := set.Parse(args); err != nil {
 		return err
 	}
 	if len(set.Args()) != 0 {
 		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
 	}
-	if *db == "" || *dir == "" {
-		return fmt.Errorf("spec handbook mint requires --db and --dir")
+	if !*restore && *db == "" {
+		return fmt.Errorf("spec handbook mint requires --db")
+	}
+	if *restore {
+		restored, err := handbook.RestoreDir(*dir)
+		if err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "restored %d clean chapters in %s\n", restored, *dir)
+		return nil
 	}
 	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
 	if err != nil {
@@ -261,14 +270,15 @@ func specHandbookMint(args []string, stdout, stderr io.Writer) error {
 	if len(sections) == 0 {
 		return fmt.Errorf("handbook mint: no chapter files in %s", *dir)
 	}
-	if *write {
-		if err := handbook.WriteSections(*dir, sections); err != nil {
-			return err
-		}
+	if err := os.MkdirAll(*out, 0o755); err != nil {
+		return err
+	}
+	if err := handbook.WriteSections(*out, sections); err != nil {
+		return err
 	}
 	for _, section := range sections {
 		fmt.Fprintf(stdout, "%-20s %-24s v%d %s upstream=%d\n", section.ID, section.Path, section.Version, section.Fingerprint, len(section.Upstream))
 	}
-	fmt.Fprintf(stdout, "handbook sections: %d (written=%v)\n", len(sections), *write)
+	fmt.Fprintf(stdout, "handbook sections: %d (source=%s, out=%s)\n", len(sections), *dir, *out)
 	return nil
 }

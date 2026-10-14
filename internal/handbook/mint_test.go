@@ -53,6 +53,20 @@ func TestMintSectionsRoundTrip(t *testing.T) {
 	if string(again[0].Bytes) != string(section.Bytes) {
 		t.Fatalf("re-mint changed bytes")
 	}
+	restored, err := RestoreDir(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if restored != 1 {
+		t.Fatalf("restored = %d, want 1", restored)
+	}
+	clean, err := os.ReadFile(filepath.Join(dir, "chapter-01.md"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(clean) != chapter {
+		t.Fatalf("restore did not reproduce the clean chapter:\n%s", clean)
+	}
 	if _, ok := sections[0].Upstream[0], true; !ok {
 		t.Fatal("unreachable")
 	}

@@ -32,6 +32,7 @@ type ManifestOptions struct {
 	ReportPath         string
 	ReportArtifactPath string
 	HandbookDir        string
+	HandbookPrefix     string
 	ArtifactPath       string
 }
 
@@ -62,6 +63,9 @@ func BuildCandidatePayloadManifest(db string, doc *cdl.EIRDoc, opts ManifestOpti
 	}
 	if opts.ReportArtifactPath == "" {
 		opts.ReportArtifactPath = CandidateReportDefaultPath
+	}
+	if opts.HandbookPrefix == "" {
+		opts.HandbookPrefix = "handbook/sections"
 	}
 	reportBytes, err := os.ReadFile(opts.ReportPath)
 	if err != nil {
@@ -159,7 +163,7 @@ func BuildCandidatePayloadManifest(db string, doc *cdl.EIRDoc, opts ManifestOpti
 				version:     fmt.Sprintf("%d", section.Version),
 				fingerprint: section.Fingerprint,
 				dependency:  artifact.DependencySetFingerprint("HBK", section.ID, tuples),
-				path:        "handbook/" + section.Path,
+				path:        opts.HandbookPrefix + "/" + section.Path,
 			})
 		}
 	}

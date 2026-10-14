@@ -143,7 +143,8 @@ func specHandoffManifest(args []string, stdout, stderr io.Writer) error {
 	db := set.String("db", "", "SQLite database path (required)")
 	report := set.String("report", "preview/package/EXIT-E-CANDIDATE-REPORT.md", "emitted candidate report payload file")
 	reportPath := set.String("report-artifact-path", handoff.CandidateReportDefaultPath, "candidate report package-relative artifact path")
-	handbookDir := set.String("handbook-dir", "", "minted handbook directory to bind HBK sections")
+	handbookDir := set.String("handbook-dir", "preview/package/handbook/sections", "minted HBK section payload directory")
+	handbookPrefix := set.String("handbook-prefix", "handbook/sections", "package-relative prefix of HBK section payloads")
 	out := set.String("out", "preview/package/CANDIDATE-PAYLOAD-MANIFEST.md", "output file for the artifact payload")
 	artifactPath := set.String("artifact-path", handoff.CandidateManifestDefaultPath, "package-relative artifact path")
 	if err := set.Parse(args); err != nil {
@@ -168,6 +169,7 @@ func specHandoffManifest(args []string, stdout, stderr io.Writer) error {
 		ReportPath:         *report,
 		ReportArtifactPath: *reportPath,
 		HandbookDir:        *handbookDir,
+		HandbookPrefix:     *handbookPrefix,
 		ArtifactPath:       *artifactPath,
 	})
 	if err != nil {
@@ -199,7 +201,9 @@ func specHandoffReadiness(args []string, stdout, stderr io.Writer) error {
 	reportPath := set.String("report-artifact-path", handoff.CandidateReportDefaultPath, "candidate report package-relative artifact path")
 	manifest := set.String("manifest", "preview/package/CANDIDATE-PAYLOAD-MANIFEST.md", "emitted candidate payload manifest file")
 	manifestPath := set.String("manifest-artifact-path", handoff.CandidateManifestDefaultPath, "manifest package-relative artifact path")
-	handbookDir := set.String("handbook-dir", "", "minted handbook directory")
+	handbookDir := set.String("handbook-dir", "preview/package/handbook/sections", "minted HBK section payload directory")
+	handbookPrefix := set.String("handbook-prefix", "handbook/sections", "package-relative prefix of HBK section payloads")
+	handbookViewDir := set.String("handbook-view-dir", "preview", "clean human handbook view directory")
 	equivalencePath := set.String("equivalence", "", "generated acceptance-suite file")
 	out := set.String("out", "preview/package/EXIT-E-CONTENT-READINESS-REPORT.md", "output file for the artifact payload")
 	artifactPath := set.String("artifact-path", handoff.ContentReadinessDefaultPath, "package-relative artifact path")
@@ -237,6 +241,8 @@ func specHandoffReadiness(args []string, stdout, stderr io.Writer) error {
 		ManifestPath:          *manifest,
 		ManifestArtifactPath:  *manifestPath,
 		HandbookDir:           *handbookDir,
+		HandbookPrefix:        *handbookPrefix,
+		HandbookViewDir:       *handbookViewDir,
 		EquivalencePath:       *equivalencePath,
 		StoreDump:             dump,
 		ArtifactPath:          *artifactPath,
