@@ -95,9 +95,9 @@ content after the canonical COMMIT block, verifies the sidecar (or an explicit
 `--expect-fingerprint`) before applying anything, and re-verifies the live schema
 against the EIR-derived schema after applying. A dump that exports, imports, and
 re-exports is byte-identical.
-go run ./cmd/legacy-autopsy spec store --db /tmp/autopsy.db          # canonical dump + fingerprint
-```
+go run ./cmd/legacy-autopsy spec store --db /tmp/autopsy.db # canonical dump + fingerprint
 
+````
 `spec compile` validates the identity ledger and prints the source fingerprint and EIR
 hash; `spec render` renders one projection/channel with a provenance header; `spec run`
 executes the native VM over a synthetic fixture and prints the canonical trace and hash.
@@ -115,7 +115,7 @@ The same checks are available as Go tests:
 go test ./cdl/               # compiler, renderer, ledger, negative fixtures
 go test ./internal/parity/   # test A (backend) and test B (protocol parity)
 go test ./internal/analysis/ # classification coverage and metrics golden
-```
+````
 
 S2 analysis lives in [`coverage-profile.md`](coverage-profile.md) and
 [`capability-contracts.md`](capability-contracts.md). Regenerate the metrics golden with
