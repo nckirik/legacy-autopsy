@@ -348,10 +348,20 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
       **Ready-For-Human-Review**, 14/14 checks Pass, empty blockers. The preflight
       header default protocol version now tracks the compiled edition (`cdl`), and
       `spec record put --update-existing` supports explicit versioned replacement.
-- [ ] Handoff: remaining packaging stages. Next: HBK handbook-section payload
-      minting (typed HBK IDs, anchors, semantic fingerprints) so the candidate
-      payload manifest can list synthesis + PRF + HBK bindings; then the
-      content-readiness report, scope certificate, outer bundle manifest, and the
+- [x] HBK handbook-section minting (`spec handbook mint`): wraps every chapter in
+      its typed HBK payload (ID from namespace + path + stable anchor, semantic
+      version, runtime-computed semantic-content fingerprint, resolved UPSTREAM
+      synthesis versions/fingerprints) with the B-POPULATED certification envelope;
+      re-minting is byte-idempotent and stale fingerprints fail closed.
+- [x] Candidate payload manifest emission (§15.4 step 2, second artifact):
+      `spec handoff manifest` binds all 60 synthesis records, 5 PRF profiles, and 16
+      HBK sections with versions, semantic fingerprints, dependency-set
+      fingerprints (derived-from edges, profile closures, HBK upstream), the
+      one-way candidate report reference, and counts. Live fresh workspace: 81
+      semantic bindings, fingerprint `sha256:49be221c...`.
+- [ ] Handoff: remaining packaging stages. Next: the Exit E Content-Readiness Report
+      (candidate revalidation, envelope/member checks, pending confirmation and
+      decision blockers), then the scope certificate, outer bundle manifest, and the
       §15.5 final verification with the human content-readiness acts (decisions,
       confirmations, readability, equivalence).
 - [x] Traversal closure modeling (PI-17, v4.3): `REQUIRED-TRAVERSAL-MATRIX-ROW` records

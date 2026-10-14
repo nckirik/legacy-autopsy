@@ -61,6 +61,28 @@ func LoadPersonas(db string, doc *cdl.EIRDoc) ([]PersonaRow, error) {
 	return rows, nil
 }
 
+// FieldForID maps a typed record ID to its declared synthesis FIELD ID.
+func FieldForID(id string) (string, bool) {
+	prefix := id
+	if idx := strings.Index(id, "-"); idx > 0 {
+		prefix = id[:idx]
+	}
+	for _, catalog := range Catalogs {
+		if catalog.IDType == prefix {
+			return catalog.FieldID, true
+		}
+	}
+	switch prefix {
+	case "PRF":
+		return "PERSONA-PROFILE", true
+	case "PRV":
+		return "PRIVACY-FINDING", true
+	case "CAP":
+		return "CAPABILITY-RECORD", true
+	}
+	return "", false
+}
+
 // ProfileID computes the §4.1 canonical PRF identity: type, namespace, persona
 // prefix, and the fixed `persona-profile` discriminator.
 func ProfileID(namespace, prefix string) (string, error) {

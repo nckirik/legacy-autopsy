@@ -9,6 +9,8 @@ import (
 
 	"github.com/nckirik/legacy-autopsy/internal/handbook"
 	"github.com/nckirik/legacy-autopsy/internal/llm"
+	"github.com/nckirik/legacy-autopsy/internal/store"
+	"github.com/nckirik/legacy-autopsy/internal/synthesis"
 )
 
 // specHandbook renders the human handbook draft from committed synthesis records.
@@ -25,8 +27,11 @@ func specHandbook(args []string, stdout, stderr io.Writer) error {
 	if args[0] == "evidence" {
 		return specHandbookEvidence(args[1:], stdout, stderr)
 	}
+	if args[0] == "mint" {
+		return specHandbookMint(args[1:], stdout, stderr)
+	}
 	if args[0] != "draft" {
-		return fmt.Errorf("spec handbook operation %q is unsupported; supported operations: draft, narrate, index, evidence", args[0])
+		return fmt.Errorf("spec handbook operation %q is unsupported; supported operations: draft, narrate, index, evidence, mint", args[0])
 	}
 	set := flags("spec handbook draft", stderr)
 	repo := set.String("repo", ".", "protocol repository root")
@@ -203,4 +208,67 @@ func specHandbookEvidence(args []string, stdout, stderr io.Writer) error {
 	}
 	_, err = stdout.Write(register)
 	return err
+}
+
+// specHandbookMint wraps rendered chapters in typed HBK semantic payloads and
+// certification envelopes, then optionally writes them back in place.
+func specHandbookMint(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handbook mint", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	dir := set.String("dir", "", "rendered handbook directory (required)")
+	write := set.Bool("write", false, "write the minted sections back in place")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" || *dir == "" {
+		return fmt.Errorf("spec handbook mint requires --db and --dir")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	namespaces := strings.TrimSpace(header["system-namespace"])
+	resolver := func(id string) (handbook.UpstreamRef, bool) {
+		fieldID, ok := synthesis.FieldForID(id)
+		if !ok {
+			return handbook.UpstreamRef{}, false
+		}
+		version, err := store.VersionOf(*db, res.EIR, fieldID, id)
+		if err != nil {
+			return handbook.UpstreamRef{}, false
+		}
+		fingerprint, err := store.FingerprintOf(*db, res.EIR, fieldID, id)
+		if err != nil {
+			return handbook.UpstreamRef{}, false
+		}
+		return handbook.UpstreamRef{ID: id, Version: version, Fingerprint: fingerprint}, true
+	}
+	sections, err := handbook.MintSections(*dir, namespaces, resolver)
+	if err != nil {
+		return err
+	}
+	if len(sections) == 0 {
+		return fmt.Errorf("handbook mint: no chapter files in %s", *dir)
+	}
+	if *write {
+		if err := handbook.WriteSections(*dir, sections); err != nil {
+			return err
+		}
+	}
+	for _, section := range sections {
+		fmt.Fprintf(stdout, "%-20s %-24s v%d %s upstream=%d\n", section.ID, section.Path, section.Version, section.Fingerprint, len(section.Upstream))
+	}
+	fmt.Fprintf(stdout, "handbook sections: %d (written=%v)\n", len(sections), *write)
+	return nil
 }

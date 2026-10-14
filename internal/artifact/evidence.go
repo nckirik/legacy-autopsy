@@ -120,6 +120,25 @@ func evidenceTuple(binding EvidenceBinding) string {
 	return strings.Join([]string{binding.Path, binding.Kind, binding.RecordID, binding.Version, binding.Fingerprint}, "|")
 }
 
+// DependencySetFingerprint binds one record identity to its exact sorted
+// dependency tuples. Preimage: `DEPENDENCY-SET|`, record type, record ID, and
+// the canonical (Source Record ID, Source Version, Binding Kind, Claim ID)
+// table.
+func DependencySetFingerprint(recordType, recordID string, tuples [][4]string) string {
+	sorted := append([][4]string(nil), tuples...)
+	sort.Slice(sorted, func(i, j int) bool {
+		return strings.Join(sorted[i][:], "|") < strings.Join(sorted[j][:], "|")
+	})
+	var b strings.Builder
+	b.WriteString("| Source Record ID | Source Version | Binding Kind | Claim ID |\n")
+	b.WriteString("| --- | --- | --- | --- |\n")
+	for _, tuple := range sorted {
+		fmt.Fprintf(&b, "| %s | %s | %s | %s |\n", tuple[0], tuple[1], tuple[2], tuple[3])
+	}
+	canonical, _ := capabilities.CanonicalMarkdown([]byte(b.String()))
+	return capabilities.Hash([]byte("DEPENDENCY-SET|" + recordType + "|" + recordID + "\n" + string(canonical)))
+}
+
 // ValidationSummaryFingerprint computes a deterministic validator-output
 // fingerprint over a snapshot and sorted key/value rows.
 func ValidationSummaryFingerprint(validatorID, snapshot string, rows [][2]string) string {
