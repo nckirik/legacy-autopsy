@@ -250,8 +250,9 @@ func validateCommand(args []string, stdout, stderr io.Writer) error {
 		return nil
 	case "fixtures":
 		_ = implemented
-		summary, err := fixtures.Run(*repo)
+		summary, err := fixtures.RunWithConformance(*repo)
 		fmt.Fprintf(stdout, "implemented bootstrap fixtures: %d passed, %d failed\n", summary.Passed, summary.Failed)
+		fmt.Fprintf(stdout, "bootstrap conformance fixtures: %d passed, %d failed\n", summary.ConformancePassed, summary.ConformanceFailed)
 		fmt.Fprintln(stdout, "unsupported conformance groups:")
 		for _, item := range summary.Unsupported {
 			fmt.Fprintln(stdout, "-", item)

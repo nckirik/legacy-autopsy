@@ -35,6 +35,10 @@ type Summary struct {
 	Passed      int
 	Failed      int
 	Unsupported []string
+	// Conformance counts the additional bootstrap conformance cases that are
+	// not part of the frozen 24-case legacy parity oracle.
+	ConformancePassed int
+	ConformanceFailed int
 }
 
 type diagnosticError struct {
@@ -76,8 +80,19 @@ var unsupported = []string{
 	"Part 17.2 snapshot-consistent acyclic Exit E and final verification",
 }
 
+// Run executes the frozen 24-case legacy parity oracle.
 func Run(repoRoot string) (Summary, error) {
-	cases, err := loadCases(repoRoot)
+	return runGroups(repoRoot, []string{"positive", "negative"}, false)
+}
+
+// RunWithConformance additionally executes the bootstrap conformance cases that
+// are not part of the frozen legacy parity oracle.
+func RunWithConformance(repoRoot string) (Summary, error) {
+	return runGroups(repoRoot, []string{"positive", "negative", "conformance/positive", "conformance/negative"}, true)
+}
+
+func runGroups(repoRoot string, groups []string, conformance bool) (Summary, error) {
+	cases, conformanceIDs, err := loadCases(repoRoot, groups)
 	if err != nil {
 		return Summary{}, err
 	}
@@ -85,31 +100,42 @@ func Run(repoRoot string) (Summary, error) {
 	var failures []string
 	for _, fixture := range cases {
 		actual, runErr := execute(repoRoot, fixture)
+		conformanceCase := conformance && conformanceIDs[fixture.ID]
+		fail := func(message string) {
+			if conformanceCase {
+				summary.ConformanceFailed++
+			} else {
+				summary.Failed++
+			}
+			failures = append(failures, message)
+		}
+		pass := func() {
+			if conformanceCase {
+				summary.ConformancePassed++
+			} else {
+				summary.Passed++
+			}
+		}
 		if fixture.ExpectError {
 			var diagnostic *diagnosticError
 			switch {
 			case runErr == nil:
-				summary.Failed++
-				failures = append(failures, fixture.ID+": expected rejection")
+				fail(fixture.ID + ": expected rejection")
 			case !errors.As(runErr, &diagnostic):
-				summary.Failed++
-				failures = append(failures, fixture.ID+": rejection lacked a stable diagnostic class")
+				fail(fixture.ID + ": rejection lacked a stable diagnostic class")
 			case diagnostic.Code != fixture.ExpectedDiagnostic:
-				summary.Failed++
-				failures = append(failures, fmt.Sprintf("%s: expected diagnostic %q, got %q", fixture.ID, fixture.ExpectedDiagnostic, diagnostic.Code))
+				fail(fmt.Sprintf("%s: expected diagnostic %q, got %q", fixture.ID, fixture.ExpectedDiagnostic, diagnostic.Code))
 			default:
-				summary.Passed++
+				pass()
 			}
 			continue
 		}
 		if runErr != nil {
-			summary.Failed++
-			failures = append(failures, fixture.ID+": "+runErr.Error())
+			fail(fixture.ID + ": " + runErr.Error())
 		} else if actual != fixture.Expected {
-			summary.Failed++
-			failures = append(failures, fmt.Sprintf("%s: expected %q, got %q", fixture.ID, fixture.Expected, actual))
+			fail(fmt.Sprintf("%s: expected %q, got %q", fixture.ID, fixture.Expected, actual))
 		} else {
-			summary.Passed++
+			pass()
 		}
 	}
 	if len(failures) > 0 {
@@ -118,18 +144,19 @@ func Run(repoRoot string) (Summary, error) {
 	return summary, nil
 }
 
-func loadCases(repoRoot string) ([]Case, error) {
+func loadCases(repoRoot string, groups []string) ([]Case, map[string]bool, error) {
 	model, err := protocol.Load(protocol.OraclePath(repoRoot))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	var cases []Case
+	conformance := map[string]bool{}
 	seen := map[string]struct{}{}
-	for _, polarity := range []string{"positive", "negative"} {
-		dir := filepath.Join(repoRoot, "fixtures", polarity)
+	for _, polarity := range groups {
+		dir := filepath.Join(repoRoot, "fixtures", filepath.FromSlash(polarity))
 		entries, err := os.ReadDir(dir)
 		if err != nil {
-			return nil, fmt.Errorf("read %s fixtures: %w", polarity, err)
+			return nil, nil, fmt.Errorf("read %s fixtures: %w", polarity, err)
 		}
 		for _, entry := range entries {
 			if entry.IsDir() || filepath.Ext(entry.Name()) != ".json" {
@@ -137,39 +164,42 @@ func loadCases(repoRoot string) ([]Case, error) {
 			}
 			data, err := os.ReadFile(filepath.Join(dir, entry.Name()))
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			var fileCases []Case
 			if err := json.Unmarshal(data, &fileCases); err != nil {
-				return nil, fmt.Errorf("parse %s: %w", entry.Name(), err)
+				return nil, nil, fmt.Errorf("parse %s: %w", entry.Name(), err)
 			}
 			for _, fixture := range fileCases {
 				if fixture.ID == "" || fixture.ProtocolSection == "" || fixture.Group == "" || fixture.Operation == "" {
-					return nil, fmt.Errorf("%s contains incomplete fixture metadata", entry.Name())
+					return nil, nil, fmt.Errorf("%s contains incomplete fixture metadata", entry.Name())
 				}
 				if !model.HasSection(fixture.ProtocolSection) {
-					return nil, fmt.Errorf("%s references missing or duplicate protocol section %q", fixture.ID, fixture.ProtocolSection)
+					return nil, nil, fmt.Errorf("%s references missing or duplicate protocol section %q", fixture.ID, fixture.ProtocolSection)
 				}
 				expectedGroup, supported := operationGroups[fixture.Operation]
 				if !supported || fixture.Group != expectedGroup {
-					return nil, fmt.Errorf("%s has unregistered operation/group pair %q/%q", fixture.ID, fixture.Operation, fixture.Group)
+					return nil, nil, fmt.Errorf("%s has unregistered operation/group pair %q/%q", fixture.ID, fixture.Operation, fixture.Group)
 				}
 				if fixture.ExpectError && fixture.ExpectedDiagnostic == "" {
-					return nil, fmt.Errorf("%s lacks an expected diagnostic class", fixture.ID)
+					return nil, nil, fmt.Errorf("%s lacks an expected diagnostic class", fixture.ID)
 				}
 				if _, duplicate := seen[fixture.ID]; duplicate {
-					return nil, fmt.Errorf("duplicate fixture ID %q", fixture.ID)
+					return nil, nil, fmt.Errorf("duplicate fixture ID %q", fixture.ID)
 				}
 				seen[fixture.ID] = struct{}{}
+				if strings.HasPrefix(polarity, "conformance") {
+					conformance[fixture.ID] = true
+				}
 				cases = append(cases, fixture)
 			}
 		}
 	}
 	if len(cases) == 0 {
-		return nil, fmt.Errorf("no implemented fixtures found")
+		return nil, nil, fmt.Errorf("no implemented fixtures found")
 	}
 	sort.Slice(cases, func(i, j int) bool { return cases[i].ID < cases[j].ID })
-	return cases, nil
+	return cases, conformance, nil
 }
 
 func execute(repoRoot string, fixture Case) (string, error) {
