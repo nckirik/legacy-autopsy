@@ -60,7 +60,7 @@ func LifecyclePlan(db string, doc *cdl.EIRDoc, namespace, snapshot string, batch
 		b.WriteString("- `reason` is one short sentence grounded in the cited claims.\n")
 		b.WriteString("- `clm-evidence-bindings` lists the claim IDs you used, comma-separated, or None.\n")
 		b.WriteString("- `classified-by-invocation` is runtime-assigned: emit the field with placeholder value PENDING.\n")
-		b.WriteString("- `snapshot` is the snapshot above.\n\n")
+		fmt.Fprintf(&b, "- `snapshot` is exactly the snapshot value `%s`; never a fingerprint or path.\n\n", snapshot)
 		for _, item := range batch {
 			fmt.Fprintf(&b, "## Source unit %s\n\n- **Concrete Coordinate:** %s\n", item.ID, item.Coordinate)
 			claims := claimsBySubject[item.ID]
@@ -79,17 +79,17 @@ func LifecyclePlan(db string, doc *cdl.EIRDoc, namespace, snapshot string, batch
 			reads = append(reads, work.Ref{FieldID: "SOURCE-INVENTORY-RECORD", RecordID: item.ID})
 		}
 		units = append(units, work.Unit{
-			ID:              fmt.Sprintf("U-ASSURANCE-LIFECYCLE-%03d", start/batchSize+1),
-			Mode:            "Discovery",
-			Scope:           namespace,
-			IDFromFields:    []string{"scope-id"},
-			RuntimeFields:   []string{"classified-by-invocation"},
-			ExpectedRecords: len(batch),
-			ResultType:      "LIFECYCLE-ELIGIBILITY",
-			Reads:           reads,
-			Inputs:          []work.Input{{Name: "lifecycle-context.md", Bytes: []byte(b.String())}},
-			Sections:        []string{"dependency-provenance"},
-			ReasoningEffort: "off",
+			ID:                      fmt.Sprintf("U-ASSURANCE-LIFECYCLE-%03d", start/batchSize+1),
+			Mode:                    "Discovery",
+			Scope:                   namespace,
+			IDFromFields:            []string{"scope-id"},
+			RuntimeInvocationFields: []string{"classified-by-invocation"},
+			ExpectedRecords:         len(batch),
+			ResultType:              "LIFECYCLE-ELIGIBILITY",
+			Reads:                   reads,
+			Inputs:                  []work.Input{{Name: "lifecycle-context.md", Bytes: []byte(b.String())}},
+			Sections:                []string{"dependency-provenance"},
+			ReasoningEffort:         "off",
 		})
 	}
 	return units, nil

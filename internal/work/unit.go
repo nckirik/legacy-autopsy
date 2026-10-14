@@ -59,6 +59,10 @@ type Unit struct {
 	// RuntimeFields are payload fields the runtime fills with the resolved
 	// record ID after identity assignment (for example a declared `block-id`).
 	RuntimeFields []string `json:"runtime_fields,omitempty"`
+	// RuntimeInvocationFields are payload fields the runtime fills with the
+	// current invocation ID (for example a declared `classified-by-invocation`).
+	// The executor emits them with a placeholder value.
+	RuntimeInvocationFields []string `json:"runtime_invocation_fields,omitempty"`
 	// RuntimeFingerprintFields are payload fields the runtime fills with the
 	// §4.1.1 semantic content fingerprint computed after identity injection,
 	// with the carrier field itself excluded from its own preimage.

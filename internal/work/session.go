@@ -168,6 +168,23 @@ func (s *Session) runUnit(unit Unit) (stats UnitStats, err error) {
 		if proposal.ZeroDomain != nil {
 			stats.ZeroDomain = proposal.ZeroDomain.Reason
 		}
+		if len(unit.RuntimeInvocationFields) > 0 {
+			failed := ""
+			for i := range proposal.Records {
+				injected, err := injectRuntimeFields(proposal.Records[i].Payload, unit.RuntimeInvocationFields, invocationID)
+				if err != nil {
+					failed = err.Error()
+					break
+				}
+				proposal.Records[i].Payload = injected
+			}
+			if failed != "" {
+				stats.Retries++
+				feedback = failed
+				s.notifyRetry(unit, feedback)
+				continue
+			}
+		}
 		if s.config.NeedsReview(unit, false) && s.reviewer != nil {
 			if s.config.Observer != nil && s.config.Observer.Reviewing != nil {
 				s.config.Observer.Reviewing(unit)
