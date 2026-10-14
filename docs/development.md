@@ -83,6 +83,7 @@ go run ./cmd/legacy-autopsy spec run --fixture protocol/fixtures/incomplete.json
 go run ./cmd/legacy-autopsy spec run --fixture protocol/fixtures/reconciled.json --json
 go run ./cmd/legacy-autopsy spec schema --out /tmp/schema.sql        # print/write DDL
 go run ./cmd/legacy-autopsy spec schema --apply /tmp/autopsy.db      # apply via sqlite3
+go run ./cmd/legacy-autopsy spec schema --audit                      # enum-registry completeness
 go run ./cmd/legacy-autopsy spec store --db /tmp/autopsy.db          # canonical dump + fingerprint
 ```
 
@@ -91,6 +92,11 @@ hash; `spec render` renders one projection/channel with a provenance header; `sp
 executes the native VM over a synthetic fixture and prints the canonical trace and hash.
 All three default to the §7.7 source, ledger, and repository root, and accept
 `--source`/`--ledger`/`--repo`.
+
+`spec schema --audit` checks the store-facing enum registry: every declared enum
+carries unique values, and every enum-typed column in the generated DDL has a
+CHECK constraint listing exactly the declared values for that table context;
+same-named columns on different tables never cross-check.
 
 The same checks are available as Go tests:
 

@@ -247,6 +247,7 @@ func specSchema(args []string, stdout, stderr io.Writer) error {
 	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
 	out := set.String("out", "", "write DDL to this path instead of stdout")
 	apply := set.String("apply", "", "apply DDL to this SQLite database path")
+	audit := set.Bool("audit", false, "validate the enum registry against the generated DDL and exit")
 	if err := set.Parse(args); err != nil {
 		return err
 	}
@@ -256,6 +257,20 @@ func specSchema(args []string, stdout, stderr io.Writer) error {
 	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
 	if err != nil {
 		return err
+	}
+	if *audit {
+		diagnostics, err := store.AuditEnumRegistries(res.EIR)
+		if err != nil {
+			return err
+		}
+		for _, diagnostic := range diagnostics {
+			fmt.Fprintf(stdout, "%s\n", diagnostic)
+		}
+		fmt.Fprintf(stdout, "enum registry: %d diagnostic(s)\n", len(diagnostics))
+		if len(diagnostics) > 0 {
+			return fmt.Errorf("enum registry audit failed")
+		}
+		return nil
 	}
 	ddl, err := store.Schema(res.EIR, store.Provenance{
 		Generator:         cdl.GeneratorVersion,
