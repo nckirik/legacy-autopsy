@@ -68,8 +68,12 @@ func CollectSuiteReview(prompt Prompter, out io.Writer, mappings []Mapping, revi
 	}
 	review.Timestamp = timestamp
 	review.Result = "Pass"
+	fmt.Fprintf(out, "\nFor each item: accept the skeleton as an adequate check, exclude it with a reason, or skip it.\n")
 	for _, mapping := range mappings {
-		fmt.Fprintf(out, "\n%s %s  %s\n", mapping.RecordType, mapping.RecordID, mapping.Skeleton)
+		fmt.Fprintf(out, "\n---- %s %s (%s) ----\n", mapping.RecordType, mapping.RecordID, mapping.Skeleton)
+		if strings.TrimSpace(mapping.Body) != "" {
+			fmt.Fprintf(out, "%s\n", strings.TrimSpace(mapping.Body))
+		}
 		for {
 			answer, err := prompt("[a]ccept / [e]xclude / [s]kip: ")
 			if err != nil {

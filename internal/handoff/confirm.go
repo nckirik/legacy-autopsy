@@ -117,6 +117,21 @@ func ConfirmationGroups(bindings []ManifestBinding) []ConfirmationGroup {
 			synthesis = append(synthesis, binding)
 		}
 	}
+	sort.SliceStable(singles, func(i, j int) bool {
+		rank := func(recordType string) int {
+			if recordType == "PRF" {
+				return 0
+			}
+			return 1
+		}
+		if rank(singles[i].RecordType) != rank(singles[j].RecordType) {
+			return rank(singles[i].RecordType) < rank(singles[j].RecordType)
+		}
+		if singles[i].Path != singles[j].Path {
+			return singles[i].Path < singles[j].Path
+		}
+		return singles[i].RecordID < singles[j].RecordID
+	})
 	var groups []ConfirmationGroup
 	if len(synthesis) > 0 {
 		groups = append(groups, ConfirmationGroup{

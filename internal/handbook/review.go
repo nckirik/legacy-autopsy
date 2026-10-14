@@ -81,6 +81,7 @@ func CollectReadabilityReview(prompt Prompter, out io.Writer, chapters []Chapter
 	}
 	review.Timestamp = timestamp
 	review.Result = "Pass"
+	fmt.Fprintln(out, "\nRead each chapter file listed below, then answer [p]ass, [f]ail (with a reason), or [s]kip.")
 	for _, chapter := range chapters {
 		fmt.Fprintf(out, "\n%s  %s  %s\n%s\n", chapter.Path, chapter.HBKID, chapter.Title, chapter.Summary)
 		for {

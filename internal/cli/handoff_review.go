@@ -6,13 +6,17 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
+	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/equivalence"
 	"github.com/nckirik/legacy-autopsy/internal/handbook"
 	"github.com/nckirik/legacy-autopsy/internal/handoff"
 	"github.com/nckirik/legacy-autopsy/internal/store"
+	"github.com/nckirik/legacy-autopsy/internal/synthesis"
+	"github.com/nckirik/legacy-autopsy/internal/work"
 )
 
 // specHandoffReview dispatches the interactive human review acts.
@@ -265,6 +269,14 @@ func specHandoffReviewConfirm(args []string, stdout, stderr io.Writer) error {
 	if len(bindings) == 0 {
 		return fmt.Errorf("handoff review confirm: the manifest declares no semantic bindings")
 	}
+	personaByProfile, err := profilePersonaNames(*db, res.EIR, header["system-namespace"])
+	if err != nil {
+		return err
+	}
+	sectionTitles, err := mintedSectionTitles(*sectionsDir)
+	if err != nil {
+		return err
+	}
 	readabilityByHBK := map[string]string{}
 	if _, files, err := handbook.LoadReadabilityReviews(*reviewDir); err == nil {
 		for _, file := range files {
@@ -299,7 +311,7 @@ func specHandoffReviewConfirm(args []string, stdout, stderr io.Writer) error {
 	confirmed := 0
 	envelopes := 0
 	for _, group := range handoff.ConfirmationGroups(bindings) {
-		fmt.Fprintf(stdout, "\n%s  [%s]\n", group.Label, group.Type)
+		fmt.Fprintf(stdout, "\n---- %s ----\n", groupDescription(group, personaByProfile, sectionTitles))
 		readabilityValue := "Not-Applicable"
 		if group.Type == "HBK" {
 			readabilityValue = readabilityByHBK[group.Bindings[0].RecordID]
@@ -382,4 +394,69 @@ func specHandoffReviewConfirm(args []string, stdout, stderr io.Writer) error {
 	}
 	fmt.Fprintf(stdout, "\nconfirmations recorded: %d, envelopes attached: %d\n", confirmed, envelopes)
 	return nil
+}
+
+// groupDescription renders the human context of one confirmation group.
+func groupDescription(group handoff.ConfirmationGroup, personas map[string]string, titles map[string]string) string {
+	switch group.Type {
+	case "synthesis":
+		counts := map[string]int{}
+		for _, binding := range group.Bindings {
+			counts[binding.RecordType]++
+		}
+		var parts []string
+		for recordType, count := range counts {
+			parts = append(parts, fmt.Sprintf("%d %s", count, recordType))
+		}
+		sort.Strings(parts)
+		return fmt.Sprintf("Confirm %d synthesis records (%s)", len(group.Bindings), strings.Join(parts, ", "))
+	case "PRF":
+		name := personas[group.Bindings[0].RecordID]
+		return fmt.Sprintf("Confirm persona profile %s%s", group.Bindings[0].RecordID, name)
+	default:
+		title := titles[group.Bindings[0].RecordID]
+		return fmt.Sprintf("Confirm handbook section %s %s", group.Bindings[0].Path, title)
+	}
+}
+
+// profilePersonaNames maps each PRF ID to its registry persona description.
+func profilePersonaNames(db string, doc *cdl.EIRDoc, namespace string) (map[string]string, error) {
+	names := map[string]string{}
+	registryNames, _, _, err := work.FieldContract(doc, "PERSONA-REGISTRY")
+	if err != nil {
+		return nil, err
+	}
+	ids, err := store.List(db, doc, "PERSONA-REGISTRY")
+	if err != nil {
+		return nil, err
+	}
+	for _, id := range ids {
+		payload, err := store.Get(db, doc, "PERSONA-REGISTRY", id)
+		if err != nil {
+			return nil, err
+		}
+		values, err := work.PayloadText(registryNames, payload)
+		if err != nil {
+			return nil, err
+		}
+		profileID, err := synthesis.ProfileID(namespace, values["prefix"])
+		if err != nil {
+			continue
+		}
+		names[profileID] = fmt.Sprintf(" (%s, prefix %s, %s)", values["persona"], values["prefix"], values["registry-state"])
+	}
+	return names, nil
+}
+
+// mintedSectionTitles maps each HBK ID to its chapter title.
+func mintedSectionTitles(dir string) (map[string]string, error) {
+	titles := map[string]string{}
+	sections, err := handbook.LoadMintedSections(dir)
+	if err != nil {
+		return nil, err
+	}
+	for _, section := range sections {
+		titles[section.ID] = section.Title
+	}
+	return titles, nil
 }

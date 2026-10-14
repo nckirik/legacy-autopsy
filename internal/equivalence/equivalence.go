@@ -23,11 +23,12 @@ const ReviewPath = "equivalence/equivalence-review.md"
 
 var typedTokenPattern = regexp.MustCompile(`\b(CLM|BR|UC|IF|SCHED|DEP|CMP|ER|MOD|SM|FLT|SEC|NFR|REL|CFG|PRF|PRV|CAP|DR)-[A-F0-9]{12,64}\b`)
 
-// Mapping is one suite mapping row.
+// Mapping is one suite mapping row with its skeleton body.
 type Mapping struct {
 	RecordType string
 	RecordID   string
 	Skeleton   string
+	Body       string
 }
 
 // Suite is the generated acceptance-test skeleton document.
@@ -95,7 +96,8 @@ func Build(db string, doc *cdl.EIRDoc) (Suite, error) {
 func useCaseSkeleton(anchor string, values map[string]string) string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "### %s\n\n", anchor)
-	fmt.Fprintf(&b, "- **Covers:** %s (behavioral contract)\n", firstToken(values["source-bindings"]))
+	writeSubject(&b, "Use case", values)
+	b.WriteString("- **Goal:** " + condense(values["goal"]) + "\n")
 	b.WriteString("- **Preconditions / Postconditions:** " + condense(values["preconditions-postconditions"]) + "\n")
 	b.WriteString("- **Observable Contract:** " + condense(values["behavioral-contract"]) + "\n")
 	b.WriteString("- **Related IDs:** " + joinIDs(relatedIDs(values)) + "\n\n")
@@ -105,10 +107,21 @@ func useCaseSkeleton(anchor string, values map[string]string) string {
 	return b.String()
 }
 
+// writeSubject renders the record identity for the human reviewer: typed ID and
+// record title, never a claim token.
+func writeSubject(b *strings.Builder, label string, values map[string]string) {
+	id := firstToken(values["block-id"])
+	if id == "None" || id == "" {
+		id = joinIDs(relatedIDs(values))
+	}
+	title := condense(values["record-title"])
+	fmt.Fprintf(b, "- **%s:** %s - %s\n", label, id, title)
+}
+
 func businessRuleSkeleton(anchor string, values map[string]string) string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "### %s\n\n", anchor)
-	fmt.Fprintf(&b, "- **Covers:** %s (invariant property)\n", firstToken(values["source-bindings"]))
+	writeSubject(&b, "Business rule", values)
 	b.WriteString("- **Condition:** " + condense(values["condition"]) + "\n")
 	b.WriteString("- **Related IDs:** " + joinIDs(relatedIDs(values)) + "\n\n")
 	b.WriteString("- [ ] Property holds for every accepted input.\n")
@@ -119,7 +132,7 @@ func businessRuleSkeleton(anchor string, values map[string]string) string {
 func stateMachineSkeleton(anchor string, values map[string]string) string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "### %s\n\n", anchor)
-	fmt.Fprintf(&b, "- **Covers:** %s (state transitions)\n", firstToken(values["source-bindings"]))
+	writeSubject(&b, "State machine", values)
 	b.WriteString("- **States:** " + condense(values["states-meaning"]) + "\n")
 	b.WriteString("- **Related IDs:** " + joinIDs(relatedIDs(values)) + "\n\n")
 	b.WriteString("- [ ] Every eligible transition is exercised once.\n")
@@ -130,7 +143,7 @@ func stateMachineSkeleton(anchor string, values map[string]string) string {
 func interfaceSkeleton(anchor string, values map[string]string) string {
 	var b strings.Builder
 	fmt.Fprintf(&b, "### %s\n\n", anchor)
-	fmt.Fprintf(&b, "- **Covers:** %s (external interface baseline)\n", firstToken(values["source-bindings"]))
+	writeSubject(&b, "Interface", values)
 	b.WriteString("- **Baseline:** " + condense(values["compatibility-baseline"]) + "\n")
 	b.WriteString("- **Related IDs:** " + joinIDs(relatedIDs(values)) + "\n\n")
 	b.WriteString("- [ ] Request/response shape matches the baseline.\n")
@@ -180,9 +193,22 @@ func joinIDs(ids []string) string {
 	return strings.Join(ids, ", ")
 }
 
-// ParseMappings reads the suite mapping table back for coverage evaluation.
+// ParseMappings reads the suite mapping table and skeleton bodies back for
+// coverage evaluation and human review.
 func ParseMappings(content []byte) []Mapping {
 	var mappings []Mapping
+	bodies := map[string][]string{}
+	var current string
+	for _, line := range strings.Split(string(content), "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "### ") {
+			current = strings.TrimSpace(strings.TrimPrefix(trimmed, "### "))
+			continue
+		}
+		if current != "" {
+			bodies[current] = append(bodies[current], line)
+		}
+	}
 	inTable := false
 	header := true
 	for _, line := range strings.Split(string(content), "\n") {
@@ -207,10 +233,12 @@ func ParseMappings(content []byte) []Mapping {
 		if len(cells) < 3 {
 			continue
 		}
+		anchor := strings.TrimPrefix(strings.TrimSpace(cells[2]), "#")
 		mappings = append(mappings, Mapping{
 			RecordType: strings.TrimSpace(cells[0]),
 			RecordID:   strings.TrimSpace(cells[1]),
-			Skeleton:   strings.TrimSpace(cells[2]),
+			Skeleton:   "#" + anchor,
+			Body:       strings.TrimSpace(strings.Join(bodies[anchor], "\n")),
 		})
 	}
 	return mappings
