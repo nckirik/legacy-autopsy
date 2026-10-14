@@ -36,9 +36,122 @@ func specAssurance(args []string, stdout, stderr io.Writer) error {
 		return specAssurancePrivacy(args[1:], stdout, stderr)
 	case "closure":
 		return specAssuranceClosure(args[1:], stdout, stderr)
+	case "tickets":
+		return specAssuranceTickets(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims, coverage, sweep, gate, advance, reconcile, lifecycle, privacy, closure", args[0])
+		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims, coverage, sweep, gate, advance, reconcile, lifecycle, privacy, closure, tickets", args[0])
 	}
+}
+
+// specAssuranceTickets originates T-OPEN tickets for ticketless unresolved
+// semantic predicates (unknown lifecycle classifications) so honest coverage
+// is visible as ticket state instead of silent gaps.
+func specAssuranceTickets(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec assurance tickets", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	reviewMode := set.String("review-mode", "", "override review policy: all|critical|uncertainty")
+	maxRetries := set.Int("max-retries", 0, "override the retry budget")
+	updateExisting := set.Bool("update-existing", false, "replace tickets whose identity exists with changed content")
+	showModel := set.String("show-model", "off", "stream raw model output: off|stderr|stdout")
+	llmURL := set.String("llm-url", "", "override "+llm.EnvURL)
+	llmModel := set.String("llm-model", "", "override "+llm.EnvModel)
+	llmReasoning := set.String("llm-reasoning", "", "override "+llm.EnvReasoning)
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec assurance tickets requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	units, err := assurance.TicketPlan(*db, res.EIR, header["system-namespace"], header["included-environments-snapshots"])
+	if err != nil {
+		return err
+	}
+	if len(units) == 0 {
+		fmt.Fprintf(stdout, "tickets: 0 (no ticketless unresolved predicates)\n")
+		return nil
+	}
+	config, err := llm.ConfigFromEnv()
+	if err != nil {
+		return err
+	}
+	if *llmURL != "" {
+		config.BaseURL = *llmURL
+	}
+	if *llmModel != "" {
+		config.Model = *llmModel
+	}
+	if *llmReasoning != "" {
+		config.Reasoning = *llmReasoning
+	}
+	client, err := llm.NewClient(config)
+	if err != nil {
+		return err
+	}
+	runConfig := work.DefaultConfig()
+	if *reviewMode != "" {
+		runConfig.ReviewMode = work.ReviewMode(*reviewMode)
+	}
+	if *maxRetries > 0 {
+		runConfig.MaxRetries = *maxRetries
+	}
+	runConfig.UpdateExisting = *updateExisting
+	if iteration := header["current-iteration"]; iteration != "" {
+		runConfig.Iteration = iteration
+	}
+	if err := runConfig.Validate(); err != nil {
+		return err
+	}
+	executor := llm.NewExecutor(client)
+	reviewer := llm.NewReviewer(client)
+	if *llmReasoning != "" {
+		executor.ForceReasoning = llmReasoning
+	}
+	switch strings.ToLower(*showModel) {
+	case "", "off", "none":
+		wireActivity(&runConfig, executor, stdout)
+	case "stderr":
+		executor.SetDebug(stderr)
+		reviewer.Debug = stderr
+	case "stdout":
+		executor.SetDebug(stdout)
+		reviewer.Debug = stdout
+	default:
+		return fmt.Errorf("--show-model must be off, stderr, or stdout")
+	}
+	session, err := work.NewSession(*db, res.EIR, runConfig, executor, reviewer)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(stdout, "ticket units: %d\n", len(units))
+	report, runErr := session.Run(units)
+	for _, stats := range report.Units {
+		fmt.Fprintf(stdout, "%-40s %8d %5d %6d %7d %-12s %v\n",
+			stats.UnitID, stats.ContextBytes, stats.Dependencies, stats.Fetches, stats.Retries, stats.Review, stats.Escalated)
+		if stats.LastError != "" {
+			fmt.Fprintf(stdout, "  last rejection: %s\n", stats.LastError)
+		}
+	}
+	if runErr != nil {
+		fmt.Fprintf(stderr, "ticket origination stopped: %s\n", runErr)
+		return runErr
+	}
+	fmt.Fprintf(stdout, "tickets originated: %d\n", len(report.Units))
+	return nil
 }
 
 // specAssuranceClosure validates the deterministic dead-code and
