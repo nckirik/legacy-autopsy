@@ -124,7 +124,7 @@ func ProfilePlan(db string, doc *cdl.EIRDoc, namespace, snapshot string) ([]work
 		fmt.Fprintf(&b, "- `prefix-actor-class` must begin with the exact prefix `%s`.\n", row.Prefix)
 		b.WriteString("- `semantic-record-version` is `1`.\n")
 		b.WriteString("- `semantic-content-fingerprint` is runtime-computed: emit the field with placeholder value `PENDING`.\n")
-		b.WriteString("- `derived-from` lists the exact record IDs used in this profile, comma-separated, from the digest below.\n")
+		b.WriteString("- `derived-from` lists the exact record IDs used in this profile, comma-separated, from the digest below. Do not write versions or fingerprints: the runtime annotates each ID with its committed version and fingerprint.\n")
 		b.WriteString("- `material-claims` and `observed-legacy-facts` list CLM IDs from the digest; use only IDs shown, never invent.\n")
 		b.WriteString("- `target-decisions` is `None` while no approved decision records exist.\n")
 		b.WriteString("- Where the evidence does not support a field, use `Unknown` (fail-inclusive) or `None`.\n")
@@ -140,6 +140,7 @@ func ProfilePlan(db string, doc *cdl.EIRDoc, namespace, snapshot string) ([]work
 			RecordID:                 id,
 			RuntimeFields:            []string{"prf-id"},
 			RuntimeFingerprintFields: []string{"semantic-content-fingerprint"},
+			RuntimeAnnotatedFields:   []string{"derived-from"},
 			ExpectedRecords:          1,
 			RequiresReview:           true,
 			ResultType:               "PERSONA-PROFILE",

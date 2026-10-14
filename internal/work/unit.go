@@ -63,6 +63,11 @@ type Unit struct {
 	// current invocation ID (for example a declared `classified-by-invocation`).
 	// The executor emits them with a placeholder value.
 	RuntimeInvocationFields []string `json:"runtime_invocation_fields,omitempty"`
+	// RuntimeAnnotatedFields are payload fields whose comma/semicolon-separated
+	// record ID tokens the runtime rewrites to exact committed versions and
+	// fingerprints (`ID@version N sha256:...`). Executors list bare IDs; they
+	// never author canonical fingerprint values themselves.
+	RuntimeAnnotatedFields []string `json:"runtime_annotated_fields,omitempty"`
 	// RuntimeFingerprintFields are payload fields the runtime fills with the
 	// §4.1.1 semantic content fingerprint computed after identity injection,
 	// with the carrier field itself excluded from its own preimage.
