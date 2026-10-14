@@ -18,7 +18,7 @@ import (
 // specHandoff dispatches the §15.1/§15.4 handoff operations.
 func specHandoff(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness|equivalence|review|certificate|outer|sign> [flags]")
+		return fmt.Errorf("usage: legacy-autopsy spec handoff <candidate|report|manifest|readiness|equivalence|review|certificate|outer|sign|status> [flags]")
 	}
 	switch args[0] {
 	case "candidate":
@@ -39,8 +39,10 @@ func specHandoff(args []string, stdout, stderr io.Writer) error {
 		return specHandoffOuter(args[1:], stdout, stderr)
 	case "sign":
 		return specHandoffSign(args[1:], stdout, stderr)
+	case "status":
+		return specHandoffStatus(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence, review, certificate, outer, sign", args[0])
+		return fmt.Errorf("spec handoff operation %q is unsupported; supported operations: candidate, report, manifest, readiness, equivalence, review, certificate, outer, sign, status", args[0])
 	}
 }
 
@@ -621,4 +623,87 @@ func outerField(payload []byte, slug string) string {
 		}
 	}
 	return ""
+}
+
+// specHandoffStatus prints the packaging chain state and the next command.
+func specHandoffStatus(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec handoff status", stderr)
+	dir := set.String("dir", "preview/package", "package artifact directory")
+	bundle := set.String("bundle", "preview/bundle", "materialized package directory")
+	receipt := set.String("receipt", "preview/final-verification-receipt.md", "final verification receipt")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	read := func(paths ...string) string {
+		for _, path := range paths {
+			content, err := os.ReadFile(path)
+			if err == nil {
+				return string(content)
+			}
+		}
+		return ""
+	}
+	fmt.Fprintln(stdout, "stage                 result")
+	candidate := read(filepath.Join(*bundle, "exit-e/EXIT-E-CANDIDATE-REPORT.md"), filepath.Join(*dir, "EXIT-E-CANDIDATE-REPORT.md"))
+	if candidate == "" {
+		fmt.Fprintf(stdout, "%-21s missing\n", "candidate report")
+	} else {
+		fmt.Fprintf(stdout, "%-21s %s\n", "candidate report", outerField([]byte(candidate), "candidate-result"))
+	}
+	manifest := read(filepath.Join(*bundle, "exit-e/CANDIDATE-PAYLOAD-MANIFEST.md"), filepath.Join(*dir, "CANDIDATE-PAYLOAD-MANIFEST.md"))
+	if manifest == "" {
+		fmt.Fprintf(stdout, "%-21s missing\n", "candidate manifest")
+	} else {
+		fmt.Fprintf(stdout, "%-21s %s bindings\n", "candidate manifest", outerField([]byte(manifest), "semantic-binding-count"))
+	}
+	readiness := read(filepath.Join(*bundle, "exit-e/EXIT-E-CONTENT-READINESS-REPORT.md"), filepath.Join(*dir, "EXIT-E-CONTENT-READINESS-REPORT.md"))
+	if readiness == "" {
+		fmt.Fprintf(stdout, "%-21s missing\n", "content readiness")
+	} else {
+		fmt.Fprintf(stdout, "%-21s %s (Exit E %s)\n", "content readiness", outerField([]byte(readiness), "content-readiness-result"), outerField([]byte(readiness), "exit-e-prepackage-state"))
+	}
+	certificate := read(filepath.Join(*bundle, "exit-e/SCOPE-CERTIFICATE.md"), filepath.Join(*dir, "exit-e/SCOPE-CERTIFICATE.md"))
+	if certificate == "" {
+		fmt.Fprintf(stdout, "%-21s missing\n", "scope certificate")
+	} else {
+		fmt.Fprintf(stdout, "%-21s emitted\n", "scope certificate")
+	}
+	outer := read(filepath.Join(*bundle, "exit-e/OUTER-BUNDLE-MANIFEST.md"), filepath.Join(*dir, "exit-e/OUTER-BUNDLE-MANIFEST.md"))
+	if outer == "" {
+		fmt.Fprintf(stdout, "%-21s missing\n", "outer manifest")
+	} else if strings.Contains(outer, "Signature Timestamps:** None") {
+		fmt.Fprintf(stdout, "%-21s PASSED, unsigned\n", "outer manifest")
+	} else {
+		fmt.Fprintf(stdout, "%-21s PASSED, signed\n", "outer manifest")
+	}
+	finalReceipt := read(*receipt)
+	if finalReceipt == "" {
+		fmt.Fprintf(stdout, "%-21s missing\n", "final verification")
+	} else {
+		fmt.Fprintf(stdout, "%-21s %s\n", "final verification", outerField([]byte(finalReceipt), "overall-result"))
+	}
+	if bundleDir, err := os.Stat(*bundle); err == nil && bundleDir.IsDir() {
+		fmt.Fprintf(stdout, "\nbundle: %s\n", *bundle)
+	}
+	fmt.Fprintln(stdout, "\nnext:")
+	switch {
+	case candidate == "":
+		fmt.Fprintln(stdout, "  spec handoff report --repo . --db <workspace db>")
+	case manifest == "":
+		fmt.Fprintln(stdout, "  spec handoff manifest")
+	case readiness == "" || outerField([]byte(readiness), "content-readiness-result") != "Ready-For-Certificate":
+		fmt.Fprintln(stdout, "  spec handoff review readability|equivalence|confirm, then spec handoff readiness")
+	case certificate == "":
+		fmt.Fprintln(stdout, "  spec handoff certificate --db <workspace db>")
+	case outer == "":
+		fmt.Fprintln(stdout, "  spec handoff outer --db <workspace db>")
+	case strings.Contains(outer, "Signature Timestamps:** None"):
+		fmt.Fprintln(stdout, "  spec handoff sign")
+	default:
+		fmt.Fprintln(stdout, "  Exit E is Passed; the signed bundle is complete")
+	}
+	return nil
 }
