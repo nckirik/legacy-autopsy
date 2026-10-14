@@ -146,6 +146,11 @@ func CommitWithIDs(caps *Caps, unit Unit, p Proposal, updateExisting bool) ([]st
 		if err := validateInvocationOwnership(unit, values); err != nil {
 			return nil, fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
 		}
+		if p.FieldID == "TICKET" {
+			if err := validateTicketLifecycle(caps.doc, caps, record.RecordID, values); err != nil {
+				return nil, fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
+			}
+		}
 	}
 	targets := map[Ref]bool{}
 	for _, record := range resolved {

@@ -3,6 +3,7 @@ package assurance
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/store"
@@ -100,11 +101,34 @@ func EvaluateExitA(db string, doc *cdl.EIRDoc) (GateResult, error) {
 	if len(tickets) == 0 {
 		add(GateCheck{ID: "ACTIVE-TICKETS", Result: "Pass", Detail: "no active terminal tickets"})
 	} else {
-		active := 0
-		for range tickets {
-			active++
+		ticketNames, _, _, err := work.FieldContract(doc, "TICKET")
+		if err != nil {
+			return result, err
 		}
-		add(GateCheck{ID: "ACTIVE-TICKETS", Result: "Fail", Detail: fmt.Sprintf("%d ticket records outstanding", active)})
+		active := 0
+		first := ""
+		for _, id := range tickets {
+			payload, err := store.Get(db, doc, "TICKET", id)
+			if err != nil {
+				return result, err
+			}
+			values, err := work.PayloadText(ticketNames, payload)
+			if err != nil {
+				return result, err
+			}
+			if !work.TicketBlocksExitA(values["status"]) {
+				continue
+			}
+			active++
+			if first == "" {
+				first = id + " (" + strings.TrimSpace(values["status"]) + ")"
+			}
+		}
+		if active == 0 {
+			add(GateCheck{ID: "ACTIVE-TICKETS", Result: "Pass", Detail: fmt.Sprintf("%d terminal tickets, none outstanding", len(tickets))})
+		} else {
+			add(GateCheck{ID: "ACTIVE-TICKETS", Result: "Fail", Detail: fmt.Sprintf("%d non-terminal tickets outstanding; first: %s", active, first)})
+		}
 	}
 
 	matrixNames, _, _, err := work.FieldContract(doc, "REQUIRED-TRAVERSAL-MATRIX-ROW")
