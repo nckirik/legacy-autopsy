@@ -117,6 +117,32 @@ that preserve all fixture outcomes, additive wiring, and no new protocol behavio
 runtime. Protocol sources change through the CDL toolchain and drift tests, not through
 Go edits.
 
+## Reconstruction chain commands
+
+The bounded semantic pipelines and packaging chain have their own verbs (all
+require `--db` pointing at a workspace store):
+
+```sh
+go run ./cmd/legacy-autopsy spec handoff status                        # chain overview + next command
+go run ./cmd/legacy-autopsy spec handoff report --handbook-dir preview # emit the candidate report
+go run ./cmd/legacy-autopsy spec handoff manifest                      # emit the candidate payload manifest
+go run ./cmd/legacy-autopsy spec handoff readiness --equivalence preview/package/equivalence/acceptance-suite.md
+go run ./cmd/legacy-autopsy spec handoff equivalence                   # regenerate the acceptance suite
+go run ./cmd/legacy-autopsy spec handoff certificate                   # stage-5 scope certificate
+go run ./cmd/legacy-autopsy spec handoff outer --package-dir preview/bundle
+go run ./cmd/legacy-autopsy spec handoff sign --package-dir preview/bundle
+```
+
+Human acts are interactive by design and never machine-authored:
+`spec handoff review readability|equivalence|confirm` prompt the operator
+(per-chapter Pass/Fail, per-mapping accept/exclude, per-group confirm) and record
+the result with reviewer identity and timestamp. `spec handbook mint` writes HBK
+semantic payloads to a separate directory, keeping the human chapters prose-first;
+`spec handbook mint --restore` rebuilds the clean views.
+
+Per-unit telemetry is appended to `<workspace db>.metrics.jsonl` (non-authoritative;
+duration, retries, context bytes, result) so rehearsal comparisons stay mechanical.
+
 ## CDL formatting
 
 `cdl fmt` is the deterministic canonical printer for `.cdl` sources. It normalizes
