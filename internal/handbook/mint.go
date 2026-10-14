@@ -196,6 +196,31 @@ func LoadMintedSections(dir string) ([]MintedSection, error) {
 	return sections, nil
 }
 
+// AttachConfirmation rewrites only the certification envelope of one minted
+// section to B-CONFIRMED with its exact CNF binding. The semantic payload bytes
+// and fingerprint are preserved.
+func AttachConfirmation(section []byte, cnfID, approver, timestamp string) ([]byte, error) {
+	content := string(section)
+	start := strings.Index(content, mintEnvelopeStart)
+	end := strings.Index(content, mintEnvelopeEnd)
+	if start < 0 || end < start {
+		return nil, fmt.Errorf("handbook: section has no certification envelope")
+	}
+	before := content[:start]
+	after := content[end+len(mintEnvelopeEnd):]
+	var b strings.Builder
+	b.WriteString(before)
+	b.WriteString(mintEnvelopeStart)
+	b.WriteString("\n\n")
+	b.WriteString("- **HANDBOOK-STATUS:** B-CONFIRMED\n")
+	fmt.Fprintf(&b, "- **Confirmation:** %s\n", cnfID)
+	b.WriteString("- **Confirmation Envelope Version:** 1\n")
+	fmt.Fprintf(&b, "- **Confirmation Envelope Audit:** approved by %s at %s\n", approver, timestamp)
+	b.WriteString(mintEnvelopeEnd)
+	b.WriteString(after)
+	return []byte(b.String()), nil
+}
+
 // SectionContent returns the human-readable payload content of a minted
 // section: the prose exactly as it is bound inside the HBK payload region.
 func SectionContent(content []byte) string {

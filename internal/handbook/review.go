@@ -198,6 +198,22 @@ func ParseReadabilityReview(content []byte) (ReadabilityReviewFile, error) {
 	return review, nil
 }
 
+// EnvelopeStatus reports the certification envelope status of one minted
+// section.
+func EnvelopeStatus(section []byte) (status, confirmation string) {
+	content := string(section)
+	for _, line := range strings.Split(content, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "- **HANDBOOK-STATUS:**") {
+			status = strings.TrimSpace(strings.TrimPrefix(trimmed, "- **HANDBOOK-STATUS:**"))
+		}
+		if strings.HasPrefix(trimmed, "- **Confirmation:**") {
+			confirmation = strings.TrimSpace(strings.TrimPrefix(trimmed, "- **Confirmation:**"))
+		}
+	}
+	return status, confirmation
+}
+
 // ReviewsFromFile converts one recorded file into the PI-12 review model.
 // Fail verdicts still cover their chapter; the failing result is the gate.
 func ReviewsFromFile(review ReadabilityReviewFile) []Review {

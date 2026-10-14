@@ -1,6 +1,8 @@
 package handbook
 
 import (
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -64,5 +66,39 @@ func TestReadabilityReviewRejectsCoverageDrift(t *testing.T) {
 	findings := VerifyReadabilityCoverage("handbook", []Binding{{HBKID: "HBK-AAA000000001", Fingerprint: "sha256:a"}}, ReviewsFromFile(review))
 	if len(findings) == 0 || !strings.Contains(findings[0].Detail, "fingerprint drift") {
 		t.Fatalf("expected drift finding, got %+v", findings)
+	}
+}
+
+func TestAttachConfirmationPreservesFingerprint(t *testing.T) {
+	dir := t.TempDir()
+	chapter := "## 01. Overview\n\n### Summary\n\nPlain prose.\n\n### Observed Legacy Behavior\n\nFact [^1].\n"
+	if err := os.WriteFile(filepath.Join(dir, "chapter-01.md"), []byte(chapter), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	resolve := func(id string) (UpstreamRef, bool) { return UpstreamRef{}, false }
+	sections, err := MintSections(dir, "demo", resolve)
+	if err != nil {
+		t.Fatal(err)
+	}
+	attached, err := AttachConfirmation(sections[0].Bytes, "CNF-ABCDEF012345", "Ali (architect)", "2026-10-14T10:00:00Z")
+	if err != nil {
+		t.Fatal(err)
+	}
+	status, confirmation := EnvelopeStatus(attached)
+	if status != "B-CONFIRMED" || confirmation != "CNF-ABCDEF012345" {
+		t.Fatalf("envelope = %q %q", status, confirmation)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "chapter-01.md"), attached, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	loaded, err := LoadMintedSections(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if loaded[0].Fingerprint != sections[0].Fingerprint {
+		t.Fatalf("confirmation changed the semantic fingerprint")
+	}
+	if string(SectionContent(loaded[0].Bytes)) != SectionContent(sections[0].Bytes) {
+		t.Fatalf("confirmation changed the payload content")
 	}
 }

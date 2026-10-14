@@ -402,6 +402,18 @@ piloted on `veri-yonetimi` - see [preflight-pilot.md](preflight-pilot.md).
       evaluator validates coverage, exact HBK fingerprints, and per-record verdicts
       against the recorded review. Reviewer identity and verdicts come only from the
       human act; the machine never records an approval on its own.
+- [x] Interactive confirmation flow (`spec handoff review confirm`): walks the
+      operator through each confirmation group (one synthesis batch, each PRF
+      profile, each HBK section with its readability result), records `CNF` records
+      binding exact candidate manifest tokens with recomputed payload fingerprints
+      and pinned report/manifest fingerprints, and attaches B-CONFIRMED
+      certification envelopes to minted HBK sections without changing their
+      semantic fingerprints. Dry run on throwaway copies: 22 CNFs, 16 envelopes,
+      readiness **Ready-For-Certificate** with 0 failing checks. Binding convention
+      (recorded decision): under the declared canonical storage binding, store-backed
+      records (synthesis/PRF) express their certification envelope through their
+      exact CNF binding, because the binding has no Markdown envelope region;
+      file-backed HBK sections carry the literal envelope.
 
 ### W6 - Acceptance rerun
 

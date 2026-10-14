@@ -150,20 +150,16 @@ func BuildContentReadiness(db string, doc *cdl.EIRDoc, opts ReadinessOptions) (C
 	}
 
 	// READINESS-02: human confirmations (CNFs) bound to exact candidate entries.
-	cnfIDs, err := store.List(db, doc, "CONFIRMATION")
+	confirmDetail, confirmFail, err := confirmationCoverage(db, doc, manifestBytes, reportFingerprint, manifestFingerprint)
 	if err != nil {
 		return report, err
 	}
-	profileCount, err := store.List(db, doc, "PERSONA-PROFILE")
-	if err != nil {
-		return report, err
-	}
-	if len(cnfIDs) == 0 {
-		if err := add("READINESS-02-CONFIRMATIONS", "Fail", fmt.Sprintf("no confirmation records exist; %d persona profiles await human confirmation", len(profileCount)), standardBindings("READINESS-02-CONFIRMATIONS")); err != nil {
+	if confirmFail != "" {
+		if err := add("READINESS-02-CONFIRMATIONS", "Fail", confirmFail, standardBindings("READINESS-02-CONFIRMATIONS")); err != nil {
 			return report, err
 		}
 	} else {
-		if err := add("READINESS-02-CONFIRMATIONS", "Fail", fmt.Sprintf("%d confirmation records exist but exact-PRF-binding validation is not implemented", len(cnfIDs)), standardBindings("READINESS-02-CONFIRMATIONS")); err != nil {
+		if err := add("READINESS-02-CONFIRMATIONS", "Pass", confirmDetail, standardBindings("READINESS-02-CONFIRMATIONS")); err != nil {
 			return report, err
 		}
 	}
@@ -223,7 +219,10 @@ func BuildContentReadiness(db string, doc *cdl.EIRDoc, opts ReadinessOptions) (C
 	}
 
 	// READINESS-07: certification envelopes attached and valid.
-	envelopes, envelopeFail := certificationEnvelopes(doc, opts.HandbookDir)
+	envelopes, envelopeFail, err := certificationEnvelopes(db, doc, manifestBytes, opts.HandbookDir)
+	if err != nil {
+		return report, err
+	}
 	if envelopeFail != "" {
 		if err := add("READINESS-07-ENVELOPE-INTEGRITY", "Fail", envelopeFail, standardBindings("READINESS-07-ENVELOPE-INTEGRITY")); err != nil {
 			return report, err
@@ -561,6 +560,7 @@ type bindingRow struct {
 	recordID    string
 	version     string
 	fingerprint string
+	path        string
 }
 
 // manifestBindings parses the manifest Semantic Bindings table.
@@ -590,7 +590,11 @@ func manifestBindings(payload []byte) []bindingRow {
 		if len(cells) < 4 || strings.Trim(cells[0], "-: ") == "" {
 			continue
 		}
-		rows = append(rows, bindingRow{recordType: cells[0], recordID: cells[1], version: cells[2], fingerprint: cells[3]})
+		path := ""
+		if len(cells) > 5 {
+			path = cells[5]
+		}
+		rows = append(rows, bindingRow{recordType: cells[0], recordID: cells[1], version: cells[2], fingerprint: cells[3], path: path})
 	}
 	return rows
 }
@@ -682,27 +686,116 @@ func decisionApprovalCoverage(db string, doc *cdl.EIRDoc) (string, string) {
 	return fmt.Sprintf("%d decision references resolve to approved decisions", references), ""
 }
 
-// certificationEnvelopes validates attached certification envelopes. Minted HBK
-// sections carry B-POPULATED envelopes without confirmation versions, so an
-// unconfirmed workspace fails closed.
-func certificationEnvelopes(doc *cdl.EIRDoc, handbookDir string) (int, string) {
+// confirmationCoverage validates every required PRF and HBK candidate binding
+// against recorded CNF content: exact tokens, recomputed payload fingerprints,
+// and pinned candidate identities. Synthesis confirmations are reported but not
+// required by condition 12.
+func confirmationCoverage(db string, doc *cdl.EIRDoc, manifestBytes []byte, reportFingerprint, manifestFingerprint string) (string, string, error) {
+	bindings := ParseManifestBindings(manifestBytes)
+	byToken := map[string]ManifestBinding{}
+	var required []ManifestBinding
+	synthesisBindings := 0
+	for _, binding := range bindings {
+		byToken[binding.BindingToken()] = binding
+		if binding.RecordType == "PRF" || binding.RecordType == "HBK" {
+			required = append(required, binding)
+		} else {
+			synthesisBindings++
+		}
+	}
+	cnfIDs, err := store.List(db, doc, "CONFIRMATION")
+	if err != nil {
+		return "", "", err
+	}
+	if len(cnfIDs) == 0 {
+		return "", fmt.Sprintf("no confirmation records exist; %d PRF/HBK bindings await human confirmation", len(required)), nil
+	}
+	confirmed := map[string]bool{}
+	for _, id := range cnfIDs {
+		payload, err := store.Get(db, doc, "CONFIRMATION", id)
+		if err != nil {
+			return "", "", err
+		}
+		if err := ValidateConfirmation(payload, byToken, reportFingerprint, manifestFingerprint); err != nil {
+			return "", fmt.Sprintf("confirmation %s is invalid: %s", id, err), nil
+		}
+		for _, token := range ConfirmationBindings(payload) {
+			confirmed[token] = true
+		}
+	}
+	missing := 0
+	for _, binding := range required {
+		if !confirmed[binding.BindingToken()] {
+			missing++
+		}
+	}
+	if missing > 0 {
+		return "", fmt.Sprintf("%d of %d PRF/HBK bindings lack a valid confirmation", missing, len(required)), nil
+	}
+	confirmedSynthesis := 0
+	for token := range confirmed {
+		if binding, ok := byToken[token]; ok && binding.RecordType != "PRF" && binding.RecordType != "HBK" {
+			confirmedSynthesis++
+		}
+	}
+	return fmt.Sprintf("%d confirmations cover all %d PRF/HBK bindings (%d of %d synthesis records additionally confirmed)", len(cnfIDs), len(required), confirmedSynthesis, synthesisBindings), "", nil
+}
+
+// certificationEnvelopes validates attached certification envelopes: every HBK
+// section must be B-CONFIRMED against a recorded CNF that binds its exact
+// token. Store-backed records express their certification through their CNF
+// binding because the declared storage binding has no Markdown envelope region.
+func certificationEnvelopes(db string, doc *cdl.EIRDoc, manifestBytes []byte, handbookDir string) (int, string, error) {
 	if handbookDir == "" {
-		return 0, "no certification envelopes are attached (no handbook package directory)"
+		return 0, "no certification envelopes are attached (no handbook package directory)", nil
 	}
 	sections, err := handbook.LoadMintedSections(handbookDir)
 	if err != nil {
-		return 0, err.Error()
+		return 0, "", err
+	}
+	cnfIDs, err := store.List(db, doc, "CONFIRMATION")
+	if err != nil {
+		return 0, "", err
+	}
+	byCNF := map[string][]string{}
+	for _, id := range cnfIDs {
+		payload, err := store.Get(db, doc, "CONFIRMATION", id)
+		if err != nil {
+			return 0, "", err
+		}
+		byCNF[id] = ConfirmationBindings(payload)
+	}
+	bound := map[string]bool{}
+	for _, tokens := range byCNF {
+		for _, token := range tokens {
+			bound[token] = true
+		}
 	}
 	attached := 0
 	for _, section := range sections {
-		if strings.Contains(string(section.Bytes), "HANDBOOK-STATUS:** B-CONFIRMED") {
-			attached++
+		status, confirmation := handbook.EnvelopeStatus(section.Bytes)
+		token := section.ID + "@" + fmt.Sprintf("%d", section.Version) + "@" + section.Fingerprint
+		switch {
+		case status != "B-CONFIRMED":
+			return attached, fmt.Sprintf("section %s is %s without a confirmation envelope", section.ID, status), nil
+		case confirmation == "" || confirmation == "None":
+			return attached, fmt.Sprintf("section %s declares B-CONFIRMED without a CNF reference", section.ID), nil
+		case len(byCNF[confirmation]) == 0:
+			return attached, fmt.Sprintf("section %s references unrecorded confirmation %s", section.ID, confirmation), nil
 		}
+		matches := false
+		for _, candidate := range byCNF[confirmation] {
+			if candidate == token {
+				matches = true
+				break
+			}
+		}
+		if !matches {
+			return attached, fmt.Sprintf("section %s envelope binds a different token than %s", section.ID, confirmation), nil
+		}
+		attached++
 	}
-	if attached < len(sections) {
-		return attached, fmt.Sprintf("%d of %d handbook sections are B-POPULATED without confirmation envelopes", len(sections)-attached, len(sections))
-	}
-	return attached, ""
+	return attached, "", nil
 }
 
 // snapshotConsistency compares the declared snapshot field across artifacts.
