@@ -266,9 +266,15 @@ Overall: **W1 and W3 done; W2 near complete (packaging remains); W5 landed; W6 i
 ### W5 - Handbook and human surfaces
 
 - [x] Narrative handbook assembler (`internal/handbook.Assemble`): required-section
-      layout (audience purpose, observed legacy behavior, target decisions, navigation)
+      layout (summary, observed legacy behavior, target decisions, navigation)
       with embedded synthesis records; narrative prose stays model-authored and the
-      assembler never invents content. Volume is tied to bound records.
+      assembler never invents content. Volume is tied to bound records. The required
+      reading order opens with a plain-language `Summary` (generalized surface and
+      flow; no products, paths, ports, hosts, code identifiers, or citations) before
+      the detailed `Observed Legacy Behavior`; the narration contract also requires
+      one cited statement per line, and narrated output is trailing-newline
+      normalized so the clean view stays byte-identical to its bound HBK payload
+      (verified by the readiness drift guard).
 - [x] PI-11 substance lint (`internal/handbook.LintChapter`): required sections plus
       at least eight claim-backed assertions per chapter, reason-bearing
       `Not-Applicable` allowed; PI-12 CNF schema validator
