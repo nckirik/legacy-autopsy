@@ -160,6 +160,20 @@ recorded review, and the candidate payload manifest binds the content
 version/fingerprint; readiness condition 03 rejects references whose approval
 binds stale content or lacks an approval envelope.
 
+Closure validators for dead-code and lifecycle eligibility are deterministic:
+
+```sh
+go run ./cmd/legacy-autopsy spec assurance closure --db <workspace db>
+```
+
+`assurance closure` rejects `[S-DEAD-CODE]` components with missing denominator
+dimensions, uncommitted source units, unresolved frontiers, active tickets, or
+any discovered caller in the committed component graph, and reports
+lifecycle-eligibility rows with duplicate scopes, missing provenance,
+inconsistent snapshots, or `Unknown` classifications without a ticket. Ticket
+writes are validated against the declared `TICKET-STATE` machine at commit
+(initial state, declared transitions, trace history, escalation reasons).
+
 Discovery enumerates files and, separately, the non-file units they declare:
 
 ```sh

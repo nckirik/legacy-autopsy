@@ -34,9 +34,77 @@ func specAssurance(args []string, stdout, stderr io.Writer) error {
 		return specAssuranceLifecycle(args[1:], stdout, stderr)
 	case "privacy":
 		return specAssurancePrivacy(args[1:], stdout, stderr)
+	case "closure":
+		return specAssuranceClosure(args[1:], stdout, stderr)
 	default:
-		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims, coverage, sweep, gate, advance, reconcile, lifecycle, privacy", args[0])
+		return fmt.Errorf("spec assurance operation %q is unsupported; supported operations: claims, coverage, sweep, gate, advance, reconcile, lifecycle, privacy, closure", args[0])
 	}
+}
+
+// specAssuranceClosure validates the deterministic dead-code and
+// lifecycle-eligibility closure rules (T11.3).
+func specAssuranceClosure(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec assurance closure", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" {
+		return fmt.Errorf("spec assurance closure requires --db")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	names, _, _, err := work.FieldContract(res.EIR, "ATOMIC-COMPONENT")
+	if err != nil {
+		return err
+	}
+	componentIDs, err := store.List(*db, res.EIR, "ATOMIC-COMPONENT")
+	if err != nil {
+		return err
+	}
+	checked := 0
+	invalid := 0
+	for _, id := range componentIDs {
+		payload, err := store.Get(*db, res.EIR, "ATOMIC-COMPONENT", id)
+		if err != nil {
+			return err
+		}
+		values, err := work.PayloadText(names, payload)
+		if err != nil {
+			return err
+		}
+		if strings.TrimSpace(values["staging-status"]) != "[S-DEAD-CODE]" {
+			continue
+		}
+		checked++
+		if err := assurance.ValidateDeadCode(*db, res.EIR, id); err != nil {
+			invalid++
+			fmt.Fprintf(stdout, "%-24s FAIL %s\n", id, err)
+			continue
+		}
+		fmt.Fprintf(stdout, "%-24s PASS dead-code proof holds\n", id)
+	}
+	diagnostics, err := assurance.ValidateLifecycleEligibility(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	for _, diagnostic := range diagnostics {
+		fmt.Fprintf(stdout, "lifecycle: %s\n", diagnostic)
+	}
+	fmt.Fprintf(stdout, "dead-code components: %d checked, %d invalid; lifecycle diagnostics: %d\n", checked, invalid, len(diagnostics))
+	if invalid > 0 || len(diagnostics) > 0 {
+		return fmt.Errorf("closure validation failed")
+	}
+	return nil
 }
 
 // specAssuranceSweep mechanically records one sweep per owner scope.
