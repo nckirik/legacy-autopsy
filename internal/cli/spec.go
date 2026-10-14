@@ -311,6 +311,9 @@ func specStore(args []string, stdout, stderr io.Writer) error {
 	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
 	db := set.String("db", "", "SQLite database path")
 	out := set.String("out", "", "write the canonical dump to this path")
+	export := set.String("export", "", "write the canonical dump plus a .sha256 fingerprint sidecar")
+	importFile := set.String("import", "", "restore a canonical dump into a fresh database")
+	expectFingerprint := set.String("expect-fingerprint", "", "require this content fingerprint when importing")
 	if err := set.Parse(args); err != nil {
 		return err
 	}
@@ -320,9 +323,34 @@ func specStore(args []string, stdout, stderr io.Writer) error {
 	if *db == "" {
 		return fmt.Errorf("spec store requires --db")
 	}
+	if *export != "" && *importFile != "" {
+		return fmt.Errorf("spec store accepts either --export or --import, not both")
+	}
 	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
 	if err != nil {
 		return err
+	}
+	if *importFile != "" {
+		path := *importFile
+		if !filepath.IsAbs(path) {
+			path = filepath.Join(*repo, filepath.FromSlash(path))
+		}
+		dump, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		expected := *expectFingerprint
+		if expected == "" {
+			if sidecar, err := os.ReadFile(path + ".sha256"); err == nil {
+				expected = strings.Fields(string(sidecar))[0]
+			}
+		}
+		fingerprint, err := store.Import(*db, res.EIR, dump, expected)
+		if err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "imported canonical dump into %s\nfingerprint: %s\n", *db, fingerprint)
+		return nil
 	}
 	dump, fingerprint, err := store.CanonicalDump(*db, res.EIR, store.Provenance{
 		Generator:         cdl.GeneratorVersion,
@@ -330,6 +358,20 @@ func specStore(args []string, stdout, stderr io.Writer) error {
 	})
 	if err != nil {
 		return err
+	}
+	if *export != "" {
+		path := *export
+		if !filepath.IsAbs(path) {
+			path = filepath.Join(*repo, filepath.FromSlash(path))
+		}
+		if err := os.WriteFile(path, dump, 0o644); err != nil {
+			return err
+		}
+		if err := os.WriteFile(path+".sha256", []byte(fingerprint+"\n"), 0o644); err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "exported canonical dump to %s\nfingerprint: %s\n", *export, fingerprint)
+		return nil
 	}
 	if *out != "" {
 		path := *out

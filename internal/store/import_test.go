@@ -2,135 +2,93 @@ package store
 
 import (
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
 )
 
-const preflightFixture = `# 0A-PREFLIGHT: Demo
-
-## 1. Metadata and Boundaries
-
-- **System Namespace:** demo
-- **Target Repository / Evidence Roots:** /tmp/demo
-- **Primary Technology Stack:** Go
-- **Protocol Version:** 4.2.1
-- **Current Iteration:** ALFA
-- **Default Max Traversal Depth:** 3
-- **Included Environments / Snapshots:** dev
-- **Explicit Scope Policy:** full tree
-
-## 2. Persona Registry
-
-| Persona | Prefix | Persona Slug | Persona Directory | Actor Class | Canonical Entry IDs | Scope Paths | Registry State |
-| :-- | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
-| Backend | BE | backend | BE-backend | human | SRC-1 | src/ | Active |
-| Operator | OP | operator | OP-operator | external | SRC-2 | ops/ | Active |
-
-## 3. Entry-Point Clusters
-
-### [CL-1] Backend entry
-
-- **Concrete Entry Coordinates:** cmd/server
-`
-
-func TestImportPreflight(t *testing.T) {
+func TestImportRoundTrip(t *testing.T) {
 	if _, err := exec.LookPath("sqlite3"); err != nil {
 		t.Skip("sqlite3 CLI not available")
 	}
 	db, res := ingestStore(t)
-	if err := ImportPreflight(db, res.EIR, []byte(preflightFixture)); err != nil {
+	payload := "- **Constraint:** a\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n"
+	if err := Ingest(db, res.EIR, "INVARIANT", "INV-A", 1, []byte(payload)); err != nil {
 		t.Fatal(err)
-	}
-	ids, err := List(db, res.EIR, "PREFLIGHT-HEADER")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if strings.Join(ids, ",") != PreflightRecordID {
-		t.Fatalf("preflight header IDs = %v", ids)
-	}
-	header, err := Get(db, res.EIR, "PREFLIGHT-HEADER", PreflightRecordID)
-	if err != nil {
-		t.Fatal(err)
-	}
-	for _, marker := range []string{
-		"- **System Namespace:** demo",
-		"- **Canonical Storage Binding:** markdown/1",
-		"- **Default Max Traversal Depth:** 3",
-	} {
-		if !strings.Contains(string(header), marker) {
-			t.Fatalf("preflight payload missing %q:\n%s", marker, header)
-		}
-	}
-	personas, err := List(db, res.EIR, "PERSONA-REGISTRY")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if strings.Join(personas, ",") != "BE,OP" {
-		t.Fatalf("persona IDs = %v", personas)
-	}
-	backend, err := Get(db, res.EIR, "PERSONA-REGISTRY", "BE")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !strings.Contains(string(backend), "- **Persona Directory:** BE-backend") {
-		t.Fatalf("persona payload:\n%s", backend)
-	}
-	view, err := Render(db, res.EIR, "PERSONA-REGISTRY")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !strings.Contains(string(view), "## BE") || !strings.Contains(string(view), "## OP") {
-		t.Fatalf("human render missing records:\n%s", view)
-	}
-	for _, forbidden := range []string{"la_semantic_fingerprint", "DEBUG RENDER", "sha256:"} {
-		if strings.Contains(string(view), forbidden) {
-			t.Fatalf("human render contains mechanical content %q", forbidden)
-		}
-	}
-}
-
-func TestImportPreflightFailsClosed(t *testing.T) {
-	if _, err := exec.LookPath("sqlite3"); err != nil {
-		t.Skip("sqlite3 CLI not available")
-	}
-	db, res := ingestStore(t)
-	if err := ImportPreflight(db, res.EIR, []byte("# nothing here\n")); err == nil {
-		t.Fatal("missing metadata accepted")
-	}
-	noPersonas := strings.Split(preflightFixture, "## 2. Persona Registry")[0]
-	if err := ImportPreflight(db, res.EIR, []byte(noPersonas)); err == nil {
-		t.Fatal("missing persona registry accepted")
-	}
-}
-
-func TestBootstrapRoundTripDeterministic(t *testing.T) {
-	if _, err := exec.LookPath("sqlite3"); err != nil {
-		t.Skip("sqlite3 CLI not available")
 	}
 	prov := Provenance{Generator: "store/test", SourceFingerprint: "sha256:test"}
-	db1, res := ingestStore(t)
-	if err := ImportPreflight(db1, res.EIR, []byte(preflightFixture)); err != nil {
-		t.Fatal(err)
-	}
-	dump1, fp1, err := CanonicalDump(db1, res.EIR, prov)
+	dump, fingerprint, err := CanonicalDump(db, res.EIR, prov)
 	if err != nil {
 		t.Fatal(err)
 	}
-	reversed := strings.Replace(preflightFixture,
-		"| Backend | BE | backend | BE-backend | human | SRC-1 | src/ | Active |\n| Operator | OP | operator | OP-operator | external | SRC-2 | ops/ | Active |",
-		"| Operator | OP | operator | OP-operator | external | SRC-2 | ops/ | Active |\n| Backend | BE | backend | BE-backend | human | SRC-1 | src/ | Active |", 1)
-	if reversed == preflightFixture {
-		t.Fatal("fixture rows were not reversed")
-	}
-	db2, res2 := ingestStore(t)
-	if err := ImportPreflight(db2, res2.EIR, []byte(reversed)); err != nil {
-		t.Fatal(err)
-	}
-	dump2, fp2, err := CanonicalDump(db2, res2.EIR, prov)
+	fresh := filepath.Join(t.TempDir(), "fresh.db")
+	got, err := Import(fresh, res.EIR, dump, fingerprint)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if string(dump1) != string(dump2) || fp1 != fp2 {
-		t.Fatal("canonical dump depends on bootstrap import order")
+	if got != fingerprint {
+		t.Fatalf("import fingerprint = %s, want %s", got, fingerprint)
+	}
+	again, againFingerprint, err := CanonicalDump(fresh, res.EIR, prov)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if againFingerprint != fingerprint {
+		t.Fatalf("round-trip fingerprint = %s, want %s", againFingerprint, fingerprint)
+	}
+	if string(again) != string(dump) {
+		t.Fatal("round-trip dump is not byte-identical")
+	}
+}
+
+func TestImportRejects(t *testing.T) {
+	if _, err := exec.LookPath("sqlite3"); err != nil {
+		t.Skip("sqlite3 CLI not available")
+	}
+	db, res := ingestStore(t)
+	payload := "- **Constraint:** a\n- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n"
+	if err := Ingest(db, res.EIR, "INVARIANT", "INV-A", 1, []byte(payload)); err != nil {
+		t.Fatal(err)
+	}
+	prov := Provenance{Generator: "store/test", SourceFingerprint: "sha256:test"}
+	dump, fingerprint, err := CanonicalDump(db, res.EIR, prov)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// A wrong expected fingerprint fails before anything is applied.
+	fresh := filepath.Join(t.TempDir(), "fresh.db")
+	if _, err := Import(fresh, res.EIR, dump, "sha256:0000"); err == nil || !strings.Contains(err.Error(), "does not match the expected") {
+		t.Fatalf("wrong fingerprint accepted: %v", err)
+	}
+	if empty, err := isEmptyDatabase(fresh); err != nil || !empty {
+		t.Fatalf("target was modified: empty=%v err=%v", empty, err)
+	}
+
+	// A tampered content block fails against the original fingerprint.
+	tampered := strings.Replace(string(dump), "INV-A", "INV-Z", 1)
+	if _, err := Import(filepath.Join(t.TempDir(), "tampered.db"), res.EIR, []byte(tampered), fingerprint); err == nil || !strings.Contains(err.Error(), "does not match the expected") {
+		t.Fatalf("tampered dump accepted: %v", err)
+	}
+
+	// A non-empty target database is refused.
+	if _, err := Import(db, res.EIR, dump, fingerprint); err == nil || !strings.Contains(err.Error(), "not empty") {
+		t.Fatalf("non-empty target accepted: %v", err)
+	}
+
+	// Content after the canonical COMMIT block is refused.
+	if _, err := Import(filepath.Join(t.TempDir(), "trailing.db"), res.EIR, append(dump, []byte("INSERT INTO \"invariant\" VALUES ('x');\n")...), fingerprint); err == nil || !strings.Contains(err.Error(), "after the canonical COMMIT") {
+		t.Fatalf("trailing content accepted: %v", err)
+	}
+}
+
+func TestImportRejectsBadHeader(t *testing.T) {
+	if _, err := exec.LookPath("sqlite3"); err != nil {
+		t.Skip("sqlite3 CLI not available")
+	}
+	_, res := ingestStore(t)
+	bad := []byte("-- GENERATED canonical store dump by test - do not edit\n-- schema-version: 99\n-- dump-format: 2\nBEGIN;\nCOMMIT;\n")
+	if _, err := Import(filepath.Join(t.TempDir(), "x.db"), res.EIR, bad, ""); err == nil || !strings.Contains(err.Error(), "schema version") {
+		t.Fatalf("bad schema version accepted: %v", err)
 	}
 }

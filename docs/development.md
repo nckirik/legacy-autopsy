@@ -85,6 +85,17 @@ go run ./cmd/legacy-autopsy spec schema --out /tmp/schema.sql        # print/wri
 go run ./cmd/legacy-autopsy spec schema --apply /tmp/autopsy.db      # apply via sqlite3
 go run ./cmd/legacy-autopsy spec schema --audit                      # enum-registry completeness
 go run ./cmd/legacy-autopsy spec store --db /tmp/autopsy.db          # canonical dump + fingerprint
+go run ./cmd/legacy-autopsy spec store --db /tmp/autopsy.db --export /tmp/autopsy.sql
+go run ./cmd/legacy-autopsy spec store --db /tmp/autopsy-2.db --import /tmp/autopsy.sql
+```
+
+`spec store --export` writes the canonical dump plus a `.sha256` content-fingerprint
+sidecar; `--import` restores into a fresh database, refuses non-empty targets and
+content after the canonical COMMIT block, verifies the sidecar (or an explicit
+`--expect-fingerprint`) before applying anything, and re-verifies the live schema
+against the EIR-derived schema after applying. A dump that exports, imports, and
+re-exports is byte-identical.
+go run ./cmd/legacy-autopsy spec store --db /tmp/autopsy.db          # canonical dump + fingerprint
 ```
 
 `spec compile` validates the identity ledger and prints the source fingerprint and EIR
