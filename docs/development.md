@@ -285,7 +285,7 @@ go run ./cmd/legacy-autopsy validate routing
 go run ./cmd/legacy-autopsy validate fixtures
 ```
 
-For workspace smoke testing, use a disposable directory and run both `init` and `workspace check`. Unit tests verify that initialization fabricates no covered, confirmed, or passed state.
+For workspace smoke testing, use a disposable directory and run both `init` and `workspace check`. Unit tests verify that initialization fabricates no covered, confirmed, or passed state. When `--db` points at a workspace store, `workspace check` also validates persona ownership: every registered 0A persona has exactly one `<prefix>-<slug>` directory, every non-reserved directory is registered, and the reserved `_shared` directory is never treated as a persona.
 
 ## Change discipline
 

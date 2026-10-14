@@ -10,11 +10,14 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/nckirik/legacy-autopsy/cdl"
 	"github.com/nckirik/legacy-autopsy/internal/contextpacket"
 	"github.com/nckirik/legacy-autopsy/internal/fixtures"
 	"github.com/nckirik/legacy-autopsy/internal/identity"
 	"github.com/nckirik/legacy-autopsy/internal/protocol"
 	"github.com/nckirik/legacy-autopsy/internal/routing"
+	"github.com/nckirik/legacy-autopsy/internal/store"
+	"github.com/nckirik/legacy-autopsy/internal/work"
 	"github.com/nckirik/legacy-autopsy/internal/workspace"
 )
 
@@ -135,14 +138,61 @@ func workspaceCommand(args []string, stdout, stderr io.Writer) error {
 	}
 	set := flags("workspace check", stderr)
 	root := set.String("workspace", ".extracted", "workspace root")
+	repo := set.String("repo", ".", "protocol repository root")
+	db := set.String("db", "", "workspace store for persona registry ownership validation")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
 	if err := set.Parse(args[1:]); err != nil {
 		return err
 	}
 	if err := workspace.Check(*root); err != nil {
 		return err
 	}
+	if *db != "" {
+		res, _, err := compileSpec(*repo, *assembly, "", *ledger)
+		if err != nil {
+			return err
+		}
+		registrations, err := personaRegistrations(*db, res.EIR)
+		if err != nil {
+			return err
+		}
+		if err := workspace.ValidatePersonaOwnership(*root, registrations); err != nil {
+			return err
+		}
+		fmt.Fprintf(stdout, "persona ownership passed: %d registered personas\n", len(registrations))
+	}
 	fmt.Fprintf(stdout, "workspace structure passed: %s (%d required Markdown files)\n", *root, len(workspace.RequiredFiles()))
 	return nil
+}
+
+// personaRegistrations reads the committed 0A persona registry in bounded form.
+func personaRegistrations(db string, doc *cdl.EIRDoc) ([]workspace.PersonaRegistration, error) {
+	names, _, _, err := work.FieldContract(doc, "PERSONA-REGISTRY")
+	if err != nil {
+		return nil, err
+	}
+	ids, err := store.List(db, doc, "PERSONA-REGISTRY")
+	if err != nil {
+		return nil, err
+	}
+	var registrations []workspace.PersonaRegistration
+	for _, id := range ids {
+		payload, err := store.Get(db, doc, "PERSONA-REGISTRY", id)
+		if err != nil {
+			return nil, err
+		}
+		values, err := work.PayloadText(names, payload)
+		if err != nil {
+			return nil, err
+		}
+		registrations = append(registrations, workspace.PersonaRegistration{
+			Prefix:    values["prefix"],
+			Slug:      values["persona-slug"],
+			Directory: values["persona-directory"],
+		})
+	}
+	return registrations, nil
 }
 
 func idCommand(args []string, stdout, stderr io.Writer) error {
