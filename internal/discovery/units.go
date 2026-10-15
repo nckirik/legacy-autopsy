@@ -18,16 +18,22 @@ type Cluster struct {
 	ScopePaths []string
 }
 
-// RegisteredPersona reports whether the cluster's canonical owner is a
-// registered persona prefix. Shared clusters return false: their participating
-// personas come from the SHARED-ENTRY record, and until that record resolves
-// them the unit records Persona=None instead of inventing an owner.
-func (c Cluster) RegisteredPersona(prefixes map[string]bool) (string, bool) {
+// PersonaBinding resolves the strict persona binding of a cluster: the
+// canonical owner when it is a registered persona prefix, otherwise the
+// shared-entry participants of the cluster's concrete entry (coordination
+// owner first, then lexicographically), and otherwise unresolved. The
+// directory is the registered canonical basename of the bound prefix.
+func (c Cluster) PersonaBinding(directories map[string]string, entries []SharedEntry) (prefix, directory string, ok bool) {
 	owner := strings.ToUpper(strings.TrimSpace(c.Owner))
-	if owner == "" || !prefixes[owner] {
-		return "", false
+	if owner != "" && directories[owner] != "" {
+		return owner, directories[owner], true
 	}
-	return owner, true
+	for _, participant := range SharedParticipants(entries, c) {
+		if directories[participant] != "" {
+			return participant, directories[participant], true
+		}
+	}
+	return "", "", false
 }
 
 // Directives are runtime-owned discovery values.
@@ -36,9 +42,12 @@ type Directives struct {
 	Snapshot       string
 	StorageBinding string
 	BatchSize      int
-	// PersonaPrefixes is the set of registered persona prefixes; hit units bind
-	// Persona only when the cluster owner is one of them.
-	PersonaPrefixes map[string]bool
+	// PersonaDirectories maps registered persona prefixes to their canonical
+	// directory basenames; units bind a persona only when it is registered.
+	PersonaDirectories map[string]string
+	// SharedEntries are committed shared-entry records used to resolve the
+	// participating personas of a shared cluster.
+	SharedEntries []SharedEntry
 }
 
 // Plan builds one bounded inventory unit per candidate batch. Each unit must

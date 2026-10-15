@@ -29,6 +29,19 @@ const (
 	maxExcerptBytes = 6000
 )
 
+// povFilePath returns the active POV file of a unit: the persona-local ledger
+// when a persona directory is bound, otherwise the shared POV ledger.
+func povFilePath(directory, pov string) string {
+	file := povFiles[pov]
+	if file == "" {
+		return "None"
+	}
+	if directory == "" {
+		return "personas/_shared/" + file
+	}
+	return "personas/" + directory + "/" + file
+}
+
 // povFiles maps the five isolated POVs to their canonically numbered shared
 // POV files (protocol/foundations.cdl forensic plane layout).
 var povFiles = map[string]string{
@@ -77,11 +90,9 @@ func ComponentPlan(root string, hits []Hit, clusters []Cluster, directives Direc
 	cache := map[string][]string{}
 	var units []work.Unit
 	for _, item := range groups {
-		persona := ""
+		persona, directory := "", ""
 		if item.bound {
-			if prefix, ok := item.cluster.RegisteredPersona(directives.PersonaPrefixes); ok {
-				persona = prefix
-			}
+			persona, directory, _ = item.cluster.PersonaBinding(directives.PersonaDirectories, directives.SharedEntries)
 		}
 		clusterToken := "UNBOUND"
 		if item.bound {
@@ -93,7 +104,7 @@ func ComponentPlan(root string, hits []Hit, clusters []Cluster, directives Direc
 				end = len(item.hits)
 			}
 			batch := item.hits[start:end]
-			context, err := componentContext(root, cache, batch, item.cluster, item.bound, persona, item.pov, directives)
+			context, err := componentContext(root, cache, batch, item.cluster, item.bound, persona, directory, item.pov, directives)
 			if err != nil {
 				return nil, err
 			}
@@ -119,7 +130,7 @@ func ComponentPlan(root string, hits []Hit, clusters []Cluster, directives Direc
 	return units, nil
 }
 
-func componentContext(root string, cache map[string][]string, batch []Hit, cluster Cluster, bound bool, persona, pov string, directives Directives) ([]byte, error) {
+func componentContext(root string, cache map[string][]string, batch []Hit, cluster Cluster, bound bool, persona, directory, pov string, directives Directives) ([]byte, error) {
 	var b strings.Builder
 	b.WriteString("# Atomic component authoring batch (runtime-generated, bounded)\n\n")
 	b.WriteString("Author exactly one ATOMIC-COMPONENT record per hit below, in order. One record MUST NOT aggregate unrelated units.\n\n")
@@ -140,6 +151,8 @@ func componentContext(root string, cache map[string][]string, batch []Hit, clust
 	}
 	b.WriteString("## Strict single-scope bindings (§8.2)\n\n")
 	fmt.Fprintf(&b, "- **Persona:** %s\n", orNone(persona))
+	fmt.Fprintf(&b, "- **Persona Directory:** %s\n", orNone(directory))
+	fmt.Fprintf(&b, "- **Active POV File:** %s\n", povFilePath(directory, pov))
 	if bound {
 		fmt.Fprintf(&b, "- **Entry Cluster:** %s (%s)\n", cluster.ID, cluster.Title)
 		fmt.Fprintf(&b, "- **Traversal Track:** %s\n", cluster.Track)

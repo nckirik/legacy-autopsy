@@ -503,11 +503,9 @@ func HitPlan(hits []Hit, clusters []Cluster, directives Directives) []work.Unit 
 				end = len(item.hits)
 			}
 			batch := item.hits[start:end]
-			persona := ""
+			persona, directory := "", ""
 			if item.bound {
-				if prefix, ok := item.cluster.RegisteredPersona(directives.PersonaPrefixes); ok {
-					persona = prefix
-				}
+				persona, directory, _ = item.cluster.PersonaBinding(directives.PersonaDirectories, directives.SharedEntries)
 			}
 			clusterToken := "UNBOUND"
 			if item.bound {
@@ -525,7 +523,7 @@ func HitPlan(hits []Hit, clusters []Cluster, directives Directives) []work.Unit 
 				ExpectedRecords:  len(batch),
 				ResultType:       "SOURCE-INVENTORY-RECORD",
 				Reads:            []work.Ref{{FieldID: "PREFLIGHT-HEADER", RecordID: "0A"}},
-				Inputs:           []work.Input{{Name: "discovery-hits-context.md", Bytes: hitContextMarkdown(batch, item.cluster, item.bound, persona, item.pov, directives)}},
+				Inputs:           []work.Input{{Name: "discovery-hits-context.md", Bytes: hitContextMarkdown(batch, item.cluster, item.bound, persona, directory, item.pov, directives)}},
 				Sections:         []string{"atomic-unit-rule", "source-inventory", "five-isolated-povs", "traversal-tracks"},
 				ReasoningEffort:  "off",
 			}
@@ -535,7 +533,7 @@ func HitPlan(hits []Hit, clusters []Cluster, directives Directives) []work.Unit 
 	return units
 }
 
-func hitContextMarkdown(batch []Hit, cluster Cluster, bound bool, persona, pov string, directives Directives) []byte {
+func hitContextMarkdown(batch []Hit, cluster Cluster, bound bool, persona, directory, pov string, directives Directives) []byte {
 	var b strings.Builder
 	b.WriteString("# Discovery hits batch (runtime-generated, bounded)\n\n")
 	b.WriteString("## Candidate hits - author exactly one SOURCE-INVENTORY-RECORD per row, in this order\n\n")
@@ -549,6 +547,8 @@ func hitContextMarkdown(batch []Hit, cluster Cluster, bound bool, persona, pov s
 	}
 	b.WriteString("## Strict single-scope bindings (§8.2; do not switch roots, personas, POVs, or tracks)\n\n")
 	fmt.Fprintf(&b, "- **Persona:** %s\n", orNone(persona))
+	fmt.Fprintf(&b, "- **Persona Directory:** %s\n", orNone(directory))
+	fmt.Fprintf(&b, "- **Active POV File:** %s\n", povFilePath(directory, pov))
 	if bound {
 		fmt.Fprintf(&b, "- **Entry Cluster:** %s (%s)\n", cluster.ID, cluster.Title)
 		fmt.Fprintf(&b, "- **Traversal Track:** %s\n", cluster.Track)
@@ -560,7 +560,7 @@ func hitContextMarkdown(batch []Hit, cluster Cluster, bound bool, persona, pov s
 	if !bound {
 		b.WriteString("The hit-to-cluster binding is unresolved. Emit `canonical-owner: None`, `scope-summary: Unbound`, and `traversal-tracks: Normal` only when the evidence shows it; otherwise `Unknown`.\n\n")
 	} else if persona == "" {
-		b.WriteString("The cluster owner is not a registered persona (shared ownership). Emit `canonical-owner: None` and leave persona attribution to the shared-entry record; do not invent a persona.\n\n")
+		b.WriteString("The cluster is shared and no committed shared-entry record resolves a participating registered persona. Emit `canonical-owner: None`; do not invent a persona.\n\n")
 	}
 	b.WriteString("## Runtime directives (must be used exactly)\n\n")
 	fmt.Fprintf(&b, "- **System Namespace:** %s\n", directives.Namespace)

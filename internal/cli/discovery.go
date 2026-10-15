@@ -294,11 +294,16 @@ func specDiscoveryHits(args []string, stdout, stderr io.Writer) error {
 	} else {
 		fmt.Fprintf(stdout, "hits window manifest: %s\n", manifest)
 	}
-	prefixes, err := personaPrefixSet(*db, res.EIR)
+	prefixes, err := personaDirectoryMap(*db, res.EIR)
 	if err != nil {
 		return err
 	}
-	directives.PersonaPrefixes = prefixes
+	directives.PersonaDirectories = prefixes
+	sharedEntries, err := discovery.LoadSharedEntries(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	directives.SharedEntries = sharedEntries
 	directives.BatchSize = *batchSize
 	config, err := llm.ConfigFromEnv()
 	if err != nil {
@@ -408,11 +413,16 @@ func specDiscoveryComponents(args []string, stdout, stderr io.Writer) error {
 	if err != nil {
 		return err
 	}
-	prefixes, err := personaPrefixSet(*db, res.EIR)
+	prefixes, err := personaDirectoryMap(*db, res.EIR)
 	if err != nil {
 		return err
 	}
-	directives.PersonaPrefixes = prefixes
+	directives.PersonaDirectories = prefixes
+	sharedEntries, err := discovery.LoadSharedEntries(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	directives.SharedEntries = sharedEntries
 	header, err := preflightHeaderValues(*db, res.EIR)
 	if err != nil {
 		return err
@@ -661,9 +671,10 @@ func discoveryContext(db string, doc *cdl.EIRDoc) (discovery.Directives, []disco
 	return directives, clusters, nil
 }
 
-// personaPrefixSet returns the registered persona prefixes from the committed
-// 0A registry, so discovery units bind Persona only to registered owners.
-func personaPrefixSet(db string, doc *cdl.EIRDoc) (map[string]bool, error) {
+// personaDirectoryMap returns the registered persona prefixes and their
+// canonical directory basenames from the committed 0A registry, so discovery
+// units bind Persona only to registered owners.
+func personaDirectoryMap(db string, doc *cdl.EIRDoc) (map[string]string, error) {
 	names, _, _, err := work.FieldContract(doc, "PERSONA-REGISTRY")
 	if err != nil {
 		return nil, err
@@ -672,7 +683,7 @@ func personaPrefixSet(db string, doc *cdl.EIRDoc) (map[string]bool, error) {
 	if err != nil {
 		return nil, err
 	}
-	prefixes := map[string]bool{}
+	directories := map[string]string{}
 	for _, id := range ids {
 		payload, err := store.Get(db, doc, "PERSONA-REGISTRY", id)
 		if err != nil {
@@ -683,11 +694,12 @@ func personaPrefixSet(db string, doc *cdl.EIRDoc) (map[string]bool, error) {
 			return nil, err
 		}
 		prefix := strings.ToUpper(strings.TrimSpace(values["prefix"]))
-		if prefix != "" {
-			prefixes[prefix] = true
+		directory := strings.TrimSpace(values["persona-directory"])
+		if prefix != "" && directory != "" {
+			directories[prefix] = directory
 		}
 	}
-	return prefixes, nil
+	return directories, nil
 }
 
 // writeWindowManifest records which files were in a bounded discovery window,

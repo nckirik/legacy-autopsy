@@ -40,7 +40,7 @@ func TestPOVManifestsProjectSharedReferences(t *testing.T) {
 		}
 	}
 	clusters := []Cluster{{ID: "WEB", Title: "Web", Owner: "WEB", PrimaryPOV: "POV-1", Track: "Normal", Entries: []string{"app/routes.py"}}}
-	directives := Directives{Namespace: "demo", Snapshot: "dev", BatchSize: 10, PersonaPrefixes: map[string]bool{"WEB": true}}
+	directives := Directives{Namespace: "demo", Snapshot: "dev", BatchSize: 10, PersonaDirectories: map[string]string{"WEB": "WEB-test"}}
 	units, err := ComponentPlan(root, hits, clusters, directives)
 	if err != nil {
 		t.Fatal(err)

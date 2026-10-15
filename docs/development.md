@@ -222,12 +222,17 @@ matching `SRC-*` identity from the copied coordinate. Hit extraction is
 deterministic and re-runnable; absence of a hit kind still needs its own
 evidence-backed enumerator record.
 
-Hit units carry the §8.2 strict single-scope bindings: one entry cluster
-(resolved from the cluster's concrete entry coordinates), its traversal track,
-one POV (routes -> `POV-5`, queries -> `POV-4`, jobs -> `POV-3`), and the
-cluster owner's persona prefix when it is a registered persona. A shared cluster
-whose participating personas are not yet resolvable records `Persona=None` in
-the context instead of inventing an owner; ambiguity is fail-inclusive.
+Hit and component units carry the §8.2 strict single-scope bindings: one entry
+cluster (resolved from the cluster's concrete entry coordinates), its traversal
+track, one POV (routes -> `POV-5`, schema objects and queries -> `POV-4`,
+jobs -> `POV-3`, output/export actions -> `POV-1`), and a persona prefix with
+its canonical directory when the binding resolves. A cluster whose canonical
+owner is not a registered persona resolves its participants from committed
+`SHARED-ENTRY` records (coordination owner first, then registered participants
+in sorted order) and binds the first registered one; when no committed
+shared-entry record resolves a registered participant, the context records
+`Persona=None` with the active POV file under `personas/_shared/`, so ambiguity
+stays fail-inclusive instead of inventing an owner.
 
 ```sh
 go run ./cmd/legacy-autopsy spec discovery components --target <repo> --db <workspace db>

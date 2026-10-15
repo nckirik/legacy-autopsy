@@ -148,14 +148,14 @@ func TestClusterForHitBinding(t *testing.T) {
 
 func TestHitPlanLeavesSharedOwnerUnbound(t *testing.T) {
 	hits := []Hit{{Coordinate: "web/routes.py :: route :: GET /x", Kind: HitRoute, File: "web/routes.py"}}
-	units := HitPlan(hits, []Cluster{{ID: "WEB", Owner: "SHARED", Track: "Normal", Entries: []string{"web/routes.py"}}}, Directives{Namespace: "demo", Snapshot: "dev", BatchSize: 10, PersonaPrefixes: map[string]bool{"WEB": true, "AD": true}})
+	units := HitPlan(hits, []Cluster{{ID: "WEB", Owner: "SHARED", Track: "Normal", Entries: []string{"web/routes.py"}}}, Directives{Namespace: "demo", Snapshot: "dev", BatchSize: 10, PersonaDirectories: map[string]string{"WEB": "WEB-test", "AD": "AD-test"}})
 	if len(units) != 1 {
 		t.Fatalf("units = %+v", units)
 	}
 	if units[0].Persona != "" || units[0].POV != "POV-5" || units[0].ID != "U-DISCOVERY-HITS-WEB-POV-5-001" {
 		t.Fatalf("unit = %+v", units[0])
 	}
-	if !strings.Contains(string(units[0].Inputs[0].Bytes), "shared ownership") {
+	if !strings.Contains(string(units[0].Inputs[0].Bytes), "shared and no committed shared-entry record") {
 		t.Fatalf("context lacks the shared-ownership note:\n%s", units[0].Inputs[0].Bytes)
 	}
 }
@@ -175,7 +175,7 @@ func TestHitPlanCommitsInventoryWithRuntimeIDs(t *testing.T) {
 	if err := store.Ingest(db, doc, "PREFLIGHT-HEADER", "0A", 1, header); err != nil {
 		t.Fatal(err)
 	}
-	units := HitPlan(hits, []Cluster{{ID: "WEB", Title: "Web", Owner: "WEB", PrimaryPOV: "POV-1", Track: "Normal", Entries: []string{"app/routes.py"}}}, Directives{Namespace: "demo", Snapshot: "dev", StorageBinding: "sqlite/1", BatchSize: 10, PersonaPrefixes: map[string]bool{"WEB": true}})
+	units := HitPlan(hits, []Cluster{{ID: "WEB", Title: "Web", Owner: "WEB", PrimaryPOV: "POV-1", Track: "Normal", Entries: []string{"app/routes.py"}}}, Directives{Namespace: "demo", Snapshot: "dev", StorageBinding: "sqlite/1", BatchSize: 10, PersonaDirectories: map[string]string{"WEB": "WEB-test"}})
 	if len(units) != 4 {
 		t.Fatalf("units = %+v", units)
 	}
