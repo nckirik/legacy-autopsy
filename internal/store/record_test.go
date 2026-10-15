@@ -42,7 +42,7 @@ func TestRecordGetListInspect(t *testing.T) {
 	if _, err := Get(db, res.EIR, "INVARIANT", "NOPE"); err == nil || !strings.Contains(err.Error(), "not found") {
 		t.Fatalf("missing record: %v", err)
 	}
-	if _, err := Get(db, res.EIR, "ENTITY-COLUMN", "EC-1"); err == nil || !strings.Contains(err.Error(), "not a table class") {
+	if _, err := Get(db, res.EIR, "BLOCK-EVIDENCE-SUMMARY", "BES-1"); err == nil || !strings.Contains(err.Error(), "not a table class") {
 		t.Fatalf("non-table class: %v", err)
 	}
 	view, err := Inspect(db, res.EIR, "INVARIANT")

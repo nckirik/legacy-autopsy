@@ -44,10 +44,7 @@ func CanonicalDump(dbPath string, doc *cdl.EIRDoc, prov Provenance) ([]byte, str
 		content.WriteString("\n")
 	}
 	for _, spec := range specs {
-		columns := []string{"la_record_id", "la_record_version", "la_semantic_fingerprint", "la_canonical_payload"}
-		for _, f := range spec.Field.Fields {
-			columns = append(columns, ident(f.Name))
-		}
+		columns := TableColumns(spec.Field)
 		quoted := make([]string, len(columns))
 		for i, c := range columns {
 			quoted[i] = fmt.Sprintf("%q", c)

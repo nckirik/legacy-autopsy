@@ -229,6 +229,10 @@ func TestCellSweepsAndExitAGate(t *testing.T) {
 	if _, err := ExpandCoverage(db, doc, CoverageDirectives{Namespace: "demo", Environment: "dev", Snapshot: "snap-1"}); err != nil {
 		t.Fatal(err)
 	}
+	cluster := "- **cluster-id:** CL-1\n- **cluster-title:** Web entry\n- **concrete-entry-coordinates:** api.js\n- **canonical-owner-persona:** WEB\n- **primary-pov:** POV-1\n- **traversal-track:** Normal\n- **capability-state:** Active\n- **environment-snapshot:** dev\n- **source-ids:** None\n- **max-depth:** 3\n- **traversal-status:** [R-UNSWEPT]\n- **required-traversal-matrix:** None\n"
+	if err := store.Ingest(db, doc, "ENTRY-CLUSTER", "CL-1", 1, []byte(cluster)); err != nil {
+		t.Fatal(err)
+	}
 	matrixRow := "- **cluster-id:** CL-1\n- **persona-owner:** WEB\n- **concrete-entry:** api.js\n- **track:** Normal\n- **environment:** dev\n- **snapshot:** snap-1\n- **pov:** POV-1\n- **applicability:** Required\n- **status:** [R-UNSWEPT]\n- **swp-id:** None\n- **claims:** None\n"
 	if err := store.Ingest(db, doc, "REQUIRED-TRAVERSAL-MATRIX-ROW", "CL-1|WEB|POV-1|Normal|dev|snap-1", 1, []byte(matrixRow)); err != nil {
 		t.Fatal(err)

@@ -82,10 +82,23 @@ func ReplaceRecord(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string, ver
 		return fmt.Errorf("store: replace %s %s: version must be positive", fieldID, recordID)
 	}
 	record := RecordInput{RecordID: recordID, Version: version, Payload: payload}
-	statement, err := ingestStatement(doc, field, record)
+	parent := ""
+	if field.Storage == "child" {
+		rows, err := queryRows(dbPath, fmt.Sprintf("select %q from %q where la_record_id = %s;", ParentColumn(*field), ident(field.ID), literal(recordID)))
+		if err != nil {
+			return err
+		}
+		if len(rows) == 0 {
+			return fmt.Errorf("store: replace %s %s not found", fieldID, recordID)
+		}
+		if value, ok := rows[0][ParentColumn(*field)].(string); ok {
+			parent = value
+		}
+	}
+	statement, err := ingestStatement(doc, field, record, parent)
 	if err != nil {
 		return err
 	}
-	script := "BEGIN;\nDELETE FROM " + fmt.Sprintf("%q", ident(field.ID)) + " WHERE la_record_id = " + literal(recordID) + ";\n" + statement + "\nCOMMIT;\n"
+	script := "PRAGMA foreign_keys=ON;\nBEGIN;\nDELETE FROM " + fmt.Sprintf("%q", ident(field.ID)) + " WHERE la_record_id = " + literal(recordID) + ";\n" + statement + "\nCOMMIT;\n"
 	return execSQL(dbPath, script)
 }

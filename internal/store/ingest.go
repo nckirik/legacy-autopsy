@@ -32,7 +32,8 @@ func Ingest(dbPath string, doc *cdl.EIRDoc, fieldID, recordID string, version in
 // record payload digests stay binding-independent; queryable columns are derived
 // projections rebuildable from the payload. Unknown, duplicate, missing-required,
 // wrongly typed, or noncanonical values fail closed, as does a non-table storage
-// class, an empty/duplicate record ID, or a non-positive version.
+// class, an empty/duplicate record ID, or a non-positive version. Declared
+// foreign keys are enforced for the transaction.
 func IngestMany(dbPath string, doc *cdl.EIRDoc, fieldID string, records []RecordInput) error {
 	if len(records) == 0 {
 		return fmt.Errorf("store: ingest %s: no records", fieldID)
@@ -43,13 +44,13 @@ func IngestMany(dbPath string, doc *cdl.EIRDoc, fieldID string, records []Record
 	}
 	seen := map[string]bool{}
 	var script strings.Builder
-	script.WriteString("BEGIN;\n")
+	script.WriteString("PRAGMA foreign_keys=ON;\nBEGIN;\n")
 	for _, record := range records {
 		if seen[record.RecordID] {
 			return fmt.Errorf("store: ingest %s: duplicate record ID %q", fieldID, record.RecordID)
 		}
 		seen[record.RecordID] = true
-		statement, err := ingestStatement(doc, field, record)
+		statement, err := ingestStatement(doc, field, record, "")
 		if err != nil {
 			return err
 		}
@@ -63,12 +64,63 @@ func IngestMany(dbPath string, doc *cdl.EIRDoc, fieldID string, records []Record
 	return nil
 }
 
-func ingestStatement(doc *cdl.EIRDoc, field *cdl.EIRField, record RecordInput) (string, error) {
+// IngestChild inserts one owned child row. Child rows have no independent
+// identity: the record identity is the parent record ID plus the declared key
+// values (`<parent>|<key>|...`), and the parent foreign key column is filled
+// from the parent argument. The parent must exist in its table; the declared
+// key values must be present in the payload and unique per parent.
+func IngestChild(dbPath string, doc *cdl.EIRDoc, fieldID, parentID string, version int, payload []byte) (string, error) {
+	field, err := tableField(doc, fieldID)
+	if err != nil {
+		return "", err
+	}
+	if field.Storage != "child" {
+		return "", fmt.Errorf("store: %s: STORAGE %s is not a child class", fieldID, field.Storage)
+	}
+	if strings.TrimSpace(parentID) == "" {
+		return "", fmt.Errorf("store: ingest child %s: empty parent record ID", fieldID)
+	}
+	canonical, err := capabilities.CanonicalMarkdown(payload)
+	if err != nil {
+		return "", err
+	}
+	values, err := extractValues(fieldID, field.Fields, canonical)
+	if err != nil {
+		return "", err
+	}
+	keyParts := []string{parentID}
+	for _, key := range field.Key {
+		value, ok := values[key]
+		if !ok {
+			return "", fmt.Errorf("store: ingest child %s: key field %q is missing from the payload", fieldID, key)
+		}
+		text := strings.TrimSpace(fmt.Sprint(value))
+		if text == "" {
+			return "", fmt.Errorf("store: ingest child %s: key field %q is empty", fieldID, key)
+		}
+		keyParts = append(keyParts, text)
+	}
+	recordID := strings.Join(keyParts, "|")
+	statement, err := ingestStatement(doc, field, RecordInput{RecordID: recordID, Version: version, Payload: canonical}, parentID)
+	if err != nil {
+		return "", err
+	}
+	script := "PRAGMA foreign_keys=ON;\nBEGIN;\n" + statement + "\nCOMMIT;\n"
+	if err := execSQL(dbPath, script); err != nil {
+		return "", fmt.Errorf("store: ingest child %s: %w", fieldID, err)
+	}
+	return recordID, nil
+}
+
+func ingestStatement(doc *cdl.EIRDoc, field *cdl.EIRField, record RecordInput, parent string) (string, error) {
 	if record.RecordID == "" {
 		return "", fmt.Errorf("store: ingest %s: empty record ID", field.ID)
 	}
 	if record.Version < 1 {
 		return "", fmt.Errorf("store: ingest %s %s: version must be positive", field.ID, record.RecordID)
+	}
+	if field.Storage == "child" && strings.TrimSpace(parent) == "" {
+		return "", fmt.Errorf("store: ingest child %s %s: parent record ID is required", field.ID, record.RecordID)
 	}
 	canonical, err := capabilities.CanonicalMarkdown(record.Payload)
 	if err != nil {
@@ -86,6 +138,10 @@ func ingestStatement(doc *cdl.EIRDoc, field *cdl.EIRField, record RecordInput) (
 	}
 	columns := []string{"la_record_id", "la_record_version", "la_semantic_fingerprint", "la_canonical_payload"}
 	literals := []string{literal(record.RecordID), literal(int64(record.Version)), literal(capabilities.Hash(canonical)), literal(string(canonical))}
+	if field.Storage == "child" {
+		columns = append(columns, ParentColumn(*field))
+		literals = append(literals, literal(parent))
+	}
 	for _, spec := range field.Fields {
 		column := ident(spec.Name)
 		value, present := values[spec.Name]

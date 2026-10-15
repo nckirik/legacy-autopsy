@@ -106,7 +106,8 @@ func TestIngestFailsClosed(t *testing.T) {
 		{"missing required", "INVARIANT", "INV-1", "- **Verification Vectors:** v1\n- **Discovered In:** SRC-1\n", "missing required"},
 		{"unknown field", "INVARIANT", "INV-2", valid + "- **Extra:** x\n", "unknown field"},
 		{"duplicate set", "INVARIANT", "INV-3", "- **Constraint:** c\n- **Verification Vectors:** a, a\n- **Discovered In:** SRC-1\n", "duplicate"},
-		{"non-table class", "ENTITY-COLUMN", "EC-1", "- **Name:** n\n", "not a table class"},
+		{"non-table class", "BLOCK-EVIDENCE-SUMMARY", "BES-1", "- **block-confidence-rank:** Low\n", "not a table class"},
+		{"child without parent", "ENTITY-COLUMN", "EC-1", "- **name:** n\n", "parent record ID is required"},
 		{"unknown field block", "NOPE", "X-1", valid, "unknown FIELD"},
 	}
 	for _, tc := range cases {

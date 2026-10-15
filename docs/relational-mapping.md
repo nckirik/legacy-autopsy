@@ -1,10 +1,9 @@
 # Relational mapping semantics for the canonical store
 
 > Implemented as the CDL `cdl/0.4` language revision with EIR format 4: every `FIELD`
-> declares a storage class, and `internal/store.Schema` (schema version 2) derives
-> tables from the declared classes. `child` projection to owned tables and `REF`
-> foreign-key generation are the remaining increments, tracked in the hardening plan;
-> nothing here changes protocol semantics.
+> declares a storage class, and `internal/store.Schema` (schema version 3) derives
+> tables from the declared classes, projects `child` rows as parent-keyed tables, and
+> emits declared `REF` foreign keys. Nothing here changes protocol semantics.
 
 ## Why table-per-FIELD is not enough
 
@@ -71,8 +70,8 @@ END
   - `value`: an embedded fragment or row shape shared by records; never a store
     table.
 - `PARENT <FIELD-ID>[.<column>]` on `child`/`singleton`: declares ownership and the
-  foreign-key target. The parent column name derives from the child field name unless
-  an explicit `<column>` is given.
+  foreign-key target. The parent foreign-key column defaults to `la_parent_id`; an
+  explicit `<column>` in the clause overrides it.
 - `KEY <column>[, ...]`: primary or natural key. Defaults to `la_record_id` for
   `record`/`registry`; required for `child` and `log`.
 - `REF <column> -> <FIELD-ID>.<column>`: foreign key. The target must be
@@ -95,14 +94,24 @@ otherwise.
 
 ## Implemented generator rules
 
-- `record`, `registry`, `singleton`, and `log` produce tables; `child`, `value`, and
-  `artifact` do not (children stay in the owning canonical payload until projected).
+- `record`, `registry`, `singleton`, `log`, and `child` produce tables; `value` and
+  `artifact` do not (value shapes stay embedded in the owning canonical payload, and
+  artifact schemas compile to validators/emitters).
 - Metadata columns derive from `STORAGE`; no per-field guessing. An unknown or missing
   class fails closed.
 - `CHECK`s come from enums, declared `KEY` columns become `UNIQUE` natural keys,
   append-only triggers come from `log`.
-- `child` projection to parent-keyed tables and `REF` foreign-key generation are the
-  next increments, with the store import/export work.
+- Child rows project with a `la_parent_id` foreign key, a `UNIQUE (parent, key...)`
+  natural key over the declared `KEY` columns, and `store.IngestChild`
+  (`<parent>|<key>|...` record identity); `ReplaceRecord` preserves the parent link.
+  A child without `PARENT` or `KEY` fails generation.
+- Declared `REF` clauses emit foreign keys. The target FIELD must be
+  `record`/`registry`/`singleton`, and the target column must exist and be the
+  target's declared `KEY` (so it is unique); anything else fails generation. A
+  registry that is addressed by a column must declare it as its `KEY` (see PI-27 for
+  `ENTRY-CLUSTER`).
+- Foreign keys are enforced on every write path (`PRAGMA foreign_keys=ON` per
+  transaction).
 - `set<string>` writes are canonicalized; `list<string>` preserves input order.
 - The `23`-`27` artifact payload fields compile to validators/emitters and do not
   enter the store schema.
@@ -111,7 +120,9 @@ otherwise.
 
 - language `cdl/0.4`, EIR format 4 (`EIRField` gains storage, parent, key, and
   reference declarations);
-- `internal/store` `SchemaVersion` 2; the canonical dump serialization is additive;
+- `internal/store` `SchemaVersion` 3 (2 added storage classes, 3 adds child tables
+  and REF foreign keys); the canonical dump serialization is additive, and dumps
+  declare their schema version so imports fail closed across versions;
 - protocol semantics are unchanged: these are language-level declarations. Until
   every `FIELD` declares `STORAGE`, table generation may only be used as a provisional
   development artifact.

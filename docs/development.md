@@ -109,6 +109,16 @@ carries unique values, and every enum-typed column in the generated DDL has a
 CHECK constraint listing exactly the declared values for that table context;
 same-named columns on different tables never cross-check.
 
+The generated schema (version 3) derives tables from declared storage classes:
+`record`, `registry`, `singleton`, `log`, and `child` become tables; `value` and
+`artifact` shapes stay embedded. Child rows carry a `la_parent_id` foreign key
+and a `UNIQUE (parent, key...)` natural key over their declared `KEY` columns,
+declared `REF` clauses become foreign keys (the target column must be the target
+FIELD's declared `KEY`), and every write path enforces foreign keys
+(`PRAGMA foreign_keys=ON`). `store.IngestChild` inserts owned rows with
+`<parent>|<key>|...` identity; dumps and imports carry the schema version and
+refuse incompatible versions.
+
 The same checks are available as Go tests:
 
 ```sh

@@ -15,7 +15,7 @@ func tableField(doc *cdl.EIRDoc, fieldID string) (*cdl.EIRField, error) {
 		return nil, err
 	}
 	switch field.Storage {
-	case "record", "registry", "singleton", "log":
+	case "record", "registry", "singleton", "log", "child":
 		return field, nil
 	default:
 		return nil, fmt.Errorf("store: %s: STORAGE %s is not a table class", fieldID, field.Storage)

@@ -35,7 +35,7 @@ func AuditEnumRegistries(doc *cdl.EIRDoc) ([]string, error) {
 	text := string(ddl)
 	for _, field := range doc.Declarations.Fields {
 		switch field.Storage {
-		case "record", "registry", "singleton", "log":
+		case "record", "registry", "singleton", "log", "child":
 		default:
 			continue
 		}

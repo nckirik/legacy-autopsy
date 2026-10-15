@@ -12,8 +12,10 @@ import (
 )
 
 // SchemaVersion identifies the generated DDL shape. Version 2 generates tables
-// from declared STORAGE classes instead of one table per FIELD block.
-const SchemaVersion = 2
+// from declared STORAGE classes instead of one table per FIELD block. Version 3
+// additionally projects child rows as parent-keyed tables and emits declared REF
+// foreign keys.
+const SchemaVersion = 3
 
 // Provenance identifies the generated schema.
 type Provenance struct {
@@ -22,11 +24,10 @@ type Provenance struct {
 }
 
 // Tables are derived from declared STORAGE classes: record, registry, singleton,
-// and log blocks become tables; child, value, and artifact blocks stay embedded
-// in their owning payload until the runtime projects them. Declared KEY columns
-// become unique natural keys; log blocks get append-only triggers. Relational
-// projection of child tables follows the import/export work; see
-// docs/relational-mapping.md.
+// log, and child blocks become tables; value and artifact blocks stay embedded
+// in their owning payload. Declared KEY columns become unique natural keys,
+// child rows carry a parent foreign key plus their declared key, declared REF
+// clauses become foreign keys, and log blocks get append-only triggers.
 //
 // Schema renders deterministic DDL: one table per table-class FIELD block, columns
 // from the declared field specs, CHECK constraints for enum-typed columns, and
@@ -69,7 +70,7 @@ func Statements(doc *cdl.EIRDoc) ([]Statement, error) {
 	}
 	var out []Statement
 	for _, spec := range specs {
-		stmts, err := tableStatements(spec.Name, spec.Field, enums)
+		stmts, err := tableStatements(doc, spec.Name, spec.Field, enums)
 		if err != nil {
 			return nil, err
 		}
@@ -90,6 +91,7 @@ var tableStorageClasses = map[string]bool{
 	"registry":  true,
 	"singleton": true,
 	"log":       true,
+	"child":     true,
 }
 
 // tableSpecs derives the deterministic table set from the declared STORAGE
@@ -99,8 +101,8 @@ func tableSpecs(doc *cdl.EIRDoc) ([]tableSpec, error) {
 	specs := make([]tableSpec, 0, len(doc.Declarations.Fields))
 	for _, field := range doc.Declarations.Fields {
 		switch field.Storage {
-		case "record", "registry", "singleton", "log":
-		case "child", "value", "artifact":
+		case "record", "registry", "singleton", "log", "child":
+		case "value", "artifact":
 			continue
 		default:
 			return nil, fmt.Errorf("store: field %q declares no usable STORAGE class (got %q)", field.ID, field.Storage)
@@ -119,7 +121,36 @@ func tableSpecs(doc *cdl.EIRDoc) ([]tableSpec, error) {
 	return specs, nil
 }
 
-func tableStatements(name string, field cdl.EIRField, enums map[string][]string) ([]Statement, error) {
+// TableColumns returns the declared column order of one generated table: the
+// fixed metadata columns, the parent foreign key for child rows, then the
+// declared field columns. CanonicalDump and the dump verifier use the same
+// order.
+func TableColumns(field cdl.EIRField) []string {
+	columns := []string{"la_record_id", "la_record_version", "la_semantic_fingerprint", "la_canonical_payload"}
+	if field.Storage == "child" {
+		columns = append(columns, ParentColumn(field))
+	}
+	for _, spec := range field.Fields {
+		columns = append(columns, ident(spec.Name))
+	}
+	return columns
+}
+
+// ParentColumn returns the child table's parent foreign-key column.
+func ParentColumn(field cdl.EIRField) string {
+	if _, column, ok := strings.Cut(field.Parent, "."); ok && strings.TrimSpace(column) != "" {
+		return ident(strings.TrimSpace(column))
+	}
+	return "la_parent_id"
+}
+
+// parentFieldID returns the declared parent FIELD id of a child block.
+func parentFieldID(field cdl.EIRField) string {
+	id, _, _ := strings.Cut(field.Parent, ".")
+	return strings.TrimSpace(id)
+}
+
+func tableStatements(doc *cdl.EIRDoc, name string, field cdl.EIRField, enums map[string][]string) ([]Statement, error) {
 	var b strings.Builder
 	fmt.Fprintf(&b, "CREATE TABLE %q (\n", name)
 	b.WriteString("  \"la_record_id\" TEXT PRIMARY KEY,\n")
@@ -127,6 +158,11 @@ func tableStatements(name string, field cdl.EIRField, enums map[string][]string)
 	b.WriteString("  \"la_semantic_fingerprint\" TEXT,\n")
 	b.WriteString("  \"la_canonical_payload\" TEXT NOT NULL,\n")
 	columnSeen := map[string]string{}
+	if field.Storage == "child" {
+		parent := ParentColumn(field)
+		fmt.Fprintf(&b, "  %q TEXT NOT NULL,\n", parent)
+		columnSeen[parent] = "PARENT"
+	}
 	for _, spec := range field.Fields {
 		column := ident(spec.Name)
 		if column == "" {
@@ -157,9 +193,60 @@ func tableStatements(name string, field cdl.EIRField, enums map[string][]string)
 	if len(field.Key) > 0 {
 		quoted := make([]string, len(field.Key))
 		for i, key := range field.Key {
-			quoted[i] = fmt.Sprintf("%q", ident(key))
+			column := ident(key)
+			if _, ok := columnSeen[column]; !ok {
+				return nil, fmt.Errorf("store: field %q KEY column %q is not a declared field", field.ID, key)
+			}
+			quoted[i] = fmt.Sprintf("%q", column)
 		}
-		constraints = append(constraints, fmt.Sprintf("UNIQUE (%s)", strings.Join(quoted, ", ")))
+		if field.Storage == "child" {
+			constraints = append(constraints, fmt.Sprintf("UNIQUE (%q, %s)", ParentColumn(field), strings.Join(quoted, ", ")))
+		} else {
+			constraints = append(constraints, fmt.Sprintf("UNIQUE (%s)", strings.Join(quoted, ", ")))
+		}
+	} else if field.Storage == "child" {
+		return nil, fmt.Errorf("store: child field %q declares no KEY columns", field.ID)
+	}
+	if field.Storage == "child" {
+		parent := parentFieldID(field)
+		if parent == "" {
+			return nil, fmt.Errorf("store: child field %q declares no PARENT", field.ID)
+		}
+		parentField, err := findField(doc, parent)
+		if err != nil {
+			return nil, fmt.Errorf("store: child field %q PARENT: %w", field.ID, err)
+		}
+		constraints = append(constraints, fmt.Sprintf("FOREIGN KEY (%q) REFERENCES %q (\"la_record_id\")", ParentColumn(field), ident(parentField.ID)))
+	}
+	for _, ref := range field.Refs {
+		column := ident(ref.Column)
+		if _, ok := columnSeen[column]; !ok {
+			return nil, fmt.Errorf("store: field %q REF column %q is not a declared field", field.ID, ref.Column)
+		}
+		targetField, targetColumn, ok := strings.Cut(ref.Target, ".")
+		if !ok {
+			return nil, fmt.Errorf("store: field %q REF target %q must be <FIELD-ID>.<column>", field.ID, ref.Target)
+		}
+		target, err := findField(doc, strings.TrimSpace(targetField))
+		if err != nil {
+			return nil, fmt.Errorf("store: field %q REF target: %w", field.ID, err)
+		}
+		switch target.Storage {
+		case "record", "registry", "singleton":
+		default:
+			return nil, fmt.Errorf("store: field %q REF target %s has STORAGE %s, not a referenceable class", field.ID, target.ID, target.Storage)
+		}
+		want := ident(strings.TrimSpace(targetColumn))
+		found := false
+		for _, spec := range target.Fields {
+			if ident(spec.Name) == want {
+				found = true
+			}
+		}
+		if !found {
+			return nil, fmt.Errorf("store: field %q REF target %s.%s is not a declared field", field.ID, target.ID, targetColumn)
+		}
+		constraints = append(constraints, fmt.Sprintf("FOREIGN KEY (%q) REFERENCES %q (%q)", column, ident(target.ID), want))
 	}
 	for i, constraint := range constraints {
 		b.WriteString("  " + constraint)

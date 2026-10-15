@@ -13,10 +13,12 @@
 > **Revision v4.3:** PI-16 (declared synthesis identity carriers) and PI-17 (required
 > traversal-matrix rows as keyed records) are implemented; the current-edition oracle
 > snapshot is `protocol/legacy/protocol-4.3.md`.
-> **Revision v4.6/v4.7:** PI-20/PI-21 and the v4.6 claim-level edge keys shipped in the
-> 4.6 edition; PI-24 (diagram and pseudocode chapter contract), PI-25 (data-chapter
+> **Revision v4.6/v4.7/v4.8:** PI-20/PI-21 and the v4.6 claim-level edge keys shipped in
+> the 4.6 edition; PI-24 (diagram and pseudocode chapter contract), PI-25 (data-chapter
 > schema presentation and schema-declaration coverage), and PI-26's coverage obligation
-> ship in the 4.7 edition (`protocol/legacy/protocol-4.7.md`).
+> ship in the 4.7 edition (`protocol/legacy/protocol-4.7.md`); PI-27 (the missing
+> `ENTRY-CLUSTER` natural key) ships in the 4.8 edition
+> (`protocol/legacy/protocol-4.8.md`).
 > Accepted for a single minor revision. Decisions recorded with acceptance: snapshot each accepted
 > revision as the new frozen oracle (old oracles kept; drift and coverage tests target
 > the current one); handbook substance floor = required sections plus a minimum
@@ -678,3 +680,24 @@ oracle snapshot is an open process decision.
   explicit claim-backed exclusion before closure.
 - **Impact:** exported labels/reports stop being invisible in reconstructions;
   adds one inventory kind family and a coverage obligation, no identity change.
+
+## PI-27: ENTRY-CLUSTER declares no KEY, so declared REF foreign keys cannot project
+
+- **Status:** implemented in v4.8 (`KEY cluster-id` on `ENTRY-CLUSTER`)
+- **Source:** T15 child/REF projection work (2026-10-15): generating the
+  declared `REF cluster-id -> ENTRY-CLUSTER.cluster-id` foreign keys failed
+  with SQLite `foreign key mismatch` because the target column was neither the
+  primary key nor unique; the registry addresses rows by cluster id but never
+  declares it as its natural key.
+- **Affected sections:** §3.1 `ENTRY-CLUSTER` registry schema, §5-designated
+  `SWEEP-RECORD` and `REQUIRED-TRAVERSAL-MATRIX-ROW` REF declarations.
+- **Observed:** `FIELD ENTRY-CLUSTER` declares fields but no `KEY`; both REF
+  sites (`SWEEP-RECORD`, `REQUIRED-TRAVERSAL-MATRIX-ROW`) target
+  `ENTRY-CLUSTER.cluster-id`, which is not unique in the generated relational
+  projection, so the declared relationship cannot be enforced.
+- **Proposed direction:** declare `KEY cluster-id` on `ENTRY-CLUSTER`, matching
+  the registry's row identity (the record ID is the cluster id) and making the
+  declared REFs enforceable, exactly like `PERSONA-REGISTRY` declares
+  `KEY prefix`.
+- **Impact:** relational projection and enforcement of declared references;
+  no identity or hashing change.

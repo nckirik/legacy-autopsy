@@ -142,6 +142,7 @@ END
 
 FIELD ENTRY-CLUSTER
   STORAGE registry
+  KEY cluster-id
   cluster-id                 -> string                                 required
   cluster-title              -> string                                 required
   concrete-entry-coordinates -> set<string>                            required

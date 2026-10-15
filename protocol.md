@@ -1,9 +1,9 @@
 # Protocol: Legacy System Deconstruction, Assurance, and Reconstruction
 
-**Version:** 4.7 (Canonical Reconstruction-Ready Edition)
+**Version:** 4.8 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
-**Generated-From:** cdl/0.4.0 (sha256:4b0a1bdf1446e5a92ff54bf6be5d348efbacb0d1b7507984f6724262a35c407f)
+**Generated-From:** cdl/0.4.0 (sha256:b1cc27b4dcab8e357a13bed15689069a05532415b8361ded0765a214748f506f)
 **Language:** cdl/0.4 (eir-format 4)
 **Authority:** generated render of the canonical CDL sources; do not edit.
 
@@ -414,7 +414,7 @@ Observed legacy facts and target decisions MUST appear in separate fields and ha
 - **System Namespace:** [stable slug]
 - **Target Repository / Evidence Roots:** [...]
 - **Primary Technology Stack:** [...]
-- **Protocol Version:** 4.7
+- **Protocol Version:** 4.8
 - **Canonical Storage Binding:** [binding identity plus binding schema version, for example `markdown/1` or `sqlite/1`; default `markdown/1`]
 - **Current Iteration:** [one canonical token from §10.6: ALFA ... ZULU]
 - **Default Max Traversal Depth:** 3
@@ -1278,7 +1278,7 @@ Predicate: complete
 Every invocation begins with:
 
 ```yaml
-Protocol Version: 4.7
+Protocol Version: 4.8
 System Namespace: [slug]
 Current Iteration: [canonical §10.6 token ALFA..ZULU]
 Invocation ID: [globally unique]
@@ -2759,5 +2759,5 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 
 ---
 
-**End of Canonical Deconstruction Protocol, edition 4.7**
+**End of Canonical Deconstruction Protocol, edition 4.8**
 
