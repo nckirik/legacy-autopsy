@@ -241,6 +241,16 @@ references into persona-local POV manifest files
 projection is non-authoritative navigation; references whose component or
 persona is not committed are skipped instead of guessed.
 
+Handbook chapters carry the v4.7 content contract: the designated flow-heavy
+chapters (02, 03, 05, 08) must include a valid Mermaid diagram, chapter 03 an
+entity-relationship diagram of the entity/table inventory, and the
+procedure-bearing chapters (03, 08) a language-agnostic pseudocode block, each
+with a reason-bearing Not-Applicable escape where nothing applies. Every
+Mermaid block is parsed deterministically before candidacy (declared head,
+structure, balanced delimiters); unknown heads or broken blocks fail closed.
+Discovered schema objects and user-visible outputs must be represented by their
+record family or an exact approved exclusion.
+
 Per-unit telemetry is appended to `<workspace db>.metrics.jsonl` (non-authoritative;
 duration, retries, context bytes, result) so rehearsal comparisons stay mechanical.
 

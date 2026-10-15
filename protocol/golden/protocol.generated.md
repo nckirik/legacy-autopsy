@@ -1,9 +1,9 @@
 # Protocol: Legacy System Deconstruction, Assurance, and Reconstruction
 
-**Version:** 4.6 (Canonical Reconstruction-Ready Edition)
+**Version:** 4.7 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
-**Generated-From:** cdl/0.4.0 (sha256:eb978f94d565d391a2275678b3cefa4d7a0a39b101be5f4fae1785702b06aa04)
+**Generated-From:** cdl/0.4.0 (sha256:4b0a1bdf1446e5a92ff54bf6be5d348efbacb0d1b7507984f6724262a35c407f)
 **Language:** cdl/0.4 (eir-format 4)
 **Authority:** generated render of the canonical CDL sources; do not edit.
 
@@ -414,7 +414,7 @@ Observed legacy facts and target decisions MUST appear in separate fields and ha
 - **System Namespace:** [stable slug]
 - **Target Repository / Evidence Roots:** [...]
 - **Primary Technology Stack:** [...]
-- **Protocol Version:** 4.6
+- **Protocol Version:** 4.7
 - **Canonical Storage Binding:** [binding identity plus binding schema version, for example `markdown/1` or `sqlite/1`; default `markdown/1`]
 - **Current Iteration:** [one canonical token from §10.6: ALFA ... ZULU]
 - **Default Max Traversal Depth:** 3
@@ -1278,7 +1278,7 @@ Predicate: complete
 Every invocation begins with:
 
 ```yaml
-Protocol Version: 4.6
+Protocol Version: 4.7
 System Namespace: [slug]
 Current Iteration: [canonical §10.6 token ALFA..ZULU]
 Invocation ID: [globally unique]
@@ -1749,6 +1749,8 @@ Every semantic architecture statement about responsibility, public interface, en
 - **Schema Drift Matrix:** [environment/snapshot -> differences + claims]
 ```
 
+A discovered schema definition (a DDL or schema source unit) MUST be reconciled: every declared object it carries - table, view, trigger, stored procedure, or function - is represented by an ER or DR record, or by an exact approved exclusion with its decision. Silent under-capture is invalid: an object present in the schema and absent from the catalogs is a coverage gap, not an omission of convenience, and the chapter that presents the data model MUST show the resulting entity/table inventory with keys and the relationship topology.
+
 ## 11.5. Relationship - `91-DATA-MODEL.md`
 
 ```markdown
@@ -2163,6 +2165,25 @@ Every chapter MUST:
 - show examples that are evidence-backed or explicitly labeled illustrative;
 - pass link and diagram validation.
 
+Flow-heavy chapters MUST carry a diagram when their backing records support one:
+`02-ARCHITECTURE.md`, `03-DOMAIN-AND-DATA.md`, `05-USE-CASES.md`, and
+`08-BACKGROUND-PROCESSING.md` MUST each include at least one Mermaid diagram
+(architecture/flow, state, entity-relationship, or sequence as fits the
+content), or a reason-bearing Not-Applicable. A diagram is a projection of
+committed records: every element traces to records the chapter cites, citations
+remain in the surrounding prose, and a diagram MUST NOT assert a fact absent
+from its backing records. `03-DOMAIN-AND-DATA.md` MUST present the
+entity/table inventory with its keys and the relationship topology, with an
+entity-relationship diagram, backed by `ER`/`REL` records.
+
+A procedure or lifecycle that prose cannot state precisely - validation order,
+locking, retry/backoff, rollback/compensation, or state transitions - MUST
+include a language-agnostic pseudocode block. Pseudocode uses neutral
+constructs and never product, language, or framework syntax; chapters whose
+backing catalogs include database routines, faults, or schedules carry
+procedures by default. When no pseudocode applies, the chapter states a
+reason-bearing Not-Applicable.
+
 `08-BACKGROUND-PROCESSING.md` MUST include the consolidated fault/resilience view: failure taxonomy, propagation, retries/backoff, transaction rollback, compensation, dead-letter/quarantine paths, observability, and operator/user outcomes, cross-linked to `FLT` records.
 
 ## 13.3. Disabled and Dormant Features chapter
@@ -2178,6 +2199,9 @@ Before candidacy, the conforming runtime validates:
 - all required chapters exist and each contains at least one claim-backed semantic handbook assertion or an evidence-backed zero-domain statement; headings, navigation links, placeholders, or grouping prose alone are vacuous;
 - all internal links and anchor targets resolve;
 - every Mermaid/diagram block parses with a conforming deterministic parser; unavailable parsing capability is `unsupported` and blocks candidacy rather than silently falling back to invisible self-assessment;
+- the designated flow-heavy chapters carry their required diagram (`02`, `03`, `05`, `08`) with a reason-bearing Not-Applicable accepted only when no backing records exist; `03-DOMAIN-AND-DATA.md` presents the entity/table inventory with keys and the relationship topology, with an entity-relationship diagram, backed by `ER`/`REL` records;
+- a procedure-bearing chapter (database routines, faults, or schedules in its backing catalogs) carries a language-agnostic pseudocode block or a reason-bearing Not-Applicable;
+- every declared schema object of a discovered schema definition (table, view, trigger, routine) and every discovered user-visible output/export behavior is represented by its record family (`ER`/`DR`, or a claim-backed `IF`/`UC`) or an exact approved exclusion;
 - each candidate synthesis block is discoverable from at least one handbook path;
 - active versus disabled presentation is unambiguous;
 - target decisions are not presented as observed facts;
@@ -2735,5 +2759,5 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 
 ---
 
-**End of Canonical Deconstruction Protocol, edition 4.6**
+**End of Canonical Deconstruction Protocol, edition 4.7**
 

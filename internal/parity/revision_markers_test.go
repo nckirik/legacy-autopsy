@@ -25,6 +25,11 @@ var revisionMarkers = []string{
 	"Handbook Readability Review",
 	"Static-only eligibility: no condition in this section",
 	"relay-only attestation",
+	"reason-bearing Not-Applicable accepted only when no backing records exist",
+	"language-agnostic pseudocode block",
+	"entity-relationship diagram",
+	"Silent under-capture is invalid",
+	"user-visible output/export behavior",
 }
 
 func TestGeneratedEditionCarriesRevisionMarkers(t *testing.T) {

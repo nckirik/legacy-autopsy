@@ -235,6 +235,8 @@ GOAL
 - **Capability State Impact:** [active/disabled usage]
 - **Schema Drift Matrix:** [environment/snapshot -> differences + claims]
 ```
+
+A discovered schema definition (a DDL or schema source unit) MUST be reconciled: every declared object it carries - table, view, trigger, stored procedure, or function - is represented by an ER or DR record, or by an exact approved exclusion with its decision. Silent under-capture is invalid: an object present in the schema and absent from the catalogs is a coverage gap, not an omission of convenience, and the chapter that presents the data model MUST show the resulting entity/table inventory with keys and the relationship topology.
 END
 
 ENUM STORAGE-KIND
@@ -280,6 +282,18 @@ FIELD ENTITY-RECORD
   permissions                        -> string       required
   capability-state-impact            -> string       required
   schema-drift-matrix                -> string       required
+END
+
+RULE schema-declaration-coverage
+  GOAL
+    A discovered schema definition (a DDL or schema source unit) MUST be reconciled:
+    every declared object it carries - table, view, trigger, stored procedure, or
+    function - is represented by an ER or DR record, or by an exact approved exclusion
+    with its decision. Silent under-capture is invalid: an object present in the schema
+    and absent from the catalogs is a coverage gap, not an omission of convenience, and
+    the chapter that presents the data model MUST show the resulting entity/table
+    inventory with keys and the relationship topology.
+  END
 END
 
 SECTION relationship-catalog

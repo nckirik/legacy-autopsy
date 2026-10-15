@@ -74,6 +74,25 @@ Every chapter MUST:
 - show examples that are evidence-backed or explicitly labeled illustrative;
 - pass link and diagram validation.
 
+Flow-heavy chapters MUST carry a diagram when their backing records support one:
+`02-ARCHITECTURE.md`, `03-DOMAIN-AND-DATA.md`, `05-USE-CASES.md`, and
+`08-BACKGROUND-PROCESSING.md` MUST each include at least one Mermaid diagram
+(architecture/flow, state, entity-relationship, or sequence as fits the
+content), or a reason-bearing Not-Applicable. A diagram is a projection of
+committed records: every element traces to records the chapter cites, citations
+remain in the surrounding prose, and a diagram MUST NOT assert a fact absent
+from its backing records. `03-DOMAIN-AND-DATA.md` MUST present the
+entity/table inventory with its keys and the relationship topology, with an
+entity-relationship diagram, backed by `ER`/`REL` records.
+
+A procedure or lifecycle that prose cannot state precisely - validation order,
+locking, retry/backoff, rollback/compensation, or state transitions - MUST
+include a language-agnostic pseudocode block. Pseudocode uses neutral
+constructs and never product, language, or framework syntax; chapters whose
+backing catalogs include database routines, faults, or schedules carry
+procedures by default. When no pseudocode applies, the chapter states a
+reason-bearing Not-Applicable.
+
 `08-BACKGROUND-PROCESSING.md` MUST include the consolidated fault/resilience view: failure taxonomy, propagation, retries/backoff, transaction rollback, compensation, dead-letter/quarantine paths, observability, and operator/user outcomes, cross-linked to `FLT` records.
 END
 
@@ -84,7 +103,19 @@ RULE chapter-requirements
     records and relevant source/evidence on demand; include navigation to
     previous/next, START-HERE, glossary, decisions, and gaps; avoid unexplained acronyms
     and identifier-only prose; show examples that are evidence-backed or explicitly
-    labeled illustrative; and pass link and diagram validation.
+    labeled illustrative; and pass link and diagram validation. Flow-heavy chapters
+    (02-ARCHITECTURE.md, 03-DOMAIN-AND-DATA.md, 05-USE-CASES.md,
+    08-BACKGROUND-PROCESSING.md) MUST each include at least one Mermaid diagram when
+    their backing records support one, or a reason-bearing Not-Applicable; diagrams are
+    projections of committed records and MUST NOT assert facts absent from their
+    backing records; 03-DOMAIN-AND-DATA.md MUST present the entity/table inventory with
+    keys and the relationship topology, with an entity-relationship diagram, backed by
+    ER and REL records. A procedure or lifecycle that prose cannot state precisely
+    (validation order, locking, retry/backoff, rollback/compensation, or state
+    transitions) MUST include a language-agnostic pseudocode block with neutral
+    constructs and no product, language, or framework syntax, or a reason-bearing
+    Not-Applicable when none applies; chapters whose backing catalogs include database
+    routines, faults, or schedules carry procedures by default.
     08-BACKGROUND-PROCESSING.md MUST include the consolidated fault/resilience view:
     failure taxonomy, propagation, retries/backoff, transaction rollback, compensation,
     dead-letter/quarantine paths, observability, and operator/user outcomes, cross-linked
@@ -126,6 +157,9 @@ Before candidacy, the conforming runtime validates:
 - all required chapters exist and each contains at least one claim-backed semantic handbook assertion or an evidence-backed zero-domain statement; headings, navigation links, placeholders, or grouping prose alone are vacuous;
 - all internal links and anchor targets resolve;
 - every Mermaid/diagram block parses with a conforming deterministic parser; unavailable parsing capability is `unsupported` and blocks candidacy rather than silently falling back to invisible self-assessment;
+- the designated flow-heavy chapters carry their required diagram (`02`, `03`, `05`, `08`) with a reason-bearing Not-Applicable accepted only when no backing records exist; `03-DOMAIN-AND-DATA.md` presents the entity/table inventory with keys and the relationship topology, with an entity-relationship diagram, backed by `ER`/`REL` records;
+- a procedure-bearing chapter (database routines, faults, or schedules in its backing catalogs) carries a language-agnostic pseudocode block or a reason-bearing Not-Applicable;
+- every declared schema object of a discovered schema definition (table, view, trigger, routine) and every discovered user-visible output/export behavior is represented by its record family (`ER`/`DR`, or a claim-backed `IF`/`UC`) or an exact approved exclusion;
 - each candidate synthesis block is discoverable from at least one handbook path;
 - active versus disabled presentation is unambiguous;
 - target decisions are not presented as observed facts;
@@ -154,10 +188,20 @@ RULE handbook-quality-checks
     placeholders, or grouping prose alone are vacuous; all internal links and anchor
     targets resolve; every Mermaid/diagram block parses with a conforming deterministic
     parser, and unavailable parsing capability is unsupported and blocks candidacy
-    rather than silently falling back to invisible self-assessment; each candidate
-    synthesis block is discoverable from at least one handbook path; active versus
-    disabled presentation is unambiguous; target decisions are not presented as observed
-    facts; and no B-STALE, provisional, or pending-reference section remains.
+    rather than silently falling back to invisible self-assessment; the designated
+    flow-heavy chapters carry their required diagram (02, 03, 05, 08) with a
+    reason-bearing Not-Applicable accepted only when no backing records exist;
+    03-DOMAIN-AND-DATA.md presents the entity/table inventory with keys and the
+    relationship topology, with an entity-relationship diagram, backed by ER and REL
+    records; a procedure-bearing chapter (database routines, faults, or schedules in its
+    backing catalogs) carries a language-agnostic pseudocode block or a reason-bearing
+    Not-Applicable; every declared schema object of a discovered schema definition
+    (table, view, trigger, routine) and every discovered user-visible output/export
+    behavior is represented by its record family (ER or DR, or a claim-backed IF or UC)
+    or an exact approved exclusion; each candidate synthesis block is discoverable from
+    at least one handbook path; active versus disabled presentation is unambiguous;
+    target decisions are not presented as observed facts; and no B-STALE, provisional,
+    or pending-reference section remains.
   END
 END
 

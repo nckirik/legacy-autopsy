@@ -92,6 +92,18 @@ func NotApplicableWithReason(markdown string) bool {
 	return false
 }
 
+// requiredDiagramChapters are the designated flow-heavy chapters that must
+// carry at least one valid Mermaid diagram or a reason-bearing Not-Applicable.
+var requiredDiagramChapters = map[string]bool{"02": true, "03": true, "05": true, "08": true}
+
+// erDiagramChapters must additionally carry an entity-relationship diagram.
+var erDiagramChapters = map[string]bool{"03": true}
+
+// requiredPseudocodeChapters carry procedures by default (database routines,
+// faults, or schedules in their catalogs) and must include a language-agnostic
+// pseudocode block or a reason-bearing Not-Applicable.
+var requiredPseudocodeChapters = map[string]bool{"03": true, "08": true}
+
 // LintChapter applies the deterministic PI-11 substance gate to one chapter.
 func LintChapter(subject, markdown string) []Finding {
 	var findings []Finding
@@ -107,6 +119,7 @@ func LintChapter(subject, markdown string) []Finding {
 	for _, finding := range ValidateDiagrams(subject, markdown) {
 		findings = append(findings, finding)
 	}
+	findings = append(findings, lintRequiredBlocks(subject, markdown)...)
 	if count := AssertionCount(markdown); count < MinimumAssertions {
 		if !NotApplicableWithReason(markdown) {
 			findings = append(findings, Finding{

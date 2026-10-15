@@ -42,7 +42,12 @@ Output exactly three sections and nothing else:
 ## Target Decisions
 <one paragraph, or "Not-Applicable: <reason>" when no decision applies>
 
-Do not add other headings, navigation, record IDs, or field tables. The runtime adds navigation and a collapsed record appendix.`
+Do not add other headings, navigation, record IDs, or field tables. The runtime adds navigation and a collapsed record appendix.
+
+Diagram and pseudocode blocks:
+- Designated flow-heavy chapters (02 Architecture, 03 Domain and Data, 05 Use Cases, 08 Background Processing) must include at least one fenced Mermaid diagram (code fence with info string mermaid) that projects the cited records: use flowchart/graph for flows, stateDiagram-v2 for lifecycles, erDiagram for entity relationships (chapter 03 must show the entity/table inventory with keys and the relationship topology as an erDiagram), and sequenceDiagram for message flows. When the chapter has no backing records at all, write a reason-bearing "Not-Applicable: <reason>" instead.
+- Chapters 03 and 08 carry procedures by default (database routines, faults, schedules): when a procedure or lifecycle cannot be stated precisely in prose (validation order, locking, retry/rollback, state transitions), include a language-agnostic pseudocode block (code fence with info string text) using neutral constructs and no product, language, or framework syntax. Otherwise write a reason-bearing "Not-Applicable: <reason>".
+- Diagram and pseudocode content is a projection of the cited records: every element traces to a claim you cite, and citations stay in the surrounding prose. Never assert a fact in a diagram or pseudocode block that the cited records do not support.`
 
 // Narrate authors the full chapter narrative from its committed records and
 // validates citations, the STE rules, and the substance floor. It retries with

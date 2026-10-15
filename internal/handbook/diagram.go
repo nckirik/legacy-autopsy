@@ -103,6 +103,81 @@ func validateDiagram(subject string, index int, raw string) []Finding {
 	return nil
 }
 
+// lintRequiredBlocks enforces the chapter content requirements: required
+// diagrams (and the entity-relationship diagram) for flow-heavy chapters, and
+// pseudocode for procedure-bearing chapters, each with a reason-bearing
+// Not-Applicable escape.
+func lintRequiredBlocks(subject, markdown string) []Finding {
+	var findings []Finding
+	if requiredDiagramChapters[subject] {
+		classes := diagramClasses(markdown)
+		if len(classes) == 0 && !NotApplicableWithReason(markdown) {
+			findings = append(findings, Finding{Code: "HBK-DIAGRAM-REQUIRED", Subject: subject, Detail: "flow-heavy chapter needs a valid Mermaid diagram or a reason-bearing Not-Applicable"})
+		}
+		if erDiagramChapters[subject] && !containsClass(classes, diagramER) && !NotApplicableWithReason(markdown) {
+			findings = append(findings, Finding{Code: "HBK-ER-DIAGRAM", Subject: subject, Detail: "data chapter needs an entity-relationship diagram of the entity/table inventory or a reason-bearing Not-Applicable"})
+		}
+	}
+	if requiredPseudocodeChapters[subject] && !hasPseudocodeBlock(markdown) && !NotApplicableWithReason(markdown) {
+		findings = append(findings, Finding{Code: "HBK-PSEUDOCODE", Subject: subject, Detail: "procedure-bearing chapter needs a language-agnostic pseudocode block or a reason-bearing Not-Applicable"})
+	}
+	return findings
+}
+
+// diagramClasses returns the validator classes of every supported Mermaid block
+// in a chapter.
+func diagramClasses(markdown string) []diagramClass {
+	doc, err := md.Parse(markdown)
+	if err != nil {
+		return nil
+	}
+	var classes []diagramClass
+	for _, node := range doc.Nodes {
+		if node.Kind != md.CodeBlock || !strings.HasPrefix(strings.ToLower(strings.TrimSpace(node.Info)), "mermaid") {
+			continue
+		}
+		for _, line := range strings.Split(node.Raw, "\n") {
+			trimmed := strings.TrimSpace(line)
+			if trimmed == "" || strings.HasPrefix(trimmed, "%%") {
+				continue
+			}
+			if class, ok := supportedDiagramHeads[strings.ToLower(strings.Fields(trimmed)[0])]; ok {
+				classes = append(classes, class)
+			}
+			break
+		}
+	}
+	return classes
+}
+
+// hasPseudocodeBlock reports whether a chapter carries a non-empty
+// language-agnostic pseudocode block (fenced `text` or `pseudocode`).
+func hasPseudocodeBlock(markdown string) bool {
+	doc, err := md.Parse(markdown)
+	if err != nil {
+		return false
+	}
+	for _, node := range doc.Nodes {
+		if node.Kind != md.CodeBlock || strings.TrimSpace(node.Raw) == "" {
+			continue
+		}
+		info := strings.ToLower(strings.TrimSpace(node.Info))
+		if strings.HasPrefix(info, "text") || strings.HasPrefix(info, "pseudocode") {
+			return true
+		}
+	}
+	return false
+}
+
+func containsClass(classes []diagramClass, want diagramClass) bool {
+	for _, class := range classes {
+		if class == want {
+			return true
+		}
+	}
+	return false
+}
+
 func unbalancedDelimiters(label string, lines []string) (string, string) {
 	counts := map[string]int{}
 	for _, line := range lines {

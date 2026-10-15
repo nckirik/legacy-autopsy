@@ -63,8 +63,15 @@ func TestDraftRendersChaptersAndLint(t *testing.T) {
 			t.Fatalf("draft missing %q", marker)
 		}
 	}
-	if len(findings) != 0 {
-		t.Fatalf("draft lint findings: %v", findings)
+	for _, finding := range findings {
+		// The mechanical draft carries no diagrams; the flow-heavy chapters
+		// report that they still need one when narrated.
+		if finding.Code != "HBK-DIAGRAM-REQUIRED" {
+			t.Fatalf("unexpected draft lint finding: %v", finding)
+		}
+	}
+	if len(findings) != 1 || findings[0].Subject != "02" {
+		t.Fatalf("draft lint findings = %v, want only the chapter 02 diagram requirement", findings)
 	}
 }
 

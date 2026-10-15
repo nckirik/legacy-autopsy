@@ -111,8 +111,15 @@ func TestAssemblePassesSubstanceLint(t *testing.T) {
 		t.Fatalf("assembled chapter fails lint: %v\n%s", findings, out)
 	}
 	sparse := Assemble([]Chapter{{Number: "02", Title: "Sparse", AudiencePurpose: "x", TargetDecisions: "y"}})
-	if findings := LintChapter("02", string(sparse)); len(findings) != 1 {
-		t.Fatalf("sparse chapter passed: %v", findings)
+	findings := LintChapter("02", string(sparse))
+	substance := false
+	for _, finding := range findings {
+		if finding.Code == "HBK-SUBSTANCE" {
+			substance = true
+		}
+	}
+	if !substance {
+		t.Fatalf("sparse chapter passed substance lint: %v", findings)
 	}
 }
 

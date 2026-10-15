@@ -3,7 +3,7 @@
 - Schema version: 1
 - Generator: parityreport parityreport/0.1
 - Generated at: 2026-09-25T00:00:00Z
-- Protocol: 4.6 (sha256:5b794a07d8e47f478b518ffd16cb12f7b7a50a1b1f4d3cd6965d473cda23d3bf)
+- Protocol: 4.7 (sha256:1a5391e825d898c5f8756b63d5c6893b73a42489e66ebcf2f5fc4753fbbc2f49)
 - Language: cdl/0.4 (EIR format 4)
 
 ## Section coverage
@@ -123,11 +123,11 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 27 sources |
 | drift-tests | pass | 24 tests in 24 files |
-| generated-protocol | pass | sha256:5b794a07d8e47f478b518ffd16cb12f7b7a50a1b1f4d3cd6965d473cda23d3bf |
-| golden-eir | pass | sha256:aaac605a232f1f195196aa42c7913bad83d8734170b9ee116666603fd75323b4 |
-| golden-prompt | pass | sha256:806af8f454e70b8bf62d8b7bb70cfb92402231915e7bcd4ba053cea27a06cdc0 |
+| generated-protocol | pass | sha256:1a5391e825d898c5f8756b63d5c6893b73a42489e66ebcf2f5fc4753fbbc2f49 |
+| golden-eir | pass | sha256:0dd52bc0231429cf7006ce5423cb40b460a08646c56ef8e96abe8467ef063eaa |
+| golden-prompt | pass | sha256:f7f8ab30fdf26ec3a943772e7be7bd29d7f0f42a134ff80c68a147ecb8e1f80a |
 | fixture-oracle | pass | 24/24 passed |
-| identity-ledger | pass | 538 identities across 27 sources |
+| identity-ledger | pass | 539 identities across 27 sources |
 
 ## Fixtures
 
@@ -159,9 +159,9 @@
 | protocol/invocation-lifecycle.cdl | 3 | 8 | sha256:3e04a6cb7e01e352e10c58411b427893abf41dc810684228acfb18a6062227ed |
 | protocol/ticket-fsm.cdl | 6 | 20 | sha256:33e51665b071fedafb359fd074b95b64ce76296f26502b01fae3cd281f035125 |
 | protocol/coverage-and-exits.cdl | 6 | 19 | sha256:4e7136c0fba1851cca37d53c063bd9685ab4430d38f4c31a0bef2804eca8cdcb |
-| protocol/synthesis-catalogs.cdl | 13 | 66 | sha256:669904f04afc4ce496c6a6602bbaad7e2e8369852c5f0749e5f66464e6d0ab6d |
+| protocol/synthesis-catalogs.cdl | 13 | 67 | sha256:21fad7328973d931db66c8723d941cc81397b18843ab10aed490bdab84302224 |
 | protocol/traceability.cdl | 5 | 16 | sha256:be0f976036aba346b118c10e72a78d55f922d9e8a0921c1a27cb0e35bb840566 |
-| protocol/handbook-and-decisions.cdl | 10 | 23 | sha256:56c6ad208fbc054697e2cd51b3b8c15e3b4872407ac456328c5c2b175273c066 |
+| protocol/handbook-and-decisions.cdl | 10 | 23 | sha256:5e6fe471b69e3516595bd9839dc2fcebd6b606f11e4b74065cfc71d921908ea1 |
 | protocol/packaging.cdl | 9 | 50 | sha256:36493cd62b0d502d2b2c5455ae648b6e6e9d461d31c4d73a6e7558b9c1e15fd0 |
 | protocol/conformance.cdl | 5 | 10 | sha256:9a8fb1d1d5212eb46e646fc31b84b0b2869ff1581c85f0c1ec5f8c598656407a |
 

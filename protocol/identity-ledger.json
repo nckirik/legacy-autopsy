@@ -800,7 +800,7 @@
     },
     {
       "path": "protocol/handbook-and-decisions.cdl",
-      "source-fingerprint": "sha256:e0940212fb5bd7e4b6a718a4cf5f96c67aaebc3e1d1764b100e5f998c00567ee",
+      "source-fingerprint": "sha256:374fd35ac62f0e6e1a002dba33d3ec7a7c55b02a3442e1ad7410f8b51202a590",
       "ids": [
         {
           "id": "AUDIENCE-ROLE",
@@ -2225,7 +2225,7 @@
     },
     {
       "path": "protocol/synthesis-catalogs.cdl",
-      "source-fingerprint": "sha256:2827e7cc4ee9552b219df2a45bec1902af076764d2d1877ba852742d3dd50654",
+      "source-fingerprint": "sha256:5c510b20e419fdc33bedf92d18fbc70f5ca39fa307842d02604d0bbd1d45ff02",
       "ids": [
         {
           "id": "ARCHITECTURE-MODULE",
@@ -2515,6 +2515,11 @@
         {
           "id": "relationship-catalog",
           "kind": "SECTION",
+          "status": "active"
+        },
+        {
+          "id": "schema-declaration-coverage",
+          "kind": "RULE",
           "status": "active"
         },
         {

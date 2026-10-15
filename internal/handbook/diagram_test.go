@@ -66,3 +66,44 @@ func TestProseViewAndAssertionsSkipFencedBlocks(t *testing.T) {
 		t.Fatalf("prose view lost narrative:\n%s", prose)
 	}
 }
+
+func TestLintRequiredBlocks(t *testing.T) {
+	flowchart := "```mermaid\nflowchart TD\n  A[Client] --> B[Server]\n```\n"
+	er := "```mermaid\nerDiagram\n  A ||--o{ B : has\n```\n"
+	pseudocode := "```text\n1. acquire the lock for the unit\n2. check conflicting reservations\n3. release the lock\n```\n"
+	cases := []struct {
+		name     string
+		subject  string
+		markdown string
+		want     string
+	}{
+		{"02 without diagram", "02", "Prose only.\n", "HBK-DIAGRAM-REQUIRED"},
+		{"03 without er", "03", flowchart, "HBK-ER-DIAGRAM"},
+		{"03 without pseudocode", "03", flowchart + er, "HBK-PSEUDOCODE"},
+		{"08 without pseudocode", "08", flowchart, "HBK-PSEUDOCODE"},
+	}
+	for _, tc := range cases {
+		findings := LintChapter(tc.subject, tc.markdown)
+		found := false
+		for _, finding := range findings {
+			if finding.Code == tc.want {
+				found = true
+			}
+		}
+		if !found {
+			t.Fatalf("%s: findings = %v, want %s", tc.name, findings, tc.want)
+		}
+	}
+	complete := flowchart + er + pseudocode
+	for _, finding := range LintChapter("03", complete) {
+		if strings.HasPrefix(finding.Code, "HBK-DIAGRAM") || finding.Code == "HBK-ER-DIAGRAM" || finding.Code == "HBK-PSEUDOCODE" {
+			t.Fatalf("complete chapter flagged: %v", finding)
+		}
+	}
+	escape := "Not-Applicable: this chapter class is empty because no records exist and no evidence supports one.\n"
+	for _, finding := range LintChapter("08", escape) {
+		if strings.HasPrefix(finding.Code, "HBK-DIAGRAM") || finding.Code == "HBK-PSEUDOCODE" {
+			t.Fatalf("reason-bearing Not-Applicable rejected: %v", finding)
+		}
+	}
+}
