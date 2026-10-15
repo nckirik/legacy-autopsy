@@ -28,16 +28,22 @@ func (f Finding) String() string { return fmt.Sprintf("%s %s: %s", f.Code, f.Sub
 
 // AssertionCount counts claim-backed assertion lines: statement lines that
 // carry an inline claim citation or a numbered footnote reference. Footnote
-// definitions and the collapsed record appendix are not assertions, so the
-// count is identical before and after citation numbering.
+// definitions, fenced diagram/code blocks, and the collapsed record appendix
+// are not assertions, so the count is identical before and after citation
+// numbering.
 func AssertionCount(markdown string) int {
 	if idx := strings.Index(markdown, "\n### Record Details"); idx >= 0 {
 		markdown = markdown[:idx]
 	}
 	count := 0
+	inFence := false
 	for _, line := range strings.Split(markdown, "\n") {
 		trimmed := strings.TrimSpace(line)
-		if trimmed == "" || strings.HasPrefix(trimmed, "#") || strings.HasPrefix(trimmed, "- [") || strings.HasPrefix(trimmed, "[^") {
+		if strings.HasPrefix(trimmed, "```") || strings.HasPrefix(trimmed, "~~~") {
+			inFence = !inFence
+			continue
+		}
+		if inFence || trimmed == "" || strings.HasPrefix(trimmed, "#") || strings.HasPrefix(trimmed, "- [") || strings.HasPrefix(trimmed, "[^") {
 			continue
 		}
 		if claimReference(trimmed) || footnoteReference(trimmed) {
@@ -98,6 +104,9 @@ func LintChapter(subject, markdown string) []Finding {
 	for _, finding := range ste.Lint(subject, proseView(markdown)) {
 		findings = append(findings, Finding{Code: finding.Code, Subject: finding.Subject, Detail: finding.Detail})
 	}
+	for _, finding := range ValidateDiagrams(subject, markdown) {
+		findings = append(findings, finding)
+	}
 	if count := AssertionCount(markdown); count < MinimumAssertions {
 		if !NotApplicableWithReason(markdown) {
 			findings = append(findings, Finding{
@@ -109,12 +118,20 @@ func LintChapter(subject, markdown string) []Finding {
 	return findings
 }
 
-// proseView removes mechanical reference lines (identity bindings) so the STE
-// lint sees human-facing prose only.
+// proseView removes mechanical reference lines (identity bindings) and fenced
+// diagram/code blocks so the STE lint sees human-facing prose only.
 func proseView(markdown string) string {
 	var lines []string
+	inFence := false
 	for _, line := range strings.Split(markdown, "\n") {
 		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "```") || strings.HasPrefix(trimmed, "~~~") {
+			inFence = !inFence
+			continue
+		}
+		if inFence {
+			continue
+		}
 		if strings.HasPrefix(trimmed, "- **source-bindings:**") {
 			continue
 		}
