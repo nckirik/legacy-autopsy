@@ -149,5 +149,5 @@ func firstTokenField(value string) string {
 	if len(fields) == 0 {
 		return ""
 	}
-	return fields[0]
+	return strings.TrimRight(fields[0], ",;:)]")
 }

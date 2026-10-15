@@ -45,8 +45,12 @@ func specAssurance(args []string, stdout, stderr io.Writer) error {
 
 // specAssuranceTickets originates T-OPEN tickets for ticketless unresolved
 // semantic predicates (unknown lifecycle classifications) so honest coverage
-// is visible as ticket state instead of silent gaps.
+// is visible as ticket state instead of silent gaps. `tickets apply` records
+// reviewed human dispositions instead of originating new tickets.
 func specAssuranceTickets(args []string, stdout, stderr io.Writer) error {
+	if len(args) > 0 && args[0] == "apply" {
+		return specAssuranceTicketsApply(args[1:], stdout, stderr)
+	}
 	set := flags("spec assurance tickets", stderr)
 	repo := set.String("repo", ".", "protocol repository root")
 	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
@@ -151,6 +155,66 @@ func specAssuranceTickets(args []string, stdout, stderr io.Writer) error {
 		return runErr
 	}
 	fmt.Fprintf(stdout, "tickets originated: %d\n", len(report.Units))
+	return nil
+}
+
+// specAssuranceTicketsApply applies recorded human dispositions: each ticket
+// transitions FSM-legally T-OPEN -> T-PENDING -> T-COMPLETE and its scope's
+// lifecycle row is reclassified with the recorded reason and provenance.
+func specAssuranceTicketsApply(args []string, stdout, stderr io.Writer) error {
+	set := flags("spec assurance tickets apply", stderr)
+	repo := set.String("repo", ".", "protocol repository root")
+	assembly := set.String("assembly", defaultSpecAssembly, "assembly manifest path")
+	source := set.String("source", "", "single CDL source (default: full assembly)")
+	ledger := set.String("ledger", defaultSpecLedger, "identity ledger path")
+	db := set.String("db", "", "SQLite database path (required)")
+	decisionsFile := set.String("decisions", "", "recorded decisions file: TICKET-ID | Classification | Reason (required)")
+	if err := set.Parse(args); err != nil {
+		return err
+	}
+	if len(set.Args()) != 0 {
+		return fmt.Errorf("unexpected positional arguments: %s", strings.Join(set.Args(), " "))
+	}
+	if *db == "" || *decisionsFile == "" {
+		return fmt.Errorf("spec assurance tickets apply requires --db and --decisions")
+	}
+	res, _, err := compileSpec(*repo, *assembly, *source, *ledger)
+	if err != nil {
+		return err
+	}
+	header, err := preflightHeaderValues(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	decisions, err := assurance.LoadDecisions(*decisionsFile)
+	if err != nil {
+		return err
+	}
+	units, payloads, err := assurance.ResolutionPlan(*db, res.EIR, decisions)
+	if err != nil {
+		return err
+	}
+	runConfig := work.DefaultConfig()
+	runConfig.UpdateExisting = true
+	if iteration := header["current-iteration"]; iteration != "" {
+		runConfig.Iteration = iteration
+	}
+	if err := runConfig.Validate(); err != nil {
+		return err
+	}
+	session, err := work.NewSession(*db, res.EIR, runConfig, assurance.MechanicalResolutionExecutor{Payloads: payloads}, nil)
+	if err != nil {
+		return err
+	}
+	report, err := session.Run(units)
+	if err != nil {
+		fmt.Fprintf(stderr, "ticket resolution stopped: %s\n", err)
+		return err
+	}
+	for _, stats := range report.Units {
+		fmt.Fprintf(stdout, "%-48s %s\n", stats.UnitID, stats.InvocationID)
+	}
+	fmt.Fprintf(stdout, "tickets resolved: %d, lifecycle rows reclassified: %d\n", len(decisions), len(decisions))
 	return nil
 }
 
