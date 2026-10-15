@@ -39,8 +39,16 @@ func SchemaCoverageDiagnostics(db string, doc *cdl.EIRDoc) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	dispositions, err := coverageDispositions(db, doc)
+	if err != nil {
+		return nil, err
+	}
 	var diagnostics []string
 	for _, unit := range inventory {
+		switch dispositions[unit.ID] {
+		case "Approved-Excluded", "Superseded", "Retired":
+			continue
+		}
 		kind := sourceKind(unit.ID)
 		claims := claimsBySubject[unit.ID]
 		switch kind {
@@ -68,6 +76,37 @@ func SchemaCoverageDiagnostics(db string, doc *cdl.EIRDoc) ([]string, error) {
 	}
 	sort.Strings(diagnostics)
 	return diagnostics, nil
+}
+
+// coverageDispositions maps each source unit to its scope-specific coverage
+// disposition, so an exactly approved exclusion (or a superseded/retired unit)
+// resolves a schema/output unit without further coverage records.
+func coverageDispositions(db string, doc *cdl.EIRDoc) (map[string]string, error) {
+	names, _, _, err := work.FieldContract(doc, "SOURCE-COVERAGE-ROW")
+	if err != nil {
+		return nil, err
+	}
+	ids, err := store.List(db, doc, "SOURCE-COVERAGE-ROW")
+	if err != nil {
+		return nil, err
+	}
+	dispositions := map[string]string{}
+	for _, id := range ids {
+		payload, err := store.Get(db, doc, "SOURCE-COVERAGE-ROW", id)
+		if err != nil {
+			return nil, err
+		}
+		values, err := work.PayloadText(names, payload)
+		if err != nil {
+			return nil, err
+		}
+		src := firstTokenField(values["src-version"])
+		if src == "" {
+			continue
+		}
+		dispositions[src] = strings.TrimSpace(values["disposition"])
+	}
+	return dispositions, nil
 }
 
 // sourceKind extracts the SRC kind token from a source-unit ID.

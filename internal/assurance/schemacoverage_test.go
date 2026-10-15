@@ -67,3 +67,20 @@ func TestSchemaCoverageDiagnostics(t *testing.T) {
 		t.Fatalf("diagnostics remain:\n%s", strings.Join(diagnostics, "\n"))
 	}
 }
+
+func TestSchemaCoverageDiagnosticsHonorApprovedExclusion(t *testing.T) {
+	doc, db := testDocDB(t)
+	table := seedInventory(t, db, doc, "TABLE", "schema.sql :: table :: legacy_cache", "sha256:aaa")
+	_ = table
+	coverage := []byte("- **cov-id:** COV-EXCLUDED\n- **src-version:** " + table + " version 1\n- **persona-owner:** SHARED\n- **track:** Normal\n- **environment:** dev\n- **snapshot:** dev\n- **scope:** In-Scope\n- **disposition:** Approved-Excluded\n- **c-status:** [C-EXCLUDED]\n- **exclusion-dec:** DEC-AAAAAAAAAAAA approved 2026-10-15\n- **mappings:** None\n- **frontier-ticket-claim-evidence:** None\n")
+	if err := store.Ingest(db, doc, "SOURCE-COVERAGE-ROW", "COV-EXCLUDED", 1, coverage); err != nil {
+		t.Fatal(err)
+	}
+	diagnostics, err := SchemaCoverageDiagnostics(db, doc)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(diagnostics) != 0 {
+		t.Fatalf("approved exclusion not honored:\n%s", strings.Join(diagnostics, "\n"))
+	}
+}
