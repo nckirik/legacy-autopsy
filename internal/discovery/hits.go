@@ -19,9 +19,13 @@ import (
 type HitKind string
 
 const (
-	HitRoute HitKind = "ROUTE"
-	HitQuery HitKind = "QUERY"
-	HitJob   HitKind = "JOB"
+	HitRoute  HitKind = "ROUTE"
+	HitQuery  HitKind = "QUERY"
+	HitJob    HitKind = "JOB"
+	HitTable  HitKind = "TABLE"
+	HitView   HitKind = "VIEW"
+	HitDR     HitKind = "DR"
+	HitAction HitKind = "ACTION"
 )
 
 // Hit is one deterministically enumerated non-file source unit: a route
@@ -75,11 +79,33 @@ var jobMarkers = []string{
 	"setinterval(", "cron_expression",
 }
 
-// queryKeywords declare the SQL statement openers the enumerator recognizes.
+// queryKeywords declare the SQL statement openers the enumerator recognizes as
+// query units. Schema-object openers (CREATE TABLE/VIEW/TRIGGER/PROCEDURE/
+// FUNCTION) classify as their own kinds instead.
 var queryKeywords = []string{
-	"CREATE TABLE", "CREATE VIEW", "CREATE TRIGGER", "CREATE PROCEDURE",
-	"CREATE FUNCTION", "ALTER TABLE", "DROP TABLE", "SELECT", "INSERT INTO",
+	"ALTER TABLE", "DROP TABLE", "SELECT", "INSERT INTO",
 	"UPDATE ", "DELETE FROM",
+}
+
+// schemaOpeners declare the DDL object declarations the enumerator recognizes
+// and the SRC kind each object carries.
+var schemaOpeners = []struct {
+	keyword string
+	kind    HitKind
+}{
+	{"CREATE MATERIALIZED VIEW", HitView},
+	{"CREATE TABLE", HitTable},
+	{"CREATE VIEW", HitView},
+	{"CREATE TRIGGER", HitDR},
+	{"CREATE PROCEDURE", HitDR},
+	{"CREATE FUNCTION", HitDR},
+}
+
+// outputMarkers declare user-visible output/export constructs (file downloads
+// and attachments) that produce artifacts rather than data reads.
+var outputMarkers = []string{
+	"st.download_button(", "download_button(", "send_file(", "send_from_directory(",
+	"fileresponse(", "res.download(", "res.sendfile(", "content-disposition",
 }
 
 // EnumerateHits scans the enumerated candidate files for route, query, and job
@@ -174,11 +200,69 @@ func classifyHit(file string, line int, trimmed string) (Hit, bool) {
 	if hit, ok := routeHit(file, line, trimmed); ok {
 		return hit, true
 	}
+	if hit, ok := schemaHit(file, line, trimmed); ok {
+		return hit, true
+	}
 	if hit, ok := queryHit(file, line, trimmed); ok {
 		return hit, true
 	}
 	if hit, ok := jobHit(file, line, trimmed); ok {
 		return hit, true
+	}
+	if hit, ok := outputHit(file, line, trimmed); ok {
+		return hit, true
+	}
+	return Hit{}, false
+}
+
+// schemaHit recognizes DDL object declarations and classifies them as their
+// declared SRC kinds: tables, views, and database routines.
+func schemaHit(file string, line int, trimmed string) (Hit, bool) {
+	body := strings.TrimLeft(trimmed, "\"'`([ ")
+	upper := strings.ToUpper(body)
+	for _, opener := range schemaOpeners {
+		if !strings.HasPrefix(upper, opener.keyword+" ") {
+			continue
+		}
+		name := ddlObjectName(strings.TrimSpace(body[len(opener.keyword):]))
+		if name == "" {
+			return Hit{}, false
+		}
+		coordinate := normalizeHitText(file + " :: " + strings.ToLower(string(opener.kind)) + " :: " + name)
+		return newHit(opener.kind, file, line, coordinate, trimmed), true
+	}
+	return Hit{}, false
+}
+
+// ddlObjectName extracts the declared object name, tolerating IF NOT EXISTS and
+// identifier quoting.
+func ddlObjectName(rest string) string {
+	if strings.HasPrefix(strings.ToUpper(rest), "IF NOT EXISTS ") {
+		rest = strings.TrimSpace(rest[len("IF NOT EXISTS "):])
+	}
+	rest = strings.TrimLeft(rest, "`\"[ ")
+	end := strings.IndexAny(rest, " `\"([\t")
+	if end < 0 {
+		end = len(rest)
+	}
+	name := strings.TrimRight(rest[:end], ";,")
+	if name == "" {
+		return ""
+	}
+	return name
+}
+
+// outputHit recognizes user-visible file output/export constructs.
+func outputHit(file string, line int, trimmed string) (Hit, bool) {
+	lower := strings.ToLower(trimmed)
+	for _, marker := range outputMarkers {
+		if strings.Contains(lower, marker) {
+			if len(trimmed) > 120 {
+				trimmed = trimmed[:120]
+			}
+			coordinate := normalizeHitText(file + " :: action :: " + trimmed)
+			return newHit(HitAction, file, line, coordinate, trimmed), true
+		}
 	}
 	return Hit{}, false
 }
@@ -317,16 +401,19 @@ func normalizeHitText(value string) string {
 }
 
 // hitPOV maps a hit kind to its isolated point of view (§2 five isolated
-// POVs): queries are data movement (POV-4), routes are system wiring (POV-5),
-// and jobs are background workflows (POV-3).
+// POVs): queries, tables, views, and database routines are data movement
+// (POV-4), routes are system wiring (POV-5), jobs are background workflows
+// (POV-3), and output/export actions are frontend workflows (POV-1).
 func hitPOV(kind HitKind) string {
 	switch kind {
-	case HitQuery:
+	case HitQuery, HitTable, HitView, HitDR:
 		return "POV-4"
 	case HitRoute:
 		return "POV-5"
 	case HitJob:
 		return "POV-3"
+	case HitAction:
+		return "POV-1"
 	default:
 		return ""
 	}

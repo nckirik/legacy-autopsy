@@ -87,19 +87,19 @@ func TestPOVManifestsProjectSharedReferences(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(manifests) != 3 {
-		t.Fatalf("manifests = %+v", manifests)
+	if len(manifests) != 4 {
+		t.Fatalf("manifests = %d, want 4", len(manifests))
 	}
 	paths := map[string]int{}
 	for _, manifest := range manifests {
 		paths[manifest.Path] = len(manifest.Markdown)
 	}
-	for _, want := range []string{"personas/WEB-web-kullanici/03-BACKGROUND-POV.md", "personas/WEB-web-kullanici/04-DATA-POV.md", "personas/WEB-web-kullanici/05-WIRING-POV.md"} {
+	for _, want := range []string{"personas/WEB-web-kullanici/01-FRONTEND-POV.md", "personas/WEB-web-kullanici/03-BACKGROUND-POV.md", "personas/WEB-web-kullanici/04-DATA-POV.md", "personas/WEB-web-kullanici/05-WIRING-POV.md"} {
 		if paths[want] == 0 {
 			t.Fatalf("missing manifest %s in %v", want, paths)
 		}
 	}
-	text := string(manifests[2].Markdown)
+	text := string(manifests[3].Markdown)
 	for _, marker := range []string{"- **Persona Directory:** WEB-web-kullanici", "- **POV:** POV-5 (System Wiring Workflows)", "canonical location: personas/_shared/05-WIRING-POV.md -> CMP-"} {
 		if !strings.Contains(text, marker) {
 			t.Fatalf("manifest missing %q:\n%s", marker, text)

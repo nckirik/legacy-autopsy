@@ -187,9 +187,13 @@ go run ./cmd/legacy-autopsy spec assurance closure --db <workspace db>
 dimensions, uncommitted source units, unresolved frontiers, active tickets, or
 any discovered caller in the committed component graph, and reports
 lifecycle-eligibility rows with duplicate scopes, missing provenance,
-inconsistent snapshots, or `Unknown` classifications without a ticket. Ticket
-writes are validated against the declared `TICKET-STATE` machine at commit
-(initial state, declared transitions, trace history, escalation reasons).
+inconsistent snapshots, or `Unknown` classifications without a ticket. It also
+reports schema/output coverage diagnostics: declared `SRC-TABLE`/`SRC-VIEW`
+units must be claim-backed and represented by an entity record, `SRC-DR` units
+by a database-routine record, and discovered output `SRC-ACTION` units must
+carry a committed claim. Ticket writes are validated against the declared
+`TICKET-STATE` machine at commit (initial state, declared transitions, trace
+history, escalation reasons).
 
 Discovery enumerates files and, separately, the non-file units they declare:
 
@@ -198,12 +202,15 @@ go run ./cmd/legacy-autopsy spec discovery hits --target <repo> --db <workspace 
 ```
 
 `spec discovery hits` scans the enumerated file window lexically with declared
-extensions and bounds, extracts route registrations, SQL statements, and
-scheduling markers, and runs bounded inventory units over the hits. The model
+extensions and bounds, and extracts source units of these kinds: route
+registrations (`ROUTE`), SQL statements (`QUERY`), schema object declarations
+(`TABLE`, `VIEW`, `DR` for triggers/procedures/functions), scheduling markers
+(`JOB`), and user-visible output/export constructs such as downloads
+(`ACTION`). It then runs bounded inventory units over the hits. The model
 authors one `SOURCE-INVENTORY-RECORD` per hit; the runtime computes the
-`SRC-ROUTE`/`SRC-QUERY`/`SRC-JOB` identity from the copied coordinate. Hit
-extraction is deterministic and re-runnable; absence of a hit kind still needs
-its own evidence-backed enumerator record.
+matching `SRC-*` identity from the copied coordinate. Hit extraction is
+deterministic and re-runnable; absence of a hit kind still needs its own
+evidence-backed enumerator record.
 
 Hit units carry the §8.2 strict single-scope bindings: one entry cluster
 (resolved from the cluster's concrete entry coordinates), its traversal track,

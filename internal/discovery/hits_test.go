@@ -27,8 +27,9 @@ func hitsTree(t *testing.T) string {
 			"def approve(rid): ...",
 		}, "\n") + "\n",
 		"app/server.js":  "router.get('/api/units', handler)\n// router.post('/api/ignored', h)\n",
-		"db/schema.sql":  "CREATE TABLE malzemeler (\n  id INT\n);\n-- SELECT * FROM secret\nSELECT id, ad FROM malzemeler;\nSELECT id, ad FROM malzemeler;\n",
+		"db/schema.sql":  "CREATE TABLE malzemeler (\n  id INT\n);\nCREATE VIEW vw_talep AS SELECT 1;\nCREATE TRIGGER trg_touch BEFORE INSERT ON malzemeler BEGIN SELECT 1; END;\n-- SELECT * FROM secret\nSELECT id, ad FROM malzemeler;\nSELECT id, ad FROM malzemeler;\n",
 		"jobs/tasks.py":  "import schedule\nschedule.every(10).minutes.do(scan)\n",
+		"pages/units.py": "img = qrcode.make(value)\nst.download_button(\"QR PNG\", data, file_name=\"unit.png\", mime=\"image/png\")\n",
 		"notes.md":       "@app.route(\"/ignored-markdown\")\n",
 		"decoy/plain.py": "print('nothing to see')\n",
 	}
@@ -63,10 +64,13 @@ func TestEnumerateHitsDeterministicAndBounded(t *testing.T) {
 		{"app/routes.py :: route :: /requests", HitRoute, 5},
 		{"app/routes.py :: route :: POST /requests/<int:rid>/approve", HitRoute, 8},
 		{"app/server.js :: route :: GET /api/units", HitRoute, 1},
-		{"db/schema.sql :: query :: CREATE TABLE malzemeler (", HitQuery, 1},
-		{"db/schema.sql :: query :: SELECT id, ad FROM malzemeler", HitQuery, 5},
-		{"db/schema.sql :: query :: SELECT id, ad FROM malzemeler #2", HitQuery, 6},
+		{"db/schema.sql :: table :: malzemeler", HitTable, 1},
+		{"db/schema.sql :: view :: vw_talep", HitView, 4},
+		{"db/schema.sql :: dr :: trg_touch", HitDR, 5},
+		{"db/schema.sql :: query :: SELECT id, ad FROM malzemeler", HitQuery, 7},
+		{"db/schema.sql :: query :: SELECT id, ad FROM malzemeler #2", HitQuery, 8},
 		{"jobs/tasks.py :: job :: schedule.every(10).minutes.do(scan)", HitJob, 2},
+		{"pages/units.py :: action :: st.download_button(\"QR PNG\", data, file_name=\"unit.png\", mime=\"image/png\")", HitAction, 2},
 	}
 	if len(hits) != len(wants) {
 		for _, hit := range hits {
@@ -172,7 +176,7 @@ func TestHitPlanCommitsInventoryWithRuntimeIDs(t *testing.T) {
 		t.Fatal(err)
 	}
 	units := HitPlan(hits, []Cluster{{ID: "WEB", Title: "Web", Owner: "WEB", PrimaryPOV: "POV-1", Track: "Normal", Entries: []string{"app/routes.py"}}}, Directives{Namespace: "demo", Snapshot: "dev", StorageBinding: "sqlite/1", BatchSize: 10, PersonaPrefixes: map[string]bool{"WEB": true}})
-	if len(units) != 3 {
+	if len(units) != 4 {
 		t.Fatalf("units = %+v", units)
 	}
 	povs := map[string]string{}
@@ -182,7 +186,7 @@ func TestHitPlanCommitsInventoryWithRuntimeIDs(t *testing.T) {
 			t.Fatalf("unit %s persona = %q, want WEB", unit.ID, unit.Persona)
 		}
 	}
-	if povs["POV-3"] != "U-DISCOVERY-HITS-WEB-POV-3-001" || povs["POV-4"] != "U-DISCOVERY-HITS-WEB-POV-4-001" || povs["POV-5"] != "U-DISCOVERY-HITS-WEB-POV-5-001" {
+	if povs["POV-1"] != "U-DISCOVERY-HITS-WEB-POV-1-001" || povs["POV-3"] != "U-DISCOVERY-HITS-WEB-POV-3-001" || povs["POV-4"] != "U-DISCOVERY-HITS-WEB-POV-4-001" || povs["POV-5"] != "U-DISCOVERY-HITS-WEB-POV-5-001" {
 		t.Fatalf("pov units = %v", povs)
 	}
 	executor := fakeExecutor(func(inv work.Invocation) (work.Proposal, error) {

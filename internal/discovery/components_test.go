@@ -88,8 +88,8 @@ func TestComponentPlanAnchorsIdentityInHitSource(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if len(units) != 3 {
-		t.Fatalf("units = %d, want 3", len(units))
+	if len(units) != 4 {
+		t.Fatalf("units = %d, want 4", len(units))
 	}
 	executor := fakeExecutor(func(inv work.Invocation) (work.Proposal, error) {
 		var proposal work.Proposal
@@ -154,8 +154,8 @@ func TestComponentPlanAnchorsIdentityInHitSource(t *testing.T) {
 		}
 	}
 	refUnits := SharedReferencePlan(components)
-	if len(refUnits) != 3 {
-		t.Fatalf("shared-reference units = %+v", refUnits)
+	if len(refUnits) != 4 {
+		t.Fatalf("shared-reference units = %d, want 4 (=%+v)", len(refUnits), refUnits)
 	}
 	for i := range components {
 		if invocation, ok := creating[components[i].ID]; ok {
