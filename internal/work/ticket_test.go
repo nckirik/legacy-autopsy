@@ -21,7 +21,7 @@ func ticketPayload(status, trace, reason string) []byte {
 
 func TestTicketLifecycleValidation(t *testing.T) {
 	db, doc := testDoc(t)
-	unit := Unit{ID: "U-TICKET-TEST", Mode: "Ticket Resolution", RecordID: "TKT-AD-POV-1-001", ResultType: "TICKET"}
+	unit := Unit{ID: "U-TICKET-TEST", Mode: "Ticket Resolution", RecordID: "TKT-AD-POV-1-001", ResultType: "TICKET", POV: "POV-2"}
 	commit := func(payload []byte, update bool) error {
 		_, err := CommitWithIDs(NewCaps(db, doc), unit, Proposal{FieldID: "TICKET", Records: []Record{{Payload: payload}}}, update)
 		return err
@@ -34,6 +34,55 @@ func TestTicketLifecycleValidation(t *testing.T) {
 	}
 	if err := commit(ticketPayload("T-OPEN", "origin:ALFA -> T-OPEN without target investigation", "None"), true); err == nil || !strings.Contains(err.Error(), "not declared") {
 		t.Fatalf("undeclared transition accepted: %v", err)
+	}
+}
+
+// TestTicketActorRights enforces §9.2: only the target POV moves a ticket to
+// pending/probe, only the origin accepts or rejects, unbound units cannot claim
+// either right, and a recorded human review is exempt.
+func TestTicketActorRights(t *testing.T) {
+	db, doc := testDoc(t)
+	commitAs := func(pov string, payload []byte, update bool) error {
+		unit := Unit{ID: "U-TICKET-ACTOR-" + pov, Mode: "Ticket Resolution", RecordID: "TKT-AD-POV-1-003", ResultType: "TICKET", POV: pov}
+		_, err := CommitWithIDs(NewCaps(db, doc), unit, Proposal{FieldID: "TICKET", Records: []Record{{Payload: payload}}}, update)
+		return err
+	}
+	if err := commitAs("POV-2", ticketPayload("T-OPEN", "origin:ALFA -> T-OPEN", "None"), false); err != nil {
+		t.Fatal(err)
+	}
+	// Origin POV cannot move the ticket to pending.
+	if err := commitAs("POV-1", ticketPayload("T-PENDING", "target:ALFA -> T-PENDING", "None"), true); err == nil || !strings.Contains(err.Error(), "requires active POV POV-2") {
+		t.Fatalf("origin POV accepted as target: %v", err)
+	}
+	// The target POV can.
+	if err := commitAs("POV-2", ticketPayload("T-PENDING", "target:ALFA -> T-PENDING", "None"), true); err != nil {
+		t.Fatalf("target POV rejected: %v", err)
+	}
+	// Target POV cannot accept its own answer; the origin must.
+	accepted := ticketPayload("T-COMPLETE", "target:ALFA -> T-PENDING; origin:ALFA -> T-COMPLETE", "None")
+	if err := commitAs("POV-2", accepted, true); err == nil || !strings.Contains(err.Error(), "requires active POV POV-1") {
+		t.Fatalf("target POV accepted as origin: %v", err)
+	}
+	if err := commitAs("POV-1", accepted, true); err != nil {
+		t.Fatalf("origin POV rejected: %v", err)
+	}
+}
+
+func TestTicketUnboundActorAndHumanReview(t *testing.T) {
+	db, doc := testDoc(t)
+	commitAs := func(pov string, payload []byte, update bool) error {
+		unit := Unit{ID: "U-TICKET-UNBOUND", Mode: "Ticket Resolution", RecordID: "TKT-AD-POV-1-004", ResultType: "TICKET", POV: pov}
+		_, err := CommitWithIDs(NewCaps(db, doc), unit, Proposal{FieldID: "TICKET", Records: []Record{{Payload: payload}}}, update)
+		return err
+	}
+	if err := commitAs("", ticketPayload("T-OPEN", "origin:ALFA -> T-OPEN", "None"), false); err != nil {
+		t.Fatal(err)
+	}
+	if err := commitAs("", ticketPayload("T-PENDING", "target:ALFA -> T-PENDING", "None"), true); err == nil || !strings.Contains(err.Error(), "cannot claim actor rights") {
+		t.Fatalf("unbound unit claimed target rights: %v", err)
+	}
+	if err := commitAs("", ticketPayload("T-PENDING", "owner-review:ALFA -> T-PENDING", "None"), true); err != nil {
+		t.Fatalf("human review actor rejected: %v", err)
 	}
 }
 

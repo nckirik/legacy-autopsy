@@ -203,7 +203,10 @@ units must be claim-backed and represented by an entity record, `SRC-DR` units
 by a database-routine record, and discovered output `SRC-ACTION` units must
 carry a committed claim. Ticket writes are validated against the declared
 `TICKET-STATE` machine at commit (initial state, declared transitions, trace
-history, escalation reasons).
+history, escalation reasons), and §9.2 actor rights are enforced for
+POV-bound units: only the target POV moves a ticket to pending or probe
+states, only the origin POV accepts or rejects, unbound units cannot claim
+either right, and transitions recorded as a human `owner-review` are exempt.
 
 Discovery enumerates files and, separately, the non-file units they declare:
 

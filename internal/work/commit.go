@@ -156,7 +156,7 @@ func CommitWithIDs(caps *Caps, unit Unit, p Proposal, updateExisting bool) ([]st
 			return nil, fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
 		}
 		if p.FieldID == "TICKET" {
-			if err := validateTicketLifecycle(caps.doc, caps, record.RecordID, values); err != nil {
+			if err := validateTicketLifecycle(caps.doc, unit, caps, record.RecordID, values); err != nil {
 				return nil, fmt.Errorf("work: unit %s record %s: %w", unit.ID, record.RecordID, err)
 			}
 		}
