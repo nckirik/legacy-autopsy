@@ -647,3 +647,30 @@ oracle snapshot is an open process decision.
   becomes a visible gap instead of a quiet chapter omission.
 - **Impact:** strengthens data-chapter completeness and turns schema
   under-capture into closure-visible state; no change to identity or hashing.
+
+## PI-26: UI output behaviors (downloads/exports) need capture or explicit exclusion
+
+- **Status:** proposed
+- **Source:** owner walkthrough of the second-target rehearsal tickets
+  (2026-10-15): the owner spotted the QR-label download in
+  `pages/units.py` and asked that it be noted. The download button
+  (`st.download_button("QR PNG İndir", ...)`) appears in neither the claims nor
+  the interface catalog; the only committed IF record is the database
+  connection pool.
+- **Affected sections:** §4.2 required inventory kinds (pages, widgets, actions,
+  interfaces), §7 claims, §11 interface and use-case catalogs, §12.1
+  traceability invariants.
+- **Observed:** the target produces user-visible file outputs (QR PNG labels)
+  from a page action, but no CLM, IF, or UC record represents that output, and
+  nothing in the pipeline flagged its absence.
+- **Issue:** the protocol requires interfaces and page actions to be covered,
+  but no deterministic check makes a discovered output/export behavior a
+  visible gap when the semantic pass misses it, so exported artifacts silently
+  disappear from the reconstruction.
+- **Proposed direction:** (a) extend deterministic hit enumeration with an
+  output/export kind (download/export constructs in scanned UI code) so such
+  units enter the inventory like routes, queries, and jobs; and (b) require
+  every discovered output unit to be represented by a claim/IF/UC record or an
+  explicit claim-backed exclusion before closure.
+- **Impact:** exported labels/reports stop being invisible in reconstructions;
+  adds one inventory kind family and a coverage obligation, no identity change.
