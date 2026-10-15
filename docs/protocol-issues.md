@@ -13,12 +13,14 @@
 > **Revision v4.3:** PI-16 (declared synthesis identity carriers) and PI-17 (required
 > traversal-matrix rows as keyed records) are implemented; the current-edition oracle
 > snapshot is `protocol/legacy/protocol-4.3.md`.
-> **Revision v4.6/v4.7/v4.8:** PI-20/PI-21 and the v4.6 claim-level edge keys shipped in
+> **Revision v4.6-v4.9:** PI-20/PI-21 and the v4.6 claim-level edge keys shipped in
 > the 4.6 edition; PI-24 (diagram and pseudocode chapter contract), PI-25 (data-chapter
 > schema presentation and schema-declaration coverage), and PI-26's coverage obligation
 > ship in the 4.7 edition (`protocol/legacy/protocol-4.7.md`); PI-27 (the missing
 > `ENTRY-CLUSTER` natural key) ships in the 4.8 edition
-> (`protocol/legacy/protocol-4.8.md`).
+> (`protocol/legacy/protocol-4.8.md`); the v4.9 edition adds the
+> `CANDIDATE-15-SCHEMA-AND-OUTPUT-COVERAGE` check that makes the PI-25/PI-26 coverage
+> obligations candidacy conditions (`protocol/legacy/protocol-4.9.md`).
 > Accepted for a single minor revision. Decisions recorded with acceptance: snapshot each accepted
 > revision as the new frozen oracle (old oracles kept; drift and coverage tests target
 > the current one); handbook substance floor = required sections plus a minimum
@@ -626,7 +628,7 @@ oracle snapshot is an open process decision.
 
 ## PI-25: Data chapter must present the database schema as a first-class section
 
-- **Status:** implemented in v4.7 (chapter 03 schema presentation + `schema-declaration-coverage` rule; the deterministic half ships as discovery TABLE/VIEW/DR hit kinds plus `spec assurance closure` schema-coverage diagnostics)
+- **Status:** implemented in v4.7 (chapter 03 schema presentation + `schema-declaration-coverage` rule; the deterministic half ships as discovery TABLE/VIEW/DR hit kinds plus `spec assurance closure` schema-coverage diagnostics); wired into candidacy as `CANDIDATE-15` in v4.9
 - **Source:** owner review of the second-target rehearsal handbook
   (2026-10-15): the data chapter does not show the database schema - which
   entities/tables are kept, their keys, and how they relate - and the owner
@@ -656,7 +658,7 @@ oracle snapshot is an open process decision.
 
 ## PI-26: UI output behaviors (downloads/exports) need capture or explicit exclusion
 
-- **Status:** deterministic half implemented (discovery ACTION hit kind + closure coverage diagnostic); the coverage obligation text ships in v4.7 as the quality-gate condition for user-visible output/export behavior; runtime wiring into candidate conditions remains (T19.4)
+- **Status:** deterministic half implemented (discovery ACTION hit kind + closure coverage diagnostic); the coverage obligation text ships in v4.7 as the quality-gate condition for user-visible output/export behavior; `CANDIDATE-15` enforces it at candidacy in v4.9
 - **Source:** owner walkthrough of the second-target rehearsal tickets
   (2026-10-15): the owner spotted the QR-label download in
   `pages/units.py` and asked that it be noted. The download button

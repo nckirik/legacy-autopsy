@@ -217,6 +217,18 @@ func EvaluateCandidateChecks(db string, doc *cdl.EIRDoc, opts Options) ([]Candid
 	default:
 		add("CANDIDATE-11-FAULTS", "Pass", fmt.Sprintf("%d fault records carry claim evidence and resolved topology references", faults.FLTs))
 	}
+	// CANDIDATE-15: discovered schema objects and user-visible outputs are
+	// represented by their record family or an exact approved exclusion.
+	schemaCoverage, err := assurance.SchemaCoverageDiagnostics(db, doc)
+	if err != nil {
+		return nil, err
+	}
+	if len(schemaCoverage) > 0 {
+		add("CANDIDATE-15-SCHEMA-AND-OUTPUT-COVERAGE", "Fail", fmt.Sprintf("%d discovered schema/output units lack representation; first: %s", len(schemaCoverage), schemaCoverage[0]))
+	} else {
+		add("CANDIDATE-15-SCHEMA-AND-OUTPUT-COVERAGE", "Pass", "discovered schema objects and outputs are represented or exactly excluded")
+	}
+
 	// CANDIDATE-12: legal PRF identity, fingerprint, and dependency closure.
 	namespace, err := headerNamespace(db, doc)
 	if err != nil {

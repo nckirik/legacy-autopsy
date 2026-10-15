@@ -1,9 +1,9 @@
 # Protocol: Legacy System Deconstruction, Assurance, and Reconstruction
 
-**Version:** 4.8 (Canonical Reconstruction-Ready Edition)
+**Version:** 4.9 (Canonical Reconstruction-Ready Edition)
 **Status:** Normative
 **Purpose:** Produce an evidence-grounded, complete, framework-agnostic description of a legacy system and a separately reviewed reconstruction package without requiring downstream readers to reopen the legacy source.
-**Generated-From:** cdl/0.4.0 (sha256:b1cc27b4dcab8e357a13bed15689069a05532415b8361ded0765a214748f506f)
+**Generated-From:** cdl/0.4.0 (sha256:2a51dfe16e50b8c242d9bb34af9c89bb4c05c30d200a6af3bfa28bc2aa8f638a)
 **Language:** cdl/0.4 (eir-format 4)
 **Authority:** generated render of the canonical CDL sources; do not edit.
 
@@ -414,7 +414,7 @@ Observed legacy facts and target decisions MUST appear in separate fields and ha
 - **System Namespace:** [stable slug]
 - **Target Repository / Evidence Roots:** [...]
 - **Primary Technology Stack:** [...]
-- **Protocol Version:** 4.8
+- **Protocol Version:** 4.9
 - **Canonical Storage Binding:** [binding identity plus binding schema version, for example `markdown/1` or `sqlite/1`; default `markdown/1`]
 - **Current Iteration:** [one canonical token from §10.6: ALFA ... ZULU]
 - **Default Max Traversal Depth:** 3
@@ -1278,7 +1278,7 @@ Predicate: complete
 Every invocation begins with:
 
 ```yaml
-Protocol Version: 4.8
+Protocol Version: 4.9
 System Namespace: [slug]
 Current Iteration: [canonical §10.6 token ALFA..ZULU]
 Invocation ID: [globally unique]
@@ -2346,6 +2346,7 @@ The required Exit E report check registry is `EXIT-E-CHECKS-v1`. Its canonical r
 | CANDIDATE         | CANDIDATE-12-PROFILES                     | populated PRF identity, dependency closure, and candidate eligibility portions of §15.1 condition 12 |
 | CANDIDATE         | CANDIDATE-13-PENDING-AND-CONTRADICTIONS   | pre-confirmation portions of §15.1 conditions 16-17                                                  |
 | CANDIDATE         | CANDIDATE-14-SNAPSHOT-INPUTS              | candidate-stage portions of §15.1 condition 18                                                       |
+| CANDIDATE         | CANDIDATE-15-SCHEMA-AND-OUTPUT-COVERAGE   | §13.5 schema/output coverage obligations (schema-declaration coverage and output/export behavior)     |
 | CONTENT-READINESS | READINESS-01-CANDIDATE-IMMUTABILITY       | unchanged candidate report, manifest, semantic payloads, decisions, and dependencies                 |
 | CONTENT-READINESS | READINESS-02-CONFIRMATIONS                | confirmed semantic bindings and §15.1 conditions 12-13 and 19                                        |
 | CONTENT-READINESS | READINESS-03-DECISION-APPROVALS           | §15.1 condition 14                                                                                   |
@@ -2759,5 +2760,5 @@ A conforming implementation MUST satisfy every applicable positive and negative 
 
 ---
 
-**End of Canonical Deconstruction Protocol, edition 4.8**
+**End of Canonical Deconstruction Protocol, edition 4.9**
 

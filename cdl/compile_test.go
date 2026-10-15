@@ -220,7 +220,7 @@ func TestUpdateAssets(t *testing.T) {
 	if err := os.WriteFile(repoPath("protocol.md"), rendered, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if err := os.WriteFile(repoPath("protocol/legacy/protocol-4.8.md"), rendered, 0o644); err != nil {
+	if err := os.WriteFile(repoPath("protocol/legacy/protocol-4.9.md"), rendered, 0o644); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -300,10 +300,10 @@ func TestGoldenProtocolRender(t *testing.T) {
 		}
 	}
 	for _, marker := range []string{
-		"**Version:** 4.8",
-		"**Protocol Version:** 4.8",
-		"Protocol Version: 4.8",
-		"End of Canonical Deconstruction Protocol, edition 4.8",
+		"**Version:** 4.9",
+		"**Protocol Version:** 4.9",
+		"Protocol Version: 4.9",
+		"End of Canonical Deconstruction Protocol, edition 4.9",
 		"## 8.3. Invocation-mode enum and explicit multi-file modes",
 		"Preflight | Export Acquisition",
 	} {
@@ -311,7 +311,7 @@ func TestGoldenProtocolRender(t *testing.T) {
 			t.Fatalf("generated protocol missing %q", marker)
 		}
 	}
-	for _, forbidden := range []string{"{{PROTOCOL-VERSION}}", "v4.7", "**Protocol Version:** 4.1"} {
+	for _, forbidden := range []string{"{{PROTOCOL-VERSION}}", "v4.8", "**Protocol Version:** 4.1"} {
 		if strings.Contains(string(got), forbidden) {
 			t.Fatalf("generated protocol contains stale version literal %q", forbidden)
 		}
@@ -344,7 +344,7 @@ func TestRenderPromptRequiresCoveredSection(t *testing.T) {
 func TestGoldenEditionOracle(t *testing.T) {
 	res := compileAssembly(t)
 	got := RenderProtocol(res.EIR)
-	want, err := os.ReadFile(repoPath("protocol/legacy/protocol-4.8.md"))
+	want, err := os.ReadFile(repoPath("protocol/legacy/protocol-4.9.md"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -793,7 +793,7 @@ func TestPackagingCompiles(t *testing.T) {
 	for _, e := range res.EIR.Declarations.Enums {
 		enumCounts[e.ID] = len(e.Values)
 	}
-	if enumCounts["EXIT-E-CANDIDATE-CHECKS"] != 14 || enumCounts["EXIT-E-CONTENT-READINESS-CHECKS"] != 11 || enumCounts["FINAL-CHECK"] != 9 {
+	if enumCounts["EXIT-E-CANDIDATE-CHECKS"] != 15 || enumCounts["EXIT-E-CONTENT-READINESS-CHECKS"] != 11 || enumCounts["FINAL-CHECK"] != 9 {
 		t.Fatalf("unexpected check registry counts: %v", enumCounts)
 	}
 }

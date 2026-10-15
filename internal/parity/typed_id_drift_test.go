@@ -53,6 +53,37 @@ func TestTypedIDRegistryDrift(t *testing.T) {
 	compareSets(t, "ID-ITERATION", enums["ID-ITERATION"], wantIterations)
 }
 
+// compareSetsWithAdditions compares a CDL set against the frozen bootstrap
+// oracle set while allowing declared post-4.1.3 additions: every oracle value
+// must remain present (nothing removed or renamed) and every extra value must
+// be listed as an accepted revision addition.
+func compareSetsWithAdditions(t *testing.T, name string, got, want, additions []string) {
+	t.Helper()
+	allowed := map[string]bool{}
+	for _, addition := range additions {
+		allowed[addition] = true
+	}
+	filtered := make([]string, 0, len(got))
+	for _, value := range got {
+		if allowed[value] {
+			continue
+		}
+		filtered = append(filtered, value)
+	}
+	for _, addition := range additions {
+		found := false
+		for _, value := range got {
+			if value == addition {
+				found = true
+			}
+		}
+		if !found {
+			t.Fatalf("%s declared addition %q is missing from the CDL", name, addition)
+		}
+	}
+	compareSets(t, name, filtered, want)
+}
+
 func compareSets(t *testing.T, name string, got, want []string) {
 	t.Helper()
 	g := append([]string(nil), got...)

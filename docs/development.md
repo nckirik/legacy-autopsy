@@ -160,6 +160,10 @@ go run ./cmd/legacy-autopsy spec handoff outer --package-dir preview/bundle
 go run ./cmd/legacy-autopsy spec handoff sign --package-dir preview/bundle
 ```
 
+Candidate condition 15 fails when discovered schema objects or user-visible
+outputs are not represented by their record family or an exact approved
+exclusion (the PI-25/PI-26 coverage obligations).
+
 Human acts are interactive by design and never machine-authored:
 `spec handoff review readability|equivalence|decisions|confirm` prompt the
 operator (per-chapter Pass/Fail, per-mapping accept/exclude, per-decision

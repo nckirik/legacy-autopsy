@@ -136,6 +136,7 @@ The required Exit E report check registry is `EXIT-E-CHECKS-v1`. Its canonical r
 | CANDIDATE         | CANDIDATE-12-PROFILES                     | populated PRF identity, dependency closure, and candidate eligibility portions of §15.1 condition 12 |
 | CANDIDATE         | CANDIDATE-13-PENDING-AND-CONTRADICTIONS   | pre-confirmation portions of §15.1 conditions 16-17                                                  |
 | CANDIDATE         | CANDIDATE-14-SNAPSHOT-INPUTS              | candidate-stage portions of §15.1 condition 18                                                       |
+| CANDIDATE         | CANDIDATE-15-SCHEMA-AND-OUTPUT-COVERAGE   | §13.5 schema/output coverage obligations (schema-declaration coverage and output/export behavior)     |
 | CONTENT-READINESS | READINESS-01-CANDIDATE-IMMUTABILITY       | unchanged candidate report, manifest, semantic payloads, decisions, and dependencies                 |
 | CONTENT-READINESS | READINESS-02-CONFIRMATIONS                | confirmed semantic bindings and §15.1 conditions 12-13 and 19                                        |
 | CONTENT-READINESS | READINESS-03-DECISION-APPROVALS           | §15.1 condition 14                                                                                   |
@@ -166,6 +167,7 @@ ENUM EXIT-E-CANDIDATE-CHECKS
   CANDIDATE-12-PROFILES
   CANDIDATE-13-PENDING-AND-CONTRADICTIONS
   CANDIDATE-14-SNAPSHOT-INPUTS
+  CANDIDATE-15-SCHEMA-AND-OUTPUT-COVERAGE
 END
 
 ENUM EXIT-E-CONTENT-READINESS-CHECKS

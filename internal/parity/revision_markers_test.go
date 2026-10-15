@@ -30,6 +30,7 @@ var revisionMarkers = []string{
 	"entity-relationship diagram",
 	"Silent under-capture is invalid",
 	"user-visible output/export behavior",
+	"CANDIDATE-15-SCHEMA-AND-OUTPUT-COVERAGE",
 }
 
 func TestGeneratedEditionCarriesRevisionMarkers(t *testing.T) {

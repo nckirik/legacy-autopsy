@@ -3,7 +3,7 @@
 - Schema version: 1
 - Generator: parityreport parityreport/0.1
 - Generated at: 2026-09-25T00:00:00Z
-- Protocol: 4.8 (sha256:35005478432c21d23994a38570216f1d5ec7b4c983160419a77b3d10a42d4874)
+- Protocol: 4.9 (sha256:dda70a54ff9d1417139bad704132c75d4bb4cef34bdc81290e0ec7ceab4c0d26)
 - Language: cdl/0.4 (EIR format 4)
 
 ## Section coverage
@@ -123,9 +123,9 @@
 | :-- | :-- | :-- |
 | assembly-compiles | pass | 27 sources |
 | drift-tests | pass | 24 tests in 24 files |
-| generated-protocol | pass | sha256:35005478432c21d23994a38570216f1d5ec7b4c983160419a77b3d10a42d4874 |
-| golden-eir | pass | sha256:5b0816edffcaa2b196d01394e0882318488cfa3cb54cf1dc7a486a1d817c9d98 |
-| golden-prompt | pass | sha256:6752dc6c01adda9407ed9469ca1e975d5d116b9411904b5e96c724af381740f9 |
+| generated-protocol | pass | sha256:dda70a54ff9d1417139bad704132c75d4bb4cef34bdc81290e0ec7ceab4c0d26 |
+| golden-eir | pass | sha256:3fe0c557f72f58a1d29f2e7f964e98a7e7a254f7a8ce0bbec6d66972bad803cc |
+| golden-prompt | pass | sha256:c6bbd0a8277bef1af5d2b2e5cc159cb4aadecb3b2bb543bdb25727d12154fd4c |
 | fixture-oracle | pass | 24/24 passed |
 | identity-ledger | pass | 539 identities across 27 sources |
 
@@ -162,7 +162,7 @@
 | protocol/synthesis-catalogs.cdl | 13 | 67 | sha256:21fad7328973d931db66c8723d941cc81397b18843ab10aed490bdab84302224 |
 | protocol/traceability.cdl | 5 | 16 | sha256:be0f976036aba346b118c10e72a78d55f922d9e8a0921c1a27cb0e35bb840566 |
 | protocol/handbook-and-decisions.cdl | 10 | 23 | sha256:5e6fe471b69e3516595bd9839dc2fcebd6b606f11e4b74065cfc71d921908ea1 |
-| protocol/packaging.cdl | 9 | 50 | sha256:36493cd62b0d502d2b2c5455ae648b6e6e9d461d31c4d73a6e7558b9c1e15fd0 |
+| protocol/packaging.cdl | 9 | 50 | sha256:0c8007f23f1d0f6e1a2d5fa3472e4af5adbc06c22b14b20c083be6237e72636f |
 | protocol/conformance.cdl | 5 | 10 | sha256:9a8fb1d1d5212eb46e646fc31b84b0b2869ff1581c85f0c1ec5f8c598656407a |
 
 ## Declared deferrals

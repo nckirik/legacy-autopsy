@@ -1210,7 +1210,7 @@
     },
     {
       "path": "protocol/packaging.cdl",
-      "source-fingerprint": "sha256:58addd7bf5ea618b6f801c2ec70e8f6db8d8408cec78db30dfe9f57df2152fbe",
+      "source-fingerprint": "sha256:e3c0c98f630cb0893da8dcf227941f88d18ceafb3c876952b97494938a7386fa",
       "ids": [
         {
           "id": "APPROVED-DEC-BINDING",

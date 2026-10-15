@@ -42,7 +42,7 @@ func TestEvaluateCandidateChecksEmptyState(t *testing.T) {
 	for _, check := range checks {
 		results[check.ID] = check.Result
 	}
-	if len(checks) != 14 {
+	if len(checks) != 15 {
 		t.Fatalf("checks = %d, want 14", len(checks))
 	}
 	for _, id := range []string{"CANDIDATE-01-EXIT-A", "CANDIDATE-02-SOURCE-CLOSURE", "CANDIDATE-03-SYNTHESIS-DOMAINS", "CANDIDATE-07-USE-CASES", "CANDIDATE-08-CONFIGURATION", "CANDIDATE-14-SNAPSHOT-INPUTS"} {
@@ -109,5 +109,26 @@ func TestBuildCandidateReportEmptyState(t *testing.T) {
 	}
 	if strings.Contains(text, "BLOCKER-CANDIDATE-01-EXIT-A | CANDIDATE-01-EXIT-A | all deterministic") {
 		t.Fatalf("passing check produced a blocker")
+	}
+}
+
+func TestCandidateSchemaAndOutputCoverageCheck(t *testing.T) {
+	doc, db := testDocDB(t)
+	table := "- **kind:** TABLE\n- **concrete-coordinate:** schema.sql :: table :: malzemeler\n- **parent-container-src:** None\n- **source-fingerprint-snapshot-src-version:** sha256:aaa version 1\n- **discovery-method:** other\n- **scope-summary:** WEB\n- **environment-runtime-state:** dev\n- **traversal-tracks:** Normal\n- **canonical-owner:** None\n- **disposition-summary:** Unknown\n- **mappings:** None\n- **frontier-references:** None\n- **coverage-rows:** None\n- **coverage-summary:** C-GAP\n- **claims:** None\n"
+	if err := store.Ingest(db, doc, "SOURCE-INVENTORY-RECORD", "SRC-TABLE-AAAAAAAAAAAA", 1, []byte(table)); err != nil {
+		t.Fatal(err)
+	}
+	checks, err := EvaluateCandidateChecks(db, doc, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	result := ""
+	for _, check := range checks {
+		if check.ID == "CANDIDATE-15-SCHEMA-AND-OUTPUT-COVERAGE" {
+			result = check.Result
+		}
+	}
+	if result != "Fail" {
+		t.Fatalf("unrepresented schema table accepted: %q", result)
 	}
 }

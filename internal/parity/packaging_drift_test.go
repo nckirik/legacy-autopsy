@@ -106,7 +106,10 @@ func TestPackagingDrift(t *testing.T) {
 	if len(candidateChecks) == 0 || len(readinessChecks) == 0 {
 		t.Fatal("check registry rows not found in §15.1.1")
 	}
-	compareSets(t, "EXIT-E-CANDIDATE-CHECKS", enums["EXIT-E-CANDIDATE-CHECKS"], candidateChecks)
+	compareSetsWithAdditions(t, "EXIT-E-CANDIDATE-CHECKS", enums["EXIT-E-CANDIDATE-CHECKS"], candidateChecks, []string{
+		// v4.9: PI-25/PI-26 schema and output coverage obligation.
+		"CANDIDATE-15-SCHEMA-AND-OUTPUT-COVERAGE",
+	})
 	compareSets(t, "EXIT-E-CONTENT-READINESS-CHECKS", enums["EXIT-E-CONTENT-READINESS-CHECKS"], readinessChecks)
 
 	text155 := load("15.5. Reproducible final-bundle verification")
