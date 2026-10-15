@@ -118,7 +118,9 @@ func DecisionContentFingerprint(payload []byte, carrier string) (string, error) 
 }
 
 // excludeFieldLines canonicalizes a payload and removes the named carrier field
-// line (with its leading indentation) before returning the preimage.
+// line (with its leading indentation) before returning the preimage. Field
+// labels compare through the same normalization the store uses, so carrier
+// exclusion is case- and separator-insensitive like the rest of the runtime.
 func excludeFieldLines(payload []byte, carrier string) (string, error) {
 	if carrier == "" {
 		return "", fmt.Errorf("canonical: empty carrier name")
@@ -127,12 +129,18 @@ func excludeFieldLines(payload []byte, carrier string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	want := ColumnName(carrier)
 	lines := strings.Split(strings.TrimSuffix(string(canonical), "\n"), "\n")
 	kept := make([]string, 0, len(lines))
 	for _, line := range lines {
 		trimmed := strings.TrimSpace(line)
-		if strings.HasPrefix(trimmed, "- **"+carrier+":**") || strings.HasPrefix(trimmed, "- **"+carrier+"**") {
-			continue
+		if strings.HasPrefix(trimmed, "- **") {
+			if end := strings.Index(trimmed[2:], ":**"); end >= 0 {
+				label := trimmed[4 : end+2]
+				if ColumnName(label) == want {
+					continue
+				}
+			}
 		}
 		kept = append(kept, line)
 	}

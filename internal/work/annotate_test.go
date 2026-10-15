@@ -4,6 +4,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/nckirik/legacy-autopsy/internal/capabilities"
 	"github.com/nckirik/legacy-autopsy/internal/store"
 )
 
@@ -59,5 +60,40 @@ func TestRuntimeAnnotatedFieldsFailClosed(t *testing.T) {
 	missing := "- **Constraint:** c\n- **Discovered In:** SRC-1\n"
 	if _, err := CommitWithIDs(NewCaps(db, doc), unit, Proposal{FieldID: "INVARIANT", Records: []Record{{Payload: []byte(missing)}}}, false); err == nil || !strings.Contains(err.Error(), "is missing") {
 		t.Fatalf("missing annotated field accepted: %v", err)
+	}
+}
+
+func TestRuntimeFingerprintCoversAnnotations(t *testing.T) {
+	db, doc := testDoc(t)
+	seedInvariant(t, db, doc, "INV-AAAAAAAAAAAA", "seeded")
+	unit := Unit{
+		ID:                       "U-ANNOTATE-FINGERPRINT",
+		Mode:                     "Discovery",
+		RecordID:                 "INV-EEEEEEEEEEEE",
+		ResultType:               "INVARIANT",
+		RuntimeAnnotatedFields:   []string{"constraint"},
+		RuntimeFingerprintFields: []string{"verification-vectors"},
+	}
+	payload := "- **Constraint:** INV-AAAAAAAAAAAA\n- **Verification Vectors:** PENDING\n- **Discovered In:** SRC-1\n"
+	if _, err := CommitWithIDs(NewCaps(db, doc), unit, Proposal{FieldID: "INVARIANT", Records: []Record{{Payload: []byte(payload)}}}, false); err != nil {
+		t.Fatal(err)
+	}
+	stored, err := store.Get(db, doc, "INVARIANT", "INV-EEEEEEEEEEEE")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(stored), "INV-AAAAAAAAAAAA@version 1 sha256:") {
+		t.Fatalf("annotation missing from stored payload:\n%s", stored)
+	}
+	values, err := PayloadText([]string{"verification-vectors"}, stored)
+	if err != nil {
+		t.Fatal(err)
+	}
+	recomputed, err := capabilities.SemanticContentFingerprint(stored, "verification-vectors")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if values["verification-vectors"] != recomputed {
+		t.Fatalf("stored fingerprint %q does not cover the annotated payload (recomputed %q)", values["verification-vectors"], recomputed)
 	}
 }

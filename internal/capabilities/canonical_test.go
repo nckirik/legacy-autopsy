@@ -238,3 +238,19 @@ func TestHashDomainAndPostHashBinding(t *testing.T) {
 		t.Fatalf("binding %s", binding)
 	}
 }
+
+func TestSemanticContentFingerprintCarrierCaseInsensitive(t *testing.T) {
+	lower := "## Block\n\n- **field:** value\n- **semantic-content-fingerprint:** sha256:placeholder\n"
+	upper := "## Block\n\n- **field:** value\n- **SEMANTIC-CONTENT-FINGERPRINT:** sha256:placeholder\n"
+	first, err := SemanticContentFingerprint([]byte(lower), "semantic-content-fingerprint")
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := SemanticContentFingerprint([]byte(upper), "semantic-content-fingerprint")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if first != second {
+		t.Fatalf("carrier exclusion is case-sensitive: %s vs %s", first, second)
+	}
+}
