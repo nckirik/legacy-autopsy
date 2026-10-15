@@ -201,7 +201,10 @@ inconsistent snapshots, or `Unknown` classifications without a ticket. It also
 reports schema/output coverage diagnostics: declared `SRC-TABLE`/`SRC-VIEW`
 units must be claim-backed and represented by an entity record, `SRC-DR` units
 by a database-routine record, and discovered output `SRC-ACTION` units must
-carry a committed claim. Ticket writes are validated against the declared
+carry a committed claim. Components declaring `[S-STAGING-VERIFIED]` or
+`[S-PROMOTED]` are checked against the §6.3 promotion locks (exactly one
+persona, no active ticket or open contradiction, no dependent component,
+C-COVERED source units, and no material `[E-UNKNOWN]` claim). Ticket writes are validated against the declared
 `TICKET-STATE` machine at commit (initial state, declared transitions, trace
 history, escalation reasons), and §9.2 actor rights are enforced for
 POV-bound units: only the target POV moves a ticket to pending or probe

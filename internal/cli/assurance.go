@@ -284,9 +284,16 @@ func specAssuranceClosure(args []string, stdout, stderr io.Writer) error {
 	for _, diagnostic := range schemaDiagnostics {
 		fmt.Fprintf(stdout, "schema-coverage: %s\n", diagnostic)
 	}
-	fmt.Fprintf(stdout, "dead-code components: %d checked, %d invalid; lifecycle diagnostics: %d; schema-coverage diagnostics: %d\n",
-		checked, invalid, len(diagnostics), len(schemaDiagnostics))
-	if invalid > 0 || len(diagnostics) > 0 || len(schemaDiagnostics) > 0 {
+	promotionDiagnostics, err := assurance.PromotionLockDiagnostics(*db, res.EIR)
+	if err != nil {
+		return err
+	}
+	for _, diagnostic := range promotionDiagnostics {
+		fmt.Fprintf(stdout, "promotion: %s\n", diagnostic)
+	}
+	fmt.Fprintf(stdout, "dead-code components: %d checked, %d invalid; lifecycle diagnostics: %d; schema-coverage diagnostics: %d; promotion diagnostics: %d\n",
+		checked, invalid, len(diagnostics), len(schemaDiagnostics), len(promotionDiagnostics))
+	if invalid > 0 || len(diagnostics) > 0 || len(schemaDiagnostics) > 0 || len(promotionDiagnostics) > 0 {
 		return fmt.Errorf("closure validation failed")
 	}
 	return nil
