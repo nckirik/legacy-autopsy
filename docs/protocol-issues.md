@@ -587,3 +587,63 @@ oracle snapshot is an open process decision.
   retry causes; keep the values non-authoritative and outside semantic hashes.
 - **Impact:** reproducible W6 metrics and regression detection for bounded
   execution quality.
+
+## PI-24: Flow-heavy handbook chapters need diagrams and language-agnostic pseudocode
+
+- **Status:** proposed
+- **Source:** owner review of the second-target rehearsal handbook
+  (iletisim-malzeme-sistemi, 2026-10-15): the chapters were read end-to-end and
+  liked, but the owner asks explicitly for flow charts and diagrams in the
+  architecture and other flow-describing chapters, and notes that prose alone is
+  sometimes not enough.
+- **Affected sections:** §13.1-13.4 handbook chapters and quality gates, the
+  narrative chapter contract, handbook lint and rendering.
+- **Observed:** chapters carry Summary, Observed Legacy Behavior, Target
+  Decisions, Navigation, and a cited record appendix. The narrator contract
+  forbids other headings and tables, so relationships, control flow, and state
+  transitions that are naturally diagrammatic are flattened into prose.
+- **Issue:** the protocol defines no diagram or code-block form for chapter
+  content, no rule for when a diagram is required versus optional, and no
+  language-agnostic pseudocode guidance. Without a declared form, generators
+  cannot add them consistently and reviewers cannot gate them.
+- **Proposed direction:** declare a small closed set of non-prose chapter
+  content blocks: a text-flow diagram form (renderable in plain Markdown, for
+  example a fenced flowchart block that mirrors states/transitions already
+  backed by `SM`, `UC`, `REL`, or `FLT` records), and a language-agnostic
+  pseudocode block for behavior that is clearer as steps than as prose. Require
+  diagram blocks for flow-heavy chapters (architecture, domain/data,
+  background processing) when the backing records exist; diagrams and pseudocode
+  remain projections of committed records, never new evidence.
+- **Impact:** changes the handbook chapter contract, lint, and renderer;
+  requires fixtures for diagram presence and for rejecting diagram content that
+  contradicts its backing records.
+
+## PI-25: Data chapter must present the database schema as a first-class section
+
+- **Status:** proposed
+- **Source:** owner review of the second-target rehearsal handbook
+  (2026-10-15): the data chapter does not show the database schema - which
+  entities/tables are kept, their keys, and how they relate - and the owner
+  expects that content plus an ER-style diagram.
+- **Affected sections:** §13 chapter 03 (`Domain and Data`), §11 entity and
+  relationship catalogs (`ER`, `REL`, `SM`, `DR`), synthesis completeness.
+- **Observed:** the target ships a complete SQL schema
+  (`sql/00_full_schema_v3.sql` with roughly forty tables, foreign keys, views,
+  and indexes) and a schema dump, both in discovery scope. The rehearsal's ER
+  catalog committed one entity record and the REL catalog four records, so the
+  chapter cannot present the schema; nothing in the pipeline flagged the
+  under-capture because the catalogs are model-authored without a
+  schema-coverage check.
+- **Issue:** a data chapter without the declared schema is not a reconstruction
+  of the data layer. The protocol does not require the chapter to present the
+  entity/table set and relationship topology, and no deterministic check
+  compares a discovered schema artifact against ER/REL coverage.
+- **Proposed direction:** (a) require chapter 03 to present the entity/table
+  inventory with keys and the relationship topology (with the PI-24 diagram
+  form for the ER view), backed by `ER`/`REL` records; and (b) add a
+  deterministic schema-coverage check: when a discovered source unit is a
+  schema/DDL artifact, its declared tables/routines must be represented by
+  `ER`/`DR` records or explicitly excluded with reasons, so under-capture
+  becomes a visible gap instead of a quiet chapter omission.
+- **Impact:** strengthens data-chapter completeness and turns schema
+  under-capture into closure-visible state; no change to identity or hashing.
