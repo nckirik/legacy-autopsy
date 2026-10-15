@@ -718,9 +718,27 @@ func specHandoffSign(args []string, stdout, stderr io.Writer) error {
 	}
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 	audit := fmt.Sprintf("approved by %s for outer payload %s; simple operator approval, no cryptographic signature", *approver, fingerprint)
-	signedFingerprint, envelopeFingerprint, err := handoff.SignOuter(*outer, *outerPath, *approver, "", timestamp, audit)
+	// The receipt verifies bundle bytes only, so when a materialized package is
+	// present the signature lands on the bundle's copy of the outer manifest and
+	// the staging copy is refreshed to match.
+	signTarget := *outer
+	if *packageDir != "" {
+		bundleCopy := filepath.Join(*packageDir, filepath.FromSlash(*outerPath))
+		if _, err := os.Stat(bundleCopy); err == nil {
+			signTarget = bundleCopy
+		}
+	}
+	signedFingerprint, envelopeFingerprint, err := handoff.SignOuter(signTarget, *outerPath, *approver, "", timestamp, audit)
 	if err != nil {
 		return err
+	}
+	if signTarget != *outer {
+		if signedBytes, err := os.ReadFile(signTarget); err == nil {
+			if err := os.WriteFile(*outer, signedBytes, 0o644); err != nil {
+				return err
+			}
+		}
+		fmt.Fprintf(stdout, "signed bundle copy: %s (staging copy refreshed)\n", signTarget)
 	}
 	fmt.Fprintf(stdout, "signed: payload %s, envelope %s\n", signedFingerprint, envelopeFingerprint)
 	final, err := handoff.BuildFinalReceipt(res.EIR, handoff.SignAndVerifyOptions{
